@@ -1,0 +1,8 @@
+flowchart TD
+  H[Human] --> UI[Editor UI]
+  UI --> WF[Hidden Workflow / Tribal Knowledge]
+  WF --> DB[(Database)]
+  DB --> OUT[Page Output]
+
+  AI[AI "assistant"] -. bolted-on .-> UI
+  note1{{Implicit state\nWeak contracts\nNo deterministic rollback\nShallow audit trails}} --- WF

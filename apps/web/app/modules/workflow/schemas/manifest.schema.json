@@ -1,0 +1,24 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"required": ["artifact", "schema", "version"],
+	"properties": {
+		"artifact": {
+			"type": "string",
+			"description": "The artifact identifier"
+		},
+		"schema": {
+			"type": "string",
+			"description": "The schema reference"
+		},
+		"version": {
+			"type": "number",
+			"description": "The version number"
+		},
+		"metadata": {
+			"type": "object",
+			"additionalProperties": true,
+			"description": "Optional metadata"
+		}
+	}
+}

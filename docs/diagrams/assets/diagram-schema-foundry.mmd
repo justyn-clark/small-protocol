@@ -1,0 +1,7 @@
+flowchart TD
+  SF[Schema Foundry Registry] --> PACKS[Domain Packs\n(Schemas + Manifests)]
+  PACKS --> SYS[Agent-Legible CMS]
+  SYS --> ART[Artifacts]
+  SYS --> POL[Policy Enforcement]
+  SYS --> LIN[Lineage]
+  ART --> OUT[Products / Surfaces]

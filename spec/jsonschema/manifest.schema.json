@@ -1,0 +1,1 @@
+{"type":"object","required":["name","allowed_states","transitions"],"properties":{"name":{"type":"string"},"allowed_states":{"type":"array","items":{"type":"string"}},"transitions":{"type":"object"}}}

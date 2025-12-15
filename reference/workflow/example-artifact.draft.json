@@ -1,0 +1,17 @@
+{
+  "id": "article_demo_001",
+  "type": "artifact.content.article",
+  "schema_ref": "schema.content.article.v1",
+  "state": "draft",
+  "data": {
+    "title": "Agent-Legible CMS: the baseline",
+    "slug": "agent-legible-cms-the-baseline",
+    "summary": "A reference artifact to demonstrate schema validation, lifecycle transitions, and rollback.",
+    "body": "This is a draft article used to demonstrate an agent-legible CMS. It will move through explicit lifecycle states and be validated against JSON Schema before publication. The goal is to prove determinism, traceability, and rollback in a minimal reference implementation.",
+    "tags": [
+      "spec",
+      "cms",
+      "agents"
+    ]
+  }
+}

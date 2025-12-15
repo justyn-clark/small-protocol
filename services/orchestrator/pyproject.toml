@@ -1,0 +1,15 @@
+[project]
+name = "agent_legible_orchestrator"
+version = "0.1.0"
+description = "Minimal agent-legible CMS orchestrator reference implementation"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.29",
+  "pydantic>=2.6",
+  "psycopg[binary]>=3.1",
+  "jsonschema>=4.21",
+]
+
+[tool.uvicorn]
+factory = false

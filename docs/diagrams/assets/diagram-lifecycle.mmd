@@ -1,0 +1,8 @@
+stateDiagram-v2
+  [*] --> draft
+  draft --> generated: transition(draft->generated)\nvalidate(schema)
+  generated --> reviewed: transition(generated->reviewed)\nvalidate(schema)
+  reviewed --> approved: transition(reviewed->approved)
+  reviewed --> draft: transition(reviewed->draft)\n(rework)
+  approved --> published: transition(approved->published)\npolicy gate
+  published --> archived: transition(published->archived)
