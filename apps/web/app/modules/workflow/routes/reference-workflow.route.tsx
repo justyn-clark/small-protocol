@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CodeBlock } from "~/modules/mdx/CodeBlock";
 import { emitLifecycle } from "~/modules/workflow/core/emitLifecycle";
 import { generateLineage } from "~/modules/workflow/core/generateLineage";
@@ -11,6 +11,14 @@ const EXAMPLE_MANIFEST = `{
   "version": 1
 }`;
 
+type ProtocolData = {
+	protocol: string;
+	version: string;
+	primitives: string[];
+	rules: Record<string, boolean>;
+	schemas: Record<string, string>;
+};
+
 export default function ReferenceWorkflowRoute() {
 	const [manifestInput, setManifestInput] = useState(EXAMPLE_MANIFEST);
 	const [validationResult, setValidationResult] = useState<{
@@ -20,6 +28,25 @@ export default function ReferenceWorkflowRoute() {
 	const [lineageHtml, setLineageHtml] = useState<string | null>(null);
 	const [lifecycleHtml, setLifecycleHtml] = useState<string | null>(null);
 	const [isProcessing, setIsProcessing] = useState(false);
+	const [protocolData, setProtocolData] = useState<ProtocolData | null>(null);
+	const [protocolJsonExpanded, setProtocolJsonExpanded] = useState(false);
+	const [protocolJsonHtml, setProtocolJsonHtml] = useState<string | null>(null);
+
+	useEffect(() => {
+		async function fetchProtocol() {
+			try {
+				const response = await fetch("/protocol/small/v1");
+				const data: ProtocolData = await response.json();
+				setProtocolData(data);
+				const jsonStr = JSON.stringify(data, null, 2);
+				const html = await highlightCodeToHtml({ code: jsonStr, lang: "json" });
+				setProtocolJsonHtml(html);
+			} catch (error) {
+				console.error("Failed to fetch protocol:", error);
+			}
+		}
+		fetchProtocol();
+	}, []);
 
 	const handleValidate = async () => {
 		setIsProcessing(true);
@@ -66,6 +93,43 @@ export default function ReferenceWorkflowRoute() {
 	return (
 		<div className="space-y-8">
 			<div className="space-y-4">
+				<div className="flex items-center justify-between">
+					<h2 className="text-xl font-semibold">SMALL Playground</h2>
+					{protocolData && (
+						<div className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-sm">
+							<span className="text-white/60">Protocol:</span>
+							<span className="font-mono font-semibold text-white">
+								{protocolData.protocol} v{protocolData.version}
+							</span>
+						</div>
+					)}
+				</div>
+
+				<div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-4 text-sm text-blue-200">
+					<p className="font-medium">Deterministic Replay</p>
+					<p className="mt-1 text-blue-300/80">
+						This playground is stateless and deterministic. No data is persisted.
+						All outputs are computed from inputs using SMALL primitives.
+					</p>
+				</div>
+
+				{protocolData && protocolJsonHtml && (
+					<div className="space-y-2">
+						<button
+							onClick={() => setProtocolJsonExpanded(!protocolJsonExpanded)}
+							className="flex w-full items-center justify-between rounded-lg border border-white/10 bg-black/40 p-3 text-left text-sm hover:bg-black/60"
+						>
+							<span className="font-medium">Raw Protocol JSON</span>
+							<span className="text-white/60">
+								{protocolJsonExpanded ? "▼" : "▶"}
+							</span>
+						</button>
+						{protocolJsonExpanded && (
+							<CodeBlock html={protocolJsonHtml} lang="json" title="Protocol" />
+						)}
+					</div>
+				)}
+
 				<h2 className="text-xl font-semibold">Manifest Input</h2>
 				<textarea
 					value={manifestInput}

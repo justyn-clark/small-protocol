@@ -7,6 +7,7 @@ import { MDXRenderer } from "~/modules/mdx/MDXRenderer";
 import { Mermaid } from "~/modules/mdx/Mermaid";
 import { compileMdx } from "~/modules/mdx/mdx-runtime.server";
 import { slugToPath } from "./slugs";
+import { validateProtocolDoc } from "./validate-protocol-docs";
 
 export async function loadDoc(slug: string) {
 	const file = slugToPath(slug);
@@ -36,7 +37,7 @@ export async function loadDoc(slug: string) {
 				),
 			}),
 		);
-		return { slug, html };
+		return { slug, html, frontmatter: compiled.frontmatter ?? {} };
 	}
 
 	const source = await fs.readFile(file, "utf8");
@@ -47,6 +48,9 @@ export async function loadDoc(slug: string) {
 		mtimeMs,
 		source,
 	});
+
+	// Validate protocol frontmatter at build time
+	validateProtocolDoc(compiled.frontmatter ?? {}, file);
 
 	const html = renderToString(
 		React.createElement(MDXRenderer, {
@@ -64,5 +68,5 @@ export async function loadDoc(slug: string) {
 		}),
 	);
 
-	return { slug, html };
+	return { slug, html, frontmatter: compiled.frontmatter ?? {} };
 }

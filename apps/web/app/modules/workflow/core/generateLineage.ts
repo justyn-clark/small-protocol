@@ -1,5 +1,7 @@
 import type { Lineage } from "~/modules/workflow/types";
+// import { SMALL_GUARANTEES } from "./guarantees";
 
+// SMALL Guarantees: deterministic, noHiddenState
 export function generateLineage(manifest: {
 	artifact: string;
 	schema: string;

@@ -1,8 +1,12 @@
-import Ajv, { type ErrorObject } from "ajv";
+import Ajv2020, { type ErrorObject } from "ajv/dist/2020";
 import addFormats from "ajv-formats";
 import manifestSchema from "../schemas/manifest.schema.json";
 
-const ajv = new Ajv({ allErrors: true });
+// SMALL Guarantees: explicitContractsOnly, deterministic
+const ajv = new Ajv2020({
+	strict: true,
+	allErrors: true,
+});
 addFormats(ajv);
 
 export function validateManifest(manifest: unknown): {

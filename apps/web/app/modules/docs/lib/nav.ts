@@ -8,6 +8,7 @@ export const DOCS_NAV: DocSection[] = [
 		title: "Getting started",
 		items: [
 			{ slug: "docs", title: "Overview" },
+			{ slug: "small-v1", title: "SMALL v1" },
 			{ slug: "reference-workflow", title: "Reference workflow" },
 		],
 	},
@@ -23,7 +24,10 @@ export const DOCS_NAV: DocSection[] = [
 	{
 		id: "architecture",
 		title: "Architecture",
-		items: [{ slug: "diagrams", title: "Canonical diagrams" }],
+		items: [
+			{ slug: "diagrams", title: "Canonical diagrams" },
+			{ slug: "small-model", title: "SMALL Model" },
+		],
 	},
 	{
 		id: "contracts",
@@ -32,5 +36,10 @@ export const DOCS_NAV: DocSection[] = [
 			{ slug: "api", title: "OpenAPI surface" },
 			{ slug: "schemas", title: "JSON Schemas" },
 		],
+	},
+	{
+		id: "manifesto",
+		title: "Manifesto",
+		items: [{ slug: "small-is-the-new-cms", title: "SMALL Is the New CMS" }],
 	},
 ];

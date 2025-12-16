@@ -1,5 +1,7 @@
 import type { Lifecycle } from "~/modules/workflow/types";
+// import { SMALL_GUARANTEES } from "./guarantees";
 
+// SMALL Guarantees: deterministic, immutableArtifacts
 export function emitLifecycle(manifest: {
 	artifact: string;
 	schema: string;

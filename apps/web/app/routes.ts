@@ -15,6 +15,7 @@ export default [
 		),
 		route(":slug", "./modules/docs/routes/doc.route.tsx"),
 	]),
+	route("/protocol/small/v1", "./routes/protocol.small-v1.route.ts"),
 	// Catch-all route for DevTools and other well-known requests
 	route("*", "./routes/catch-all.route.tsx"),
 ];

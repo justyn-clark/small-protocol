@@ -12,7 +12,55 @@ import { Mermaid } from "./Mermaid";
 type CacheEntry = {
 	mtimeMs: number;
 	Component: React.FC;
+	frontmatter?: Record<string, unknown>;
 };
+
+export type Frontmatter = Record<string, unknown>;
+
+function parseFrontmatter(source: string): {
+	frontmatter: Frontmatter;
+	content: string;
+} {
+	const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+	const match = source.match(frontmatterRegex);
+
+	if (!match) {
+		return { frontmatter: {}, content: source };
+	}
+
+	const [, frontmatterYaml, content] = match;
+	const frontmatter: Frontmatter = {};
+
+	// Simple YAML parser for basic key: value pairs
+	for (const line of frontmatterYaml.split("\n")) {
+		const trimmed = line.trim();
+		if (!trimmed || trimmed.startsWith("#")) continue;
+
+		const colonIndex = trimmed.indexOf(":");
+		if (colonIndex === -1) continue;
+
+		const key = trimmed.slice(0, colonIndex).trim();
+		let value: string | number | boolean = trimmed.slice(colonIndex + 1).trim();
+
+		// Remove quotes if present
+		if (
+			(value.startsWith('"') && value.endsWith('"')) ||
+			(value.startsWith("'") && value.endsWith("'"))
+		) {
+			value = value.slice(1, -1);
+		}
+
+		// Parse booleans and numbers
+		if (value === "true") value = true;
+		else if (value === "false") value = false;
+		else if (/^\d+$/.test(value)) value = Number(value);
+		else if (/^\d+\.\d+$/.test(value)) value = Number(value);
+
+		frontmatter[key] = value;
+	}
+
+	return { frontmatter, content };
+}
 
 const mdxCache = new Map<string, CacheEntry>();
 
@@ -91,9 +139,16 @@ export async function compileMdx(args: {
 	source: string;
 }) {
 	const cached = mdxCache.get(args.cacheKey);
-	if (cached && cached.mtimeMs === args.mtimeMs) return cached;
+	if (cached && cached.mtimeMs === args.mtimeMs) {
+		return {
+			Component: cached.Component,
+			frontmatter: cached.frontmatter ?? {},
+		};
+	}
 
-	const compiled = await compile(args.source, {
+	const { frontmatter, content } = parseFrontmatter(args.source);
+
+	const compiled = await compile(content, {
 		outputFormat: "function-body",
 		development: process.env.NODE_ENV !== "production",
 		remarkPlugins: [remarkCodeToComponents, remarkGfm],
@@ -116,14 +171,14 @@ export async function compileMdx(args: {
 	const fn = isDevelopment
 		? new Function("_jsxRuntime", "CodeBlock", "Mermaid", wrappedCode)
 		: new Function(
-				"React",
-				"jsx",
-				"jsxs",
-				"Fragment",
-				"CodeBlock",
-				"Mermaid",
-				wrappedCode,
-			);
+			"React",
+			"jsx",
+			"jsxs",
+			"Fragment",
+			"CodeBlock",
+			"Mermaid",
+			wrappedCode,
+		);
 
 	// Ensure we're passing actual functions
 	if (typeof CodeBlock !== "function") {
@@ -135,21 +190,21 @@ export async function compileMdx(args: {
 
 	const ComponentResult = isDevelopment
 		? fn(
-				{
-					Fragment: runtime.Fragment,
-					jsxDEV: runtime.jsxDEV,
-				},
-				CodeBlock,
-				Mermaid,
-			)
+			{
+				Fragment: runtime.Fragment,
+				jsxDEV: runtime.jsxDEV,
+			},
+			CodeBlock,
+			Mermaid,
+		)
 		: fn(
-				React,
-				runtime.jsx,
-				runtime.jsxs,
-				runtime.Fragment,
-				CodeBlock,
-				Mermaid,
-			);
+			React,
+			runtime.jsx,
+			runtime.jsxs,
+			runtime.Fragment,
+			CodeBlock,
+			Mermaid,
+		);
 
 	// Extract the actual component function - MDX may export it as default
 	const Component =
@@ -163,9 +218,16 @@ export async function compileMdx(args: {
 		);
 	}
 
-	const entry: CacheEntry = { mtimeMs: args.mtimeMs, Component };
+	const entry: CacheEntry = {
+		mtimeMs: args.mtimeMs,
+		Component,
+		frontmatter,
+	};
 	mdxCache.set(args.cacheKey, entry);
-	return entry;
+	return {
+		Component,
+		frontmatter,
+	};
 }
 
 export async function highlightCodeToHtml(args: {

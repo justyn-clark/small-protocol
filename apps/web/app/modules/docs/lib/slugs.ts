@@ -16,6 +16,10 @@ export function slugToPath(slug: string) {
 		return path.join(ROOT, "reference-workflow.mdx");
 	if (slug === "api") return path.join(ROOT, "api.mdx");
 	if (slug === "schemas") return path.join(ROOT, "schemas.mdx");
+	if (slug === "small-v1") return path.join(ROOT, "small-v1.mdx");
+	if (slug === "small-model") return path.join(ROOT, "architecture", "small-model.mdx");
+	if (slug === "small-is-the-new-cms")
+		return path.join(ROOT, "manifesto", "small-is-the-new-cms.mdx");
 
 	return null;
 }

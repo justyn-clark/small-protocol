@@ -34,6 +34,9 @@ type Pages = {
       "slug": string;
     };
   };
+  "/protocol/small/v1": {
+    params: {};
+  };
   "/*": {
     params: {
       "*": string;
@@ -44,7 +47,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/pricing" | "/about" | "/contact" | "/docs" | "/docs/reference-workflow" | "/docs/:slug" | "/*";
+    page: "/" | "/pricing" | "/about" | "/contact" | "/docs" | "/docs/reference-workflow" | "/docs/:slug" | "/protocol/small/v1" | "/*";
   };
   "./modules/shell/routes/marketing-layout.route.tsx": {
     id: "modules/shell/routes/marketing-layout.route";
@@ -82,6 +85,10 @@ type RouteFiles = {
     id: "modules/docs/routes/doc.route";
     page: "/docs/:slug";
   };
+  "./routes/protocol.small-v1.route.ts": {
+    id: "routes/protocol.small-v1.route";
+    page: "/protocol/small/v1";
+  };
   "./routes/catch-all.route.tsx": {
     id: "routes/catch-all.route";
     page: "/*";
@@ -99,5 +106,6 @@ type RouteModules = {
   "modules/docs/routes/docs-index.route": typeof import("./app/./modules/docs/routes/docs-index.route.tsx");
   "modules/workflow/routes/reference-workflow.route": typeof import("./app/./modules/workflow/routes/reference-workflow.route.tsx");
   "modules/docs/routes/doc.route": typeof import("./app/./modules/docs/routes/doc.route.tsx");
+  "routes/protocol.small-v1.route": typeof import("./app/./routes/protocol.small-v1.route.ts");
   "routes/catch-all.route": typeof import("./app/./routes/catch-all.route.tsx");
 };
