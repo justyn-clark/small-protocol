@@ -1,0 +1,25 @@
+{
+	"$id": "http://localhost:5173/schemas/small/v1/lineage.schema.json",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"required": ["artifact", "derivedFrom", "generatedAt", "replayId"],
+	"properties": {
+		"artifact": {
+			"type": "string",
+			"description": "The artifact identifier"
+		},
+		"derivedFrom": {
+			"type": "string",
+			"description": "The schema this artifact is derived from"
+		},
+		"generatedAt": {
+			"type": "string",
+			"format": "date-time",
+			"description": "ISO 8601 timestamp when lineage was generated"
+		},
+		"replayId": {
+			"type": "string",
+			"description": "Deterministic replay identifier computed from protocol version and manifest"
+		}
+	}
+}

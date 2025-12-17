@@ -1,22 +1,17 @@
-import Ajv2020, { type ErrorObject } from "ajv/dist/2020";
-import addFormats from "ajv-formats";
-import manifestSchema from "../schemas/manifest.schema.json";
+import { type ErrorObject } from "ajv/dist/2020";
+import { validateWith } from "../schema-registry/registry.client";
 
 // SMALL Guarantees: explicitContractsOnly, deterministic
-const ajv = new Ajv2020({
-	strict: true,
-	allErrors: true,
-});
-addFormats(ajv);
+const MANIFEST_SCHEMA_ID =
+	"http://localhost:5173/schemas/small/v1/manifest.schema.json";
 
-export function validateManifest(manifest: unknown): {
+export async function validateManifest(manifest: unknown): Promise<{
 	ok: boolean;
 	errors: ErrorObject[];
-} {
-	const validate = ajv.compile(manifestSchema);
-	const ok = validate(manifest);
+}> {
+	const result = await validateWith(MANIFEST_SCHEMA_ID, manifest);
 	return {
-		ok,
-		errors: validate.errors ?? [],
+		ok: result.valid,
+		errors: result.errors,
 	};
 }

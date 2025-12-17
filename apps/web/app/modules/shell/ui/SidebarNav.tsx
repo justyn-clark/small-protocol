@@ -24,13 +24,19 @@ export function SidebarNav({
 										to={to}
 										className={({ isActive }) =>
 											[
-												"block rounded-lg px-3 py-2 text-sm",
+												"group relative block rounded-xl px-3 py-2 text-sm transition",
 												isActive || activeSlug === item.slug
 													? "bg-white/10 text-white"
 													: "text-white/70 hover:bg-white/5 hover:text-white",
 											].join(" ")
 										}
 									>
+										<span
+											className={[
+												"block",
+												activeSlug === item.slug ? "pl-3" : "pl-3",
+											].join(" ")}
+										/>
 										{item.title}
 									</NavLink>
 								</li>

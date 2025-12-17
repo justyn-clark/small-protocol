@@ -6,9 +6,6 @@ import { visit } from "unist-util-visit";
 import { CodeBlock } from "./CodeBlock";
 import { Mermaid } from "./Mermaid";
 
-// Simple in-memory cache keyed by file path.
-// In dev, mtime invalidation keeps it fresh.
-// In prod, this is fine unless you hot-swap files at runtime.
 type CacheEntry = {
 	mtimeMs: number;
 	Component: React.FC;
@@ -17,21 +14,25 @@ type CacheEntry = {
 
 export type Frontmatter = Record<string, unknown>;
 
+const mdxCache = new Map<string, CacheEntry>();
+
+/**
+ * Frontmatter: intentionally tiny parser.
+ * Supports: key: value, booleans, numbers, quoted strings.
+ * Not a full YAML parser (by design).
+ */
 function parseFrontmatter(source: string): {
 	frontmatter: Frontmatter;
 	content: string;
 } {
-	const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+	const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/;
 	const match = source.match(frontmatterRegex);
 
-	if (!match) {
-		return { frontmatter: {}, content: source };
-	}
+	if (!match) return { frontmatter: {}, content: source };
 
 	const [, frontmatterYaml, content] = match;
 	const frontmatter: Frontmatter = {};
 
-	// Simple YAML parser for basic key: value pairs
 	for (const line of frontmatterYaml.split("\n")) {
 		const trimmed = line.trim();
 		if (!trimmed || trimmed.startsWith("#")) continue;
@@ -40,53 +41,99 @@ function parseFrontmatter(source: string): {
 		if (colonIndex === -1) continue;
 
 		const key = trimmed.slice(0, colonIndex).trim();
-		let value: string | number | boolean = trimmed.slice(colonIndex + 1).trim();
+		let raw = trimmed.slice(colonIndex + 1).trim();
 
-		// Remove quotes if present
-		if (
-			(value.startsWith('"') && value.endsWith('"')) ||
-			(value.startsWith("'") && value.endsWith("'"))
-		) {
-			value = value.slice(1, -1);
+		// Empty values allowed (treat as empty string)
+		if (!raw) {
+			frontmatter[key] = "";
+			continue;
 		}
 
-		// Parse booleans and numbers
-		if (value === "true") value = true;
-		else if (value === "false") value = false;
-		else if (/^\d+$/.test(value)) value = Number(value);
-		else if (/^\d+\.\d+$/.test(value)) value = Number(value);
+		// Remove surrounding quotes
+		if (
+			(raw.startsWith('"') && raw.endsWith('"')) ||
+			(raw.startsWith("'") && raw.endsWith("'"))
+		) {
+			raw = raw.slice(1, -1);
+			frontmatter[key] = raw;
+			continue;
+		}
 
-		frontmatter[key] = value;
+		// Parse booleans
+		if (raw === "true") {
+			frontmatter[key] = true;
+			continue;
+		}
+		if (raw === "false") {
+			frontmatter[key] = false;
+			continue;
+		}
+
+		// Parse numbers
+		if (/^-?\d+$/.test(raw)) {
+			frontmatter[key] = Number(raw);
+			continue;
+		}
+		if (/^-?\d+\.\d+$/.test(raw)) {
+			frontmatter[key] = Number(raw);
+			continue;
+		}
+
+		frontmatter[key] = raw;
 	}
 
 	return { frontmatter, content };
 }
 
-const mdxCache = new Map<string, CacheEntry>();
+// ---- Shiki (singleton) ----
 
-let highlighterPromise: Awaited<ReturnType<typeof createHighlighter>> | null =
-	null;
-async function getShiki() {
-	if (!highlighterPromise) {
-		highlighterPromise = await createHighlighter({
-			themes: ["github-dark"] as any,
-			langs: Object.keys(bundledLanguages) as any,
-		});
-	}
-	return highlighterPromise;
+type ShikiHighlighter = Awaited<ReturnType<typeof createHighlighter>>;
+
+let shiki: ShikiHighlighter | null = null;
+async function getShiki(): Promise<ShikiHighlighter> {
+	if (shiki) return shiki;
+
+	shiki = await createHighlighter({
+		themes: ["github-dark"] as any,
+		langs: Object.keys(bundledLanguages) as any,
+	});
+
+	return shiki;
 }
 
-function remarkCodeToComponents() {
-	return async (tree: any, file: any) => {
-		const highlighter = await getShiki();
+function normalizeLang(lang: unknown): string {
+	return (lang ?? "").toString().trim().toLowerCase();
+}
 
+async function codeToHtmlSafe(
+	highlighter: ShikiHighlighter,
+	code: string,
+	lang: string,
+) {
+	const loaded = new Set(
+		highlighter.getLoadedLanguages().map((l) => String(l).toLowerCase()),
+	);
+
+	const safeLang = loaded.has(lang) ? lang : "txt";
+
+	return highlighter.codeToHtml(code, {
+		lang: safeLang,
+		theme: "github-dark",
+	} as any);
+}
+
+// ---- Remark plugin: transform fenced code blocks -> components ----
+
+function remarkCodeToComponents() {
+	return async (tree: any) => {
+		const highlighter = await getShiki();
 		const tasks: Promise<void>[] = [];
 
-		visit(tree, "code", (node: any, index, parent: any) => {
+		visit(tree, "code", (node: any, index: number | undefined, parent: any) => {
 			if (!parent || typeof index !== "number") return;
 
-			const lang = (node.lang || "").toString().trim();
-			const code = (node.value || "").toString();
+			const lang = normalizeLang(node.lang);
+			const code = (node.value ?? "").toString();
 
 			// Mermaid special-case
 			if (lang === "mermaid") {
@@ -99,13 +146,10 @@ function remarkCodeToComponents() {
 				return;
 			}
 
-			// Normal code -> Shiki HTML -> CodeBlock component
+			// Normal code -> Shiki -> CodeBlock
 			tasks.push(
 				(async () => {
-					const html = highlighter.codeToHtml(code, {
-						lang: lang || "txt",
-						theme: "github-dark",
-					} as any);
+					const html = await codeToHtmlSafe(highlighter, code, lang || "txt");
 
 					parent.children[index] = {
 						type: "mdxJsxFlowElement",
@@ -128,11 +172,8 @@ function remarkCodeToComponents() {
 	};
 }
 
-// Very small MDX -> React compiler.
-// We also override fenced code rendering by converting MDX code blocks to HTML using Shiki.
-// Easiest approach: expose a <CodeBlockHtml /> component and let MDX use it via a rehype transform later.
-// For Run #2A, we do a pragmatic approach: keep inline code + pre styling, and add a helper export
-// so we can use it from MDX content when needed.
+// ---- MDX compiler ----
+
 export async function compileMdx(args: {
 	cacheKey: string;
 	mtimeMs: number;
@@ -154,90 +195,55 @@ export async function compileMdx(args: {
 		remarkPlugins: [remarkCodeToComponents, remarkGfm],
 	});
 
-	const code = String(compiled);
+	const fnBody = String(compiled);
 
-	// Pass components in as named parameters to avoid redeclaration conflicts.
-	// Keep the compiled body clean as specified.
-	const wrappedCode = `${code}\nreturn MDXContent;`;
+	// runtime is arguments[0] (MDX expects this)
+	// React is arguments[1] (needed by some MDX output)
+	// components are arguments[2] (we inject CodeBlock + Mermaid)
+	const wrappedCode = `
+		const React = arguments[1];
+		const { CodeBlock, Mermaid } = arguments[2] || {};
+		${fnBody}
+	`;
 
-	// In development mode, MDX uses jsx-dev-runtime which exports jsxDEV
-	// In production mode, it uses jsx-runtime which exports jsx/jsxs
-	const isDevelopment = process.env.NODE_ENV !== "production";
-	const runtime = isDevelopment
+	const isDev = process.env.NODE_ENV !== "production";
+	const runtime = isDev
 		? await import("react/jsx-dev-runtime")
 		: await import("react/jsx-runtime");
 
 	// eslint-disable-next-line no-new-func
-	const fn = isDevelopment
-		? new Function("_jsxRuntime", "CodeBlock", "Mermaid", wrappedCode)
-		: new Function(
-			"React",
-			"jsx",
-			"jsxs",
-			"Fragment",
-			"CodeBlock",
-			"Mermaid",
-			wrappedCode,
-		);
+	const fn = new Function(wrappedCode);
 
-	// Ensure we're passing actual functions
-	if (typeof CodeBlock !== "function") {
-		throw new Error(`CodeBlock must be a function, got: ${typeof CodeBlock}`);
-	}
-	if (typeof Mermaid !== "function") {
-		throw new Error(`Mermaid must be a function, got: ${typeof Mermaid}`);
-	}
+	// Provide components as a single object to avoid “Identifier already declared” issues.
+	const result = fn(runtime, React, { CodeBlock, Mermaid });
 
-	const ComponentResult = isDevelopment
-		? fn(
-			{
-				Fragment: runtime.Fragment,
-				jsxDEV: runtime.jsxDEV,
-			},
-			CodeBlock,
-			Mermaid,
-		)
-		: fn(
-			React,
-			runtime.jsx,
-			runtime.jsxs,
-			runtime.Fragment,
-			CodeBlock,
-			Mermaid,
-		);
-
-	// Extract the actual component function - MDX may export it as default
 	const Component =
-		typeof ComponentResult === "function"
-			? ComponentResult
-			: ((ComponentResult as any)?.default ?? ComponentResult);
+		typeof result === "function"
+			? result
+			: ((result as any)?.default ?? result);
 
 	if (typeof Component !== "function") {
 		throw new Error(
-			`Component must be a function, got: ${typeof Component}. ComponentResult: ${typeof ComponentResult}`,
+			`MDX compile produced non-component. Got: ${typeof Component}`,
 		);
 	}
 
-	const entry: CacheEntry = {
+	mdxCache.set(args.cacheKey, {
 		mtimeMs: args.mtimeMs,
 		Component,
 		frontmatter,
-	};
-	mdxCache.set(args.cacheKey, entry);
-	return {
-		Component,
-		frontmatter,
-	};
+	});
+
+	return { Component, frontmatter };
 }
+
+// ---- Public helper (used elsewhere) ----
 
 export async function highlightCodeToHtml(args: {
 	code: string;
 	lang?: string;
 }) {
 	const highlighter = await getShiki();
-	const lang =
-		args.lang && highlighter.getLoadedLanguages().includes(args.lang as any)
-			? args.lang
-			: "txt";
-	return highlighter.codeToHtml(args.code, { lang } as any);
+	const lang = normalizeLang(args.lang) || "txt";
+	return codeToHtmlSafe(highlighter, args.code, lang);
 }

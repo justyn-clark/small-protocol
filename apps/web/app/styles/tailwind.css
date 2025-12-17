@@ -41,6 +41,21 @@
   --container-5xl: 66rem;
 }
 
+hr {
+  padding: 0;
+  margin: 1rem 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 2rem 0 1rem;
+}
+
 @layer base {
   :root {
     --shiki-color-text: var(--color-white);
@@ -56,5 +71,83 @@
 
   [inert] ::-webkit-scrollbar {
     display: none;
+  }
+
+
+}
+
+@layer base {
+  html {
+    background: var(--color-zinc-950);
+    color: var(--color-white);
+  }
+
+  body {
+    min-height: 100%;
+    background: radial-gradient(1200px 600px at 50% -200px,
+        rgb(255 255 255 / 0.06),
+        transparent 60%),
+      linear-gradient(to bottom, rgb(9 9 11), rgb(0 0 0));
+  }
+
+
+  /* Protocol-ish “hairline” borders everywhere */
+  :where(.border, [class*="border-"]) {
+    border-color: rgb(255 255 255 / 0.10);
+  }
+
+  /* Better default focus */
+  :where(a, button, input, textarea, select):focus-visible {
+    outline: 2px solid rgb(56 189 248 / 0.7);
+    outline-offset: 2px;
+  }
+
+  /* Make Shiki blocks look like Protocol */
+  .shiki,
+  .shiki pre {
+    background: transparent !important;
+  }
+
+  .shiki {
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  pre.shiki,
+  .shiki pre {
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Fix long-line wrapping behavior */
+  .shiki code {
+    display: block;
+    min-width: max-content;
+  }
+}
+
+@layer components {
+  .prose {
+    --tw-prose-body: rgb(244 244 245 / 0.82);
+    --tw-prose-headings: rgb(255 255 255 / 0.92);
+    --tw-prose-links: rgb(255 255 255 / 0.92);
+    --tw-prose-bold: rgb(255 255 255 / 0.92);
+    --tw-prose-counters: rgb(255 255 255 / 0.55);
+    --tw-prose-bullets: rgb(255 255 255 / 0.35);
+    --tw-prose-hr: rgb(255 255 255 / 0.10);
+    --tw-prose-quotes: rgb(255 255 255 / 0.85);
+    --tw-prose-quote-borders: rgb(255 255 255 / 0.15);
+    --tw-prose-captions: rgb(255 255 255 / 0.55);
+    --tw-prose-code: rgb(255 255 255 / 0.9);
+    --tw-prose-pre-bg: transparent;
+    --tw-prose-th-borders: rgb(255 255 255 / 0.12);
+    --tw-prose-td-borders: rgb(255 255 255 / 0.10);
+  }
+
+  .prose :where(code):not(:where(pre code)) {
+    border: 1px solid rgb(255 255 255 / 0.10);
+    background: rgb(255 255 255 / 0.06);
+    padding: 0.12rem 0.35rem;
+    border-radius: 0.5rem;
   }
 }

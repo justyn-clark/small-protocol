@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { LoaderFunctionArgs } from "react-router-dom";
 import { useLoaderData } from "react-router-dom";
+import { MDXRenderer } from "~/modules/mdx/MDXRenderer";
+import { compileMdxClient } from "~/modules/mdx/mdx-runtime.client";
 import { loadDoc } from "~/modules/docs/lib/content.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -9,22 +11,28 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export default function DocRoute() {
-	const data = useLoaderData() as { slug: string; html: string };
+	const data = useLoaderData() as {
+		slug: string;
+		source: string;
+		frontmatter?: Record<string, unknown>;
+	};
+	const [Component, setComponent] = useState<React.ComponentType<any> | null>(
+		null,
+	);
 
-	// Hydrate Mermaid diagrams on the client
-	// The server-rendered HTML includes Mermaid containers with data attributes
 	useEffect(() => {
-		// Mermaid components will initialize themselves via their useEffect hooks
-		// when they mount. Since we're using dangerouslySetInnerHTML, we need to
-		// manually trigger Mermaid initialization for any diagrams in the HTML.
-		// However, this is complex. For now, Mermaid will work if the HTML structure
-		// is preserved and Mermaid components can find their containers.
-	}, []);
+		compileMdxClient(data.source).then((compiled) => {
+			setComponent(() => compiled.Component);
+		});
+	}, [data.source]);
+
+	if (!Component) {
+		return <div>Loading...</div>;
+	}
 
 	return (
-		<div
-			className="prose prose-invert max-w-none"
-			dangerouslySetInnerHTML={{ __html: data.html }}
-		/>
+		<div className="prose prose-invert max-w-none prose-headings:scroll-mt-24">
+			<MDXRenderer Content={Component} />
+		</div>
 	);
 }

@@ -1,25 +1,19 @@
 {
-  "protocol": "SMALL",
-  "version": "1.0.0",
-  "primitives": [
-    "Schema",
-    "Manifest",
-    "Artifact",
-    "Lineage",
-    "Lifecycle"
-  ],
-  "rules": {
-    "materializationRequiresValidation": true,
-    "artifactsAreImmutable": true,
-    "lineageIsAppendOnly": true,
-    "lifecycleIsEventBased": true,
-    "explicitContractsOnly": true
-  },
-  "schemas": {
-    "schema": "/schemas/schema.schema.json",
-    "manifest": "/schemas/manifest.schema.json",
-    "artifact": "/schemas/artifact.schema.json",
-    "lineage": "/schemas/lineage.schema.json",
-    "lifecycle": "/schemas/lifecycle.schema.json"
-  }
+	"protocol": "SMALL",
+	"version": "1.0.0",
+	"primitives": ["Schema", "Manifest", "Artifact", "Lineage", "Lifecycle"],
+	"rules": {
+		"materializationRequiresValidation": true,
+		"artifactsAreImmutable": true,
+		"lineageIsAppendOnly": true,
+		"lifecycleIsEventBased": true,
+		"explicitContractsOnly": true
+	},
+	"schemas": {
+		"schema": "/schemas/small/v1/schema.schema.json",
+		"manifest": "/schemas/small/v1/manifest.schema.json",
+		"artifact": "/schemas/small/v1/artifact.schema.json",
+		"lineage": "/schemas/small/v1/lineage.schema.json",
+		"lifecycle": "/schemas/small/v1/lifecycle.schema.json"
+	}
 }

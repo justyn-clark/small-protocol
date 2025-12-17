@@ -1,38 +1,32 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "required": [
-    "id",
-    "type",
-    "schema_ref",
-    "state",
-    "version"
-  ],
-  "properties": {
-    "id": {
-      "type": "string",
-      "description": "Unique artifact identifier"
-    },
-    "type": {
-      "type": "string",
-      "description": "Artifact type"
-    },
-    "schema_ref": {
-      "type": "string",
-      "description": "Reference to the schema"
-    },
-    "state": {
-      "type": "string",
-      "description": "Current state of the artifact"
-    },
-    "version": {
-      "type": "integer",
-      "description": "Version number"
-    },
-    "data": {
-      "type": "object",
-      "additionalProperties": true,
-      "description": "Artifact data"
-    }
-  }
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"required": ["id", "type", "schema_ref", "state", "version"],
+	"properties": {
+		"id": {
+			"type": "string",
+			"description": "Unique artifact identifier"
+		},
+		"type": {
+			"type": "string",
+			"description": "Artifact type"
+		},
+		"schema_ref": {
+			"type": "string",
+			"description": "Reference to the schema"
+		},
+		"state": {
+			"type": "string",
+			"description": "Current state of the artifact"
+		},
+		"version": {
+			"type": "integer",
+			"description": "Version number"
+		},
+		"data": {
+			"type": "object",
+			"additionalProperties": true,
+			"description": "Artifact data"
+		}
+	}
 }

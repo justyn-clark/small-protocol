@@ -6,12 +6,14 @@
 		"dev": "react-router dev",
 		"build": "react-router build",
 		"start": "react-router serve",
+		"sync-schemas": "bun run ../../scripts/sync-schemas.ts",
 		"lint": "biome lint .",
 		"lint:fix": "biome lint --write .",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
 		"check": "biome check .",
-		"check:fix": "biome check --write ."
+		"check:fix": "biome check --write .",
+		"clean": "rm -rf node_modules && bun install"
 	},
 	"dependencies": {
 		"@headlessui/react": "^2.2.6",

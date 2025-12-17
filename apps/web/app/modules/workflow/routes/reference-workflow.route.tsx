@@ -3,6 +3,7 @@ import { CodeBlock } from "~/modules/mdx/CodeBlock";
 import { emitLifecycle } from "~/modules/workflow/core/emitLifecycle";
 import { generateLineage } from "~/modules/workflow/core/generateLineage";
 import { validateManifest } from "~/modules/workflow/core/validateManifest";
+import { computeReplayId } from "~/modules/workflow/core/replayId";
 import { highlightCodeToHtml } from "~/modules/workflow/lib/highlight";
 
 const EXAMPLE_MANIFEST = `{
@@ -27,6 +28,7 @@ export default function ReferenceWorkflowRoute() {
 	} | null>(null);
 	const [lineageHtml, setLineageHtml] = useState<string | null>(null);
 	const [lifecycleHtml, setLifecycleHtml] = useState<string | null>(null);
+	const [replayIdHtml, setReplayIdHtml] = useState<string | null>(null);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [protocolData, setProtocolData] = useState<ProtocolData | null>(null);
 	const [protocolJsonExpanded, setProtocolJsonExpanded] = useState(false);
@@ -53,16 +55,31 @@ export default function ReferenceWorkflowRoute() {
 		setValidationResult(null);
 		setLineageHtml(null);
 		setLifecycleHtml(null);
+		setReplayIdHtml(null);
 
 		try {
 			const parsed = JSON.parse(manifestInput);
-			const result = validateManifest(parsed);
+			const result = await validateManifest(parsed);
 
 			setValidationResult(result);
 
-			if (result.ok) {
-				const lineageData = generateLineage(parsed);
-				const lifecycleData = emitLifecycle(parsed);
+			if (result.ok && protocolData) {
+				const protocolVersion = protocolData.version;
+
+				// Compute replay ID
+				const replayId = await computeReplayId({
+					protocolVersion,
+					manifest: parsed,
+				});
+				const replayIdHighlighted = await highlightCodeToHtml({
+					code: replayId,
+					lang: "text",
+				});
+				setReplayIdHtml(replayIdHighlighted);
+
+				// Generate lineage and lifecycle with protocol version
+				const lineageData = generateLineage(parsed, protocolVersion);
+				const lifecycleData = emitLifecycle(parsed, protocolVersion);
 
 				const lineageJson = JSON.stringify(lineageData, null, 2);
 				const lifecycleJson = JSON.stringify(lifecycleData, null, 2);
@@ -108,8 +125,9 @@ export default function ReferenceWorkflowRoute() {
 				<div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-4 text-sm text-blue-200">
 					<p className="font-medium">Deterministic Replay</p>
 					<p className="mt-1 text-blue-300/80">
-						This playground is stateless and deterministic. No data is persisted.
-						All outputs are computed from inputs using SMALL primitives.
+						This playground is stateless and deterministic. No data is
+						persisted. All outputs are computed from inputs using SMALL
+						primitives.
 					</p>
 				</div>
 
@@ -179,6 +197,13 @@ export default function ReferenceWorkflowRoute() {
 							</div>
 						)}
 					</div>
+
+					{validationResult.ok && replayIdHtml && (
+						<div>
+							<h2 className="mb-4 text-xl font-semibold">Replay ID</h2>
+							<CodeBlock html={replayIdHtml} lang="text" title="Replay ID" />
+						</div>
+					)}
 
 					{validationResult.ok && lineageHtml && lifecycleHtml && (
 						<>

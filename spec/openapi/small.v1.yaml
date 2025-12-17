@@ -1,0 +1,237 @@
+openapi: 3.0.0
+info:
+  title: SMALL Protocol v1 API
+  version: 1.0.0
+  description: |
+    Executable API surface for the SMALL (Schema → Manifest → Artifact → Lineage → Lifecycle) protocol.
+    
+    All operations are deterministic. Same inputs produce same outputs, enabling reproducible agent workflows.
+
+servers:
+  - url: http://localhost:5173
+    description: Local development server
+
+paths:
+  /protocol/small/v1:
+    get:
+      summary: Get SMALL Protocol v1 contract
+      description: Returns the protocol definition including primitives, rules, and schema locations.
+      operationId: getProtocol
+      tags:
+        - Protocol
+      responses:
+        '200':
+          description: Protocol contract
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Protocol'
+
+  /schemas/small/v1/{schemaName}:
+    get:
+      summary: Get schema by name
+      description: Returns the JSON Schema for a SMALL primitive (schema, manifest, artifact, lineage, lifecycle).
+      operationId: getSchema
+      tags:
+        - Schemas
+      parameters:
+        - name: schemaName
+          in: path
+          required: true
+          description: Name of the schema (schema, manifest, artifact, lineage, lifecycle)
+          schema:
+            type: string
+            enum: [schema, manifest, artifact, lineage, lifecycle]
+      responses:
+        '200':
+          description: JSON Schema
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Schema not found
+
+  /small/v1/validate-manifest:
+    post:
+      summary: Validate a manifest
+      description: |
+        Validates a manifest against the SMALL manifest schema.
+        Returns validation result and replay ID if valid.
+      operationId: validateManifest
+      tags:
+        - Validation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateManifestRequest'
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateManifestResponse'
+
+  /small/v1/replay:
+    post:
+      summary: Replay manifest workflow
+      description: |
+        Validates a manifest and generates lineage + lifecycle records.
+        Returns deterministic replay ID, validation result, and generated records.
+      operationId: replayManifest
+      tags:
+        - Replay
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplayRequest'
+      responses:
+        '200':
+          description: Replay result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplayResponse'
+
+components:
+  schemas:
+    Protocol:
+      type: object
+      required: [protocol, version, primitives, rules, schemas]
+      properties:
+        protocol:
+          type: string
+          example: SMALL
+        version:
+          type: string
+          example: "1.0.0"
+        primitives:
+          type: array
+          items:
+            type: string
+          example: [Schema, Manifest, Artifact, Lineage, Lifecycle]
+        rules:
+          type: object
+          additionalProperties:
+            type: boolean
+        schemas:
+          type: object
+          additionalProperties:
+            type: string
+
+    Manifest:
+      type: object
+      required: [artifact, schema, version]
+      properties:
+        artifact:
+          type: string
+          description: The artifact identifier
+        schema:
+          type: string
+          description: The schema reference
+        version:
+          type: number
+          description: The version number
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Optional metadata
+
+    Lineage:
+      type: object
+      required: [artifact, derivedFrom, generatedAt, replayId]
+      properties:
+        artifact:
+          type: string
+        derivedFrom:
+          type: string
+        generatedAt:
+          type: string
+          format: date-time
+        replayId:
+          type: string
+          description: Deterministic replay identifier
+
+    LifecycleEvent:
+      type: object
+      required: [type, at, replayId]
+      properties:
+        type:
+          type: string
+          example: validated
+        at:
+          type: string
+          format: date-time
+        replayId:
+          type: string
+
+    Lifecycle:
+      type: array
+      items:
+        $ref: '#/components/schemas/LifecycleEvent'
+
+    ValidationError:
+      type: object
+      properties:
+        instancePath:
+          type: string
+        message:
+          type: string
+
+    ValidateManifestRequest:
+      type: object
+      properties:
+        protocolVersion:
+          type: string
+          description: Protocol version (defaults to protocol version if omitted)
+          example: "1.0.0"
+        manifest:
+          $ref: '#/components/schemas/Manifest'
+
+    ValidateManifestResponse:
+      type: object
+      required: [valid]
+      properties:
+        valid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+        replayId:
+          type: string
+          description: Replay ID if valid
+
+    ReplayRequest:
+      type: object
+      required: [protocolVersion, manifest]
+      properties:
+        protocolVersion:
+          type: string
+          description: Protocol version (required)
+          example: "1.0.0"
+        manifest:
+          $ref: '#/components/schemas/Manifest'
+
+    ReplayResponse:
+      type: object
+      required: [replayId, valid]
+      properties:
+        replayId:
+          type: string
+          description: Deterministic replay identifier
+        valid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+        lineage:
+          $ref: '#/components/schemas/Lineage'
+        lifecycle:
+          $ref: '#/components/schemas/Lifecycle'

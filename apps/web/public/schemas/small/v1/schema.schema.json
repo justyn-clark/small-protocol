@@ -1,0 +1,21 @@
+{
+	"$id": "http://localhost:5173/schemas/small/v1/schema.schema.json",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "SchemaRegistryItem",
+	"type": "object",
+	"required": ["schema_ref", "version", "schema"],
+	"properties": {
+		"schema_ref": {
+			"type": "string",
+			"minLength": 1
+		},
+		"version": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"schema": {
+			"type": "object"
+		}
+	},
+	"additionalProperties": false
+}
