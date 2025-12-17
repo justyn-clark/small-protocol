@@ -7,7 +7,7 @@ function InlineCode(props: ComponentProps<"code">) {
 		<code
 			{...props}
 			className={[
-				"rounded-md bg-white/10 px-1.5 py-0.5 text-sm text-white",
+				"rounded-md bg-white/10 px-1.5 py-0.5 text-sm text-white p-4 test",
 				props.className ?? "",
 			].join(" ")}
 		/>

@@ -115,7 +115,6 @@ h6 {
 
   pre.shiki,
   .shiki pre {
-    padding: 0;
     margin: 0;
   }
 
@@ -123,6 +122,15 @@ h6 {
   .shiki code {
     display: block;
     min-width: max-content;
+    padding: 1.5rem !important;
+  }
+
+  /* Remove background colors from Shiki token spans and all nested elements */
+  .shiki span,
+  .shiki code span,
+  .shiki * {
+    background: transparent !important;
+    background-color: transparent !important;
   }
 }
 
@@ -149,5 +157,14 @@ h6 {
     background: rgb(255 255 255 / 0.06);
     padding: 0.12rem 0.35rem;
     border-radius: 0.5rem;
+  }
+
+  /* Override prose styles for Shiki code blocks */
+  .prose .shiki code {
+    padding: 1rem !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
   }
 }

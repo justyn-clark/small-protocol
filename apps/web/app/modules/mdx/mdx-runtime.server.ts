@@ -105,6 +105,22 @@ function normalizeLang(lang: unknown): string {
 	return (lang ?? "").toString().trim().toLowerCase();
 }
 
+function stripBackgroundStyles(html: string): string {
+	return html.replace(
+		/style="([^"]*)"/g,
+		(_, styles) => {
+			const cleaned = styles
+				.split(";")
+				.filter((s: string) => {
+					const prop = s.split(":")[0].trim().toLowerCase();
+					return prop !== "background" && prop !== "background-color";
+				})
+				.join(";");
+			return cleaned ? `style="${cleaned}"` : "";
+		},
+	);
+}
+
 async function codeToHtmlSafe(
 	highlighter: ShikiHighlighter,
 	code: string,
@@ -116,10 +132,12 @@ async function codeToHtmlSafe(
 
 	const safeLang = loaded.has(lang) ? lang : "txt";
 
-	return highlighter.codeToHtml(code, {
+	const html = highlighter.codeToHtml(code, {
 		lang: safeLang,
 		theme: "github-dark",
 	} as any);
+
+	return stripBackgroundStyles(html);
 }
 
 // ---- Remark plugin: transform fenced code blocks -> components ----

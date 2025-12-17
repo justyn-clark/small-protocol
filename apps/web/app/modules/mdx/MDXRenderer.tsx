@@ -1,8 +1,9 @@
 import { MDXProvider } from "@mdx-js/react";
+import type { ComponentType } from "react";
 import { mdxComponents } from "./mdx-components";
 
 type Props = {
-	Content: React.ComponentType<any>;
+	Content: ComponentType<any>;
 };
 
 export function MDXRenderer({ Content }: Props) {

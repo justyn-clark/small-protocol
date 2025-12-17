@@ -13,7 +13,23 @@ function labelFrom({ title, lang }: { title?: string; lang?: string }) {
 	return raw.length ? raw : "code";
 }
 
-let highlighterPromise: Awaited<ReturnType<typeof createHighlighter>> | null =
+function stripBackgroundStyles(html: string): string {
+	return html.replace(
+		/style="([^"]*)"/g,
+		(_, styles) => {
+			const cleaned = styles
+				.split(";")
+				.filter((s: string) => {
+					const prop = s.split(":")[0].trim().toLowerCase();
+					return prop !== "background" && prop !== "background-color";
+				})
+				.join(";");
+			return cleaned ? `style="${cleaned}"` : "";
+		},
+	);
+}
+
+let highlighterPromise: Promise<Awaited<ReturnType<typeof createHighlighter>>> | null =
 	null;
 
 async function getShiki() {
@@ -35,7 +51,7 @@ async function getShiki() {
 			],
 		});
 	}
-	return highlighterPromise;
+	return await highlighterPromise;
 }
 
 export function CodeBlock({ html, code, lang, title }: Props) {
@@ -44,7 +60,7 @@ export function CodeBlock({ html, code, lang, title }: Props) {
 
 	useEffect(() => {
 		if (html) {
-			setHighlightedHtml(html);
+			setHighlightedHtml(stripBackgroundStyles(html));
 			return;
 		}
 
@@ -66,7 +82,7 @@ export function CodeBlock({ html, code, lang, title }: Props) {
 				});
 
 				if (!cancelled) {
-					setHighlightedHtml(html);
+					setHighlightedHtml(stripBackgroundStyles(html));
 				}
 			} catch (error) {
 				console.error("Failed to highlight code:", error);
@@ -82,8 +98,8 @@ export function CodeBlock({ html, code, lang, title }: Props) {
 	}, [html, code, lang]);
 
 	return (
-		<div className="my-8 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-			<div className="flex items-center justify-between border-b border-white/10 px-4 py-2">
+		<div className="my-8 overflow-hidden rounded-2xl border border-white/5 bg-white/3">
+			<div className="flex items-center justify-between border-b border-white/5 px-4 py-2">
 				<div className="flex items-center gap-2">
 					<span className="text-[11px] font-medium uppercase tracking-wide text-white/60">
 						{label}
@@ -96,11 +112,11 @@ export function CodeBlock({ html, code, lang, title }: Props) {
 
 			{highlightedHtml ? (
 				<div
-					className="overflow-auto p-4 text-sm leading-6 [--shiki-color-background:transparent] [&_.shiki]:bg-transparent [&_.shiki]:p-0"
+					className="overflow-auto text-sm leading-6 [--shiki-color-background:transparent] [&_.shiki]:bg-transparent"
 					dangerouslySetInnerHTML={{ __html: highlightedHtml }}
 				/>
 			) : (
-				<pre className="overflow-auto p-4 text-sm leading-6">
+				<pre className="overflow-auto text-sm leading-6">
 					<code>{code || ""}</code>
 				</pre>
 			)}
