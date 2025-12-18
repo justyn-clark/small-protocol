@@ -26,12 +26,25 @@ function A(props: ComponentProps<"a">) {
 	);
 }
 
+function H2(props: ComponentProps<"h2">) {
+	return (
+		<h2
+			{...props}
+			className={[
+				"mt-[72px]",
+				props.className ?? "",
+			].join(" ")}
+		/>
+	);
+}
+
 // NOTE: We no longer need to override <pre> because code fences will be transformed
 // into <CodeBlock> / <Mermaid> at compile time. Keep <pre> default.
 
 export const mdxComponents = {
 	a: A,
 	code: InlineCode,
+	h2: H2,
 
 	// Allow explicit usage in MDX too:
 	CodeBlock,

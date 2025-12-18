@@ -62,16 +62,16 @@ type RouteFiles = {
     id: "modules/shell/routes/marketing-layout.route";
     page: "/" | "/about" | "/spec" | "/compliance" | "/reference-workflow" | "/blog/ai-needs-execution" | "/pricing" | "/contact";
   };
-  "./modules/marketing/routes/home.route.tsx": {
-    id: "modules/marketing/routes/home.route";
+  "./modules/marketing/home/home.route.tsx": {
+    id: "modules/marketing/home/home.route";
     page: "/";
   };
   "./modules/marketing/about/about.route.tsx": {
     id: "modules/marketing/about/about.route";
     page: "/about";
   };
-  "./modules/marketing/routes/spec.route.tsx": {
-    id: "modules/marketing/routes/spec.route";
+  "./modules/marketing/spec/spec.route.tsx": {
+    id: "modules/marketing/spec/spec.route";
     page: "/spec";
   };
   "./modules/marketing/compliance/compliance.route.tsx": {
@@ -82,16 +82,16 @@ type RouteFiles = {
     id: "modules/workflow/routes/reference-workflow.route";
     page: "/reference-workflow";
   };
-  "./modules/marketing/routes/blog/ai-needs-execution.route.tsx": {
-    id: "modules/marketing/routes/blog/ai-needs-execution.route";
+  "./modules/marketing/blog/ai-needs-execution/ai-needs-execution.route.tsx": {
+    id: "modules/marketing/blog/ai-needs-execution/ai-needs-execution.route";
     page: "/blog/ai-needs-execution";
   };
-  "./modules/marketing/routes/pricing.route.tsx": {
-    id: "modules/marketing/routes/pricing.route";
+  "./modules/marketing/pricing/pricing.route.tsx": {
+    id: "modules/marketing/pricing/pricing.route";
     page: "/pricing";
   };
-  "./modules/marketing/routes/contact.route.tsx": {
-    id: "modules/marketing/routes/contact.route";
+  "./modules/marketing/contact/contact.route.tsx": {
+    id: "modules/marketing/contact/contact.route";
     page: "/contact";
   };
   "./modules/shell/routes/docs-layout.route.tsx": {
@@ -119,14 +119,14 @@ type RouteFiles = {
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "modules/shell/routes/marketing-layout.route": typeof import("./app/./modules/shell/routes/marketing-layout.route.tsx");
-  "modules/marketing/routes/home.route": typeof import("./app/./modules/marketing/routes/home.route.tsx");
+  "modules/marketing/home/home.route": typeof import("./app/./modules/marketing/home/home.route.tsx");
   "modules/marketing/about/about.route": typeof import("./app/./modules/marketing/about/about.route.tsx");
-  "modules/marketing/routes/spec.route": typeof import("./app/./modules/marketing/routes/spec.route.tsx");
+  "modules/marketing/spec/spec.route": typeof import("./app/./modules/marketing/spec/spec.route.tsx");
   "modules/marketing/compliance/compliance.route": typeof import("./app/./modules/marketing/compliance/compliance.route.tsx");
   "modules/workflow/routes/reference-workflow.route": typeof import("./app/./modules/workflow/routes/reference-workflow.route.tsx");
-  "modules/marketing/routes/blog/ai-needs-execution.route": typeof import("./app/./modules/marketing/routes/blog/ai-needs-execution.route.tsx");
-  "modules/marketing/routes/pricing.route": typeof import("./app/./modules/marketing/routes/pricing.route.tsx");
-  "modules/marketing/routes/contact.route": typeof import("./app/./modules/marketing/routes/contact.route.tsx");
+  "modules/marketing/blog/ai-needs-execution/ai-needs-execution.route": typeof import("./app/./modules/marketing/blog/ai-needs-execution/ai-needs-execution.route.tsx");
+  "modules/marketing/pricing/pricing.route": typeof import("./app/./modules/marketing/pricing/pricing.route.tsx");
+  "modules/marketing/contact/contact.route": typeof import("./app/./modules/marketing/contact/contact.route.tsx");
   "modules/shell/routes/docs-layout.route": typeof import("./app/./modules/shell/routes/docs-layout.route.tsx");
   "modules/docs/routes/docs-index.route": typeof import("./app/./modules/docs/routes/docs-index.route.tsx");
   "modules/docs/routes/doc.route": typeof import("./app/./modules/docs/routes/doc.route.tsx");

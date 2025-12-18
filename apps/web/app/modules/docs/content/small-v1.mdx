@@ -1,13 +1,13 @@
----
+
 protocol: SMALL
 version: 1.0.0
----
+
 
 SMALL is the execution model for agent-legible systems. It defines five primitives that compose into deterministic workflows: **Schema**, **Manifest**, **Artifact**, **Lineage**, and **Lifecycle**.
 
 SMALL replaces opaque CMS abstractions with explicit, machine-verifiable contracts. Each primitive is addressable, versioned, and serializable.
 
----
+
 
 ## Schema
 
@@ -29,7 +29,6 @@ A Schema defines the structural and semantic contract for artifacts. It specifie
 }
 ```
 
----
 
 ## Manifest
 
@@ -49,7 +48,7 @@ A Manifest binds schemas, artifacts, and policies into a deployable unit. It dec
 }
 ```
 
----
+
 
 ## Artifact
 
@@ -69,7 +68,7 @@ An Artifact is the smallest addressable, versioned unit in the system. It repres
 }
 ```
 
----
+
 
 ## Lineage
 
@@ -88,7 +87,7 @@ Lineage captures derivation and causality. It records where an artifact came fro
 }
 ```
 
----
+
 
 ## Lifecycle
 
@@ -105,7 +104,7 @@ Lifecycle records artifact state transitions as an append-only event stream. Eac
 }
 ```
 
----
+
 
 ## Execution Flow
 
@@ -119,7 +118,7 @@ SMALL primitives compose into deterministic execution flows:
 
 This flow is agent-legible: each step is explicit, verifiable, and automatable. See the [SMALL Model diagrams](/docs/architecture/small-model) for visual representations.
 
----
+
 
 ## Design Principles
 

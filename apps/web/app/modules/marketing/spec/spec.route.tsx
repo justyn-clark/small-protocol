@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function SpecRoute() {
 	return (
 		<div className="prose prose-invert max-w-3xl">
-			<div className="">
+			<div>
 				<h1 className="text-4xl font-bold tracking-tight">
 					SMALL Specification
 				</h1>
@@ -20,21 +20,19 @@ export default function SpecRoute() {
 					</h2>
 					<ul className="space-y-3 text-white/80">
 						<li>
-							<strong className="text-white">Schema</strong> - What is allowed
+							<strong className="text-white">Schema</strong> — What is allowed
 						</li>
 						<li>
-							<strong className="text-white">Manifest</strong> - What is
-							intended
+							<strong className="text-white">Manifest</strong> — What is intended
 						</li>
 						<li>
-							<strong className="text-white">Artifact</strong> - What exists
+							<strong className="text-white">Artifact</strong> — What exists
 						</li>
 						<li>
-							<strong className="text-white">Lineage</strong> - Where it came
-							from
+							<strong className="text-white">Lineage</strong> — Where it came from
 						</li>
 						<li>
-							<strong className="text-white">Lifecycle</strong> - What happened
+							<strong className="text-white">Lifecycle</strong> — What happened
 							and what may happen next
 						</li>
 					</ul>
@@ -42,10 +40,10 @@ export default function SpecRoute() {
 
 				<div>
 					<h2 className="text-2xl font-semibold tracking-tight mb-4">
-						Documentation
+						Reference Material
 					</h2>
 					<p className="text-white/80 mb-4">
-						Detailed specifications and reference documentation:
+						Normative definitions and execution references:
 					</p>
 					<ul className="space-y-2 text-white/80">
 						<li>
@@ -53,7 +51,7 @@ export default function SpecRoute() {
 								to="/docs"
 								className="text-white/90 hover:text-white underline"
 							>
-								SMALL Documentation →
+								Primitive Specifications →
 							</Link>
 						</li>
 						<li>

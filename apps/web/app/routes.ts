@@ -2,9 +2,9 @@ import { index, route } from "@react-router/dev/routes";
 
 export default [
 	route("/", "./modules/shell/routes/marketing-layout.route.tsx", [
-		index("./modules/marketing/routes/home.route.tsx"),
+		index("./modules/marketing/home/home.route.tsx"),
 		route("about", "./modules/marketing/about/about.route.tsx"),
-		route("spec", "./modules/marketing/routes/spec.route.tsx"),
+		route("spec", "./modules/marketing/spec/spec.route.tsx"),
 		route("compliance", "./modules/marketing/compliance/compliance.route.tsx"),
 		route(
 			"reference-workflow",
@@ -12,10 +12,10 @@ export default [
 		),
 		route(
 			"blog/ai-needs-execution",
-			"./modules/marketing/routes/blog/ai-needs-execution.route.tsx",
+			"./modules/marketing/blog/ai-needs-execution/ai-needs-execution.route.tsx",
 		),
-		route("pricing", "./modules/marketing/routes/pricing.route.tsx"),
-		route("contact", "./modules/marketing/routes/contact.route.tsx"),
+		route("pricing", "./modules/marketing/pricing/pricing.route.tsx"),
+		route("contact", "./modules/marketing/contact/contact.route.tsx"),
 	]),
 	route("/docs", "./modules/shell/routes/docs-layout.route.tsx", [
 		index("./modules/docs/routes/docs-index.route.tsx"),

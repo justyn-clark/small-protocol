@@ -38,17 +38,17 @@ Every reliable computing system in history-from compilers to CI pipelines to clo
 
 AI is not exempt from this law.
 
-## Why “Smarter Agents” Is the Wrong Goal
+## Why "Smarter Agents" Is the Wrong Goal
 
 Much of the industry is still asking:
 
-> “How do we make agents smarter?”
+> "How do we make agents smarter?"
 
 This is the wrong question.
 
 The correct question is:
 
-> **“What kind of system can intelligent agents operate in without destabilizing it?”**
+> **"What kind of system can intelligent agents operate in without destabilizing it?"**
 
 Smarter agents inside a poorly defined system do not produce better outcomes.  
 They amplify failure modes.
@@ -155,7 +155,7 @@ Outputs overwrite inputs. History disappears. Rollbacks become guesswork.
 
 ### 3. Invisible Provenance
 
-No one can answer “where did this come from?” with certainty.
+No one can answer "where did this come from?" with certainty.
 
 ### 4. Unobservable Lifecycles
 
@@ -189,7 +189,7 @@ This creates a critical boundary:
 
 That boundary is the difference between autonomy and safety.
 
-## Why This Is Not “Just Another Abstraction”
+## Why This Is Not "Just Another Abstraction"
 
 SMALL is not optional complexity.
 
