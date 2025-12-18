@@ -14,23 +14,21 @@ function labelFrom({ title, lang }: { title?: string; lang?: string }) {
 }
 
 function stripBackgroundStyles(html: string): string {
-	return html.replace(
-		/style="([^"]*)"/g,
-		(_, styles) => {
-			const cleaned = styles
-				.split(";")
-				.filter((s: string) => {
-					const prop = s.split(":")[0].trim().toLowerCase();
-					return prop !== "background" && prop !== "background-color";
-				})
-				.join(";");
-			return cleaned ? `style="${cleaned}"` : "";
-		},
-	);
+	return html.replace(/style="([^"]*)"/g, (_, styles) => {
+		const cleaned = styles
+			.split(";")
+			.filter((s: string) => {
+				const prop = s.split(":")[0].trim().toLowerCase();
+				return prop !== "background" && prop !== "background-color";
+			})
+			.join(";");
+		return cleaned ? `style="${cleaned}"` : "";
+	});
 }
 
-let highlighterPromise: Promise<Awaited<ReturnType<typeof createHighlighter>>> | null =
-	null;
+let highlighterPromise: Promise<
+	Awaited<ReturnType<typeof createHighlighter>>
+> | null = null;
 
 async function getShiki() {
 	if (!highlighterPromise) {

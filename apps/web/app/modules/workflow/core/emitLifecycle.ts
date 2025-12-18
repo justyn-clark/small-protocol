@@ -1,6 +1,6 @@
+import protocol from "~/modules/protocol/small.protocol.json";
 import type { Lifecycle } from "~/modules/workflow/types";
 import { computeReplayId } from "./replayId";
-import protocol from "~/modules/protocol/small.protocol.json";
 
 // SMALL Guarantees: deterministic, immutableArtifacts
 export function emitLifecycle(

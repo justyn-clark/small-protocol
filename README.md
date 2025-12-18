@@ -2,7 +2,7 @@
 
 A canonical specification and reference implementation for **agent-legible content systems**.
 
-This project defines how content should be modeled, validated, versioned, and operated in an AI-driven environment — using **schemas, manifests, and deterministic workflows**, not opaque CMS abstractions.
+This project defines how content should be modeled, validated, versioned, and operated in an AI-driven environment - using **schemas, manifests, and deterministic workflows**, not opaque CMS abstractions.
 
 ---
 
@@ -51,7 +51,7 @@ SMALL defines the minimal execution primitives required to build agent-legible s
 
 ## SMALL as a Protocol
 
-SMALL is not just a concept—it's a versioned, machine-consumable protocol. Agents can discover and validate against it programmatically.
+SMALL is not just a concept-it's a versioned, machine-consumable protocol. Agents can discover and validate against it programmatically.
 
 ### Discovery
 
@@ -123,19 +123,19 @@ The protocol is the source of truth. Documentation is validated against it at bu
 
 ## Project Structure
 
-### Phase 0 — Canonical Spec
+### Phase 0 - Canonical Spec
 
 - Define primitives
 - Establish terminology
 - Publish durable contracts
 
-### Phase 1 — Reference Implementation
+### Phase 1 - Reference Implementation
 
 - Render specs using MDX
 - Show canonical relationships
 - Provide executable examples
 
-### Phase 2 — Reference Workflow (Run #3)
+### Phase 2 - Reference Workflow (Run #3)
 
 - Validate manifests
 - Generate lineage
@@ -182,8 +182,8 @@ This is **infrastructure**.
 - ✅ Mermaid diagrams
 - ✅ Primitive Spec v1 published
 - ✅ Reference Workflow (interactive validation)
-- ✅ SMALL Protocol v1.0.0 (Run #5) — Protocol discovery endpoint, build-time doc validation, SMALL Playground
-- ✅ Executable SMALL (Run #6) — Deterministic replay IDs, strict offline validation, OpenAPI surface
+- ✅ SMALL Protocol v1.0.0 (Run #5) - Protocol discovery endpoint, build-time doc validation, SMALL Playground
+- ✅ Executable SMALL (Run #6) - Deterministic replay IDs, strict offline validation, OpenAPI surface
 
 ---
 

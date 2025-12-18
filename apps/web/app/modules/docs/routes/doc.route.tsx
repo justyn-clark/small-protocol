@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import type { LoaderFunctionArgs } from "react-router-dom";
 import { useLoaderData } from "react-router-dom";
+import { loadDoc } from "~/modules/docs/lib/content.server";
 import { MDXRenderer } from "~/modules/mdx/MDXRenderer";
 import { compileMdxClient } from "~/modules/mdx/mdx-runtime.client";
-import { loadDoc } from "~/modules/docs/lib/content.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const slug = params.slug ?? "docs";

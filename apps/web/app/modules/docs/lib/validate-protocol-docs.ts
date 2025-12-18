@@ -1,6 +1,6 @@
-import { SMALL_PROTOCOL } from "~/modules/protocol/version";
-import { SMALL_PRIMITIVES } from "~/modules/protocol/small.protocol";
 import type { Frontmatter } from "~/modules/mdx/mdx-runtime.server";
+import { SMALL_PRIMITIVES } from "~/modules/protocol/small.protocol";
+import { SMALL_PROTOCOL } from "~/modules/protocol/version";
 import { verifySchemaRegistry } from "~/modules/workflow/schema-registry/verify.server";
 
 let schemaRegistryVerified = false;

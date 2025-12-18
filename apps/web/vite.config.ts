@@ -1,7 +1,7 @@
 import path from "node:path";
 import { reactRouter } from "@react-router/dev/vite";
-import { defineConfig } from "vite";
 import type { Plugin } from "vite";
+import { defineConfig } from "vite";
 
 function mdxHmrPlugin(): Plugin {
 	return {

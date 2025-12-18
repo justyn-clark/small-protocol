@@ -1,4 +1,4 @@
-import { type ErrorObject } from "ajv/dist/2020";
+import type { ErrorObject } from "ajv/dist/2020";
 import { validateWith } from "../schema-registry/registry.client";
 
 // SMALL Guarantees: explicitContractsOnly, deterministic

@@ -1,5 +1,5 @@
-import { getAjv } from "./registry.server";
 import protocol from "~/modules/protocol/small.protocol.json";
+import { getAjv } from "./registry.server";
 
 const EXAMPLE_MANIFEST = {
 	artifact: "track.audio",

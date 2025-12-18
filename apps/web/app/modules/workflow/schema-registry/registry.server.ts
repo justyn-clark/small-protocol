@@ -1,9 +1,8 @@
+import { fileURLToPath } from "node:url";
 import Ajv2020, { type ErrorObject } from "ajv/dist/2020";
 import addFormats from "ajv-formats";
-import { readFileSync, readdirSync } from "fs";
-import { join, dirname } from "path";
-import { existsSync } from "fs";
-import { fileURLToPath } from "node:url";
+import { existsSync, readdirSync, readFileSync } from "fs";
+import { dirname, join } from "path";
 
 declare global {
 	// eslint-disable-next-line no-var

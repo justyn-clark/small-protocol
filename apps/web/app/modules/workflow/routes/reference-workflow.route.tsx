@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { CodeBlock } from "~/modules/mdx/CodeBlock";
 import { emitLifecycle } from "~/modules/workflow/core/emitLifecycle";
 import { generateLineage } from "~/modules/workflow/core/generateLineage";
-import { validateManifest } from "~/modules/workflow/core/validateManifest";
 import { computeReplayId } from "~/modules/workflow/core/replayId";
+import { validateManifest } from "~/modules/workflow/core/validateManifest";
 import { highlightCodeToHtml } from "~/modules/workflow/lib/highlight";
 
 const EXAMPLE_MANIFEST = `{

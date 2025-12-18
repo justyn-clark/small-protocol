@@ -106,19 +106,16 @@ function normalizeLang(lang: unknown): string {
 }
 
 function stripBackgroundStyles(html: string): string {
-	return html.replace(
-		/style="([^"]*)"/g,
-		(_, styles) => {
-			const cleaned = styles
-				.split(";")
-				.filter((s: string) => {
-					const prop = s.split(":")[0].trim().toLowerCase();
-					return prop !== "background" && prop !== "background-color";
-				})
-				.join(";");
-			return cleaned ? `style="${cleaned}"` : "";
-		},
-	);
+	return html.replace(/style="([^"]*)"/g, (_, styles) => {
+		const cleaned = styles
+			.split(";")
+			.filter((s: string) => {
+				const prop = s.split(":")[0].trim().toLowerCase();
+				return prop !== "background" && prop !== "background-color";
+			})
+			.join(";");
+		return cleaned ? `style="${cleaned}"` : "";
+	});
 }
 
 async function codeToHtmlSafe(

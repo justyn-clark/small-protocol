@@ -1,6 +1,6 @@
+import protocol from "~/modules/protocol/small.protocol.json";
 import type { Lineage } from "~/modules/workflow/types";
 import { computeReplayId } from "./replayId";
-import protocol from "~/modules/protocol/small.protocol.json";
 
 // SMALL Guarantees: deterministic, noHiddenState
 export function generateLineage(

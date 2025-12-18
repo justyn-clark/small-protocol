@@ -1,0 +1,207 @@
+# SMALL Compliance
+
+**What it Means to Be SMALL-Compliant**
+
+This section defines the **minimum, enforceable requirements** for any system claiming to implement SMALL.
+
+Compliance is binary.
+
+A system either **is** SMALL-compliant or **is not**.
+
+---
+
+## 1. Compliance Scope
+
+SMALL compliance applies to:
+
+- content systems
+- agent execution systems
+- orchestration layers
+- workflow engines
+- CMS replacements
+- AI-native platforms
+- internal tooling that allows agent interaction
+
+If agents can operate inside the system, compliance applies.
+
+---
+
+## 2. Required Capabilities (Non-Negotiable)
+
+A SMALL-compliant system **MUST** provide all of the following.
+
+### 2.1 Schema Enforcement
+
+The system **MUST**:
+
+- enforce schemas before execution
+- reject invalid inputs deterministically
+- prevent schema bypass by humans or agents
+- version schemas explicitly
+
+If schema validation can be skipped, the system is **not compliant**.
+
+---
+
+### 2.2 Manifest-Based Intent
+
+The system **MUST**:
+
+- require intent to be expressed as manifests
+- validate manifests prior to execution
+- separate intent declaration from execution
+- allow manifests to fail without side effects
+
+If intent is inferred from behavior, UI actions, or prompts, the system is **not compliant**.
+
+---
+
+### 2.3 Immutable Artifacts
+
+The system **MUST**:
+
+- treat artifacts as immutable
+- prohibit in-place mutation
+- create new artifacts for changes
+- preserve historical versions
+
+If state can be silently overwritten, the system is **not compliant**.
+
+---
+
+### 2.4 Explicit Lineage
+
+The system **MUST**:
+
+- record parent artifacts
+- record the manifest that caused creation
+- attribute actions to humans vs agents
+- expose lineage as a queryable structure
+
+If provenance must be inferred from logs, the system is **not compliant**.
+
+---
+
+### 2.5 Observable Lifecycle
+
+The system **MUST**:
+
+- define explicit lifecycle states
+- enforce valid transitions
+- emit lifecycle events
+- reject invalid transitions
+
+If lifecycle state is implicit or UI-driven, the system is **not compliant**.
+
+---
+
+## 3. Agent Safety Boundary (Critical)
+
+In a SMALL-compliant system:
+
+- Agents **MUST NOT** mutate artifacts directly
+- Agents **MUST NOT** bypass lifecycle gates
+- Agents **MUST NOT** invent new states
+- Agents **MUST** operate exclusively through manifests
+
+This boundary is **the core safety guarantee**.
+
+If violated, the system is **unsafe for agent operation**.
+
+---
+
+## 4. Determinism Requirement
+
+A SMALL-compliant system **MUST** ensure that:
+
+- identical manifests against identical inputs
+- under identical schemas
+- produce identical results
+
+Non-determinism must be explicit and bounded.
+
+“Best effort” execution is **not compliant**.
+
+---
+
+## 5. Rollback Semantics
+
+In a SMALL-compliant system:
+
+- rollback **MUST** be implemented as a new artifact
+- rollback **MUST** preserve lineage
+- rollback **MUST NOT** erase history
+
+Undo is a UI concern.  
+Rollback is an execution concern.
+
+Systems that conflate the two are **not compliant**.
+
+---
+
+## 6. Partial Adoption Rules
+
+Partial adoption is allowed **only** if explicitly declared.
+
+Examples:
+
+- “Schema-only SMALL”
+- “Manifest-only SMALL”
+- “Artifact + Lineage SMALL”
+
+However:
+
+> **Partial adoption ≠ compliance**
+
+A system may borrow ideas from SMALL without claiming compliance.
+
+Claims of compliance require full implementation.
+
+---
+
+## 7. Explicit Anti-Patterns (Non-Compliant by Definition)
+
+The following patterns are **explicitly non-compliant**:
+
+- agents editing live state
+- WYSIWYG as system of record
+- UI actions mutating artifacts directly
+- prompts as execution contracts
+- logs used as provenance
+- silent retries or auto-corrections
+- hidden state transitions
+
+If any of these exist, the system is **not SMALL-compliant**.
+
+---
+
+## 8. Compliance Statement (Canonical)
+
+A compliant system may state:
+
+> “This system is SMALL-compliant as defined by the SMALL Primitive Spec v1.”
+
+Anything weaker is a marketing claim, not compliance.
+
+---
+
+## 9. Why Compliance Matters (Plain English)
+
+Compliance guarantees:
+
+- agents are constrained, not trusted
+- failures are visible, not hidden
+- state is auditable
+- execution is predictable
+- systems can be reasoned about after the fact
+
+This is the difference between:
+
+- **assistive AI**
+- **operational AI**
+
+---
+
+## 10. One-Sentence Test
+
+> If you cannot answer **what happened, why it happened, and what is allowed to happen next** without reading logs or guessing, your system is not SMALL-compliant.

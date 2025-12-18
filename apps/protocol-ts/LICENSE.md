@@ -118,7 +118,7 @@ The copyright of the Components and Templates is owned by Tailwind Labs Inc. You
 
 ## Liability
 
-Tailwind Labs Inc.’s liability to you for costs, damages, or other losses arising from your use of the Components or Templates — including third-party claims against you — is limited to a refund of your license fee. Tailwind Labs Inc. may not be held liable for any consequential damages related to your use of the Components or Templates.
+Tailwind Labs Inc.’s liability to you for costs, damages, or other losses arising from your use of the Components or Templates - including third-party claims against you - is limited to a refund of your license fee. Tailwind Labs Inc. may not be held liable for any consequential damages related to your use of the Components or Templates.
 
 This Agreement is governed by the laws of the Province of Ontario and the applicable laws of Canada. Legal proceedings related to this Agreement may only be brought in the courts of Ontario. You agree to service of process at the e-mail address on your original order.
 

@@ -6,7 +6,7 @@ export const metadata = {
 
 # Authentication
 
-You'll need to authenticate your requests to access any of the endpoints in the Protocol API. In this guide, we'll look at how authentication works. Protocol offers two ways to authenticate your API requests: Basic authentication and OAuth2 with a token — OAuth2 is the recommended way. {{ className: 'lead' }}
+You'll need to authenticate your requests to access any of the endpoints in the Protocol API. In this guide, we'll look at how authentication works. Protocol offers two ways to authenticate your API requests: Basic authentication and OAuth2 with a token - OAuth2 is the recommended way. {{ className: 'lead' }}
 
 ## Basic authentication
 
@@ -21,7 +21,7 @@ Please don't commit your Protocol password to GitHub!
 
 ## OAuth2 with bearer token
 
-The recommended way to authenticate with the Protocol API is by using OAuth2. When establishing a connection using OAuth2, you will need your access token — you will find it in the [Protocol dashboard](#) under API settings. Here's how to add the token to the request header using cURL:
+The recommended way to authenticate with the Protocol API is by using OAuth2. When establishing a connection using OAuth2, you will need your access token - you will find it in the [Protocol dashboard](#) under API settings. Here's how to add the token to the request header using cURL:
 
 ```bash {{ title: 'Example request with bearer token' }}
 curl https://api.protocol.chat/v1/conversations \
@@ -32,7 +32,7 @@ Always keep your token safe and reset it if you suspect it has been compromised.
 
 ## Using an SDK
 
-If you use one of our official SDKs, you won't have to worry about any of the above — fetch your access token from the [Protocol dashboard](#) under API settings, and the client library will take care of the rest. All the client libraries use OAuth2 behind the scenes.
+If you use one of our official SDKs, you won't have to worry about any of the above - fetch your access token from the [Protocol dashboard](#) under API settings, and the client library will take care of the rest. All the client libraries use OAuth2 behind the scenes.
 
 <div className="not-prose">
   <Button href="/sdks" variant="text" arrow="right">
