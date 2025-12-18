@@ -3,8 +3,6 @@ protocol: SMALL
 version: 1.0.0
 ---
 
-# Primitive Spec v1
-
 Defines **Artifact**, **Schema**, **Manifest**, **Lifecycle**, **Lineage**, and **Agent Action** for the Agent-Legible CMS.
 
 This spec is intentionally *boring on purpose*: deterministic primitives scale. Chaos doesn't.
@@ -144,11 +142,14 @@ const lineage: Lineage = {
 ## Canonical relationships
 
 ```mermaid
-flowchart TD
-  A[Artifact] --> B[Schema]
-  B --> C[Manifest]
+flowchart LR
+  subgraph Definition
+    B[Schema] --> C[Manifest]
+  end
+
+  A[Artifact] --> B
   C --> D[Lifecycle]
-  D --> E[Lineage]
+  C --> E[Lineage]
 ```
 
 

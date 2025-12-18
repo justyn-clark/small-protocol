@@ -2,68 +2,61 @@
 
 import type { GetInfo, GetAnnotations } from "react-router/internal";
 
-type Module = typeof import("../catch-all.route.js");
+type Module = typeof import("../catch-all.route.js")
 
 type Info = GetInfo<{
-	file: "./routes/catch-all.route.tsx";
-	module: Module;
-}>;
+  file: "./routes/catch-all.route.tsx",
+  module: Module
+}>
 
-type Matches = [
-	{
-		id: "root";
-		module: typeof import("../../root.js");
-	},
-	{
-		id: "routes/catch-all.route";
-		module: typeof import("../catch-all.route.js");
-	},
-];
+type Matches = [{
+  id: "root";
+  module: typeof import("../../root.js");
+}, {
+  id: "routes/catch-all.route";
+  module: typeof import("../catch-all.route.js");
+}];
 
-type Annotations = GetAnnotations<
-	Info & { module: Module; matches: Matches },
-	false
->;
+type Annotations = GetAnnotations<Info & { module: Module, matches: Matches }, false>;
 
 export namespace Route {
-	// links
-	export type LinkDescriptors = Annotations["LinkDescriptors"];
-	export type LinksFunction = Annotations["LinksFunction"];
+  // links
+  export type LinkDescriptors = Annotations["LinkDescriptors"];
+  export type LinksFunction = Annotations["LinksFunction"];
 
-	// meta
-	export type MetaArgs = Annotations["MetaArgs"];
-	export type MetaDescriptors = Annotations["MetaDescriptors"];
-	export type MetaFunction = Annotations["MetaFunction"];
+  // meta
+  export type MetaArgs = Annotations["MetaArgs"];
+  export type MetaDescriptors = Annotations["MetaDescriptors"];
+  export type MetaFunction = Annotations["MetaFunction"];
 
-	// headers
-	export type HeadersArgs = Annotations["HeadersArgs"];
-	export type HeadersFunction = Annotations["HeadersFunction"];
+  // headers
+  export type HeadersArgs = Annotations["HeadersArgs"];
+  export type HeadersFunction = Annotations["HeadersFunction"];
 
-	// middleware
-	export type MiddlewareFunction = Annotations["MiddlewareFunction"];
+  // middleware
+  export type MiddlewareFunction = Annotations["MiddlewareFunction"];
 
-	// clientMiddleware
-	export type ClientMiddlewareFunction =
-		Annotations["ClientMiddlewareFunction"];
+  // clientMiddleware
+  export type ClientMiddlewareFunction = Annotations["ClientMiddlewareFunction"];
 
-	// loader
-	export type LoaderArgs = Annotations["LoaderArgs"];
+  // loader
+  export type LoaderArgs = Annotations["LoaderArgs"];
 
-	// clientLoader
-	export type ClientLoaderArgs = Annotations["ClientLoaderArgs"];
+  // clientLoader
+  export type ClientLoaderArgs = Annotations["ClientLoaderArgs"];
 
-	// action
-	export type ActionArgs = Annotations["ActionArgs"];
+  // action
+  export type ActionArgs = Annotations["ActionArgs"];
 
-	// clientAction
-	export type ClientActionArgs = Annotations["ClientActionArgs"];
+  // clientAction
+  export type ClientActionArgs = Annotations["ClientActionArgs"];
 
-	// HydrateFallback
-	export type HydrateFallbackProps = Annotations["HydrateFallbackProps"];
+  // HydrateFallback
+  export type HydrateFallbackProps = Annotations["HydrateFallbackProps"];
 
-	// Component
-	export type ComponentProps = Annotations["ComponentProps"];
+  // Component
+  export type ComponentProps = Annotations["ComponentProps"];
 
-	// ErrorBoundary
-	export type ErrorBoundaryProps = Annotations["ErrorBoundaryProps"];
+  // ErrorBoundary
+  export type ErrorBoundaryProps = Annotations["ErrorBoundaryProps"];
 }

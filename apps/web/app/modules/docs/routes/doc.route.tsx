@@ -10,6 +10,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	return loadDoc(slug);
 }
 
+export function shouldRevalidate() {
+	return process.env.NODE_ENV === "development";
+}
+
 export default function DocRoute() {
 	const data = useLoaderData() as {
 		slug: string;

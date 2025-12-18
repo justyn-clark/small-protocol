@@ -3,8 +3,6 @@ protocol: SMALL
 version: 1.0.0
 ---
 
-# SMALL Model
-
 Visual representations of the SMALL execution model.
 
 ---
@@ -55,11 +53,14 @@ Agents submit intent through manifests; validation occurs against schemas; artif
 The validation boundary that ensures agent outputs conform to contracts.
 
 ```mermaid
-flowchart TD
-  Agent --> Manifest
-  Manifest --> Validator
-  Validator --> Outputs
-  Outputs --> Agent
+flowchart LR
+  Agent --> Manifest --> Validator --> Outputs --> Agent
+
+  subgraph Boundary["Safety Boundary"]
+    Manifest
+    Validator
+    Outputs
+  end
 ```
 
 All agent outputs pass through a validator that enforces schema contracts before materialization.

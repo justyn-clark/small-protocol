@@ -42,11 +42,11 @@ export default function DocsLayout() {
 				</aside>
 				<main className="min-w-0 flex-1">
 					<div className="mb-8">
-						<h1 className="text-3xl font-semibold tracking-tight">
+						{/* <h1 className="text-3xl font-semibold tracking-tight">
 							{data.title}
-						</h1>
+						</h1> */}
 						{data.description ? (
-							<p className="mt-2 text-white/70">{data.description}</p>
+							<p className="text-white/70">{data.description}</p>
 						) : null}
 					</div>
 					<Outlet />
