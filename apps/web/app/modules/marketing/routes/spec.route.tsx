@@ -2,18 +2,18 @@ import { Link } from "react-router-dom";
 
 export default function SpecRoute() {
 	return (
-		<div className="space-y-8 max-w-3xl">
-			<div className="space-y-4">
+		<div className="prose prose-invert max-w-3xl">
+			<div className="">
 				<h1 className="text-4xl font-bold tracking-tight">
 					SMALL Specification
 				</h1>
-				<p className="text-white/80 leading-relaxed">
+				<p className="text-white/80">
 					SMALL defines the minimal execution model required for agent-legible
 					systems through five core primitives.
 				</p>
 			</div>
 
-			<div className="space-y-6 border-t border-white/10 pt-8">
+			<div className="space-y-6 border-white/10">
 				<div>
 					<h2 className="text-2xl font-semibold tracking-tight mb-4">
 						The Five Primitives

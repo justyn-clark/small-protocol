@@ -1,5 +1,7 @@
 import path from "node:path";
 import { reactRouter } from "@react-router/dev/vite";
+import mdx from "@mdx-js/rollup";
+import rehypeHighlight from 'rehype-highlight';
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
 
@@ -20,8 +22,22 @@ function mdxHmrPlugin(): Plugin {
 	};
 }
 
+const options = {
+	// See https://mdxjs.com/advanced/plugins
+	remarkPlugins: [
+		// E.g. `remark-frontmatter`
+	],
+	rehypePlugins: [rehypeHighlight],
+};
+
+
 export default defineConfig({
-	plugins: [reactRouter(), mdxHmrPlugin()],
+	plugins: [mdx({
+		rehypePlugins: [...options.rehypePlugins],
+	}),
+	mdxHmrPlugin(),
+	reactRouter()
+	],
 	resolve: {
 		alias: {
 			"~": path.resolve(__dirname, "./app"),

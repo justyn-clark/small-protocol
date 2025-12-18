@@ -111,7 +111,7 @@ export default function ReferenceWorkflowRoute() {
 		<div className="space-y-8">
 			<div className="space-y-4">
 				<div className="flex items-center justify-between">
-					<h2 className="text-xl font-semibold">SMALL Playground</h2>
+					<h1 className="text-4xl font-bold tracking-tight">SMALL Playground</h1>
 					{protocolData && (
 						<div className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-sm">
 							<span className="text-white/60">Protocol:</span>

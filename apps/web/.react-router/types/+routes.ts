@@ -66,16 +66,16 @@ type RouteFiles = {
     id: "modules/marketing/routes/home.route";
     page: "/";
   };
-  "./modules/marketing/routes/about.route.tsx": {
-    id: "modules/marketing/routes/about.route";
+  "./modules/marketing/about/about.route.tsx": {
+    id: "modules/marketing/about/about.route";
     page: "/about";
   };
   "./modules/marketing/routes/spec.route.tsx": {
     id: "modules/marketing/routes/spec.route";
     page: "/spec";
   };
-  "./modules/marketing/routes/compliance.route.tsx": {
-    id: "modules/marketing/routes/compliance.route";
+  "./modules/marketing/compliance/compliance.route.tsx": {
+    id: "modules/marketing/compliance/compliance.route";
     page: "/compliance";
   };
   "./modules/workflow/routes/reference-workflow.route.tsx": {
@@ -120,9 +120,9 @@ type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "modules/shell/routes/marketing-layout.route": typeof import("./app/./modules/shell/routes/marketing-layout.route.tsx");
   "modules/marketing/routes/home.route": typeof import("./app/./modules/marketing/routes/home.route.tsx");
-  "modules/marketing/routes/about.route": typeof import("./app/./modules/marketing/routes/about.route.tsx");
+  "modules/marketing/about/about.route": typeof import("./app/./modules/marketing/about/about.route.tsx");
   "modules/marketing/routes/spec.route": typeof import("./app/./modules/marketing/routes/spec.route.tsx");
-  "modules/marketing/routes/compliance.route": typeof import("./app/./modules/marketing/routes/compliance.route.tsx");
+  "modules/marketing/compliance/compliance.route": typeof import("./app/./modules/marketing/compliance/compliance.route.tsx");
   "modules/workflow/routes/reference-workflow.route": typeof import("./app/./modules/workflow/routes/reference-workflow.route.tsx");
   "modules/marketing/routes/blog/ai-needs-execution.route": typeof import("./app/./modules/marketing/routes/blog/ai-needs-execution.route.tsx");
   "modules/marketing/routes/pricing.route": typeof import("./app/./modules/marketing/routes/pricing.route.tsx");

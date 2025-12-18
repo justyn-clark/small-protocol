@@ -18,3 +18,4 @@ apps/web/dist
 apps/protocol-ts
 
 node_modules
+apps/web/bun.lockb

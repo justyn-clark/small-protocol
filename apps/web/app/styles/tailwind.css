@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
-@config '../../typography.ts';
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -46,16 +45,6 @@ hr {
   margin: 1rem 0;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  padding: 0;
-  margin: 2rem 0 1rem;
-}
-
 @layer base {
   :root {
     --shiki-color-text: var(--color-white);
@@ -72,8 +61,6 @@ h6 {
   [inert] ::-webkit-scrollbar {
     display: none;
   }
-
-
 }
 
 @layer base {
@@ -136,35 +123,430 @@ h6 {
 
 @layer components {
   .prose {
-    --tw-prose-body: rgb(244 244 245 / 0.82);
-    --tw-prose-headings: rgb(255 255 255 / 0.92);
-    --tw-prose-links: rgb(255 255 255 / 0.92);
-    --tw-prose-bold: rgb(255 255 255 / 0.92);
-    --tw-prose-counters: rgb(255 255 255 / 0.55);
-    --tw-prose-bullets: rgb(255 255 255 / 0.35);
-    --tw-prose-hr: rgb(255 255 255 / 0.10);
-    --tw-prose-quotes: rgb(255 255 255 / 0.85);
-    --tw-prose-quote-borders: rgb(255 255 255 / 0.15);
-    --tw-prose-captions: rgb(255 255 255 / 0.55);
-    --tw-prose-code: rgb(255 255 255 / 0.9);
-    --tw-prose-pre-bg: transparent;
-    --tw-prose-th-borders: rgb(255 255 255 / 0.12);
-    --tw-prose-td-borders: rgb(255 255 255 / 0.10);
+    /* CSS Variables - Default */
+    --tw-prose-body: var(--color-zinc-700);
+    --tw-prose-headings: var(--color-zinc-900);
+    --tw-prose-links: var(--color-emerald-500);
+    --tw-prose-links-hover: var(--color-emerald-600);
+    --tw-prose-links-underline: color-mix(in srgb, var(--color-emerald-500) 30%, transparent);
+    --tw-prose-bold: var(--color-zinc-900);
+    --tw-prose-counters: var(--color-zinc-500);
+    --tw-prose-bullets: var(--color-zinc-300);
+    --tw-prose-hr: color-mix(in srgb, var(--color-zinc-900) 5%, transparent);
+    --tw-prose-quotes: var(--color-zinc-900);
+    --tw-prose-quote-borders: var(--color-zinc-200);
+    --tw-prose-captions: var(--color-zinc-500);
+    --tw-prose-code: var(--color-zinc-900);
+    --tw-prose-code-bg: var(--color-zinc-100);
+    --tw-prose-code-ring: var(--color-zinc-300);
+    --tw-prose-th-borders: var(--color-zinc-300);
+    --tw-prose-td-borders: var(--color-zinc-200);
+
+    /* CSS Variables - Invert (for .prose-invert) */
+    --tw-prose-invert-body: var(--color-zinc-400);
+    --tw-prose-invert-headings: var(--color-white);
+    --tw-prose-invert-links: var(--color-emerald-400);
+    --tw-prose-invert-links-hover: var(--color-emerald-500);
+    --tw-prose-invert-links-underline: color-mix(in srgb, var(--color-emerald-500) 30%, transparent);
+    --tw-prose-invert-bold: var(--color-white);
+    --tw-prose-invert-counters: var(--color-zinc-400);
+    --tw-prose-invert-bullets: var(--color-zinc-600);
+    --tw-prose-invert-hr: color-mix(in srgb, var(--color-white) 5%, transparent);
+    --tw-prose-invert-quotes: var(--color-zinc-100);
+    --tw-prose-invert-quote-borders: var(--color-zinc-700);
+    --tw-prose-invert-captions: var(--color-zinc-400);
+    --tw-prose-invert-code: var(--color-white);
+    --tw-prose-invert-code-bg: color-mix(in srgb, var(--color-zinc-700) 15%, transparent);
+    --tw-prose-invert-code-ring: color-mix(in srgb, var(--color-white) 10%, transparent);
+    --tw-prose-invert-th-borders: var(--color-zinc-600);
+    --tw-prose-invert-td-borders: var(--color-zinc-700);
+
+    /* Base typography */
+    color: var(--tw-prose-body);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+
+    /* Paragraphs */
+    p {
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Lead text */
+    [class~="lead"] {
+      font-size: var(--text-base);
+      line-height: var(--text-base--line-height);
+    }
+
+    /* Lists */
+    ol {
+      list-style-type: decimal;
+      margin-top: 1.25rem;
+      margin-bottom: 1.25rem;
+      padding-left: 1.625rem;
+    }
+
+    ol[type="A"] {
+      list-style-type: upper-alpha;
+    }
+
+    ol[type="a"] {
+      list-style-type: lower-alpha;
+    }
+
+    ol[type="A" s] {
+      list-style-type: upper-alpha;
+    }
+
+    ol[type="a" s] {
+      list-style-type: lower-alpha;
+    }
+
+    ol[type="I"] {
+      list-style-type: upper-roman;
+    }
+
+    ol[type="i"] {
+      list-style-type: lower-roman;
+    }
+
+    ol[type="I" s] {
+      list-style-type: upper-roman;
+    }
+
+    ol[type="i" s] {
+      list-style-type: lower-roman;
+    }
+
+    ol[type="1"] {
+      list-style-type: decimal;
+    }
+
+    ul {
+      list-style-type: disc;
+      margin-top: 1.25rem;
+      margin-bottom: 1.25rem;
+      padding-left: 1.625rem;
+    }
+
+    li {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    :is(ol, ul)>li {
+      padding-left: 0.375rem;
+    }
+
+    ol>li::marker {
+      font-weight: 400;
+      color: var(--tw-prose-counters);
+    }
+
+    ul>li::marker {
+      color: var(--tw-prose-bullets);
+    }
+
+    >ul>li p {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    >ul>li>*:first-child {
+      margin-top: 1.25rem;
+    }
+
+    >ul>li>*:last-child {
+      margin-bottom: 1.25rem;
+    }
+
+    >ol>li>*:first-child {
+      margin-top: 1.25rem;
+    }
+
+    >ol>li>*:last-child {
+      margin-bottom: 1.25rem;
+    }
+
+    ul ul,
+    ul ol,
+    ol ul,
+    ol ol {
+      margin-top: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Horizontal rules */
+    hr {
+      border-color: var(--tw-prose-hr);
+      border-top-width: 1px;
+      margin-top: 4rem;
+      margin-bottom: 4rem;
+      max-width: none;
+      margin-left: calc(-1 * 1rem);
+      margin-right: calc(-1 * 1rem);
+    }
+
+    @media (min-width: 640px) {
+      hr {
+        margin-left: calc(-1 * 1.5rem);
+        margin-right: calc(-1 * 1.5rem);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      hr {
+        margin-left: calc(-1 * 2rem);
+        margin-right: calc(-1 * 2rem);
+      }
+    }
+
+    /* Blockquotes */
+    blockquote {
+      font-weight: 500;
+      font-style: italic;
+      color: var(--tw-prose-quotes);
+      border-left-width: 0.25rem;
+      border-left-color: var(--tw-prose-quote-borders);
+      quotes: "\201C" "\201D" "\2018" "\2019";
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      padding-left: 1.25rem;
+    }
+
+    blockquote p:first-of-type::before {
+      content: open-quote;
+    }
+
+    blockquote p:last-of-type::after {
+      content: close-quote;
+    }
+
+    /* Headings */
+    h1 {
+      color: var(--tw-prose-headings);
+      font-weight: 700;
+      font-size: var(--text-2xl);
+      line-height: var(--text-2xl--line-height);
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      color: var(--tw-prose-headings);
+      font-weight: 600;
+      font-size: var(--text-lg);
+      line-height: var(--text-lg--line-height);
+      margin-top: 4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h3 {
+      color: var(--tw-prose-headings);
+      font-size: var(--text-base);
+      line-height: var(--text-base--line-height);
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Media */
+    img,
+    video,
+    figure {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    figure>* {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    figcaption {
+      color: var(--tw-prose-captions);
+      font-size: var(--text-xs);
+      line-height: var(--text-xs--line-height);
+      margin-top: 0.5rem;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      table-layout: auto;
+      text-align: left;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      line-height: 1.5rem;
+    }
+
+    thead {
+      border-bottom-width: 1px;
+      border-bottom-color: var(--tw-prose-th-borders);
+    }
+
+    thead th {
+      color: var(--tw-prose-headings);
+      font-weight: 600;
+      vertical-align: bottom;
+      padding-right: 0.5rem;
+      padding-bottom: 0.5rem;
+      padding-left: 0.5rem;
+    }
+
+    thead th:first-child {
+      padding-left: 0;
+    }
+
+    thead th:last-child {
+      padding-right: 0;
+    }
+
+    tbody tr {
+      border-bottom-width: 1px;
+      border-bottom-color: var(--tw-prose-td-borders);
+    }
+
+    tbody tr:last-child {
+      border-bottom-width: 0;
+    }
+
+    tbody td {
+      vertical-align: baseline;
+    }
+
+    tfoot {
+      border-top-width: 1px;
+      border-top-color: var(--tw-prose-th-borders);
+    }
+
+    tfoot td {
+      vertical-align: top;
+    }
+
+    :is(tbody, tfoot) td {
+      padding-top: 0.5rem;
+      padding-right: 0.5rem;
+      padding-bottom: 0.5rem;
+      padding-left: 0.5rem;
+    }
+
+    :is(tbody, tfoot) td:first-child {
+      padding-left: 0;
+    }
+
+    :is(tbody, tfoot) td:last-child {
+      padding-right: 0;
+    }
+
+    /* Inline elements */
+    a {
+      color: var(--tw-prose-links);
+      text-decoration: underline transparent;
+      font-weight: 500;
+      transition-property: color, text-decoration-color;
+      transition-duration: 150ms;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    a:hover {
+      color: var(--tw-prose-links-hover);
+      text-decoration-color: var(--tw-prose-links-underline);
+    }
+
+    :is(h1, h2, h3) a {
+      font-weight: inherit;
+    }
+
+    strong {
+      color: var(--tw-prose-bold);
+      font-weight: 600;
+    }
+
+    :is(a, blockquote, thead th) strong {
+      color: inherit;
+    }
+
+    code {
+      color: var(--tw-prose-code);
+      border-radius: 0.5rem;
+      padding-top: 0.25rem;
+      padding-right: 0.375rem;
+      padding-bottom: 0.25rem;
+      padding-left: 0.375rem;
+      box-shadow: inset 0 0 0 1px var(--tw-prose-code-ring);
+      background-color: var(--tw-prose-code-bg);
+      font-size: var(--text-2xs);
+    }
+
+    :is(a, h1, h2, h3, blockquote, thead th) code {
+      color: inherit;
+    }
+
+    h2 code {
+      font-size: var(--text-base);
+      font-weight: inherit;
+    }
+
+    h3 code {
+      font-size: var(--text-sm);
+      font-weight: inherit;
+    }
+
+    /* Overrides */
+    :is(h1, h2, h3)+* {
+      margin-top: 0;
+    }
+
+    > :first-child {
+      margin-top: 0 !important;
+    }
+
+    > :last-child {
+      margin-bottom: 0 !important;
+    }
+
+    /* Inline code (not in pre blocks) */
+    :where(code):not(:where(pre code)) {
+      border: 1px solid var(--tw-prose-code-ring);
+      background: var(--tw-prose-code-bg);
+      padding: 0.12rem 0.35rem;
+      border-radius: 0.5rem;
+    }
+
+    /* Override prose styles for Shiki code blocks */
+    .shiki code {
+      padding: 1rem !important;
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+    }
   }
 
-  .prose :where(code):not(:where(pre code)) {
-    border: 1px solid rgb(255 255 255 / 0.10);
-    background: rgb(255 255 255 / 0.06);
-    padding: 0.12rem 0.35rem;
-    border-radius: 0.5rem;
+  /* Invert variant */
+  .prose-invert {
+    --tw-prose-body: var(--tw-prose-invert-body);
+    --tw-prose-headings: var(--tw-prose-invert-headings);
+    --tw-prose-links: var(--tw-prose-invert-links);
+    --tw-prose-links-hover: var(--tw-prose-invert-links-hover);
+    --tw-prose-links-underline: var(--tw-prose-invert-links-underline);
+    --tw-prose-bold: var(--tw-prose-invert-bold);
+    --tw-prose-counters: var(--tw-prose-invert-counters);
+    --tw-prose-bullets: var(--tw-prose-invert-bullets);
+    --tw-prose-hr: var(--tw-prose-invert-hr);
+    --tw-prose-quotes: var(--tw-prose-invert-quotes);
+    --tw-prose-quote-borders: var(--tw-prose-invert-quote-borders);
+    --tw-prose-captions: var(--tw-prose-invert-captions);
+    --tw-prose-code: var(--tw-prose-invert-code);
+    --tw-prose-code-bg: var(--tw-prose-invert-code-bg);
+    --tw-prose-code-ring: var(--tw-prose-invert-code-ring);
+    --tw-prose-th-borders: var(--tw-prose-invert-th-borders);
+    --tw-prose-td-borders: var(--tw-prose-invert-td-borders);
   }
 
-  /* Override prose styles for Shiki code blocks */
-  .prose .shiki code {
-    padding: 1rem !important;
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
+  /* Large variant */
+  .prose-lg {
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
   }
 }

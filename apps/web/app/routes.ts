@@ -3,9 +3,9 @@ import { index, route } from "@react-router/dev/routes";
 export default [
 	route("/", "./modules/shell/routes/marketing-layout.route.tsx", [
 		index("./modules/marketing/routes/home.route.tsx"),
-		route("about", "./modules/marketing/routes/about.route.tsx"),
+		route("about", "./modules/marketing/about/about.route.tsx"),
 		route("spec", "./modules/marketing/routes/spec.route.tsx"),
-		route("compliance", "./modules/marketing/routes/compliance.route.tsx"),
+		route("compliance", "./modules/marketing/compliance/compliance.route.tsx"),
 		route(
 			"reference-workflow",
 			"./modules/workflow/routes/reference-workflow.route.tsx",
