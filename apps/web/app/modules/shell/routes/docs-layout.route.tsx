@@ -36,20 +36,20 @@ export default function DocsLayout() {
 	return (
 		<div className="min-h-screen bg-zinc-950 text-white">
 			<Header />
+			<div className="border-b border-white/10" />
 			<div className="mx-auto flex max-w-7xl gap-10 px-4 py-10">
 				<aside className="hidden w-72 shrink-0 lg:block">
 					<SidebarNav nav={data.nav} activeSlug={data.activeSlug} />
 				</aside>
 				<main className="min-w-0 flex-1">
-					<div className="mb-8">
-						{/* <h1 className="text-3xl font-semibold tracking-tight">
-							{data.title}
-						</h1> */}
-						{data.description ? (
-							<p className="text-white/70">{data.description}</p>
-						) : null}
+					<div className="max-w-3xl">
+						<div className="mb-8">
+							{data.description ? (
+								<p className="text-white/70">{data.description}</p>
+							) : null}
+						</div>
+						<Outlet />
 					</div>
-					<Outlet />
 				</main>
 			</div>
 			<Footer />
