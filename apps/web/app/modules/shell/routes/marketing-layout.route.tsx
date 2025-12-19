@@ -7,7 +7,7 @@ export default function MarketingLayout() {
 		<div className="min-h-screen bg-zinc-950 text-white">
 			<Header />
 			<div className="border-b border-white/10" />
-			<div className="mx-auto max-w-6xl px-6 sm:px-8 py-16 sm:py-20">
+			<div className="mx-auto max-w-6xl px-6 sm:px-8 py-16">
 				<div className="mx-auto max-w-3xl">
 					<Outlet />
 				</div>
