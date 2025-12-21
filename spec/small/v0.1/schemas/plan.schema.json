@@ -7,7 +7,6 @@
   "required": [
     "small_version",
     "owner",
-    "generated_at",
     "tasks"
   ],
   "properties": {
@@ -24,7 +23,7 @@
     "generated_at": {
       "type": "string",
       "format": "date-time",
-      "description": "ISO 8601 timestamp when this plan was generated"
+      "description": "Optional ISO 8601 timestamp when this plan was generated"
     },
     "tasks": {
       "type": "array",
@@ -48,7 +47,13 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "in_progress", "completed", "blocked", "cancelled"],
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "blocked",
+              "cancelled"
+            ],
             "description": "Task status"
           },
           "dependencies": {

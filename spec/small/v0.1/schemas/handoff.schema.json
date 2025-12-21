@@ -6,9 +6,7 @@
   "type": "object",
   "required": [
     "small_version",
-    "generated_at",
-    "current_plan",
-    "recent_progress"
+    "current_plan"
   ],
   "properties": {
     "small_version": {
@@ -19,18 +17,18 @@
     "generated_at": {
       "type": "string",
       "format": "date-time",
-      "description": "ISO 8601 timestamp when this handoff was generated"
+      "description": "Optional ISO 8601 timestamp when this handoff was generated"
     },
     "current_plan": {
       "type": "object",
       "required": [
-        "generated_at",
         "tasks"
       ],
       "properties": {
         "generated_at": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "description": "Optional timestamp from the originating plan"
         },
         "tasks": {
           "type": "array",
@@ -52,7 +50,13 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["pending", "in_progress", "completed", "blocked", "cancelled"]
+                "enum": [
+                  "pending",
+                  "in_progress",
+                  "completed",
+                  "blocked",
+                  "cancelled"
+                ]
               },
               "dependencies": {
                 "type": "array",
@@ -62,7 +66,8 @@
               }
             },
             "additionalProperties": false
-          }
+          },
+          "description": "Tasks from the current plan"
         }
       },
       "additionalProperties": false,
@@ -88,7 +93,13 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "in_progress", "completed", "blocked", "cancelled"]
+            "enum": [
+              "pending",
+              "in_progress",
+              "completed",
+              "blocked",
+              "cancelled"
+            ]
           },
           "evidence": {
             "oneOf": [
@@ -141,7 +152,7 @@
         },
         "additionalProperties": false
       },
-      "description": "Recent progress entries (last N from progress.small.yml)"
+      "description": "Optional recent progress entries (last N from progress.small.yml)"
     },
     "next_steps": {
       "type": "array",

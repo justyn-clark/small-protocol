@@ -5,9 +5,16 @@ set -euo pipefail
 # All steps must pass. Exit on first failure.
 
 echo "=== Step 1: Go version ==="
-go version
+GO_VER="$(go version)"
+echo "$GO_VER"
 
-echo ""
+echo "=== Enforcing Go toolchain version ==="
+echo "$GO_VER" | grep -E "go1\.22\." >/dev/null || {
+  echo "ERROR: Go 1.22.x is required, found: $GO_VER"
+  exit 1
+}
+echo "✓ Go toolchain pinned to 1.22.x"
+
 echo "=== Step 2: go mod tidy (must produce no diffs) ==="
 if ! git diff --quiet -- go.mod go.sum 2>/dev/null; then
     echo "ERROR: go.mod or go.sum has local diffs before tidy"

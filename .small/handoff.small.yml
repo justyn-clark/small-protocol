@@ -1,20 +1,17 @@
-current_plan:
-    generated_at: ""
-    tasks:
-        - dependencies: []
-          description: Define project intent and constraints
-          id: task-1
-          status: pending
-        - dependencies:
-            - task-1
-          description: Validate SMALL artifacts against schemas
-          id: task-2
-          status: pending
-        - dependencies:
-            - task-2
-          description: Generate handoff for agent resume
-          id: task-3
-          status: pending
-generated_at: "2025-12-21T06:09:29Z"
-recent_progress: []
 small_version: "0.1"
+generated_at: "2025-12-21T08:48:21Z"
+current_plan:
+    tasks:
+        - id: task-1
+          description: Define project intent and constraints
+          status: pending
+        - id: task-2
+          description: Validate SMALL artifacts against schemas
+          status: pending
+          dependencies:
+            - task-1
+        - id: task-3
+          description: Generate handoff for agent resume
+          status: pending
+          dependencies:
+            - task-2

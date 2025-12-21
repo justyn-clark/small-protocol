@@ -29,7 +29,6 @@ other:
 
 	planTemplate = `small_version: "0.1"
 owner: "agent"
-generated_at: ""
 tasks:
   - id: "task-1"
     description: "Define project intent and constraints"
@@ -51,11 +50,8 @@ entries: []
 `
 
 	handoffTemplate = `small_version: "0.1"
-generated_at: ""
 current_plan:
-  generated_at: ""
   tasks: []
-recent_progress: []
 next_steps: []
 `
 )
