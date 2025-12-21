@@ -1,4 +1,4 @@
-module github.com/justyn-clark/agent-legible-cms-spec
+module github.com/justyn-clark/small-protocol
 
 go 1.22
 

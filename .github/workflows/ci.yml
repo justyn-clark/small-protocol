@@ -33,3 +33,6 @@ jobs:
 
       - name: Check formatting
         run: make small-format-check
+
+      - name: Run verification script
+        run: bash scripts/verify.sh

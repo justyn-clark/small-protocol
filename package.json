@@ -1,5 +1,5 @@
 {
-  "name": "agent-legible-cms-spec",
+  "name": "small-protocol",
   "private": true,
   "type": "module",
   "devDependencies": {

@@ -5,7 +5,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/justyn-clark/agent-legible-cms-spec/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )

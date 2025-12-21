@@ -1,4 +1,4 @@
-.PHONY: small-build small-validate small-lint small-test small-format small-format-check
+.PHONY: small-build small-validate small-lint small-test small-format small-format-check verify
 
 GOOS := $(shell go env GOOS)
 GOARCH := $(shell go env GOARCH)
@@ -42,3 +42,6 @@ small-format-check:
 	else \
 		echo "✓ Go code is properly formatted"; \
 	fi
+
+verify:
+	@bash scripts/verify.sh
