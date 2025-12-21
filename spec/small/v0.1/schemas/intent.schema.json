@@ -1,0 +1,45 @@
+{
+  "$id": "https://small.dev/schemas/small/v0.1/intent.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMALL Intent",
+  "description": "Human-owned project intent and goals",
+  "type": "object",
+  "required": [
+    "small_version",
+    "owner",
+    "project_name",
+    "goals"
+  ],
+  "properties": {
+    "small_version": {
+      "type": "string",
+      "const": "0.1",
+      "description": "SMALL protocol version"
+    },
+    "owner": {
+      "type": "string",
+      "const": "human",
+      "description": "Owner of this artifact (must be 'human')"
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Name of the project"
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "description": "Array of project goals"
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Optional context information"
+    }
+  },
+  "additionalProperties": false
+}

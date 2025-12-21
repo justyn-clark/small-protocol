@@ -1,0 +1,13 @@
+small_version: "0.1"
+owner: "human"
+technical_constraints:
+  - "Must use TypeScript for all code"
+  - "No external dependencies without security audit"
+  - "Must support Node.js 18+ and modern browsers"
+business_constraints:
+  - "Must comply with GDPR requirements"
+  - "Budget limit: $5000 for third-party services"
+security_constraints:
+  - "No secrets in code or version control"
+  - "All API endpoints must require authentication"
+  - "User data must be encrypted at rest"

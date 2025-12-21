@@ -15,22 +15,47 @@ const navLinks = [
 ];
 
 export function Header() {
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-	const closeMenu = () => setIsMenuOpen(false);
+	const closeMenu = () => setIsMobileMenuOpen(false);
 
 	useEffect(() => {
 		const handleEscape = (e: KeyboardEvent) => {
-			if (e.key === "Escape" && isMenuOpen) {
-				setIsMenuOpen(false);
+			if (e.key === "Escape" && isMobileMenuOpen) {
+				setIsMobileMenuOpen(false);
 			}
 		};
 
-		if (isMenuOpen) {
+		if (isMobileMenuOpen) {
 			document.addEventListener("keydown", handleEscape);
 			return () => document.removeEventListener("keydown", handleEscape);
 		}
-	}, [isMenuOpen]);
+	}, [isMobileMenuOpen]);
+
+	useEffect(() => {
+		const mq = window.matchMedia("(min-width: 768px)");
+
+		const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
+			// If we crossed into desktop, close the mobile panel
+			const matches = "matches" in e ? e.matches : e.matches;
+			if (matches) setIsMobileMenuOpen(false);
+		};
+
+		// Run once on mount	
+		handleChange(mq);
+
+		// Subscribe
+		if ("addEventListener" in mq) {
+			mq.addEventListener("change", handleChange);
+			return () => mq.removeEventListener("change", handleChange);
+		} else {
+			// Safari fallback
+			// @ts-expect-error - legacy API
+			mq.addListener(handleChange);
+			// @ts-expect-error - legacy API
+			return () => mq.removeListener(handleChange);
+		}
+	}, []);
 
 	return (
 		<header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/80 backdrop-blur">
@@ -59,9 +84,9 @@ export function Header() {
 				<button
 					type="button"
 					className="md:hidden p-2 text-white/70 hover:text-white"
-					onClick={() => setIsMenuOpen(!isMenuOpen)}
+					onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
 					aria-label="Toggle menu"
-					aria-expanded={isMenuOpen}
+					aria-expanded={isMobileMenuOpen}
 				>
 					<svg
 						className="h-6 w-6"
@@ -70,7 +95,7 @@ export function Header() {
 						stroke="currentColor"
 						strokeWidth={2}
 					>
-						{isMenuOpen ? (
+						{isMobileMenuOpen ? (
 							<path
 								strokeLinecap="round"
 								strokeLinejoin="round"
@@ -87,7 +112,7 @@ export function Header() {
 				</button>
 
 				{/* Mobile Menu Panel */}
-				{isMenuOpen && (
+				{isMobileMenuOpen && (
 					<div className="absolute left-0 top-full w-full border-b border-white/10 bg-zinc-950/95 backdrop-blur">
 						<nav className="flex flex-col">
 							{navLinks.map((link, index) => (

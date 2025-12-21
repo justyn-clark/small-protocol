@@ -1,0 +1,69 @@
+{
+  "$id": "https://small.dev/schemas/small/v0.1/plan.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMALL Plan",
+  "description": "Agent-owned execution plan",
+  "type": "object",
+  "required": [
+    "small_version",
+    "owner",
+    "generated_at",
+    "tasks"
+  ],
+  "properties": {
+    "small_version": {
+      "type": "string",
+      "const": "0.1",
+      "description": "SMALL protocol version"
+    },
+    "owner": {
+      "type": "string",
+      "const": "agent",
+      "description": "Owner of this artifact (must be 'agent')"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this plan was generated"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "description",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique task identifier"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Task description"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "completed", "blocked", "cancelled"],
+            "description": "Task status"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of task IDs this task depends on"
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "description": "Array of tasks in the plan"
+    }
+  },
+  "additionalProperties": false
+}

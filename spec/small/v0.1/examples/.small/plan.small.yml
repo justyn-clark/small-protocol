@@ -1,0 +1,20 @@
+small_version: "0.1"
+owner: "agent"
+generated_at: "2024-01-15T10:30:00Z"
+tasks:
+  - id: "task-1"
+    description: "Set up project structure and development environment"
+    status: "completed"
+    dependencies: []
+  - id: "task-2"
+    description: "Implement user authentication system"
+    status: "in_progress"
+    dependencies: ["task-1"]
+  - id: "task-3"
+    description: "Build REST API endpoints"
+    status: "pending"
+    dependencies: ["task-2"]
+  - id: "task-4"
+    description: "Write unit and integration tests"
+    status: "pending"
+    dependencies: ["task-3"]

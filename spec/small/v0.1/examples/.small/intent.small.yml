@@ -1,0 +1,11 @@
+small_version: "0.1"
+owner: "human"
+project_name: "Example Web Application"
+goals:
+  - "Build a responsive web application with user authentication"
+  - "Implement REST API with proper error handling"
+  - "Add comprehensive test coverage (minimum 80%)"
+context:
+  target_audience: "Developers and end users"
+  timeline: "6 weeks"
+  tech_stack: ["TypeScript", "React", "Node.js"]

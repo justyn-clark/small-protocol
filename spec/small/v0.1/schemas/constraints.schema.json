@@ -1,0 +1,53 @@
+{
+  "$id": "https://small.dev/schemas/small/v0.1/constraints.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMALL Constraints",
+  "description": "Human-owned project constraints and requirements",
+  "type": "object",
+  "required": [
+    "small_version",
+    "owner"
+  ],
+  "properties": {
+    "small_version": {
+      "type": "string",
+      "const": "0.1",
+      "description": "SMALL protocol version"
+    },
+    "owner": {
+      "type": "string",
+      "const": "human",
+      "description": "Owner of this artifact (must be 'human')"
+    },
+    "technical_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Technical constraints (e.g., 'Must use TypeScript', 'No external dependencies')"
+    },
+    "business_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Business constraints (e.g., 'Must comply with GDPR', 'Budget limit: $X')"
+    },
+    "security_constraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Security constraints (e.g., 'No secrets in code', 'Require 2FA')"
+    },
+    "other": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Other constraints or requirements"
+    }
+  },
+  "additionalProperties": false
+}
