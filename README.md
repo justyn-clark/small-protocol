@@ -8,7 +8,17 @@ SMALL defines five canonical artifacts that enable agents to understand, execute
 
 ## What is SMALL?
 
-SMALL (State, Manifest, Artifact, Lineage, Lifecycle) provides a minimal, strict protocol for agent continuity. Agents can read project state, execute plans, track progress, and resume work after interruptions.
+SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle) provides a minimal, strict protocol for agent continuity.
+
+Agents and humans can use SMALL to:
+
+- make project intent explicit
+- define and validate artifact contracts
+- track verifiable progress
+- generate deterministic handoffs
+- resume work across sessions, tools, and agents
+
+SMALL is schema-first, file-based, and tool-agnostic.
 
 ## Specification Status
 

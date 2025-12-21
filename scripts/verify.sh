@@ -31,6 +31,13 @@ if ! git diff --quiet -- go.mod go.sum 2>/dev/null; then
 fi
 echo "✓ go mod tidy produced no diffs"
 
+echo "=== README acronym check ==="
+grep -q 'SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle)' README.md || {
+  echo "ERROR: README must define SMALL as: Schema, Manifest, Artifact, Lineage, Lifecycle"
+  exit 1
+}
+echo "✓ README acronym is correct"
+
 echo ""
 echo "=== Step 3: Build CLI ==="
 make small-build

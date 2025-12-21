@@ -1,21 +1,32 @@
+# OS / Editor
 .DS_Store
+.idea
+.vscode
+
+# Environment files
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.idea
-.vscode
+
+# Cursor / AI
 .cursorrules
 
+# Temp
 .tmp
-.idea
 
+# Node / Web
+node_modules
 apps/web/node_modules
 apps/web/build
 apps/web/dist
+apps/web/bun.lockb
 
-apps/protocol-ts
+# Build artifacts (DO NOT COMMIT)
+bin/
+small
 
-node_modules
-apps/web/bun.lockb/bin/
+# SMALL runtime artifacts (never commit)
+.small/
+handoff.small.yml
