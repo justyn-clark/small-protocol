@@ -1,6 +1,6 @@
 # SMALL Protocol
 
-**SMALL is a protocol for durable, agent-legible project state.**
+**SMALL is a protocol for durable, agent-legible project continuity.**
 
 SMALL defines five canonical artifacts that enable agents to understand, execute, and resume work across sessions. It is not a CMS, not an agent framework, and not MCP.
 
@@ -34,6 +34,7 @@ make small-build
 ```
 
 This creates `.small/` with all five canonical files:
+
 - `intent.small.yml` - Project goals (human-owned)
 - `constraints.small.yml` - Requirements (human-owned)
 - `plan.small.yml` - Execution plan (agent-owned)
@@ -44,18 +45,24 @@ This creates `.small/` with all five canonical files:
 
 ```bash
 ./bin/small validate
+# Or validate a specific directory:
+./bin/small validate --dir spec/small/v0.1/examples
 ```
 
 ### Lint
 
 ```bash
 ./bin/small lint
+# Or lint a specific directory:
+./bin/small lint --dir spec/small/v0.1/examples
 ```
 
 ### Generate Handoff
 
 ```bash
-./bin/small handoff
+./bin/small handoff --recent 3
+# Or generate from a specific directory:
+./bin/small handoff --dir .small --recent 3
 ```
 
 ---
@@ -73,27 +80,28 @@ This repository contains:
   - Go-based tool for validating and managing SMALL artifacts
   - Commands: `init`, `validate`, `lint`, `handoff`, `version`
 
-- **`apps/web/`** - Demo/reference applications
-  - Includes `smallcms`, which demonstrates SMALL-CMS v1.0.0
-  - SMALL-CMS v1.0.0 is a reference demo showing how SMALL principles apply to content systems
-
-- **`spec/jsonschema/small-cms/v1.0.0/`** - SMALL-CMS specification
+- **`spec/small-cms/v1.0.0/`** - SMALL-CMS specification
   - Content system application of SMALL principles
   - Defines Schema, Manifest, Artifact, Lineage, Lifecycle primitives for content
+
+- **`apps/`** - Reference demo applications
+  - Includes examples demonstrating SMALL protocol usage
 
 ---
 
 ## SMALL vs SMALL-CMS
 
 **SMALL v0.1** is the core protocol for agent continuity:
+
 - Focus: Project state, plans, progress, handoffs
 - Artifacts: intent, constraints, plan, progress, handoff
 - Use case: Any project where agents need to resume work
 
-**SMALL-CMS v1.0.0** is a demo application of SMALL principles:
+**SMALL-CMS v1.0.0** is a content extension specification:
+
 - Focus: Content systems (articles, schemas, manifests)
 - Artifacts: schema, manifest, artifact, lineage, lifecycle
-- Use case: Demonstrates how SMALL principles apply to content management
+- Use case: Content management systems built on SMALL principles
 
 ---
 
@@ -130,8 +138,7 @@ make small-build
 ### Validate Examples
 
 ```bash
-cd spec/small/v0.1/examples
-../../bin/small validate
+./bin/small validate --dir spec/small/v0.1/examples
 ```
 
 ### Run Tests

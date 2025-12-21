@@ -4,19 +4,25 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/agentlegible/small-cli/internal/small"
+	"github.com/justyn-clark/agent-legible-cms-spec/internal/small"
 	"github.com/spf13/cobra"
 )
 
 func lintCmd() *cobra.Command {
 	var strict bool
+	var dir string
 
 	cmd := &cobra.Command{
 		Use:   "lint",
 		Short: "Lint SMALL artifacts for invariant violations",
 		Long:  "Checks invariants beyond schema validation (version, ownership, evidence, secrets).",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			artifacts, err := small.LoadAllArtifacts(baseDir)
+			if dir == "" {
+				dir = baseDir
+			}
+
+			artifactsDir := resolveArtifactsDir(dir)
+			artifacts, err := small.LoadAllArtifacts(artifactsDir)
 			if err != nil {
 				return fmt.Errorf("failed to load artifacts: %w", err)
 			}
@@ -36,6 +42,7 @@ func lintCmd() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (includes secret detection)")
+	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 
 	return cmd
 }

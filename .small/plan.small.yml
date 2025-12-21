@@ -1,20 +1,16 @@
 small_version: "0.1"
 owner: "agent"
-generated_at: "2024-01-15T10:30:00Z"
+generated_at: ""
 tasks:
   - id: "task-1"
-    description: "Set up project structure and development environment"
-    status: "completed"
+    description: "Define project intent and constraints"
+    status: "pending"
     dependencies: []
   - id: "task-2"
-    description: "Implement user authentication system"
-    status: "in_progress"
+    description: "Validate SMALL artifacts against schemas"
+    status: "pending"
     dependencies: ["task-1"]
   - id: "task-3"
-    description: "Build REST API endpoints"
+    description: "Generate handoff for agent resume"
     status: "pending"
     dependencies: ["task-2"]
-  - id: "task-4"
-    description: "Write unit and integration tests"
-    status: "pending"
-    dependencies: ["task-3"]

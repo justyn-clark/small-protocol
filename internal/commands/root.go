@@ -36,8 +36,33 @@ func Execute() error {
 	return rootCmd.Execute()
 }
 
-func findRepoRoot() (string, error) {
-	dir := baseDir
+// resolveArtifactsDir resolves the directory that contains .small/
+// If dir ends with .small, returns the parent directory
+// If dir/.small exists, returns dir
+// Otherwise, returns dir (for init/create scenarios)
+func resolveArtifactsDir(dir string) string {
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		absDir = dir
+	}
+
+	// If dir ends with .small, use parent
+	if filepath.Base(absDir) == ".small" {
+		return filepath.Dir(absDir)
+	}
+
+	// If dir/.small exists, use dir
+	smallPath := filepath.Join(absDir, ".small")
+	if _, err := os.Stat(smallPath); err == nil {
+		return absDir
+	}
+
+	// Otherwise, return dir as-is (for init/create)
+	return absDir
+}
+
+func findRepoRoot(startDir string) (string, error) {
+	dir := startDir
 	for {
 		specPath := filepath.Join(dir, "spec", "small", "v0.1", "schemas")
 		if _, err := os.Stat(specPath); err == nil {

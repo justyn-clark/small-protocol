@@ -12,21 +12,17 @@ small-build:
 	@go build -o $(BIN_PATH) ./cmd/small
 	@echo "Built $(BIN_PATH)"
 
-small-validate:
+small-validate: small-build
+	@echo "Validating examples directory..."
+	@$(BIN_PATH) validate --dir spec/small/v0.1/examples
 	@if [ -d .small ]; then \
-		echo "Validating .small/ artifacts..."; \
-		$(BIN_PATH) validate || (echo "Build CLI first with: make small-build" && exit 1); \
-	else \
-		echo "No .small/ directory found, skipping validation"; \
+		echo "Validating repo root .small/ artifacts..."; \
+		$(BIN_PATH) validate --dir .; \
 	fi
 
-small-lint:
-	@if [ -d .small ]; then \
-		echo "Linting .small/ artifacts..."; \
-		$(BIN_PATH) lint || (echo "Build CLI first with: make small-build" && exit 1); \
-	else \
-		echo "No .small/ directory found, skipping lint"; \
-	fi
+small-lint: small-build
+	@echo "Linting examples directory..."
+	@$(BIN_PATH) lint --dir spec/small/v0.1/examples
 
 small-test:
 	@echo "Running Go tests..."

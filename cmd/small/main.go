@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/agentlegible/small-cli/internal/commands"
+	"github.com/justyn-clark/agent-legible-cms-spec/internal/commands"
 )
 
 const (

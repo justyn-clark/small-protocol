@@ -1,14 +1,10 @@
 context:
-    target_audience: Developers and end users
-    tech_stack:
-        - TypeScript
-        - React
-        - Node.js
-    timeline: 6 weeks
+    purpose: Enable agents to understand, execute, and resume work across sessions
+    scope: Project continuity and state management
 goals:
-    - Build a responsive web application with user authentication
-    - Implement REST API with proper error handling
-    - Add comprehensive test coverage (minimum 80%)
+    - Adopt SMALL protocol for agent-legible project continuity
+    - Define clear project intent and scope
+    - Establish verifiable progress tracking
 owner: human
-project_name: test
+project_name: testproject
 small_version: "0.1"

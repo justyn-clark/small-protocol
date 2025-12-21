@@ -1,6 +1,6 @@
-module github.com/agentlegible/small-cli
+module github.com/justyn-clark/agent-legible-cms-spec
 
-go 1.25.3
+go 1.22
 
 require (
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1
