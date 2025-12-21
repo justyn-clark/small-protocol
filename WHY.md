@@ -9,8 +9,6 @@ They lose context between sessions, tools, and environments.
 
 SMALL exists to solve that problem — **without frameworks, platforms, or lock-in**.
 
----
-
 ## The Core Problem
 
 Agents today operate inside transient contexts:
@@ -36,8 +34,6 @@ Most solutions try to fix this by adding:
 
 These approaches increase complexity and brittleness.
 
----
-
 ## The SMALL Approach
 
 SMALL is deliberately minimal.
@@ -52,8 +48,6 @@ Instead of building a system, SMALL defines a **contract**:
 SMALL answers one question clearly:
 
 > “If this agent stopped right now, how would the next one continue?”
-
----
 
 ## What SMALL Is
 
@@ -74,8 +68,6 @@ At its core are five artifacts:
 - `handoff` — the sole resume entrypoint
 
 Together, they form a durable continuity surface.
-
----
 
 ## What SMALL Is Not
 
@@ -110,8 +102,6 @@ If an agent can write it, a human can audit it.
 
 This symmetry is intentional.
 
----
-
 ## Why v0.1 Is Frozen
 
 SMALL v0.1 defines the **minimum viable contract** for continuity.
@@ -127,8 +117,6 @@ Freezing v0.1 ensures:
 - freedom to build extensions without breaking the core
 
 Future versions may add capabilities, but v0.1 will remain valid.
-
----
 
 ## The Goal
 

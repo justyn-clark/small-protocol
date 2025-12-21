@@ -4,8 +4,6 @@
 
 SMALL defines five canonical artifacts that enable agents to understand, execute, and resume work across sessions. It is not a CMS, not an agent framework, and not MCP.
 
----
-
 ## What is SMALL?
 
 SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle) provides a minimal, strict protocol for agent continuity.
@@ -37,8 +35,6 @@ If you are implementing SMALL today, target **v0.1**.
 - **Ownership Rules**: Clear separation between human-owned and agent-owned artifacts
 - **Verifiable Progress**: Every progress entry must include evidence
 - **Deterministic Handoff**: Agents resume from a single entrypoint
-
----
 
 ## Quickstart
 
@@ -86,8 +82,6 @@ This creates `.small/` with all five canonical files:
 ./bin/small handoff --dir .small --recent 3
 ```
 
----
-
 ## Repository Structure
 
 This repository contains:
@@ -108,8 +102,6 @@ This repository contains:
 - **`apps/`** - Reference demo applications
   - Includes examples demonstrating SMALL protocol usage
 
----
-
 ## SMALL vs SMALL-CMS
 
 **SMALL v0.1** is the core protocol for agent continuity:
@@ -123,8 +115,6 @@ This repository contains:
 - Focus: Content systems (articles, schemas, manifests)
 - Artifacts: schema, manifest, artifact, lineage, lifecycle
 - Use case: Content management systems built on SMALL principles
-
----
 
 ## Protocol Specification
 
@@ -146,8 +136,6 @@ See [`spec/small/v0.1/SPEC.md`](spec/small/v0.1/SPEC.md) for the complete specif
 - Handoff is the only resume entrypoint
 - `small_version` must be `"0.1"` in all files
 
----
-
 ## Development
 
 ### Build CLI
@@ -168,15 +156,11 @@ make small-build
 make small-test
 ```
 
----
-
 ## Status
 
 SMALL v0.1 is the current stable protocol version. The specification is complete and the reference CLI implementation is available.
 
 Breaking changes are expected until v1.0.
-
----
 
 ## Philosophy
 
