@@ -10,6 +10,17 @@ SMALL defines five canonical artifacts that enable agents to understand, execute
 
 SMALL (State, Manifest, Artifact, Lineage, Lifecycle) provides a minimal, strict protocol for agent continuity. Agents can read project state, execute plans, track progress, and resume work after interruptions.
 
+## Specification Status
+
+**SMALL v0.1 is frozen.**
+
+- The v0.1 protocol is considered stable and complete.
+- No breaking changes will be made to v0.1.
+- All future evolution will occur in v0.2+.
+- Tooling and extensions may evolve, but the v0.1 artifact contract is locked.
+
+If you are implementing SMALL today, target **v0.1**.
+
 ### Core Principles
 
 - **Explicit State**: All project state is stored in canonical YAML files

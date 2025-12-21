@@ -1,0 +1,40 @@
+# Changelog
+
+All notable changes to the SMALL protocol and tooling will be documented in this file.
+
+This project follows a protocol-first versioning model:
+- Protocol versions describe artifact contracts and semantics.
+- Tooling versions may evolve independently, but always declare supported protocol versions.
+
+---
+
+## [v0.1.0] — 2025-12-21
+
+### Status
+- **Frozen / Stable**
+
+### Added
+- SMALL v0.1 protocol specification:
+  - `intent.small.yml`
+  - `constraints.small.yml`
+  - `plan.small.yml`
+  - `progress.small.yml`
+  - `handoff.small.yml`
+- JSON Schemas for all v0.1 artifacts
+- Reference Go CLI (`small`) with commands:
+  - `init`
+  - `validate`
+  - `lint`
+  - `handoff`
+  - `version`
+- Deterministic handoff generation
+- Verification script (`make verify`) enforcing:
+  - toolchain pinning
+  - clean module state
+  - schema + invariant validation
+- CI workflow running full verification
+
+### Notes
+- v0.1 defines the **minimal, canonical artifact contract** for agent-legible project continuity.
+- No empty semantic fields are emitted.
+- Handoff is the sole resume entrypoint.

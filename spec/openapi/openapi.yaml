@@ -1,5 +1,5 @@
 openapi: 3.0.0
 info:
-  title: Agent-Legible CMS API
+  title: SMALL Protocol v1 API
   version: 0.1.0
 paths: {}
