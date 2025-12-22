@@ -1,1 +1,0 @@
-{"type":"object","required":["id","type","schema_ref","state","version"],"properties":{"id":{"type":"string"},"type":{"type":"string"},"schema_ref":{"type":"string"},"state":{"type":"string"},"version":{"type":"integer"},"data":{"type":"object"}}}

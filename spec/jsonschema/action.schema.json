@@ -1,1 +1,0 @@
-{"type":"object","required":["action_id","name"],"properties":{"action_id":{"type":"string"},"name":{"type":"string"}}}

@@ -95,27 +95,6 @@ This repository contains:
   - Go-based tool for validating and managing SMALL artifacts
   - Commands: `init`, `validate`, `lint`, `handoff`, `version`
 
-- **`spec/small-cms/v1.0.0/`** - SMALL-CMS specification
-  - Content system application of SMALL principles
-  - Defines Schema, Manifest, Artifact, Lineage, Lifecycle primitives for content
-
-- **`apps/`** - Reference demo applications
-  - Includes examples demonstrating SMALL protocol usage
-
-## SMALL vs SMALL-CMS
-
-**SMALL v0.1** is the core protocol for agent continuity:
-
-- Focus: Project state, plans, progress, handoffs
-- Artifacts: intent, constraints, plan, progress, handoff
-- Use case: Any project where agents need to resume work
-
-**SMALL-CMS v1.0.0** is a content extension specification:
-
-- Focus: Content systems (articles, schemas, manifests)
-- Artifacts: schema, manifest, artifact, lineage, lifecycle
-- Use case: Content management systems built on SMALL principles
-
 ## Protocol Specification
 
 See [`spec/small/v0.1/SPEC.md`](spec/small/v0.1/SPEC.md) for the complete specification.
@@ -169,3 +148,7 @@ Breaking changes are expected until v1.0.
 - Agents are tools, not magic
 - Determinism beats "AI vibes"
 - Infrastructure first, products follow
+
+## Related Repos
+
+- **small-cms**: Demo implementation and orchestration runtime (optional)

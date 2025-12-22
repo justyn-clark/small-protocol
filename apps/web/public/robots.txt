@@ -1,7 +1,0 @@
-# Block ALL bots from dashboard - this is a private admin area
-User-agent: *
-Disallow: /
-
-# No sitemap for dashboard
-# This is a private admin interface
-

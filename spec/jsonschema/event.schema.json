@@ -1,1 +1,0 @@
-{"type":"object","required":["event_id","artifact_id","event_type","timestamp"],"properties":{"event_id":{"type":"string"},"artifact_id":{"type":"string"},"event_type":{"type":"string"},"timestamp":{"type":"string"}}}
