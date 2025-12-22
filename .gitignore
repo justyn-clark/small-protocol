@@ -16,12 +16,8 @@
 # Temp
 .tmp
 
-# Node / Web
+# Node / Web (if any Node tooling remains)
 node_modules
-apps/web/node_modules
-apps/web/build
-apps/web/dist
-apps/web/bun.lockb
 
 # Build artifacts (DO NOT COMMIT)
 bin/
