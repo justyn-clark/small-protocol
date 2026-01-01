@@ -1,5 +1,5 @@
 {
-  "$id": "https://small.dev/schemas/small/v0.1/progress.schema.json",
+  "$id": "https://smallprotocol.dev/schemas/small/v0.1/progress.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SMALL Progress",
   "description": "Agent-owned progress tracking",

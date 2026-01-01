@@ -36,18 +36,42 @@ If you are implementing SMALL today, target **v0.1**.
 - **Verifiable Progress**: Every progress entry must include evidence
 - **Deterministic Handoff**: Agents resume from a single entrypoint
 
-## Quickstart
+## Installation
 
-### Build the CLI
+### Option 1: Install with Go
 
 ```bash
-make small-build
+go install github.com/justyn-clark/small-protocol/cmd/small@latest
 ```
 
-### Initialize a Project
+### Option 2: Build from Source
 
 ```bash
-./bin/small init --name myproject
+git clone https://github.com/justyn-clark/small-protocol.git
+cd small-protocol
+make small-build
+# Binary will be at ./bin/small
+```
+
+### Option 3: Download Pre-built Binary
+
+Download the latest release from [GitHub Releases](https://github.com/justyn-clark/small-protocol/releases) (coming soon).
+
+## Quickstart
+
+Verify installation:
+
+```bash
+small version
+# small v0.1.0
+# Supported spec versions: ["0.1"]
+```
+
+Initialize a new SMALL project:
+
+```bash
+small init --name myproject
+# Initialized SMALL project in /path/to/project/.small
 ```
 
 This creates `.small/` with all five canonical files:
@@ -58,29 +82,68 @@ This creates `.small/` with all five canonical files:
 - `progress.small.yml` - Progress tracking (agent-owned)
 - `handoff.small.yml` - Resume entrypoint (shared)
 
-### Validate
+Validate your artifacts:
 
 ```bash
-./bin/small validate
-# Or validate a specific directory:
-./bin/small validate --dir spec/small/v0.1/examples
+small validate
+# All artifacts are valid
 ```
 
-### Lint
+Lint for protocol invariants:
 
 ```bash
-./bin/small lint
-# Or lint a specific directory:
-./bin/small lint --dir spec/small/v0.1/examples
+small lint
+# All invariants satisfied
 ```
 
-### Generate Handoff
+Add a task to the plan:
 
 ```bash
-./bin/small handoff --recent 3
-# Or generate from a specific directory:
-./bin/small handoff --dir .small --recent 3
+small plan --add "Implement authentication"
+# Added task task-5: Implement authentication
 ```
+
+Check project status:
+
+```bash
+small status
+# Displays: artifacts, task summary, next actionable tasks, last handoff
+```
+
+Execute a command (dry-run by default):
+
+```bash
+small apply --dry-run --cmd "npm test"
+# Dry-run mode: no command will be executed
+# Would execute: npm test
+```
+
+Execute with recording:
+
+```bash
+small apply --cmd "make build" --task task-5
+# Executing: make build
+# [command output]
+# Command completed successfully (exit code: 0)
+```
+
+Generate a handoff:
+
+```bash
+small handoff --recent 3
+# Generated handoff.small.yml with 3 recent progress entries
+```
+
+### What lives in `.small/`
+
+The `.small/` directory contains all project state as canonical YAML files. Intent and constraints are human-owned (you edit them). Plan and progress are agent-owned (tools manage them). Handoff is the single entrypoint for resuming work across sessions.
+
+### Safety Defaults
+
+- `small apply` defaults to dry-run mode if no `--cmd` is provided
+- All commands are read-only except `init`, `plan`, and `apply`
+- Progress is append-only (never deleted)
+- Execution always records timestamp, command, exit code, and evidence
 
 ## CLI Command Model
 
@@ -197,3 +260,9 @@ Breaking changes are expected until v1.0.
 ## Related Repos
 
 - **small-cms**: Demo implementation and orchestration runtime (optional)
+
+## License
+
+Apache-2.0 - see [LICENSE](LICENSE) for details.
+
+Copyright 2025 Justyn Clark

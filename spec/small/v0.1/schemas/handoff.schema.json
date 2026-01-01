@@ -1,5 +1,5 @@
 {
-  "$id": "https://small.dev/schemas/small/v0.1/handoff.schema.json",
+  "$id": "https://smallprotocol.dev/schemas/small/v0.1/handoff.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SMALL Handoff",
   "description": "Shared resume entrypoint for agent sessions",

@@ -7,7 +7,7 @@ on:
     branches: [main, master]
 
 jobs:
-  test:
+  verify:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,22 +17,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: '1.22.x'
 
-      - name: Build CLI
-        run: make small-build
-
-      - name: Run tests
-        run: make small-test
-
-      - name: Validate examples
-        run: make small-validate
-
-      - name: Lint examples
-        run: make small-lint
-
-      - name: Check formatting
-        run: make small-format-check
-
-      - name: Run verification script
-        run: bash scripts/verify.sh
+      - name: Run full verification
+        run: make verify

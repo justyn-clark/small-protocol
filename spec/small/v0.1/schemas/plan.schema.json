@@ -1,5 +1,5 @@
 {
-  "$id": "https://small.dev/schemas/small/v0.1/plan.schema.json",
+  "$id": "https://smallprotocol.dev/schemas/small/v0.1/plan.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SMALL Plan",
   "description": "Agent-owned execution plan",

@@ -1,5 +1,5 @@
 {
-  "$id": "https://small.dev/schemas/small/v0.1/constraints.schema.json",
+  "$id": "https://smallprotocol.dev/schemas/small/v0.1/constraints.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SMALL Constraints",
   "description": "Human-owned project constraints and requirements",
