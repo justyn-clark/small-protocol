@@ -170,6 +170,7 @@ The SMALL CLI provides deterministic, composable commands for managing SMALL art
 ### Command Details
 
 **`small plan`** - Deterministic plan management:
+
 - `--add "Task description"` - Append a new task
 - `--done <task-id>` - Mark task as completed
 - `--pending <task-id>` - Mark task as pending
@@ -178,11 +179,13 @@ The SMALL CLI provides deterministic, composable commands for managing SMALL art
 - `--reset --yes` - Reset plan to template (destructive)
 
 **`small status`** - Project state summary:
+
 - `--json` - Machine-readable JSON output
 - `--recent <n>` - Number of progress entries (default: 5)
 - `--tasks <n>` - Number of actionable tasks (default: 3)
 
 **`small apply`** - Bounded execution (not an LLM executor):
+
 - `--cmd "<command>"` - Shell command to execute
 - `--task <task-id>` - Associate with a specific task
 - `--handoff` - Generate handoff after successful execution
@@ -249,6 +252,50 @@ SMALL v0.1 is the current stable protocol version. The specification is complete
 
 Breaking changes are expected until v1.0.
 
+## What SMALL Is Not
+
+SMALL is an execution protocol. It is not:
+
+- **A CMS**: SMALL stores project state metadata, not content
+- **A task runner**: `small apply` records execution; it does not orchestrate it
+- **A spec-only tool**: SMALL enforces artifacts, not describes them
+- **A multi-agent framework**: SMALL is single-writer by design
+
+### SMALL vs Spec-Only Tools
+
+Spec-only tools (e.g., Spec Kit) help humans write specifications. SMALL enforces execution against specifications.
+
+| Spec-Only Tools | SMALL |
+|-----------------|-------|
+| Generate documentation | Enforce artifact structure via schema |
+| Help humans describe intent | Track execution state |
+| Output prose for humans | Output machine-readable state |
+| Descriptive | Normative |
+
+Spec-only tools answer: "What do we want to build?"
+SMALL answers: "What has been done, and what happens next?"
+
+See [docs/FAQ.md](docs/FAQ.md) for detailed comparisons.
+
+## Execution Model
+
+SMALL is single-writer. Concurrent writes are errors, not merges.
+
+- Append-only progress preserves audit trail
+- Handoff is the only resume entrypoint
+- Git provides time travel and branching
+
+See [docs/EXECUTION_MODEL.md](docs/EXECUTION_MODEL.md) for concurrency details.
+
+## CLI as Reference Enforcer
+
+The Go CLI is part of the specification, not a convenience wrapper.
+
+- The CLI is the authoritative validator
+- If the CLI rejects an artifact, the artifact is invalid
+- Other implementations must pass the same invariants
+- The CLI is coupled by design to prevent spec drift
+
 ## Philosophy
 
 - Schemas are law
@@ -256,6 +303,7 @@ Breaking changes are expected until v1.0.
 - Agents are tools, not magic
 - Determinism beats "AI vibes"
 - Infrastructure first, products follow
+- Failure is safer than ambiguity
 
 ## Related Repos
 
