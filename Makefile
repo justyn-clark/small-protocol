@@ -45,3 +45,4 @@ small-format-check:
 
 verify:
 	@bash scripts/verify.sh
+

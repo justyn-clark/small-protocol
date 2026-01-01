@@ -82,6 +82,51 @@ This creates `.small/` with all five canonical files:
 ./bin/small handoff --dir .small --recent 3
 ```
 
+## CLI Command Model
+
+The SMALL CLI provides deterministic, composable commands for managing SMALL artifacts:
+
+### Core Commands
+
+| Command | Description |
+|---------|-------------|
+| `small init` | Initialize a new SMALL project with all canonical artifacts |
+| `small validate` | Validate all artifacts against JSON schemas |
+| `small lint` | Check protocol invariants (secrets, ownership, append-only) |
+| `small handoff` | Generate a deterministic handoff document for agent resume |
+| `small version` | Display CLI and supported spec versions |
+
+### Execution Commands
+
+| Command | Description |
+|---------|-------------|
+| `small plan` | Create or update the plan artifact (add tasks, set status, manage dependencies) |
+| `small status` | Display compact summary of project state (artifacts, tasks, progress) |
+| `small apply` | Bounded execution gate that runs commands and records progress |
+
+### Command Details
+
+**`small plan`** - Deterministic plan management:
+- `--add "Task description"` - Append a new task
+- `--done <task-id>` - Mark task as completed
+- `--pending <task-id>` - Mark task as pending
+- `--blocked <task-id>` - Mark task as blocked
+- `--depends <task-id>:<dep-id>` - Add dependency edge
+- `--reset --yes` - Reset plan to template (destructive)
+
+**`small status`** - Project state summary:
+- `--json` - Machine-readable JSON output
+- `--recent <n>` - Number of progress entries (default: 5)
+- `--tasks <n>` - Number of actionable tasks (default: 3)
+
+**`small apply`** - Bounded execution (not an LLM executor):
+- `--cmd "<command>"` - Shell command to execute
+- `--task <task-id>` - Associate with a specific task
+- `--handoff` - Generate handoff after successful execution
+- `--dry-run` - Record intent without executing (default if no --cmd)
+
+All commands are safe-by-default and composable in CI pipelines.
+
 ## Repository Structure
 
 This repository contains:
@@ -93,7 +138,7 @@ This repository contains:
 
 - **`cmd/small/`** - Reference CLI implementation
   - Go-based tool for validating and managing SMALL artifacts
-  - Commands: `init`, `validate`, `lint`, `handoff`, `version`
+  - Commands: `init`, `validate`, `lint`, `handoff`, `plan`, `status`, `apply`, `version`
 
 ## Protocol Specification
 

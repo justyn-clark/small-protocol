@@ -68,7 +68,32 @@ echo "=== Step 9: Generate handoff ==="
 ./bin/small handoff --dir . --recent 3
 
 echo ""
-echo "=== Step 10: Run tests and format check ==="
+echo "=== Step 10: Test plan command ==="
+./bin/small plan --add "Verification test task"
+./bin/small plan --done task-4
+./bin/small validate
+
+echo ""
+echo "=== Step 11: Test status command ==="
+./bin/small status
+./bin/small status --json > /dev/null
+
+echo ""
+echo "=== Step 12: Test apply command (dry-run) ==="
+./bin/small apply --dry-run
+./bin/small apply --cmd "echo hello" --dry-run
+
+echo ""
+echo "=== Step 13: Test apply command (execution) ==="
+./bin/small apply --cmd "echo 'SMALL apply test'"
+
+echo ""
+echo "=== Step 14: Validate after apply ==="
+./bin/small validate
+./bin/small lint
+
+echo ""
+echo "=== Step 15: Run tests and format check ==="
 make small-test small-format-check
 
 echo ""

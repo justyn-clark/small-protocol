@@ -32,6 +32,9 @@ func Execute() error {
 	rootCmd.AddCommand(validateCmd())
 	rootCmd.AddCommand(lintCmd())
 	rootCmd.AddCommand(handoffCmd())
+	rootCmd.AddCommand(planCmd())
+	rootCmd.AddCommand(statusCmd())
+	rootCmd.AddCommand(applyCmd())
 
 	return rootCmd.Execute()
 }
