@@ -1,0 +1,20 @@
+small_version: "1.0.0"
+owner: "agent"
+tasks:
+  - id: "task-1"
+    title: "Set up project structure"
+    steps:
+      - "Create .small directory"
+      - "Initialize canonical artifacts"
+    acceptance:
+      - "All five files exist"
+      - "Files pass validation"
+  - id: "task-2"
+    title: "Implement core functionality"
+    steps:
+      - "Implement loader"
+      - "Implement validator"
+      - "Implement invariant checker"
+    acceptance:
+      - "Unit tests pass"
+      - "Integration tests pass"

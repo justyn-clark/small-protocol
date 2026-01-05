@@ -4,55 +4,41 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
-	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
 
+// handoffOut represents the v1.0.0 handoff structure
 type handoffOut struct {
-	SmallVersion   string         `yaml:"small_version"`
-	GeneratedAt    string         `yaml:"generated_at"`
-	CurrentPlan    currentPlanOut `yaml:"current_plan"`
-	RecentProgress []progressOut  `yaml:"recent_progress,omitempty"`
-	NextSteps      []string       `yaml:"next_steps,omitempty"`
+	SmallVersion string    `yaml:"small_version"`
+	Owner        string    `yaml:"owner"`
+	Summary      string    `yaml:"summary"`
+	Resume       resumeOut `yaml:"resume"`
+	Links        []linkOut `yaml:"links"`
 }
 
-type currentPlanOut struct {
-	GeneratedAt string     `yaml:"generated_at,omitempty"`
-	Tasks       []planTask `yaml:"tasks"`
+type resumeOut struct {
+	CurrentTaskID string   `yaml:"current_task_id"`
+	NextSteps     []string `yaml:"next_steps"`
 }
 
-type planTask struct {
-	ID           string   `yaml:"id"`
-	Description  string   `yaml:"description"`
-	Status       string   `yaml:"status"`
-	Dependencies []string `yaml:"dependencies,omitempty"`
-}
-
-type progressOut struct {
-	Timestamp    string      `yaml:"timestamp"`
-	TaskID       string      `yaml:"task_id"`
-	Status       string      `yaml:"status"`
-	Evidence     interface{} `yaml:"evidence,omitempty"`
-	Verification interface{} `yaml:"verification,omitempty"`
-	Command      string      `yaml:"command,omitempty"`
-	Test         interface{} `yaml:"test,omitempty"`
-	Link         string      `yaml:"link,omitempty"`
-	Commit       string      `yaml:"commit,omitempty"`
-	Notes        string      `yaml:"notes,omitempty"`
+type linkOut struct {
+	URL         string `yaml:"url,omitempty"`
+	Description string `yaml:"description,omitempty"`
 }
 
 func handoffCmd() *cobra.Command {
-	var recent int
-	var dir string
+	var (
+		summary string
+		dir     string
+	)
 
 	cmd := &cobra.Command{
 		Use:   "handoff",
 		Short: "Generate or update handoff.small.yml",
-		Long:  "Generates handoff.small.yml from current plan and recent progress entries.",
+		Long:  "Generates handoff.small.yml from current plan with resume information.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if dir == "" {
 				dir = baseDir
@@ -60,22 +46,14 @@ func handoffCmd() *cobra.Command {
 
 			artifactsDir := resolveArtifactsDir(dir)
 
-			if recent <= 0 {
-				recent = 10
-			}
-
 			planArtifact, err := small.LoadArtifact(artifactsDir, "plan.small.yml")
 			if err != nil {
 				return fmt.Errorf("failed to load plan.small.yml: %w", err)
 			}
 
-			progressArtifact, err := small.LoadArtifact(artifactsDir, "progress.small.yml")
-			if err != nil {
-				return fmt.Errorf("failed to load progress.small.yml: %w", err)
-			}
-
-			// ---- Build current_plan (deterministic order) ----
-			var tasks []planTask
+			// Build next_steps from pending tasks and find current task
+			var nextSteps []string
+			var currentTaskID string
 			if rawTasks, ok := planArtifact.Data["tasks"].([]interface{}); ok {
 				for _, t := range rawTasks {
 					m, ok := t.(map[string]interface{})
@@ -83,71 +61,43 @@ func handoffCmd() *cobra.Command {
 						continue
 					}
 
-					task := planTask{
-						ID:          stringVal(m["id"]),
-						Description: stringVal(m["description"]),
-						Status:      stringVal(m["status"]),
+					taskID := stringVal(m["id"])
+					title := stringVal(m["title"])
+					status := stringVal(m["status"])
+
+					// Find the first in_progress task as current
+					if status == "in_progress" && currentTaskID == "" {
+						currentTaskID = taskID
 					}
 
-					if deps, ok := m["dependencies"].([]interface{}); ok && len(deps) > 0 {
-						task.Dependencies = make([]string, 0, len(deps))
-						for _, d := range deps {
-							if s, ok := d.(string); ok && s != "" {
-								task.Dependencies = append(task.Dependencies, s)
-							}
+					// Add pending and in_progress tasks to next_steps
+					if status == "pending" || status == "in_progress" || status == "" {
+						step := title
+						if step == "" {
+							step = taskID
 						}
-						if len(task.Dependencies) == 0 {
-							task.Dependencies = nil
+						if step != "" {
+							nextSteps = append(nextSteps, step)
 						}
 					}
-
-					tasks = append(tasks, task)
 				}
 			}
 
-			sort.Slice(tasks, func(i, j int) bool { return tasks[i].ID < tasks[j].ID })
-
-			cp := currentPlanOut{Tasks: tasks}
-			if genAt, ok := planArtifact.Data["generated_at"].(string); ok && genAt != "" {
-				cp.GeneratedAt = genAt
-			}
-
-			// ---- Build recent_progress (deterministic by timestamp) ----
-			var entries []progressOut
-			if rawEntries, ok := progressArtifact.Data["entries"].([]interface{}); ok {
-				for _, e := range rawEntries {
-					m, ok := e.(map[string]interface{})
-					if !ok {
-						continue
-					}
-					entries = append(entries, progressOut{
-						Timestamp:    stringVal(m["timestamp"]),
-						TaskID:       stringVal(m["task_id"]),
-						Status:       stringVal(m["status"]),
-						Evidence:     m["evidence"],
-						Verification: m["verification"],
-						Command:      stringVal(m["command"]),
-						Test:         m["test"],
-						Link:         stringVal(m["link"]),
-						Commit:       stringVal(m["commit"]),
-						Notes:        stringVal(m["notes"]),
-					})
-				}
-			}
-
-			sort.Slice(entries, func(i, j int) bool { return entries[i].Timestamp < entries[j].Timestamp })
-
-			if recent > 0 && len(entries) > recent {
-				entries = entries[len(entries)-recent:]
+			// Use provided summary or generate a default one
+			handoffSummary := summary
+			if handoffSummary == "" {
+				handoffSummary = "Handoff generated from current plan state"
 			}
 
 			h := handoffOut{
-				SmallVersion: "0.1",
-				GeneratedAt:  time.Now().UTC().Format(time.RFC3339),
-				CurrentPlan:  cp,
-			}
-			if len(entries) > 0 {
-				h.RecentProgress = entries
+				SmallVersion: small.ProtocolVersion,
+				Owner:        "agent",
+				Summary:      handoffSummary,
+				Resume: resumeOut{
+					CurrentTaskID: currentTaskID,
+					NextSteps:     nextSteps,
+				},
+				Links: []linkOut{},
 			}
 
 			yml, err := yaml.Marshal(h)
@@ -165,13 +115,13 @@ func handoffCmd() *cobra.Command {
 				return fmt.Errorf("failed to write %s: %w", outPath, err)
 			}
 
-			fmt.Printf("Generated handoff.small.yml with %d recent progress entries\n", len(entries))
+			fmt.Printf("Generated handoff.small.yml with %d next steps\n", len(nextSteps))
 			fmt.Println(string(yml))
 			return nil
 		},
 	}
 
-	cmd.Flags().IntVar(&recent, "recent", 10, "Number of recent progress entries to include")
+	cmd.Flags().StringVar(&summary, "summary", "", "Summary description for the handoff")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 
 	return cmd

@@ -17,15 +17,17 @@ import (
 type PlanData struct {
 	SmallVersion string     `yaml:"small_version"`
 	Owner        string     `yaml:"owner"`
-	GeneratedAt  string     `yaml:"generated_at,omitempty"`
 	Tasks        []PlanTask `yaml:"tasks"`
 }
 
 // PlanTask represents a task in the plan
+// id and title are required by v1.0.0; steps, acceptance, status, dependencies are optional CLI conveniences
 type PlanTask struct {
 	ID           string   `yaml:"id"`
-	Description  string   `yaml:"description"`
-	Status       string   `yaml:"status"`
+	Title        string   `yaml:"title"`
+	Steps        []string `yaml:"steps,omitempty"`
+	Acceptance   []string `yaml:"acceptance,omitempty"`
+	Status       string   `yaml:"status,omitempty"`
 	Dependencies []string `yaml:"dependencies,omitempty"`
 }
 
@@ -91,10 +93,9 @@ func planCmd() *cobra.Command {
 			if addTask != "" {
 				newID := generateNextTaskID(plan.Tasks)
 				newTask := PlanTask{
-					ID:           newID,
-					Description:  addTask,
-					Status:       "pending",
-					Dependencies: []string{},
+					ID:     newID,
+					Title:  addTask,
+					Status: "pending",
 				}
 				plan.Tasks = append(plan.Tasks, newTask)
 				modified = true
@@ -161,7 +162,7 @@ func planCmd() *cobra.Command {
 
 	cmd.Flags().BoolVar(&reset, "reset", false, "Reset plan to template (requires --yes)")
 	cmd.Flags().BoolVar(&yes, "yes", false, "Confirm destructive operations (required with --reset)")
-	cmd.Flags().StringVar(&addTask, "add", "", "Add a new task with the given description")
+	cmd.Flags().StringVar(&addTask, "add", "", "Add a new task with the given title")
 	cmd.Flags().StringVar(&doneID, "done", "", "Mark task as completed by ID")
 	cmd.Flags().StringVar(&pendingID, "pending", "", "Mark task as pending by ID")
 	cmd.Flags().StringVar(&blockedID, "blocked", "", "Mark task as blocked by ID")
@@ -173,26 +174,12 @@ func planCmd() *cobra.Command {
 
 func getDefaultPlan() PlanData {
 	return PlanData{
-		SmallVersion: "0.1",
+		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
 		Tasks: []PlanTask{
 			{
-				ID:           "task-1",
-				Description:  "Define project intent and constraints",
-				Status:       "pending",
-				Dependencies: []string{},
-			},
-			{
-				ID:           "task-2",
-				Description:  "Validate SMALL artifacts against schemas",
-				Status:       "pending",
-				Dependencies: []string{"task-1"},
-			},
-			{
-				ID:           "task-3",
-				Description:  "Generate handoff for agent resume",
-				Status:       "pending",
-				Dependencies: []string{"task-2"},
+				ID:    "task-1",
+				Title: "Initial task",
 			},
 		},
 	}
@@ -218,13 +205,6 @@ func loadPlan(path string) (*PlanData, error) {
 }
 
 func savePlan(path string, plan *PlanData) error {
-	// Ensure empty dependencies are represented as empty arrays, not null
-	for i := range plan.Tasks {
-		if plan.Tasks[i].Dependencies == nil {
-			plan.Tasks[i].Dependencies = []string{}
-		}
-	}
-
 	data, err := yaml.Marshal(plan)
 	if err != nil {
 		return err

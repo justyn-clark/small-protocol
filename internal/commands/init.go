@@ -4,18 +4,20 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
 
 func initCmd() *cobra.Command {
 	var force bool
-	var projectName string
+	var intentStr string
 
 	cmd := &cobra.Command{
 		Use:   "init",
-		Short: "Initialize a new SMALL project",
+		Short: "Initialize a new SMALL v" + small.ProtocolVersion + " project",
 		Long:  "Creates .small/ directory and all five canonical files from templates.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			smallDir := filepath.Join(baseDir, ".small")
@@ -41,10 +43,11 @@ func initCmd() *cobra.Command {
 			for filename, template := range templates {
 				content := template
 
-				if filename == "intent.small.yml" && projectName != "" {
+				// Seed intent if provided
+				if filename == "intent.small.yml" && strings.TrimSpace(intentStr) != "" {
 					var data map[string]interface{}
 					if err := yaml.Unmarshal([]byte(template), &data); err == nil {
-						data["project_name"] = projectName
+						data["intent"] = intentStr
 						updated, err := yaml.Marshal(data)
 						if err == nil {
 							content = string(updated)
@@ -58,13 +61,13 @@ func initCmd() *cobra.Command {
 				}
 			}
 
-			fmt.Printf("Initialized SMALL project in %s\n", smallDir)
+			fmt.Printf("Initialized SMALL v%s project in %s\n", small.ProtocolVersion, smallDir)
 			return nil
 		},
 	}
 
 	cmd.Flags().BoolVar(&force, "force", false, "Overwrite existing .small/ directory")
-	cmd.Flags().StringVar(&projectName, "name", "", "Project name to seed in intent.small.yml")
+	cmd.Flags().StringVar(&intentStr, "intent", "", "Intent string to seed in intent.small.yml")
 
 	return cmd
 }

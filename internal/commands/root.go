@@ -67,14 +67,20 @@ func resolveArtifactsDir(dir string) string {
 func findRepoRoot(startDir string) (string, error) {
 	dir := startDir
 	for {
-		specPath := filepath.Join(dir, "spec", "small", "v0.1", "schemas")
+		// Try v1.0.0 first, then fall back to v0.1 for backwards compatibility
+		specPath := filepath.Join(dir, "spec", "small", "v1.0.0", "schemas")
 		if _, err := os.Stat(specPath); err == nil {
+			return dir, nil
+		}
+		// Fallback to v0.1 schemas during transition
+		specPathOld := filepath.Join(dir, "spec", "small", "v0.1", "schemas")
+		if _, err := os.Stat(specPathOld); err == nil {
 			return dir, nil
 		}
 
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			return "", fmt.Errorf("not in SMALL repo: spec/small/v0.1/schemas not found")
+			return "", fmt.Errorf("not in SMALL repo: spec/small schemas not found")
 		}
 		dir = parent
 	}

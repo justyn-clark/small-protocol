@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/justyn-clark/small-protocol/internal/small"
 	"gopkg.in/yaml.v3"
 )
 
@@ -44,7 +45,7 @@ func TestAppendProgressEntry(t *testing.T) {
 
 	// Create initial progress file
 	initialProgress := ProgressData{
-		SmallVersion: "0.1",
+		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
 		Entries:      []map[string]interface{}{},
 	}

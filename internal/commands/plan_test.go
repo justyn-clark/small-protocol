@@ -18,34 +18,34 @@ func TestGenerateNextTaskID(t *testing.T) {
 		{
 			name: "single task",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test", Status: "pending"},
+				{ID: "task-1", Title: "Test", Status: "pending"},
 			},
 			expected: "task-2",
 		},
 		{
 			name: "multiple sequential tasks",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "pending"},
-				{ID: "task-2", Description: "Test 2", Status: "pending"},
-				{ID: "task-3", Description: "Test 3", Status: "pending"},
+				{ID: "task-1", Title: "Test 1", Status: "pending"},
+				{ID: "task-2", Title: "Test 2", Status: "pending"},
+				{ID: "task-3", Title: "Test 3", Status: "pending"},
 			},
 			expected: "task-4",
 		},
 		{
 			name: "non-sequential task IDs",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "pending"},
-				{ID: "task-5", Description: "Test 5", Status: "pending"},
-				{ID: "task-3", Description: "Test 3", Status: "pending"},
+				{ID: "task-1", Title: "Test 1", Status: "pending"},
+				{ID: "task-5", Title: "Test 5", Status: "pending"},
+				{ID: "task-3", Title: "Test 3", Status: "pending"},
 			},
 			expected: "task-6",
 		},
 		{
 			name: "tasks with non-numeric IDs mixed",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "pending"},
-				{ID: "custom-task", Description: "Custom", Status: "pending"},
-				{ID: "task-10", Description: "Test 10", Status: "pending"},
+				{ID: "task-1", Title: "Test 1", Status: "pending"},
+				{ID: "custom-task", Title: "Custom", Status: "pending"},
+				{ID: "task-10", Title: "Test 10", Status: "pending"},
 			},
 			expected: "task-11",
 		},
@@ -64,9 +64,9 @@ func TestGenerateNextTaskID(t *testing.T) {
 func TestFindTask(t *testing.T) {
 	plan := &PlanData{
 		Tasks: []PlanTask{
-			{ID: "task-1", Description: "Test 1", Status: "pending"},
-			{ID: "task-2", Description: "Test 2", Status: "completed"},
-			{ID: "task-3", Description: "Test 3", Status: "blocked"},
+			{ID: "task-1", Title: "Test 1", Status: "pending"},
+			{ID: "task-2", Title: "Test 2", Status: "completed"},
+			{ID: "task-3", Title: "Test 3", Status: "blocked"},
 		},
 	}
 
@@ -101,7 +101,7 @@ func TestFindTask(t *testing.T) {
 func TestSetTaskStatus(t *testing.T) {
 	plan := &PlanData{
 		Tasks: []PlanTask{
-			{ID: "task-1", Description: "Test 1", Status: "pending"},
+			{ID: "task-1", Title: "Test 1", Status: "pending"},
 		},
 	}
 
@@ -133,8 +133,8 @@ func TestAddDependency(t *testing.T) {
 			name: "valid dependency",
 			plan: &PlanData{
 				Tasks: []PlanTask{
-					{ID: "task-1", Description: "Test 1", Status: "pending"},
-					{ID: "task-2", Description: "Test 2", Status: "pending"},
+					{ID: "task-1", Title: "Test 1", Status: "pending"},
+					{ID: "task-2", Title: "Test 2", Status: "pending"},
 				},
 			},
 			taskID:  "task-2",
@@ -145,7 +145,7 @@ func TestAddDependency(t *testing.T) {
 			name: "task not found",
 			plan: &PlanData{
 				Tasks: []PlanTask{
-					{ID: "task-1", Description: "Test 1", Status: "pending"},
+					{ID: "task-1", Title: "Test 1", Status: "pending"},
 				},
 			},
 			taskID:  "task-99",
@@ -156,7 +156,7 @@ func TestAddDependency(t *testing.T) {
 			name: "dependency not found",
 			plan: &PlanData{
 				Tasks: []PlanTask{
-					{ID: "task-1", Description: "Test 1", Status: "pending"},
+					{ID: "task-1", Title: "Test 1", Status: "pending"},
 				},
 			},
 			taskID:  "task-1",
@@ -167,7 +167,7 @@ func TestAddDependency(t *testing.T) {
 			name: "self dependency",
 			plan: &PlanData{
 				Tasks: []PlanTask{
-					{ID: "task-1", Description: "Test 1", Status: "pending"},
+					{ID: "task-1", Title: "Test 1", Status: "pending"},
 				},
 			},
 			taskID:  "task-1",
@@ -178,8 +178,8 @@ func TestAddDependency(t *testing.T) {
 			name: "duplicate dependency",
 			plan: &PlanData{
 				Tasks: []PlanTask{
-					{ID: "task-1", Description: "Test 1", Status: "pending"},
-					{ID: "task-2", Description: "Test 2", Status: "pending", Dependencies: []string{"task-1"}},
+					{ID: "task-1", Title: "Test 1", Status: "pending"},
+					{ID: "task-2", Title: "Test 2", Status: "pending", Dependencies: []string{"task-1"}},
 				},
 			},
 			taskID:  "task-2",

@@ -14,9 +14,9 @@ func TestDependencySatisfaction(t *testing.T) {
 		{
 			name: "no dependencies - all pending are actionable",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "pending"},
-				{ID: "task-2", Description: "Test 2", Status: "pending"},
-				{ID: "task-3", Description: "Test 3", Status: "pending"},
+				{ID: "task-1", Title: "Test 1", Status: "pending"},
+				{ID: "task-2", Title: "Test 2", Status: "pending"},
+				{ID: "task-3", Title: "Test 3", Status: "pending"},
 			},
 			maxActionable:  3,
 			wantActionable: []string{"task-1", "task-2", "task-3"},
@@ -24,8 +24,8 @@ func TestDependencySatisfaction(t *testing.T) {
 		{
 			name: "completed deps unlock pending",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "completed"},
-				{ID: "task-2", Description: "Test 2", Status: "pending", Dependencies: []string{"task-1"}},
+				{ID: "task-1", Title: "Test 1", Status: "completed"},
+				{ID: "task-2", Title: "Test 2", Status: "pending", Dependencies: []string{"task-1"}},
 			},
 			maxActionable:  3,
 			wantActionable: []string{"task-2"},
@@ -33,8 +33,8 @@ func TestDependencySatisfaction(t *testing.T) {
 		{
 			name: "incomplete deps block pending",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "pending"},
-				{ID: "task-2", Description: "Test 2", Status: "pending", Dependencies: []string{"task-1"}},
+				{ID: "task-1", Title: "Test 1", Status: "pending"},
+				{ID: "task-2", Title: "Test 2", Status: "pending", Dependencies: []string{"task-1"}},
 			},
 			maxActionable:  3,
 			wantActionable: []string{"task-1"},
@@ -42,9 +42,9 @@ func TestDependencySatisfaction(t *testing.T) {
 		{
 			name: "multiple deps all must be completed",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "completed"},
-				{ID: "task-2", Description: "Test 2", Status: "pending"},
-				{ID: "task-3", Description: "Test 3", Status: "pending", Dependencies: []string{"task-1", "task-2"}},
+				{ID: "task-1", Title: "Test 1", Status: "completed"},
+				{ID: "task-2", Title: "Test 2", Status: "pending"},
+				{ID: "task-3", Title: "Test 3", Status: "pending", Dependencies: []string{"task-1", "task-2"}},
 			},
 			maxActionable:  3,
 			wantActionable: []string{"task-2"},
@@ -52,10 +52,10 @@ func TestDependencySatisfaction(t *testing.T) {
 		{
 			name: "limit actionable count",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "pending"},
-				{ID: "task-2", Description: "Test 2", Status: "pending"},
-				{ID: "task-3", Description: "Test 3", Status: "pending"},
-				{ID: "task-4", Description: "Test 4", Status: "pending"},
+				{ID: "task-1", Title: "Test 1", Status: "pending"},
+				{ID: "task-2", Title: "Test 2", Status: "pending"},
+				{ID: "task-3", Title: "Test 3", Status: "pending"},
+				{ID: "task-4", Title: "Test 4", Status: "pending"},
 			},
 			maxActionable:  2,
 			wantActionable: []string{"task-1", "task-2"},
@@ -63,10 +63,10 @@ func TestDependencySatisfaction(t *testing.T) {
 		{
 			name: "only pending tasks are actionable",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "completed"},
-				{ID: "task-2", Description: "Test 2", Status: "in_progress"},
-				{ID: "task-3", Description: "Test 3", Status: "blocked"},
-				{ID: "task-4", Description: "Test 4", Status: "pending"},
+				{ID: "task-1", Title: "Test 1", Status: "completed"},
+				{ID: "task-2", Title: "Test 2", Status: "in_progress"},
+				{ID: "task-3", Title: "Test 3", Status: "blocked"},
+				{ID: "task-4", Title: "Test 4", Status: "pending"},
 			},
 			maxActionable:  3,
 			wantActionable: []string{"task-4"},
@@ -74,8 +74,8 @@ func TestDependencySatisfaction(t *testing.T) {
 		{
 			name: "no pending tasks",
 			tasks: []PlanTask{
-				{ID: "task-1", Description: "Test 1", Status: "completed"},
-				{ID: "task-2", Description: "Test 2", Status: "completed"},
+				{ID: "task-1", Title: "Test 1", Status: "completed"},
+				{ID: "task-2", Title: "Test 2", Status: "completed"},
 			},
 			maxActionable:  3,
 			wantActionable: []string{},

@@ -3,6 +3,7 @@ package small
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/santhosh-tekuri/jsonschema/v5"
@@ -14,6 +15,12 @@ var (
 )
 
 func getSchemaPath(baseDir, artifactType string) string {
+	// Try v1.0.0 first, fall back to v0.1 for backwards compatibility
+	v1Path := filepath.Join(baseDir, "spec", "small", "v1.0.0", "schemas", artifactType+".schema.json")
+	if _, err := os.Stat(v1Path); err == nil {
+		return v1Path
+	}
+	// Fallback to v0.1 schemas during transition
 	return filepath.Join(baseDir, "spec", "small", "v0.1", "schemas", artifactType+".schema.json")
 }
 

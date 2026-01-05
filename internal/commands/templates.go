@@ -1,57 +1,48 @@
 package commands
 
+import "github.com/justyn-clark/small-protocol/internal/small"
+
 var (
-	intentTemplate = `small_version: "0.1"
+	intentTemplate = `small_version: "` + small.ProtocolVersion + `"
 owner: "human"
-project_name: "Project Name"
-goals:
-  - "Adopt SMALL protocol for agent-legible project continuity"
-  - "Define clear project intent and scope"
-  - "Establish verifiable progress tracking"
-context:
-  purpose: "Enable agents to understand, execute, and resume work across sessions"
-  scope: "Project continuity and state management"
+intent: ""
+scope:
+  include: []
+  exclude: []
+success_criteria: []
 `
 
-	constraintsTemplate = `small_version: "0.1"
+	constraintsTemplate = `small_version: "` + small.ProtocolVersion + `"
 owner: "human"
-technical_constraints:
-  - "All artifacts must conform to SMALL v0.1 schemas"
-  - "Progress entries must include verifiable evidence"
-security_constraints:
-  - "No secrets in any artifact"
-  - "No sensitive tokens or credentials"
-other:
-  protocol_constraints:
-    - "Handoff is the only resume entrypoint"
-    - "Plan is disposable; progress is append-only"
+constraints:
+  - id: "no-secrets"
+    rule: "No secrets in .small artifacts"
+    severity: "error"
+  - id: "no-prod-writes"
+    rule: "No writes to production by default"
+    severity: "error"
 `
 
-	planTemplate = `small_version: "0.1"
+	planTemplate = `small_version: "` + small.ProtocolVersion + `"
 owner: "agent"
 tasks:
   - id: "task-1"
-    description: "Define project intent and constraints"
-    status: "pending"
-    dependencies: []
-  - id: "task-2"
-    description: "Validate SMALL artifacts against schemas"
-    status: "pending"
-    dependencies: ["task-1"]
-  - id: "task-3"
-    description: "Generate handoff for agent resume"
-    status: "pending"
-    dependencies: ["task-2"]
+    title: ""
+    steps: []
+    acceptance: []
 `
 
-	progressTemplate = `small_version: "0.1"
+	progressTemplate = `small_version: "` + small.ProtocolVersion + `"
 owner: "agent"
 entries: []
 `
 
-	handoffTemplate = `small_version: "0.1"
-current_plan:
-  tasks: []
-next_steps: []
+	handoffTemplate = `small_version: "` + small.ProtocolVersion + `"
+owner: "agent"
+summary: ""
+resume:
+  current_task_id: ""
+  next_steps: []
+links: []
 `
 )

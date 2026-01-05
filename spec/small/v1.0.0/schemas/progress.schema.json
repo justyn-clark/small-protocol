@@ -1,0 +1,91 @@
+{
+  "$id": "https://smallprotocol.dev/schemas/small/v1.0.0/progress.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMALL Progress",
+  "description": "Agent-owned progress tracking (append-only flight recorder)",
+  "type": "object",
+  "required": [
+    "small_version",
+    "owner",
+    "entries"
+  ],
+  "properties": {
+    "small_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "SMALL protocol version"
+    },
+    "owner": {
+      "type": "string",
+      "const": "agent",
+      "description": "Owner of this artifact (must be 'agent')"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["task_id"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp for this progress entry"
+          },
+          "task_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "ID of the task this progress entry relates to"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "completed", "blocked", "cancelled"],
+            "description": "Status of the task at this point in time"
+          },
+          "evidence": {
+            "description": "Evidence of progress (string or object)",
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              { "type": "object" }
+            ]
+          },
+          "verification": {
+            "description": "Verification of progress (string or object)",
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              { "type": "object" }
+            ]
+          },
+          "command": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Command that was executed"
+          },
+          "test": {
+            "description": "Test that was run (string or object)",
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              { "type": "object" }
+            ]
+          },
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to external evidence"
+          },
+          "commit": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{7,40}$",
+            "description": "Git commit hash"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes about this progress entry"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Array of progress entries (append-only)"
+    }
+  },
+  "additionalProperties": false
+}

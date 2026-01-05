@@ -228,34 +228,45 @@ func appendProgressEntry(baseDir string, entry map[string]interface{}) error {
 }
 
 func generateHandoffFromApply(baseDir string) error {
-	// Load plan
+	// Load plan to derive next steps
 	planArtifact, err := small.LoadArtifact(baseDir, "plan.small.yml")
 	if err != nil {
 		return fmt.Errorf("failed to load plan: %w", err)
 	}
 
-	// Load progress
-	progressArtifact, err := small.LoadArtifact(baseDir, "progress.small.yml")
-	if err != nil {
-		return fmt.Errorf("failed to load progress: %w", err)
-	}
-
-	// Build handoff structure (simplified version of handoff command)
-	handoffData := map[string]interface{}{
-		"small_version": "0.1",
-		"generated_at":  time.Now().UTC().Format(time.RFC3339),
-		"current_plan": map[string]interface{}{
-			"tasks": planArtifact.Data["tasks"],
-		},
-	}
-
-	// Add recent progress (last 10 entries)
-	if entries, ok := progressArtifact.Data["entries"].([]interface{}); ok && len(entries) > 0 {
-		recent := entries
-		if len(entries) > 10 {
-			recent = entries[len(entries)-10:]
+	// Build next_steps from pending tasks
+	var nextSteps []interface{}
+	var currentTaskID string
+	if tasks, ok := planArtifact.Data["tasks"].([]interface{}); ok {
+		for _, t := range tasks {
+			if tm, ok := t.(map[string]interface{}); ok {
+				status, _ := tm["status"].(string)
+				taskID, _ := tm["id"].(string)
+				title, _ := tm["title"].(string)
+				if status == "in_progress" && currentTaskID == "" {
+					currentTaskID = taskID
+				}
+				if status == "pending" || status == "in_progress" {
+					if title != "" {
+						nextSteps = append(nextSteps, title)
+					} else if taskID != "" {
+						nextSteps = append(nextSteps, taskID)
+					}
+				}
+			}
 		}
-		handoffData["recent_progress"] = recent
+	}
+
+	// Build handoff structure matching v1.0.0 schema
+	handoffData := map[string]interface{}{
+		"small_version": small.ProtocolVersion,
+		"owner":         "agent",
+		"summary":       "Auto-generated handoff from apply command",
+		"resume": map[string]interface{}{
+			"current_task_id": currentTaskID,
+			"next_steps":      nextSteps,
+		},
+		"links": []interface{}{},
 	}
 
 	// Write handoff

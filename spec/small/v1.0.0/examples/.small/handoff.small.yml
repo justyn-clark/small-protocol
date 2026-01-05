@@ -1,0 +1,12 @@
+small_version: "1.0.0"
+owner: "agent"
+summary: "Project initialized. Ready to implement core functionality."
+resume:
+  current_task_id: "task-2"
+  next_steps:
+    - "Implement loader module"
+    - "Add unit tests for loader"
+    - "Implement validator module"
+links:
+  - url: "https://github.com/example/small-protocol"
+    description: "Project repository"

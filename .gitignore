@@ -17,13 +17,28 @@
 .tmp
 
 # Node / Web (if any Node tooling remains)
-node_modules
+node_modules/
 
-# Build artifacts (DO NOT COMMIT)
+# Go build artifacts (DO NOT COMMIT)
 bin/
 small
 
 # SMALL runtime artifacts (never commit)
 .small/
-handoff.small.yml
 
+# --- EXCEPTIONS: spec content is canonical and SHOULD be committed ---
+
+# Unignore spec tree so nested negations can work
+!spec/
+!spec/**/
+
+# Unignore any .small directories under spec (if you store canonical artifacts there)
+!spec/**/.small/
+!spec/**/.small/**
+
+# Unignore canonical SMALL artifact files if they exist under spec
+!spec/**/intent.small.yml
+!spec/**/constraints.small.yml
+!spec/**/plan.small.yml
+!spec/**/progress.small.yml
+!spec/**/handoff.small.yml
