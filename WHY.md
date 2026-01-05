@@ -102,21 +102,21 @@ If an agent can write it, a human can audit it.
 
 This symmetry is intentional.
 
-## Why v0.1 Is Frozen
+## Why v1.0.0 Is Stable
 
-SMALL v0.1 defines the **minimum viable contract** for continuity.
+SMALL v1.0.0 defines the **minimum viable contract** for continuity.
 
 Nothing more.
 Nothing less.
 
-Freezing v0.1 ensures:
+v1.0.0 ensures:
 
 - long-term stability
 - low cognitive overhead
 - confidence for implementers
 - freedom to build extensions without breaking the core
 
-Future versions may add capabilities, but v0.1 will remain valid.
+Future versions may add capabilities, but v1.0.0 provides a stable foundation.
 
 ## The Goal
 

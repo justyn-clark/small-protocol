@@ -14,7 +14,7 @@ small-build:
 
 small-validate: small-build
 	@echo "Validating examples directory..."
-	@$(BIN_PATH) validate --dir spec/small/v0.1/examples
+	@$(BIN_PATH) validate --dir spec/small/v1.0.0/examples
 	@if [ -d .small ]; then \
 		echo "Validating repo root .small/ artifacts..."; \
 		$(BIN_PATH) validate --dir .; \
@@ -22,7 +22,7 @@ small-validate: small-build
 
 small-lint: small-build
 	@echo "Linting examples directory..."
-	@$(BIN_PATH) lint --dir spec/small/v0.1/examples
+	@$(BIN_PATH) lint --dir spec/small/v1.0.0/examples
 
 small-test:
 	@echo "Running Go tests..."

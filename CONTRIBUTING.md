@@ -2,8 +2,8 @@
 
 ## Principles
 
-- `spec/small/v0.1/SPEC.md` is the source of truth for the protocol.
-- Protocol changes are versioned (e.g. `spec/small/v0.2/`). Do not break `v0.1` in-place.
+- `spec/small/v1.0.0/SPEC.md` is the source of truth for the protocol.
+- Protocol changes are versioned (e.g. `spec/small/v1.1.0/`). Do not break `v1.0.0` in-place.
 - Documentation must match implementation. Do not reference commands, paths, or files that do not exist.
 
 ## Security

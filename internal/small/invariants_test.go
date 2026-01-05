@@ -11,7 +11,8 @@ func TestCheckInvariants_Version(t *testing.T) {
 		wantErrors int
 	}{
 		{"correct version", ProtocolVersion, 0},
-		{"wrong version", "0.1", 1},
+		{"wrong version", "0.1", 1},     // v0.1 is no longer supported
+		{"wrong version 1.0", "1.0", 1}, // must be exactly "1.0.0"
 		{"missing version", nil, 1},
 		{"empty version", "", 1},
 	}

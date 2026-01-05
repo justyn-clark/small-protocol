@@ -57,11 +57,11 @@ echo "=== Step 6: Validate repo root ==="
 
 echo ""
 echo "=== Step 7: Validate examples directory ==="
-./bin/small validate --dir spec/small/v0.1/examples
+./bin/small validate --dir spec/small/v1.0.0/examples
 
 echo ""
 echo "=== Step 8: Lint examples directory ==="
-./bin/small lint --dir spec/small/v0.1/examples
+./bin/small lint --dir spec/small/v1.0.0/examples
 
 echo ""
 echo "=== Step 9: Generate handoff ==="

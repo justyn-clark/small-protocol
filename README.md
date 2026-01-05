@@ -1,48 +1,77 @@
 # SMALL Protocol
 
-**SMALL is a protocol for durable, agent-legible project continuity.**
+**SMALL** is a formal execution protocol for making AI-assisted work legible, deterministic, and resumable.
 
-SMALL defines five canonical artifacts that enable agents to understand, execute, and resume work across sessions. It is not a CMS, not an agent framework, and not MCP.
+It defines a small set of canonical, machine-readable artifacts that allow humans and automated agents to coordinate work without relying on ephemeral chat history or implicit context.
 
-## What is SMALL?
+SMALL is **not**:
 
-SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle) provides a minimal, strict protocol for agent continuity.
+- an agent framework
+- a prompt format
+- a workflow engine
 
-Agents and humans can use SMALL to:
+It is a **governance and continuity layer**.
 
-- make project intent explicit
-- define and validate artifact contracts
-- track verifiable progress
-- generate deterministic handoffs
-- resume work across sessions, tools, and agents
+---
 
-SMALL is schema-first, file-based, and tool-agnostic.
+## Versioning
 
-## Specification Status
+This repository implements **SMALL Protocol v1.0.0**.
 
-**SMALL v0.1 is frozen.**
+- v1.0.0 is **stable**
+- Invariants are **locked**
+- Schemas are **authoritative**
+- Backward compatibility is **not guaranteed** prior to v1.0.0
 
-- The v0.1 protocol is considered stable and complete.
-- No breaking changes will be made to v0.1.
-- All future evolution will occur in v0.2+.
-- Tooling and extensions may evolve, but the v0.1 artifact contract is locked.
-
-If you are implementing SMALL today, target **v0.1**.
-
-### Core Principles
-
-- **Explicit State**: All project state is stored in canonical YAML files
-- **Ownership Rules**: Clear separation between human-owned and agent-owned artifacts
-- **Verifiable Progress**: Every progress entry must include evidence
-- **Deterministic Handoff**: Agents resume from a single entrypoint
+---
 
 ## Installation
 
-### Option 1: Install with Go
+### Option 1 (Recommended): Install via Go
+
+> Requires Go 1.22+ and installs a single `small` binary.
+
+This installs the `small` CLI into Go's binary directory.
 
 ```bash
 go install github.com/justyn-clark/small-protocol/cmd/small@latest
 ```
+
+Verify installation:
+
+```bash
+small version
+```
+
+Expected output:
+
+```
+small v1.0.0
+Supported spec versions: ["1.0.0"]
+```
+
+#### If `small` is not found
+
+If you see:
+
+```
+zsh: command not found: small
+```
+
+Your Go bin directory is not on PATH. Fix it:
+
+```bash
+echo 'export PATH="$(go env GOPATH)/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Then retry:
+
+```bash
+small version
+```
+
+---
 
 ### Option 2: Build from Source
 
@@ -50,181 +79,213 @@ go install github.com/justyn-clark/small-protocol/cmd/small@latest
 git clone https://github.com/justyn-clark/small-protocol.git
 cd small-protocol
 make small-build
-# Binary will be at ./bin/small
 ```
 
-### Option 3: Download Pre-built Binary
-
-Download the latest release from [GitHub Releases](https://github.com/justyn-clark/small-protocol/releases) (coming soon).
-
-## Quickstart
-
-Verify installation:
+Run the binary directly:
 
 ```bash
-small version
-# small v0.1.0
-# Supported spec versions: ["0.1"]
+./bin/small version
 ```
 
-Initialize a new SMALL project:
+Optional: install globally:
+
+```bash
+sudo cp ./bin/small /usr/local/bin/small
+small version
+```
+
+---
+
+## Quick Start
+
+Initialize a SMALL workspace:
 
 ```bash
 small init --name myproject
-# Initialized SMALL project in /path/to/project/.small
 ```
 
-This creates `.small/` with all five canonical files:
+This creates a `.small/` directory containing the five canonical artifacts:
 
-- `intent.small.yml` - Project goals (human-owned)
-- `constraints.small.yml` - Requirements (human-owned)
-- `plan.small.yml` - Execution plan (agent-owned)
-- `progress.small.yml` - Progress tracking (agent-owned)
-- `handoff.small.yml` - Resume entrypoint (shared)
+```
+.small/
+├── intent.small.yml
+├── constraints.small.yml
+├── plan.small.yml
+├── progress.small.yml
+└── handoff.small.yml
+```
 
 Validate your artifacts:
 
 ```bash
 small validate
-# All artifacts are valid
-```
-
-Lint for protocol invariants:
-
-```bash
-small lint
-# All invariants satisfied
-```
-
-Add a task to the plan:
-
-```bash
-small plan --add "Implement authentication"
-# Added task task-5: Implement authentication
 ```
 
 Check project status:
 
 ```bash
 small status
-# Displays: artifacts, task summary, next actionable tasks, last handoff
 ```
 
-Execute a command (dry-run by default):
+---
 
-```bash
-small apply --dry-run --cmd "npm test"
-# Dry-run mode: no command will be executed
-# Would execute: npm test
-```
+## The Five Canonical Artifacts
 
-Execute with recording:
+| Artifact | Owner | Purpose |
+|----------|-------|---------|
+| `intent.small.yml` | Human | Declares what the work is |
+| `constraints.small.yml` | Human | Declares what must not change |
+| `plan.small.yml` | Agent | Proposed execution steps |
+| `progress.small.yml` | Agent | Verified execution evidence |
+| `handoff.small.yml` | System | Serialized resume checkpoint |
 
-```bash
-small apply --cmd "make build" --task task-5
-# Executing: make build
-# [command output]
-# Command completed successfully (exit code: 0)
-```
+All artifacts:
 
-Generate a handoff:
+- **MUST** declare `small_version: "1.0.0"`
+- **MUST** validate against the v1.0.0 schemas
+- **MUST** satisfy locked invariants
 
-```bash
-small handoff --recent 3
-# Generated handoff.small.yml with 3 recent progress entries
-```
+---
 
-### What lives in `.small/`
-
-The `.small/` directory contains all project state as canonical YAML files. Intent and constraints are human-owned (you edit them). Plan and progress are agent-owned (tools manage them). Handoff is the single entrypoint for resuming work across sessions.
-
-### Safety Defaults
-
-- `small apply` defaults to dry-run mode if no `--cmd` is provided
-- All commands are read-only except `init`, `plan`, and `apply`
-- Progress is append-only (never deleted)
-- Execution always records timestamp, command, exit code, and evidence
-
-## CLI Command Model
-
-The SMALL CLI provides deterministic, composable commands for managing SMALL artifacts:
+## CLI Commands
 
 ### Core Commands
 
 | Command | Description |
 |---------|-------------|
+| `small version` | Print CLI version and supported spec versions |
 | `small init` | Initialize a new SMALL project with all canonical artifacts |
 | `small validate` | Validate all artifacts against JSON schemas |
 | `small lint` | Check protocol invariants (secrets, ownership, append-only) |
 | `small handoff` | Generate a deterministic handoff document for agent resume |
-| `small version` | Display CLI and supported spec versions |
 
 ### Execution Commands
 
 | Command | Description |
 |---------|-------------|
-| `small plan` | Create or update the plan artifact (add tasks, set status, manage dependencies) |
-| `small status` | Display compact summary of project state (artifacts, tasks, progress) |
+| `small plan` | Create or update the plan artifact |
+| `small status` | Display compact summary of project state |
 | `small apply` | Bounded execution gate that runs commands and records progress |
 
 ### Command Details
 
 **`small plan`** - Deterministic plan management:
 
-- `--add "Task description"` - Append a new task
-- `--done <task-id>` - Mark task as completed
-- `--pending <task-id>` - Mark task as pending
-- `--blocked <task-id>` - Mark task as blocked
-- `--depends <task-id>:<dep-id>` - Add dependency edge
-- `--reset --yes` - Reset plan to template (destructive)
+```bash
+small plan --add "Task description"    # Append a new task
+small plan --done <task-id>            # Mark task as completed
+small plan --pending <task-id>         # Mark task as pending
+small plan --blocked <task-id>         # Mark task as blocked
+small plan --depends <task-id>:<dep>   # Add dependency edge
+small plan --reset --yes               # Reset plan to template
+```
 
 **`small status`** - Project state summary:
 
-- `--json` - Machine-readable JSON output
-- `--recent <n>` - Number of progress entries (default: 5)
-- `--tasks <n>` - Number of actionable tasks (default: 3)
+```bash
+small status              # Human-readable output
+small status --json       # Machine-readable JSON output
+small status --recent 10  # Show 10 recent progress entries
+small status --tasks 5    # Show 5 actionable tasks
+```
 
-**`small apply`** - Bounded execution (not an LLM executor):
+**`small apply`** - Bounded execution:
 
-- `--cmd "<command>"` - Shell command to execute
-- `--task <task-id>` - Associate with a specific task
-- `--handoff` - Generate handoff after successful execution
-- `--dry-run` - Record intent without executing (default if no --cmd)
+```bash
+small apply --dry-run --cmd "npm test"           # Preview without executing
+small apply --cmd "make build" --task task-5     # Execute and record
+small apply --cmd "go test" --handoff            # Execute and generate handoff
+```
 
-All commands are safe-by-default and composable in CI pipelines.
+---
 
-## Repository Structure
+## Validation
 
-This repository contains:
+Validate the current workspace:
 
-- **`spec/small/v0.1/`** - SMALL protocol specification
-  - `SPEC.md` - Normative specification document
-  - `schemas/` - JSON Schema definitions for all artifacts
-  - `examples/.small/` - Example YAML files
+```bash
+small validate
+```
 
-- **`cmd/small/`** - Reference CLI implementation
-  - Go-based tool for validating and managing SMALL artifacts
-  - Commands: `init`, `validate`, `lint`, `handoff`, `plan`, `status`, `apply`, `version`
+Strict validation (enforces secret detection and invariant hard-fail):
 
-## Protocol Specification
+```bash
+small validate --strict
+```
 
-See [`spec/small/v0.1/SPEC.md`](spec/small/v0.1/SPEC.md) for the complete specification.
+---
 
-### Canonical Artifacts
+## Handoff Generation
 
-1. **`.small/intent.small.yml`** - Human-owned project intent/goals
-2. **`.small/constraints.small.yml`** - Human-owned constraints/requirements
-3. **`.small/plan.small.yml`** - Agent-owned execution plan
-4. **`.small/progress.small.yml`** - Agent-owned progress tracking
-5. **`.small/handoff.small.yml`** - Shared resume entrypoint
+Generate a resumable checkpoint:
 
-### Invariants
+```bash
+small handoff
+```
 
-- Secrets never stored in any artifact
-- Progress entries must include verifiable evidence
-- Plan is disposable; progress is not (append-only)
-- Handoff is the only resume entrypoint
-- `small_version` must be `"0.1"` in all files
+This produces a `handoff.small.yml` artifact that allows a different agent or human to resume work deterministically.
+
+---
+
+## Invariants (v1.0.0)
+
+The following are non-negotiable:
+
+- `intent` and `constraints` **MUST** be human-owned
+- `plan` and `progress` **MUST** be agent-owned
+- `progress` entries **MUST** contain evidence
+- Schema validation **MUST** pass before execution is considered valid
+- `small_version` **MUST** be exactly `"1.0.0"`
+
+**Violations are hard errors.**
+
+---
+
+## Specification
+
+Authoritative specification and schemas:
+
+```
+spec/small/v1.0.0/
+├── SPEC.md
+├── schemas/
+└── examples/
+```
+
+Earlier versions are retained for historical reference only.
+
+See [`spec/small/v1.0.0/SPEC.md`](spec/small/v1.0.0/SPEC.md) for the complete specification.
+
+---
+
+## Philosophy
+
+SMALL treats execution as a first-class artifact.
+
+When systems fail, SMALL leaves evidence instead of speculation.
+
+It functions as a **flight recorder** for agentic workflows.
+
+### Core Principles
+
+- Schemas are law
+- Explicit state beats implicit state
+- Agents are tools, not magic
+- Determinism beats "AI vibes"
+- Failure is safer than ambiguity
+
+---
+
+## What SMALL Is Not
+
+| What It's Not | Why |
+|---------------|-----|
+| A CMS | SMALL stores project state metadata, not content |
+| A task runner | `small apply` records execution; it does not orchestrate it |
+| A multi-agent framework | SMALL is single-writer by design |
+| An LLM executor | It's a protocol, not an AI product |
+
+---
 
 ## Development
 
@@ -237,7 +298,7 @@ make small-build
 ### Validate Examples
 
 ```bash
-./bin/small validate --dir spec/small/v0.1/examples
+./bin/small validate --dir spec/small/v1.0.0/examples
 ```
 
 ### Run Tests
@@ -246,71 +307,24 @@ make small-build
 make small-test
 ```
 
-## Status
+---
 
-SMALL v0.1 is the current stable protocol version. The specification is complete and the reference CLI implementation is available.
+## Requirements
 
-Breaking changes are expected until v1.0.
+- Go 1.22 or later
 
-## What SMALL Is Not
-
-SMALL is an execution protocol. It is not:
-
-- **A CMS**: SMALL stores project state metadata, not content
-- **A task runner**: `small apply` records execution; it does not orchestrate it
-- **A spec-only tool**: SMALL enforces artifacts, not describes them
-- **A multi-agent framework**: SMALL is single-writer by design
-
-### SMALL vs Spec-Only Tools
-
-Spec-only tools (e.g., Spec Kit) help humans write specifications. SMALL enforces execution against specifications.
-
-| Spec-Only Tools | SMALL |
-|-----------------|-------|
-| Generate documentation | Enforce artifact structure via schema |
-| Help humans describe intent | Track execution state |
-| Output prose for humans | Output machine-readable state |
-| Descriptive | Normative |
-
-Spec-only tools answer: "What do we want to build?"
-SMALL answers: "What has been done, and what happens next?"
-
-See [docs/FAQ.md](docs/FAQ.md) for detailed comparisons.
-
-## Execution Model
-
-SMALL is single-writer. Concurrent writes are errors, not merges.
-
-- Append-only progress preserves audit trail
-- Handoff is the only resume entrypoint
-- Git provides time travel and branching
-
-See [docs/EXECUTION_MODEL.md](docs/EXECUTION_MODEL.md) for concurrency details.
-
-## CLI as Reference Enforcer
-
-The Go CLI is part of the specification, not a convenience wrapper.
-
-- The CLI is the authoritative validator
-- If the CLI rejects an artifact, the artifact is invalid
-- Other implementations must pass the same invariants
-- The CLI is coupled by design to prevent spec drift
-
-## Philosophy
-
-- Schemas are law
-- Explicit state beats implicit state
-- Agents are tools, not magic
-- Determinism beats "AI vibes"
-- Infrastructure first, products follow
-- Failure is safer than ambiguity
-
-## Related Repos
-
-- **small-cms**: Demo implementation and orchestration runtime (optional)
+---
 
 ## License
 
-Apache-2.0 - see [LICENSE](LICENSE) for details.
+Apache License 2.0 - See [LICENSE](LICENSE) for details.
 
 Copyright 2025 Justyn Clark
+
+---
+
+## Status
+
+**SMALL Protocol v1.0.0 is production-ready.**
+
+Tooling will evolve. The protocol will not.

@@ -27,7 +27,7 @@ constraints:
 owner: "agent"
 tasks:
   - id: "task-1"
-    title: ""
+    title: "Initial task"
     steps: []
     acceptance: []
 `
@@ -39,7 +39,7 @@ entries: []
 
 	handoffTemplate = `small_version: "` + small.ProtocolVersion + `"
 owner: "agent"
-summary: ""
+summary: "Project initialized"
 resume:
   current_task_id: ""
   next_steps: []
