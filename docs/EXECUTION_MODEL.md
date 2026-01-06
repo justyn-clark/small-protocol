@@ -1,6 +1,6 @@
 # SMALL Execution Model
 
-This document defines the execution and concurrency model for SMALL v0.x.
+This document defines the execution and concurrency model for SMALL v1.0.0.
 
 ## Single-Writer Design
 
@@ -58,9 +58,9 @@ SMALL artifacts are plain files. Git provides:
 
 If an agent corrupts state, `git checkout` restores the previous known-good state.
 
-## Out of Scope for v0.x
+## Out of Scope for v1.0.0
 
-The following features are explicitly not part of SMALL v0.x:
+The following features are explicitly not part of SMALL v1.0.0:
 
 ### CRDTs
 
@@ -164,6 +164,6 @@ These are conceptual only. Implementation depends on demonstrated need.
 
 ## Summary
 
-SMALL v0.x is single-writer. This is intentional. The complexity cost of automatic concurrency exceeds the benefit for the target use case: durable, verifiable agent continuity.
+SMALL v1.0.0 is single-writer. This is intentional. The complexity cost of automatic concurrency exceeds the benefit for the target use case: durable, verifiable agent continuity.
 
 If you need concurrency, use git branches and merge explicitly.

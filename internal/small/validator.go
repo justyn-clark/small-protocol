@@ -204,7 +204,7 @@ func formatValidationError(err *jsonschema.ValidationError, filePath string) err
 		messages = append(messages, fmt.Sprintf("  %s: %s", cause.InstanceLocation, cause.Message))
 	}
 
-	return fmt.Errorf("%s:\n%s", filePath, fmt.Sprint(messages))
+	return fmt.Errorf("%s:\n- %s", filePath, strings.Join(messages, "\n- "))
 }
 
 // ValidateAllArtifactsWithConfig validates all artifacts using the given schema config.

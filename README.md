@@ -10,7 +10,7 @@ SMALL is **not**:
 - a prompt format
 - a workflow engine
 
-It is a **governance and continuity layer**.
+It is a **governance and continuity protocol**.
 
 ---
 
@@ -134,6 +134,8 @@ Validate your artifacts:
 ```bash
 small validate
 ```
+
+Run `small` commands from your repository root. If executed inside `.small/`, SMALL will still resolve the workspace automatically.
 
 Check project status:
 
