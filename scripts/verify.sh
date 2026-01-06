@@ -49,7 +49,7 @@ echo "=== Step 4: Version command ==="
 echo ""
 echo "=== Step 5: Initialize test project ==="
 rm -rf .small
-./bin/small init --name testproject --force
+./bin/small init --intent "Test project for verification" --force
 
 echo ""
 echo "=== Step 6: Validate repo root ==="
@@ -65,12 +65,12 @@ echo "=== Step 8: Lint examples directory ==="
 
 echo ""
 echo "=== Step 9: Generate handoff ==="
-./bin/small handoff --dir . --recent 3
+./bin/small handoff --dir . --summary "Verification checkpoint"
 
 echo ""
 echo "=== Step 10: Test plan command ==="
 ./bin/small plan --add "Verification test task"
-./bin/small plan --done task-4
+./bin/small plan --done task-2
 ./bin/small validate
 
 echo ""

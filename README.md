@@ -1,6 +1,6 @@
 # SMALL Protocol
 
-**SMALL** is a formal execution protocol for making AI-assisted work legible, deterministic, and resumable.
+**SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle)** is a formal execution protocol for making AI-assisted work legible, deterministic, and resumable.
 
 It defines a small set of canonical, machine-readable artifacts that allow humans and automated agents to coordinate work without relying on ephemeral chat history or implicit context.
 
@@ -40,36 +40,50 @@ go install github.com/justyn-clark/small-protocol/cmd/small@latest
 Verify installation:
 
 ```bash
-small version
+command -v small && small version
 ```
 
 Expected output:
 
 ```
+/Users/you/go/bin/small
 small v1.0.0
 Supported spec versions: ["1.0.0"]
 ```
 
 #### If `small` is not found
 
-If you see:
+If `command -v small` returns nothing, the Go bin directory is not on PATH.
 
-```
-zsh: command not found: small
-```
-
-Your Go bin directory is not on PATH. Fix it:
+**zsh (macOS default):**
 
 ```bash
 echo 'export PATH="$(go env GOPATH)/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-Then retry:
+**bash:**
 
 ```bash
-small version
+echo 'export PATH="$(go env GOPATH)/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
+
+**Common fixes:**
+
+- Ensure `$(go env GOPATH)/bin` is on PATH
+- Restart your terminal or source your shell rc file
+- Confirm you installed to the same Go you're running (`which go`)
+- On macOS with Homebrew: ensure you're using the Homebrew Go (`brew --prefix go`)
+
+Then verify:
+
+```bash
+command -v small   # Should print a path
+small version      # Should print version info
+```
+
+If `command -v small` still returns nothing, you are not installed correctly.
 
 ---
 
@@ -101,7 +115,7 @@ small version
 Initialize a SMALL workspace:
 
 ```bash
-small init --name myproject
+small init --intent "My project description"
 ```
 
 This creates a `.small/` directory containing the five canonical artifacts:
@@ -129,6 +143,74 @@ small status
 
 ---
 
+## End-to-End: 5 Minutes
+
+A complete first-run walkthrough. Run these commands from your project root.
+
+### 1. Install
+
+```bash
+go install github.com/justyn-clark/small-protocol/cmd/small@latest
+```
+
+### 2. Verify installation
+
+```bash
+command -v small          # Should print: /path/to/go/bin/small
+small version             # Should print: small v1.0.0
+```
+
+### 3. Initialize a project
+
+```bash
+mkdir myproject && cd myproject
+small init --intent "My project description"
+```
+
+### 4. Validate and lint
+
+```bash
+small validate            # Schema validation
+small lint                # Invariant checks
+```
+
+### 5. Add a task
+
+```bash
+small plan --add "Implement user authentication"
+small status              # See the new task
+```
+
+### 6. Preview execution
+
+```bash
+small apply --dry-run --cmd "echo 'Hello SMALL'"
+```
+
+### 7. Execute and record
+
+```bash
+small apply --cmd "echo 'Hello SMALL'"
+small status --recent 1   # See the recorded progress entry
+```
+
+### 8. Generate handoff
+
+```bash
+small handoff
+```
+
+### 9. Verify artifacts exist
+
+```bash
+ls -la .small/
+git status                # .small/ artifacts ready to commit
+```
+
+You now have a working SMALL project with tracked execution history.
+
+---
+
 ## The Five Canonical Artifacts
 
 | Artifact | Owner | Purpose |
@@ -144,6 +226,33 @@ All artifacts:
 - **MUST** declare `small_version: "1.0.0"`
 - **MUST** validate against the v1.0.0 schemas
 - **MUST** satisfy locked invariants
+
+---
+
+## What a SMALL Project Looks Like
+
+A SMALL project is always the same **five canonical files**. The set does not change.
+
+```
+.small/
+├── intent.small.yml        # Stable: what the work is
+├── constraints.small.yml   # Stable: what must not change
+├── plan.small.yml          # Grows: tasks added/updated over time
+├── progress.small.yml      # Grows: append-only verified execution log
+└── handoff.small.yml       # Updates: checkpoint regenerated on handoff
+```
+
+### How artifacts evolve
+
+| Artifact | Behavior |
+|----------|----------|
+| `intent` | Stable. Set once, rarely edited. |
+| `constraints` | Stable. Set once, rarely edited. |
+| `plan` | Grows. Tasks are added, updated, marked done. |
+| `progress` | Append-only. Each verified execution adds an entry. |
+| `handoff` | Regenerated. Updates when you run `small handoff`. |
+
+Growth happens **inside** `plan` and `progress`, not by multiplying file types.
 
 ---
 
@@ -276,14 +385,40 @@ It functions as a **flight recorder** for agentic workflows.
 
 ---
 
-## What SMALL Is Not
+## Explicit Non-Goals
 
 | What It's Not | Why |
 |---------------|-----|
 | A CMS | SMALL stores project state metadata, not content |
 | A task runner | `small apply` records execution; it does not orchestrate it |
-| A multi-agent framework | SMALL is single-writer by design |
+| A multi-agent framework | SMALL intentionally enforces a single active workstream per `.small/` directory to preserve determinism, replay integrity, and unambiguous authorship |
 | An LLM executor | It's a protocol, not an AI product |
+
+---
+
+## Enterprise Posture: Audit, Security, Lineage
+
+SMALL is **stateless by design**: it maintains no centralized service, daemon, or runtime memory. State is represented exclusively through explicit, versioned artifacts that can be committed, exported, or ingested elsewhere.
+
+### Centralized lineage
+
+Centralized lineage capture is done by **exporting/ingesting** SMALL artifacts into your existing systems, not by making SMALL itself a server.
+
+**Recommended patterns:**
+
+| Environment | Pattern |
+|-------------|---------|
+| Git-based teams | Commit `.small/` to git for immutable history |
+| CI/CD pipelines | Archive `.small/progress.small.yml` and `small status --json` as build artifacts |
+| Regulated environments | Ingest progress entries into Splunk, Datadog, ELK, or a database as an audit stream |
+
+### What SMALL does not replace
+
+SMALL does not replace IAM, RBAC, or access control. It complements them by making agent execution **legible**: who did what, when, and with what evidence.
+
+### The flight recorder
+
+SMALL functions as a **flight recorder** for agentic work. When something breaks, you have evidence, not vibes. Every verified execution is logged with timestamps, commands, and outcomes. This makes post-incident review and compliance audits straightforward.
 
 ---
 
@@ -326,5 +461,7 @@ Copyright 2025 Justyn Clark
 ## Status
 
 **SMALL Protocol v1.0.0 is production-ready.**
+
+The SMALL Protocol defines structure and invariants only; tooling, automation, and integrations are intentionally out of scope and left to implementations.
 
 Tooling will evolve. The protocol will not.
