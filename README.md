@@ -316,10 +316,18 @@ Validate the current workspace:
 small validate
 ```
 
+The CLI includes embedded v1.0.0 schemas, so validation works in any repository without requiring the small-protocol spec directory.
+
+**Schema resolution order:**
+
+1. `--spec-dir` flag (or `$SMALL_SPEC_DIR` env var) - explicit path to spec directory
+2. On-disk schemas in `spec/small/v1.0.0/schemas/` - for development in small-protocol repo
+3. Embedded schemas - default for installed CLI
+
 Strict validation (enforces secret detection and invariant hard-fail):
 
 ```bash
-small validate --strict
+small lint --strict
 ```
 
 ---
@@ -430,11 +438,15 @@ SMALL functions as a **flight recorder** for agentic work. When something breaks
 make small-build
 ```
 
+This automatically syncs schemas from `spec/small/v1.0.0/schemas/` to the embedded location before building.
+
 ### Validate Examples
 
 ```bash
 ./bin/small validate --dir spec/small/v1.0.0/examples
 ```
+
+When running inside the small-protocol repo, the CLI automatically uses on-disk schemas for development.
 
 ### Run Tests
 

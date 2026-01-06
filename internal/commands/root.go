@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -62,21 +61,4 @@ func resolveArtifactsDir(dir string) string {
 
 	// Otherwise, return dir as-is (for init/create)
 	return absDir
-}
-
-func findRepoRoot(startDir string) (string, error) {
-	dir := startDir
-	for {
-		// v1.0.0 is the only supported version
-		specPath := filepath.Join(dir, "spec", "small", "v1.0.0", "schemas")
-		if _, err := os.Stat(specPath); err == nil {
-			return dir, nil
-		}
-
-		parent := filepath.Dir(dir)
-		if parent == dir {
-			return "", fmt.Errorf("not in SMALL repo: spec/small/v1.0.0 schemas not found")
-		}
-		dir = parent
-	}
 }

@@ -1,4 +1,4 @@
-.PHONY: small-build small-validate small-lint small-test small-format small-format-check verify
+.PHONY: small-build small-validate small-lint small-test small-format small-format-check verify sync-schemas
 
 GOOS := $(shell go env GOOS)
 GOARCH := $(shell go env GOARCH)
@@ -6,7 +6,14 @@ BIN_DIR := bin
 BIN_NAME := small
 BIN_PATH := $(BIN_DIR)/$(BIN_NAME)
 
-small-build:
+# Sync schemas from spec to embedded location before building
+sync-schemas:
+	@echo "Syncing embedded schemas..."
+	@mkdir -p internal/specembed/schemas
+	@cp spec/small/v1.0.0/schemas/*.schema.json internal/specembed/schemas/
+	@echo "✓ Schemas synced to internal/specembed/schemas/"
+
+small-build: sync-schemas
 	@echo "Building SMALL CLI..."
 	@mkdir -p $(BIN_DIR)
 	@go build -o $(BIN_PATH) ./cmd/small

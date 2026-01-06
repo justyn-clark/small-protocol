@@ -11,11 +11,17 @@ import (
 func lintCmd() *cobra.Command {
 	var strict bool
 	var dir string
+	var specDir string
 
 	cmd := &cobra.Command{
 		Use:   "lint",
 		Short: "Lint SMALL artifacts for invariant violations",
-		Long:  "Checks invariants beyond schema validation (version, ownership, evidence, secrets).",
+		Long: `Checks invariants beyond schema validation (version, ownership, evidence, secrets).
+
+Schema Resolution (for any validation performed):
+  1. If --spec-dir is set, load schemas from that directory
+  2. Else if on-disk schemas found (dev mode in small-protocol repo), use those
+  3. Else use embedded v1.0.0 schemas (default for installed CLI)`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if dir == "" {
 				dir = baseDir
@@ -43,6 +49,10 @@ func lintCmd() *cobra.Command {
 
 	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (includes secret detection)")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
+	cmd.Flags().StringVar(&specDir, "spec-dir", os.Getenv("SMALL_SPEC_DIR"),
+		"Directory containing spec/ (e.g., path/to/small-protocol). Falls back to $SMALL_SPEC_DIR")
+	// Mark as unused for now since lint doesn't do schema validation
+	_ = specDir
 
 	return cmd
 }

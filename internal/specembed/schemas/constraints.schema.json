@@ -1,0 +1,52 @@
+{
+  "$id": "https://smallprotocol.dev/schemas/small/v1.0.0/constraints.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMALL Constraints",
+  "description": "Human-owned project constraints and requirements",
+  "type": "object",
+  "required": [
+    "small_version",
+    "owner",
+    "constraints"
+  ],
+  "properties": {
+    "small_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "SMALL protocol version"
+    },
+    "owner": {
+      "type": "string",
+      "const": "human",
+      "description": "Owner of this artifact (must be 'human')"
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "rule", "severity"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique identifier for this constraint"
+          },
+          "rule": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The constraint rule description"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warn"],
+            "description": "Severity level of constraint violation"
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Array of constraints with id, rule, and severity"
+    }
+  },
+  "additionalProperties": false
+}

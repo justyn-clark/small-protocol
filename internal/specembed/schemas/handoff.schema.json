@@ -1,0 +1,67 @@
+{
+  "$id": "https://smallprotocol.dev/schemas/small/v1.0.0/handoff.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMALL Handoff",
+  "description": "Agent-owned resume entrypoint for session continuity",
+  "type": "object",
+  "required": [
+    "small_version",
+    "owner",
+    "summary",
+    "resume",
+    "links"
+  ],
+  "properties": {
+    "small_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "SMALL protocol version"
+    },
+    "owner": {
+      "type": "string",
+      "const": "agent",
+      "description": "Owner of this artifact (must be 'agent')"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Summary of current state for resuming work"
+    },
+    "resume": {
+      "type": "object",
+      "required": ["next_steps"],
+      "properties": {
+        "current_task_id": {
+          "type": "string",
+          "description": "ID of the current/active task"
+        },
+        "next_steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Array of next steps to resume work"
+        }
+      },
+      "additionalProperties": false
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to relevant resource"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the linked resource"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Array of relevant links for context"
+    }
+  },
+  "additionalProperties": false
+}
