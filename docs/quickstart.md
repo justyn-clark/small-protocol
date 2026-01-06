@@ -1,0 +1,57 @@
+# Quick Start
+
+Run all `small` commands from your repository root.
+If executed inside `.small/`, SMALL will still resolve the workspace automatically.
+
+## Initialize a SMALL Workspace
+
+```bash
+small init --intent "My project description"
+```
+
+This creates a `.small/` directory with the five canonical artifacts:
+
+```text
+.small/
+├── intent.small.yml
+├── constraints.small.yml
+├── plan.small.yml
+├── progress.small.yml
+└── handoff.small.yml
+```
+
+## Validate Artifacts
+
+```bash
+small validate
+```
+
+## Check Project Status
+
+```bash
+small status
+```
+
+## What a SMALL Project Looks Like
+
+A SMALL project always consists of exactly five files.
+The set is fixed; growth happens inside the artifacts.
+
+```text
+.small/
+├── intent.small.yml        # Stable: what the work is
+├── constraints.small.yml   # Stable: what must not change
+├── plan.small.yml          # Grows: tasks added and updated
+├── progress.small.yml      # Append-only execution log
+└── handoff.small.yml       # Regenerated resume checkpoint
+```
+
+### Artifact Evolution
+
+| Artifact    | Behavior                 |
+|-------------|--------------------------|
+| intent      | Set once, rarely edited  |
+| constraints | Set once, rarely edited  |
+| plan        | Grows over time          |
+| progress    | Append-only              |
+| handoff     | Regenerated on handoff   |
