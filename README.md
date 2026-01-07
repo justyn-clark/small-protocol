@@ -53,49 +53,31 @@ spec/small/v1.0.0/
 
 | Document | Description |
 |----------|-------------|
-| [Installation](docs/installation.md) | Install via Go or build from source |
+| [Installation](docs/installation.md) | Install via Go, binaries, or source |
 | [Quick Start](docs/quickstart.md) | Initialize and validate a SMALL workspace |
 | [CLI Reference](docs/cli.md) | Command reference |
 | [Invariants](docs/invariants.md) | Non-negotiable protocol rules |
 | [Enterprise Integration](docs/enterprise.md) | Git, CI/CD, and audit patterns |
 | [Philosophy](docs/philosophy.md) | Design rationale and non-goals |
+| [Releasing](docs/releasing.md) | How releases are built and verified |
 
 ## Quick Start
 
+Run all commands from your repository root.
+
 ```bash
+# Install
 go install github.com/justyn-clark/small-protocol/cmd/small@latest
+
+# Initialize
 small init --intent "My project description"
+
+# Validate
 small validate
 ```
 
-## Releases
-
-Tagged releases publish cross-platform binaries to [GitHub Releases](https://github.com/justyn-clark/small-protocol/releases).
-
-### Creating a Release
-
-```bash
-git tag -a v1.0.0 -m "SMALL v1.0.0"
-git push origin v1.0.0
-```
-
-The release workflow builds binaries for:
-- macOS (amd64, arm64)
-- Linux (amd64, arm64)
-- Windows (amd64, arm64)
-
-### Verifying Downloads
-
-Each release includes a `checksums.txt` file with SHA256 hashes:
-
-```bash
-# Download the binary and checksums
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.0/small_1.0.0_Darwin_arm64.tar.gz
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.0/checksums.txt
-
-# Verify checksum
-sha256sum -c checksums.txt --ignore-missing
-```
+Or download pre-built binaries from [GitHub Releases](https://github.com/justyn-clark/small-protocol/releases).
+See [Installation](docs/installation.md) for checksum verification and PATH setup.
 
 ## License
 

@@ -2,9 +2,28 @@
 
 ## Requirements
 
-- Go 1.22 or later
+- Go 1.22 or later (for source install)
+- Or: download pre-built binaries (no Go required)
 
-## Option 1 (Recommended): Install via Go
+## Option 1: Download Pre-built Binaries
+
+Download the latest release from [GitHub Releases](https://github.com/justyn-clark/small-protocol/releases).
+
+```bash
+# Example for macOS ARM64
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.0/small-protocol_1.0.0_Darwin_arm64.tar.gz
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.0/checksums.txt
+
+# Verify checksum
+shasum -a 256 -c checksums.txt --ignore-missing
+
+# Extract and install
+tar -xzf small-protocol_1.0.0_Darwin_arm64.tar.gz
+sudo mv small /usr/local/bin/
+small version
+```
+
+## Option 2 (Recommended for Go users): Install via Go
 
 Install the `small` binary directly:
 
@@ -51,7 +70,7 @@ command -v small
 small version
 ```
 
-## Option 2: Build from Source
+## Option 3: Build from Source
 
 ```bash
 git clone https://github.com/justyn-clark/small-protocol.git
