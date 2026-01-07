@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/version"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -67,7 +68,7 @@ func statusCmd() *cobra.Command {
 			smallDir := filepath.Join(artifactsDir, small.SmallDir)
 
 			status := StatusOutput{
-				Version: CLIVersion,
+				Version: version.GetVersion(),
 			}
 
 			// Check if .small directory exists
@@ -76,7 +77,7 @@ func statusCmd() *cobra.Command {
 				if jsonOutput {
 					return outputJSON(status)
 				}
-				fmt.Printf("small v%s\n", CLIVersion)
+				fmt.Printf("small %s\n", version.GetVersion())
 				fmt.Println("\n.small/ directory does not exist")
 				fmt.Println("Run 'small init' to create a SMALL project")
 				return nil

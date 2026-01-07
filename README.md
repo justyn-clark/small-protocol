@@ -68,6 +68,35 @@ small init --intent "My project description"
 small validate
 ```
 
+## Releases
+
+Tagged releases publish cross-platform binaries to [GitHub Releases](https://github.com/justyn-clark/small-protocol/releases).
+
+### Creating a Release
+
+```bash
+git tag -a v1.0.0 -m "SMALL v1.0.0"
+git push origin v1.0.0
+```
+
+The release workflow builds binaries for:
+- macOS (amd64, arm64)
+- Linux (amd64, arm64)
+- Windows (amd64, arm64)
+
+### Verifying Downloads
+
+Each release includes a `checksums.txt` file with SHA256 hashes:
+
+```bash
+# Download the binary and checksums
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.0/small_1.0.0_Darwin_arm64.tar.gz
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.0/checksums.txt
+
+# Verify checksum
+sha256sum -c checksums.txt --ignore-missing
+```
+
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE).

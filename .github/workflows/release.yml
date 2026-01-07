@@ -21,6 +21,10 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.22.x'
+          cache: true
+
+      - name: Sync embedded schemas
+        run: make sync-schemas
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
