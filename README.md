@@ -49,13 +49,27 @@ spec/small/v1.0.0/
 └── examples/
 ```
 
+## Getting Started
+
+**New to SMALL?** Start here:
+
+1. [Getting Started Guide](docs/getting-started.md) - Answers "Do I manually type these files?" and walks through the workflow
+2. [Agent Operating Contract](docs/agent-operating-contract.md) - Required reading for AI agents using SMALL
+
+**Human workflow**: Edit `intent.small.yml` and `constraints.small.yml`. The agent handles the rest.
+
+**Agent workflow**: Read `.small/` first, respect ownership rules, validate before claiming success, handoff when stopping.
+
 ## Documentation
 
 | Document | Description |
 |----------|-------------|
+| [Getting Started](docs/getting-started.md) | First-time user guide with examples |
+| [Agent Operating Contract](docs/agent-operating-contract.md) | Behavioral rules for AI agents |
+| [CLI Guide](docs/cli-guide.md) | Detailed command reference with error handling |
 | [Installation](docs/installation.md) | Install via Go, binaries, or source |
 | [Quick Start](docs/quickstart.md) | Initialize and validate a SMALL workspace |
-| [CLI Reference](docs/cli.md) | Command reference |
+| [CLI Reference](docs/cli.md) | Command summary table |
 | [Invariants](docs/invariants.md) | Non-negotiable protocol rules |
 | [Enterprise Integration](docs/enterprise.md) | Git, CI/CD, and audit patterns |
 | [Philosophy](docs/philosophy.md) | Design rationale and non-goals |
