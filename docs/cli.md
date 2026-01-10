@@ -9,6 +9,9 @@
 | `small validate` | Schema validation                     |
 | `small lint`     | Invariant enforcement                 |
 | `small handoff`  | Generate resume checkpoint            |
+| `small reset`    | Reset workspace for new run           |
+| `small verify`   | CI/local enforcement gate             |
+| `small doctor`   | Diagnose workspace issues             |
 
 ## Execution Commands
 
@@ -50,4 +53,25 @@ Generate a handoff checkpoint:
 
 ```bash
 small handoff
+```
+
+Reset workspace for a new run:
+
+```bash
+small reset --yes
+small reset --keep-intent  # Preserve intent.small.yml
+```
+
+Verify artifacts for CI:
+
+```bash
+small verify        # Exit 0 if valid, 1 if invalid, 2 if system error
+small verify --ci   # Minimal output for CI pipelines
+small verify --strict  # Enable strict checks (secrets, insecure links)
+```
+
+Diagnose workspace issues:
+
+```bash
+small doctor  # Read-only, never mutates state
 ```

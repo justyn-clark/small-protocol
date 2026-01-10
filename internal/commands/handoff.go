@@ -1,9 +1,13 @@
 package commands
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/spf13/cobra"
@@ -12,11 +16,18 @@ import (
 
 // handoffOut represents the v1.0.0 handoff structure
 type handoffOut struct {
-	SmallVersion string    `yaml:"small_version"`
-	Owner        string    `yaml:"owner"`
-	Summary      string    `yaml:"summary"`
-	Resume       resumeOut `yaml:"resume"`
-	Links        []linkOut `yaml:"links"`
+	SmallVersion string       `yaml:"small_version"`
+	Owner        string       `yaml:"owner"`
+	Summary      string       `yaml:"summary"`
+	Resume       resumeOut    `yaml:"resume"`
+	Links        []linkOut    `yaml:"links"`
+	ReplayId     *replayIdOut `yaml:"replayId,omitempty"`
+}
+
+// replayIdOut represents optional deterministic metadata for replay identification
+type replayIdOut struct {
+	Value  string `yaml:"value"`
+	Source string `yaml:"source"`
 }
 
 type resumeOut struct {
@@ -31,14 +42,18 @@ type linkOut struct {
 
 func handoffCmd() *cobra.Command {
 	var (
-		summary string
-		dir     string
+		summary      string
+		dir          string
+		withReplayId bool
 	)
 
 	cmd := &cobra.Command{
 		Use:   "handoff",
 		Short: "Generate or update handoff.small.yml",
-		Long:  "Generates handoff.small.yml from current plan with resume information.",
+		Long: `Generates handoff.small.yml from current plan with resume information.
+
+Use --replay-id to include deterministic metadata for replay identification.
+Note: replayId is optional metadata; git history remains the canonical audit trail.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if dir == "" {
 				dir = baseDir
@@ -100,6 +115,11 @@ func handoffCmd() *cobra.Command {
 				Links: []linkOut{},
 			}
 
+			// Add replayId if requested
+			if withReplayId {
+				h.ReplayId = generateReplayId(handoffSummary, nextSteps)
+			}
+
 			yml, err := yaml.Marshal(h)
 			if err != nil {
 				return fmt.Errorf("failed to marshal handoff: %w", err)
@@ -116,6 +136,9 @@ func handoffCmd() *cobra.Command {
 			}
 
 			fmt.Printf("Generated handoff.small.yml with %d next steps\n", len(nextSteps))
+			if withReplayId {
+				fmt.Printf("Included replayId: %s\n", h.ReplayId.Value[:16]+"...")
+			}
 			fmt.Println(string(yml))
 			return nil
 		},
@@ -123,8 +146,25 @@ func handoffCmd() *cobra.Command {
 
 	cmd.Flags().StringVar(&summary, "summary", "", "Summary description for the handoff")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
+	cmd.Flags().BoolVar(&withReplayId, "replay-id", false, "Include deterministic replayId metadata")
 
 	return cmd
+}
+
+// generateReplayId creates a deterministic SHA256 hash from handoff content
+func generateReplayId(summary string, nextSteps []string) *replayIdOut {
+	// Create deterministic content for hashing
+	content := fmt.Sprintf("summary:%s;steps:%s;ts:%d",
+		summary,
+		strings.Join(nextSteps, ","),
+		time.Now().UnixNano(),
+	)
+
+	hash := sha256.Sum256([]byte(content))
+	return &replayIdOut{
+		Value:  hex.EncodeToString(hash[:]),
+		Source: "cli",
+	}
 }
 
 func stringVal(v interface{}) string {
