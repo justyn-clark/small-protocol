@@ -21,6 +21,7 @@ Thumbs.db
 # Cursor / AI
 # ================================
 .cursorrules
+.claude
 
 # ================================
 # Temp / Logs

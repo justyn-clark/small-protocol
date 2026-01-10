@@ -322,6 +322,7 @@ small handoff --summary "Completed authentication module"
 | Flag | Description |
 |------|-------------|
 | `--summary <string>` | Custom summary text |
+| `--replay-id` | Include deterministic replayId metadata |
 | `--dir <path>` | Directory containing .small/ |
 
 **What gets generated:**
@@ -345,6 +346,149 @@ small handoff --summary "Completed authentication module"
 |-------|-------|------------|
 | `.small/ not found` | Workspace not initialized | Run `small init` first |
 | `no tasks in plan` | Empty plan | Add tasks with `small plan --add` |
+
+### small reset
+
+Reset the workspace for a new run while preserving audit history.
+
+```bash
+small reset --yes
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--yes`, `-y` | Non-interactive mode (skip confirmation) |
+| `--keep-intent` | Preserve intent.small.yml |
+| `--dir <path>` | Directory containing .small/ |
+
+**What gets reset (ephemeral files):**
+
+- `intent.small.yml` (unless `--keep-intent`)
+- `plan.small.yml`
+- `handoff.small.yml`
+
+**What gets preserved (audit files):**
+
+- `progress.small.yml` (append-only audit trail)
+- `constraints.small.yml` (human-owned)
+
+**When to reset:**
+
+- Starting a new work run/session
+- After completing a major milestone
+- When artifacts have become stale
+
+**Common errors:**
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| `.small/ does not exist` | Workspace not initialized | Run `small init` first |
+| `Reset cancelled` | User declined confirmation | Use `--yes` to skip confirmation |
+
+### small verify
+
+CI and local enforcement gate for SMALL artifacts.
+
+```bash
+small verify
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--strict` | Enable strict mode (secrets, insecure links) |
+| `--ci` | CI mode (minimal output, just errors) |
+| `--dir <path>` | Directory containing .small/ |
+
+**Exit codes:**
+
+| Code | Meaning |
+|------|---------|
+| 0 | All artifacts valid |
+| 1 | Artifacts invalid (validation or invariant failures) |
+| 2 | System error (missing directory, read errors) |
+
+**What gets checked:**
+
+- All required files exist
+- Schema validation of all artifacts
+- Invariant enforcement (ownership, required fields)
+- ReplayId format validation (if present)
+
+**CI integration example:**
+
+```yaml
+# GitHub Actions
+- name: Verify SMALL artifacts
+  run: small verify --ci --strict
+```
+
+**Common errors:**
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| `Missing required files` | Files don't exist | Run `small init` |
+| `Schema validation failed` | Invalid structure | Fix the schema violation |
+| `Invariant violation` | Protocol rule broken | Fix the invariant |
+
+### small doctor
+
+Diagnose workspace issues and suggest fixes. This command is **read-only** and never mutates state.
+
+```bash
+small doctor
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--dir <path>` | Directory to diagnose |
+
+**What gets diagnosed:**
+
+- Missing or malformed .small files
+- Schema violations
+- Invariant violations
+- Version consistency
+- Run state analysis (task status distribution)
+- Progress entry count
+- Handoff next steps
+
+**Example output:**
+
+```
+SMALL Doctor Report
+===================
+
+[OK] Workspace: .small/ directory exists
+[OK] Files: All required files present
+[OK] Schema: All artifacts pass schema validation
+[OK] Invariant: All protocol invariants satisfied
+[OK] Run State: Tasks: 5 total, 2 completed, 1 in_progress, 2 pending, 0 blocked
+     -> Ready to continue current task
+[OK] Progress: 10 progress entries recorded
+
+Summary: All checks passed!
+```
+
+**When to use doctor:**
+
+- First time setting up a workspace
+- When you encounter unexpected errors
+- Before starting a new session
+- Debugging CI failures
+
+**Common output states:**
+
+| Status | Meaning |
+|--------|---------|
+| `[OK]` | Check passed |
+| `[WARN]` | Non-critical issue, review suggestion |
+| `[ERROR]` | Critical issue, must fix |
 
 ## Error Resolution Guide
 
@@ -431,4 +575,16 @@ small apply --cmd "make build" --task task-2 --handoff
 
 # Handoff
 small handoff --summary "Session complete"
+small handoff --replay-id  # Include deterministic metadata
+
+# New run
+small reset --yes           # Reset ephemeral files
+small reset --keep-intent   # Keep intent, reset others
+
+# CI/Verification
+small verify                # Exit 0 valid, 1 invalid, 2 error
+small verify --ci --strict  # CI mode with strict checks
+
+# Diagnosis
+small doctor                # Read-only workspace diagnosis
 ```

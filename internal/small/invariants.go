@@ -108,6 +108,7 @@ func allowedTopLevelKeys(artifactType string) map[string]bool {
 		base["summary"] = true
 		base["resume"] = true
 		base["links"] = true
+		base["replayId"] = true
 		return base
 	default:
 		return nil

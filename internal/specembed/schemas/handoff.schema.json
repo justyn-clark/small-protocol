@@ -61,6 +61,24 @@
         "additionalProperties": false
       },
       "description": "Array of relevant links for context"
+    },
+    "replayId": {
+      "type": "object",
+      "description": "Optional deterministic metadata for replay identification. Git history remains the canonical audit trail.",
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$",
+          "description": "SHA256 hash for deterministic identification"
+        },
+        "source": {
+          "type": "string",
+          "enum": ["cli", "agent", "ci", "manual"],
+          "description": "Source that generated the replayId"
+        }
+      },
+      "required": ["value", "source"],
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
