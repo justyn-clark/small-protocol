@@ -171,9 +171,9 @@ func validateReplayId(handoff *small.Artifact) []string {
 	if !hasSource || strings.TrimSpace(source) == "" {
 		errors = append(errors, "replayId.source must be a non-empty string")
 	} else {
-		validSources := map[string]bool{"cli": true, "agent": true, "ci": true, "manual": true}
+		validSources := map[string]bool{"auto": true, "manual": true}
 		if !validSources[source] {
-			errors = append(errors, fmt.Sprintf("replayId.source must be one of [cli, agent, ci, manual], got: %s", source))
+			errors = append(errors, fmt.Sprintf("replayId.source must be one of [auto, manual], got: %s", source))
 		}
 	}
 

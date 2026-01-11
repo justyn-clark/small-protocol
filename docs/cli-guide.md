@@ -322,7 +322,7 @@ small handoff --summary "Completed authentication module"
 | Flag | Description |
 |------|-------------|
 | `--summary <string>` | Custom summary text |
-| `--replay-id` | Include deterministic replayId metadata |
+| `--replay-id <string>` | Manual replayId override (must be 64 lowercase hex chars) |
 | `--dir <path>` | Directory containing .small/ |
 
 **What gets generated:**
@@ -331,6 +331,27 @@ small handoff --summary "Completed authentication module"
 - `resume.current_task_id` - First in_progress task
 - `resume.next_steps` - Titles of pending/in_progress tasks
 - `links` - Empty array (populate manually if needed)
+- `replayId` - Deterministic identifier for the run (always included)
+
+**ReplayId:**
+
+ReplayId is the stable identifier for a SMALL run. The CLI emits replayId automatically by hashing the run-defining artifacts (intent + plan + optional constraints). The hash is deterministic: same inputs produce the same replayId across machines.
+
+```yaml
+replayId:
+  value: "a1b2c3d4..."  # 64 lowercase hex chars (SHA256)
+  source: "auto"        # "auto" when generated, "manual" when provided
+```
+
+If you supply `--replay-id`, the CLI will validate the value (must be 64 lowercase hex characters) and use it instead, marking `source: "manual"`.
+
+```bash
+# Auto-generated (default)
+small handoff
+
+# Manual override
+small handoff --replay-id a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
+```
 
 **When to handoff:**
 
@@ -346,6 +367,7 @@ small handoff --summary "Completed authentication module"
 |-------|-------|------------|
 | `.small/ not found` | Workspace not initialized | Run `small init` first |
 | `no tasks in plan` | Empty plan | Add tasks with `small plan --add` |
+| `invalid replayId format` | Manual replayId not 64 lowercase hex | Provide valid SHA256 hash |
 
 ### small reset
 
@@ -575,7 +597,7 @@ small apply --cmd "make build" --task task-2 --handoff
 
 # Handoff
 small handoff --summary "Session complete"
-small handoff --replay-id  # Include deterministic metadata
+small handoff --replay-id abc123...  # Manual replayId override
 
 # New run
 small reset --yes           # Reset ephemeral files

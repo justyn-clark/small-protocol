@@ -1,0 +1,63 @@
+small_version: "1.0.0"
+owner: agent
+tasks:
+  - id: "replayid-schema-alignment"
+    title: "Align handoff replayId type with schema"
+    status: completed
+    steps:
+      - "Change handoff data model to replayId: { value, source } (optional)"
+      - "Ensure YAML output matches handoff.schema.json exactly"
+    acceptance:
+      - "handoff.small.yml contains replayId.value and replayId.source"
+
+  - id: "replayid-generation-auto"
+    title: "Generate deterministic ReplayId when flag not provided"
+    status: completed
+    steps:
+      - "Read .small/intent.small.yml and .small/plan.small.yml"
+      - "If .small/constraints.small.yml exists, include it"
+      - "Normalize content (LF line endings) and sha256 hash concatenated bytes"
+      - "Write replayId.source=auto"
+    acceptance:
+      - "Same inputs produce same replayId across machines"
+      - "replayId.value is 64 lowercase hex chars"
+
+  - id: "replayid-flag-manual"
+    title: "Support --replay-id for manual override"
+    status: completed
+    steps:
+      - "Add/keep --replay-id flag on small handoff"
+      - "Validate input matches ^[a-f0-9]{64}$"
+      - "Write replayId.source=manual"
+    acceptance:
+      - "Invalid replay ids fail fast with clear error"
+      - "Manual replay id is preserved exactly"
+
+  - id: "remove-nondeterminism"
+    title: "Eliminate time/rand-based replay id generation"
+    status: completed
+    steps:
+      - "Delete or refactor any code paths using time.Now or crypto/rand for replayId"
+      - "Remove/adjust any comments claiming determinism when not true"
+    acceptance:
+      - "No nondeterministic replayId generation remains"
+
+  - id: "tests"
+    title: "Lock behavior with tests"
+    status: completed
+    steps:
+      - "Unit test: deterministic replay id from fixture inputs"
+      - "Unit test: manual flag sets source=manual and validates format"
+      - "Schema validation test (if existing harness): handoff passes validate"
+    acceptance:
+      - "go test ./... passes"
+
+  - id: "docs-sync"
+    title: "Update docs to match real behavior"
+    status: completed
+    steps:
+      - "Update docs/cli-guide.md and any ReplayId references"
+      - "Add short note: CLI emits replayId automatically; --replay-id overrides"
+      - "Remove any implication that website examples are magic-only"
+    acceptance:
+      - "Docs describe the same shape and rules the CLI emits"

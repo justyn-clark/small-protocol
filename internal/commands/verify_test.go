@@ -133,10 +133,18 @@ func TestValidateReplayId(t *testing.T) {
 			wantErrors: 0,
 		},
 		{
-			name: "valid replayId",
+			name: "valid replayId with auto source",
 			replayId: map[string]interface{}{
 				"value":  "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
-				"source": "cli",
+				"source": "auto",
+			},
+			wantErrors: 0,
+		},
+		{
+			name: "valid replayId with manual source",
+			replayId: map[string]interface{}{
+				"value":  "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+				"source": "manual",
 			},
 			wantErrors: 0,
 		},
@@ -144,7 +152,7 @@ func TestValidateReplayId(t *testing.T) {
 			name: "invalid SHA256 format",
 			replayId: map[string]interface{}{
 				"value":  "invalid",
-				"source": "cli",
+				"source": "auto",
 			},
 			wantErrors: 1,
 		},
@@ -152,14 +160,14 @@ func TestValidateReplayId(t *testing.T) {
 			name: "invalid source",
 			replayId: map[string]interface{}{
 				"value":  "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
-				"source": "invalid",
+				"source": "cli",
 			},
 			wantErrors: 1,
 		},
 		{
 			name: "missing value",
 			replayId: map[string]interface{}{
-				"source": "cli",
+				"source": "auto",
 			},
 			wantErrors: 1,
 		},
