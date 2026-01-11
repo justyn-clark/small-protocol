@@ -11,10 +11,10 @@ import (
 )
 
 type DiagnosticResult struct {
-	Category    string
-	Status      string // "ok", "warning", "error"
-	Message     string
-	Suggestion  string
+	Category   string
+	Status     string // "ok", "warning", "error"
+	Message    string
+	Suggestion string
 }
 
 func doctorCmd() *cobra.Command {
@@ -253,9 +253,9 @@ func analyzeRunState(artifacts map[string]*small.Artifact) []DiagnosticResult {
 			})
 		} else {
 			results = append(results, DiagnosticResult{
-				Category:   "Progress",
-				Status:     "ok",
-				Message:    fmt.Sprintf("%d progress entries recorded", entryCount),
+				Category: "Progress",
+				Status:   "ok",
+				Message:  fmt.Sprintf("%d progress entries recorded", entryCount),
 			})
 		}
 	}

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
-	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/spf13/cobra"
@@ -42,9 +42,9 @@ type linkOut struct {
 
 func handoffCmd() *cobra.Command {
 	var (
-		summary      string
-		dir          string
-		withReplayId bool
+		summary  string
+		dir      string
+		replayId string
 	)
 
 	cmd := &cobra.Command{
@@ -52,7 +52,10 @@ func handoffCmd() *cobra.Command {
 		Short: "Generate or update handoff.small.yml",
 		Long: `Generates handoff.small.yml from current plan with resume information.
 
-Use --replay-id to include deterministic metadata for replay identification.
+ReplayId is emitted automatically by hashing the run-defining artifacts
+(intent + plan + optional constraints). Use --replay-id to override with
+a manual value.
+
 Note: replayId is optional metadata; git history remains the canonical audit trail.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if dir == "" {
@@ -115,10 +118,13 @@ Note: replayId is optional metadata; git history remains the canonical audit tra
 				Links: []linkOut{},
 			}
 
-			// Add replayId if requested
-			if withReplayId {
-				h.ReplayId = generateReplayId(handoffSummary, nextSteps)
+			// Generate or validate replayId
+			smallDir := filepath.Join(artifactsDir, small.SmallDir)
+			generatedReplayId, err := generateReplayId(smallDir, replayId)
+			if err != nil {
+				return fmt.Errorf("replayId error: %w", err)
 			}
+			h.ReplayId = generatedReplayId
 
 			yml, err := yaml.Marshal(h)
 			if err != nil {
@@ -126,7 +132,6 @@ Note: replayId is optional metadata; git history remains the canonical audit tra
 			}
 
 			// Write to .small/handoff.small.yml
-			smallDir := filepath.Join(artifactsDir, small.SmallDir)
 			if err := os.MkdirAll(smallDir, 0755); err != nil {
 				return fmt.Errorf("failed to create .small directory: %w", err)
 			}
@@ -136,9 +141,7 @@ Note: replayId is optional metadata; git history remains the canonical audit tra
 			}
 
 			fmt.Printf("Generated handoff.small.yml with %d next steps\n", len(nextSteps))
-			if withReplayId {
-				fmt.Printf("Included replayId: %s\n", h.ReplayId.Value[:16]+"...")
-			}
+			fmt.Printf("replayId: %s (source: %s)\n", h.ReplayId.Value[:16]+"...", h.ReplayId.Source)
 			fmt.Println(string(yml))
 			return nil
 		},
@@ -146,25 +149,78 @@ Note: replayId is optional metadata; git history remains the canonical audit tra
 
 	cmd.Flags().StringVar(&summary, "summary", "", "Summary description for the handoff")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
-	cmd.Flags().BoolVar(&withReplayId, "replay-id", false, "Include deterministic replayId metadata")
+	cmd.Flags().StringVar(&replayId, "replay-id", "", "Manual replayId override (must be 64 lowercase hex chars)")
 
 	return cmd
 }
 
-// generateReplayId creates a deterministic SHA256 hash from handoff content
-func generateReplayId(summary string, nextSteps []string) *replayIdOut {
-	// Create deterministic content for hashing
-	content := fmt.Sprintf("summary:%s;steps:%s;ts:%d",
-		summary,
-		strings.Join(nextSteps, ","),
-		time.Now().UnixNano(),
-	)
+// replayIdPattern validates that a manual replayId is 64 lowercase hex chars
+var replayIdPattern = regexp.MustCompile(`^[a-f0-9]{64}$`)
 
-	hash := sha256.Sum256([]byte(content))
+// generateReplayId creates a deterministic SHA256 hash from run-defining artifacts
+// or validates and uses a manual override if provided.
+//
+// Auto mode: sha256(intent.small.yml + "\n" + plan.small.yml [+ "\n" + constraints.small.yml if present])
+// Manual mode: validates --replay-id matches ^[a-f0-9]{64}$ and uses it directly
+func generateReplayId(smallDir string, manualReplayId string) (*replayIdOut, error) {
+	// Manual mode: validate and use provided replayId
+	if manualReplayId != "" {
+		if !replayIdPattern.MatchString(manualReplayId) {
+			return nil, fmt.Errorf("invalid replayId format: must be 64 lowercase hex chars, got: %s", manualReplayId)
+		}
+		return &replayIdOut{
+			Value:  manualReplayId,
+			Source: "manual",
+		}, nil
+	}
+
+	// Auto mode: generate deterministic hash from artifacts
+	intentPath := filepath.Join(smallDir, "intent.small.yml")
+	planPath := filepath.Join(smallDir, "plan.small.yml")
+	constraintsPath := filepath.Join(smallDir, "constraints.small.yml")
+
+	// Read intent (required)
+	intentBytes, err := os.ReadFile(intentPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read intent.small.yml: %w", err)
+	}
+
+	// Read plan (required)
+	planBytes, err := os.ReadFile(planPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read plan.small.yml: %w", err)
+	}
+
+	// Normalize line endings to LF
+	intentContent := normalizeLineEndings(intentBytes)
+	planContent := normalizeLineEndings(planBytes)
+
+	// Build content to hash: intent + "\n" + plan [+ "\n" + constraints]
+	var hashContent []byte
+	hashContent = append(hashContent, intentContent...)
+	hashContent = append(hashContent, '\n')
+	hashContent = append(hashContent, planContent...)
+
+	// Optionally include constraints if present
+	if constraintsBytes, err := os.ReadFile(constraintsPath); err == nil {
+		constraintsContent := normalizeLineEndings(constraintsBytes)
+		hashContent = append(hashContent, '\n')
+		hashContent = append(hashContent, constraintsContent...)
+	}
+
+	hash := sha256.Sum256(hashContent)
 	return &replayIdOut{
 		Value:  hex.EncodeToString(hash[:]),
-		Source: "cli",
-	}
+		Source: "auto",
+	}, nil
+}
+
+// normalizeLineEndings converts CRLF and CR to LF for consistent hashing
+func normalizeLineEndings(content []byte) []byte {
+	// Replace CRLF with LF, then CR with LF
+	s := strings.ReplaceAll(string(content), "\r\n", "\n")
+	s = strings.ReplaceAll(s, "\r", "\n")
+	return []byte(s)
 }
 
 func stringVal(v interface{}) string {

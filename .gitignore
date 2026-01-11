@@ -68,10 +68,15 @@ pnpm-debug.log*
 dist/
 
 # ================================
-# SMALL runtime artifacts (never commit)
+# SMALL runtime artifacts
+# - Ignore live workspace at repo root
+# - Allow committed fixtures under examples/**/.small/**
 # ================================
-/.small/
-handoff.small.yml
+/.small/**
+
+# Allow committed examples
+!/examples/**/.small/
+!/examples/**/.small/**
 
 # ================================
 # Terraform

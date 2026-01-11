@@ -1,0 +1,21 @@
+small_version: "1.0.0"
+owner: human
+intent: >-
+  ReplayId v1: make CLI emit spec-compliant replayId automatically.
+  Docs + schema already define replayId as an object with {value, source};
+  CLI currently emits a mismatched string. ReplayId must be automatic and
+  deterministic to avoid docs looking like a fake demo.
+scope:
+  include:
+    - "internal/commands/"
+    - "spec/small/v1.0.0/"
+    - ".small/"
+    - "docs/"
+  exclude:
+    - "spec/small/v0.1/"
+success_criteria:
+  - "small handoff emits replayId as an object: { value: 64-lower-hex, source: auto|manual }"
+  - "Auto replayId is deterministic: sha256 of run-defining artifacts (intent + plan + optional constraints)"
+  - "--replay-id validates ^[a-f0-9]{64}$ and sets source=manual"
+  - "Generated handoff passes small validate and small verify"
+  - "Docs updated to match actual behavior (no overpromises)"
