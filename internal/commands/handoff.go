@@ -149,27 +149,27 @@ Note: replayId is optional metadata; git history remains the canonical audit tra
 
 	cmd.Flags().StringVar(&summary, "summary", "", "Summary description for the handoff")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
-	cmd.Flags().StringVar(&replayId, "replay-id", "", "Manual replayId override (must be 64 lowercase hex chars)")
+	cmd.Flags().StringVar(&replayId, "replay-id", "", "Manual replayId override (64 hex chars, normalized to lowercase)")
 
 	return cmd
 }
 
-// replayIdPattern validates that a manual replayId is 64 lowercase hex chars
-var replayIdPattern = regexp.MustCompile(`^[a-f0-9]{64}$`)
+// replayIdPattern validates that a manual replayId is 64 hex chars (uppercase or lowercase)
+var replayIdPattern = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
 
 // generateReplayId creates a deterministic SHA256 hash from run-defining artifacts
 // or validates and uses a manual override if provided.
 //
 // Auto mode: sha256(intent.small.yml + "\n" + plan.small.yml [+ "\n" + constraints.small.yml if present])
-// Manual mode: validates --replay-id matches ^[a-f0-9]{64}$ and uses it directly
+// Manual mode: validates --replay-id matches ^[a-fA-F0-9]{64}$ (accepts both cases) and normalizes to lowercase
 func generateReplayId(smallDir string, manualReplayId string) (*replayIdOut, error) {
-	// Manual mode: validate and use provided replayId
+	// Manual mode: validate and use provided replayId (normalized to lowercase)
 	if manualReplayId != "" {
 		if !replayIdPattern.MatchString(manualReplayId) {
-			return nil, fmt.Errorf("invalid replayId format: must be 64 lowercase hex chars, got: %s", manualReplayId)
+			return nil, fmt.Errorf("invalid replayId format: must be 64 hex chars, got: %s", manualReplayId)
 		}
 		return &replayIdOut{
-			Value:  manualReplayId,
+			Value:  strings.ToLower(manualReplayId),
 			Source: "manual",
 		}, nil
 	}

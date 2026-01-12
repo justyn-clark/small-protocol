@@ -121,10 +121,25 @@ constraints:
 		}
 	})
 
+	t.Run("manual mode accepts uppercase and normalizes to lowercase", func(t *testing.T) {
+		uppercaseHash := "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
+		expectedLower := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+		result, err := generateReplayId(smallDir, uppercaseHash)
+		if err != nil {
+			t.Fatalf("generateReplayId with uppercase hash failed: %v", err)
+		}
+
+		if result.Value != expectedLower {
+			t.Errorf("expected normalized value %s, got %s", expectedLower, result.Value)
+		}
+		if result.Source != "manual" {
+			t.Errorf("expected source 'manual', got %s", result.Source)
+		}
+	})
+
 	t.Run("manual mode rejects invalid format", func(t *testing.T) {
 		invalidHashes := []string{
 			"invalid", // too short
-			"A1B2C3D4E5F6A1B2C3D4E5F6A1B2C3D4E5F6A1B2C3D4E5F6A1B2C3D4E5F6A1B2", // uppercase
 			"a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b",  // 63 chars
 			"g1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2", // invalid char 'g'
 		}
