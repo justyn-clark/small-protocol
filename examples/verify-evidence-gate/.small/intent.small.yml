@@ -1,0 +1,13 @@
+intent: "Ensure completed tasks always log progress evidence"
+owner: human
+scope:
+    include:
+        - "internal/small"
+        - "docs/cli-guide.md"
+        - "examples/verify-evidence-gate"
+    exclude: []
+small_version: "1.0.0"
+success_criteria:
+    - "All completed plan tasks reference at least one progress entry"
+    - "docs/cli-guide.md documents the git contract and verify requirement"
+    - "examples/verify-evidence-gate illustrates the gate with a README"

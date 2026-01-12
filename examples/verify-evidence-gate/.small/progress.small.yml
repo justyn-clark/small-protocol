@@ -1,0 +1,28 @@
+small_version: "1.0.0"
+owner: "agent"
+entries:
+  - task_id: verify-evidence-rule
+    status: completed
+    timestamp: "2026-01-12T12:30:00Z"
+    evidence: "Added invariant linking completed tasks to progress entries and regression tests"
+    notes: "internal/small/invariants.go and invariants_test.go updated"
+  - task_id: docs-git-contract
+    status: completed
+    timestamp: "2026-01-12T12:35:00Z"
+    evidence: "CLI guide now explains git contract and the new verify rule"
+    notes: "docs/cli-guide.md updated with Git contract section and verify note"
+  - task_id: example-verify-evidence
+    status: completed
+    timestamp: "2026-01-12T12:45:00Z"
+    evidence: "Copied final .small/ artifacts into examples/verify-evidence-gate/.small/ and wrote README"
+    notes: "Example documents the verify evidence gate"
+  - task_id: verification
+    status: completed
+    timestamp: "2026-01-12T12:50:00Z"
+    evidence: "`go test ./...` and `make verify` passed"
+    notes: "CLI now enforces the progress evidence invariant"
+  - task_id: handoff-summary
+    status: completed
+    timestamp: "2026-01-12T12:55:00Z"
+    evidence: "handoff.small.yml summarizes the new rule and docs"
+    notes: "Next steps list is empty"

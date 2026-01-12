@@ -1,0 +1,52 @@
+small_version: "1.0.0"
+owner: "agent"
+tasks:
+  - id: "verify-evidence-rule"
+    title: "Enforce verify evidence gating"
+    status: completed
+    steps:
+      - "Add invariant linking completed plan tasks to progress entries"
+      - "Cover the new error with regression tests"
+    acceptance:
+      - "Completed plan tasks require at least one matching progress entry"
+      - "New tests fail when the entry is absent and pass when present"
+
+  - id: "docs-git-contract"
+    title: "Document git contract and verify rule"
+    status: completed
+    steps:
+      - "Add the git contract section to the CLI guide"
+      - "Explain the verify enforcement and error message"
+    acceptance:
+      - "CLI guide differentiates runtime .small/ from published examples"
+      - "small verify section calls out the new requirement and message"
+
+  - id: "example-verify-evidence"
+    title: "Publish verify evidence gate example"
+    status: completed
+    steps:
+      - "Copy the final .small/ artifacts into examples/verify-evidence-gate/.small/"
+      - "Write a README describing the rule and failure message"
+    acceptance:
+      - "Example .small/ mirrors the workspace artifacts used for this work"
+      - "README documents the gating rule and shows the expected verify failure"
+
+  - id: "verification"
+    title: "Run go test and make verify"
+    status: completed
+    steps:
+      - "Run `go test ./...`"
+      - "Run `make verify`"
+    acceptance:
+      - "`go test ./...` exits with 0"
+      - "`make verify` exits with 0"
+
+  - id: "handoff-summary"
+    title: "Capture the final handoff"
+    status: completed
+    steps:
+      - "Summarize the new enforcement, docs, and example"
+      - "List the next steps if any remain"
+    acceptance:
+      - "handoff.small.yml reflects the latest summary and resume entries"
+      - "replayId stays consistent with existing contracts"

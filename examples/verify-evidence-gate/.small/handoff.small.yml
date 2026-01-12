@@ -1,0 +1,10 @@
+small_version: 1.0.0
+owner: agent
+summary: "Enforced the progress evidence gate, documented the git contract and verify rule, published the verify evidence example, and confirmed go test/make verify"
+resume:
+    current_task_id: ""
+    next_steps: []
+links: []
+replayId:
+    value: abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789
+    source: manual
