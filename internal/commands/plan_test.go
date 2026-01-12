@@ -1,7 +1,13 @@
 package commands
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
+	"time"
+
+	"github.com/justyn-clark/small-protocol/internal/small"
+	"gopkg.in/yaml.v3"
 )
 
 func TestGenerateNextTaskID(t *testing.T) {
@@ -195,5 +201,112 @@ func TestAddDependency(t *testing.T) {
 				t.Errorf("addDependency() error = %v, wantErr = %v", err, tt.wantErr)
 			}
 		})
+	}
+}
+
+func TestEnsureProgressEvidenceWritesValidEntry(t *testing.T) {
+	artifactsDir := t.TempDir()
+	smallDir := filepath.Join(artifactsDir, small.SmallDir)
+	if err := os.MkdirAll(smallDir, 0o755); err != nil {
+		t.Fatalf("failed to create small dir: %v", err)
+	}
+
+	taskID := "task-1"
+	if err := ensureProgressEvidence(artifactsDir, taskID); err != nil {
+		t.Fatalf("ensureProgressEvidence error: %v", err)
+	}
+
+	progressPath := filepath.Join(smallDir, "progress.small.yml")
+	data, err := os.ReadFile(progressPath)
+	if err != nil {
+		t.Fatalf("failed to read progress file: %v", err)
+	}
+
+	var parsed map[string]interface{}
+	if err := yaml.Unmarshal(data, &parsed); err != nil {
+		t.Fatalf("failed to parse progress YAML: %v", err)
+	}
+
+	entries, ok := parsed["entries"].([]interface{})
+	if !ok || len(entries) != 1 {
+		t.Fatalf("expected one progress entry, got %v", entries)
+	}
+
+	entry, ok := entries[0].(map[string]interface{})
+	if !ok {
+		t.Fatalf("progress entry is not an object: %T", entries[0])
+	}
+
+	if entry["task_id"] != taskID {
+		t.Fatalf("task_id = %v, want %s", entry["task_id"], taskID)
+	}
+
+	note, _ := entry["notes"].(string)
+	if note != planDoneProgressNote {
+		t.Fatalf("notes = %q, want %q", note, planDoneProgressNote)
+	}
+
+	timestamp, ok := entry["timestamp"].(string)
+	if !ok {
+		t.Fatalf("timestamp missing or not a string: %v", entry["timestamp"])
+	}
+	if _, err := time.Parse(time.RFC3339, timestamp); err != nil {
+		t.Fatalf("timestamp not parseable: %v", err)
+	}
+
+	if !small.ProgressEntryHasValidEvidence(entry) {
+		t.Fatal("progress entry should satisfy evidence requirements")
+	}
+
+	if err := ensureProgressEvidence(artifactsDir, taskID); err != nil {
+		t.Fatalf("ensureProgressEvidence error on second call: %v", err)
+	}
+
+	data, err = os.ReadFile(progressPath)
+	if err != nil {
+		t.Fatalf("failed to read progress file after second call: %v", err)
+	}
+
+	var parsedAfter map[string]interface{}
+	if err := yaml.Unmarshal(data, &parsedAfter); err != nil {
+		t.Fatalf("failed to parse progress YAML after second call: %v", err)
+	}
+
+	entriesAfter, ok := parsedAfter["entries"].([]interface{})
+	if !ok {
+		t.Fatalf("progress entries missing after second call: %v", parsedAfter["entries"])
+	}
+	if len(entriesAfter) != 1 {
+		t.Fatalf("expected one entry after second call, got %d", len(entriesAfter))
+	}
+
+	planArtifact := &small.Artifact{
+		Path: filepath.Join(smallDir, "plan.small.yml"),
+		Type: "plan",
+		Data: map[string]interface{}{
+			"small_version": small.ProtocolVersion,
+			"owner":         "agent",
+			"tasks": []interface{}{
+				map[string]interface{}{
+					"id":     taskID,
+					"title":  "Test CLI entry",
+					"status": "completed",
+				},
+			},
+		},
+	}
+
+	progressArtifact := &small.Artifact{
+		Path: progressPath,
+		Type: "progress",
+		Data: parsedAfter,
+	}
+
+	violations := small.CheckInvariants(map[string]*small.Artifact{
+		"plan":     planArtifact,
+		"progress": progressArtifact,
+	}, false)
+	if len(violations) != 0 {
+		t.Fatalf("expected no invariant violations, got %+v", violations)
 	}
 }

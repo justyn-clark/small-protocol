@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/spf13/cobra"
@@ -30,6 +31,8 @@ type PlanTask struct {
 	Status       string   `yaml:"status,omitempty"`
 	Dependencies []string `yaml:"dependencies,omitempty"`
 }
+
+const planDoneProgressNote = "completed via CLI"
 
 func planCmd() *cobra.Command {
 	var (
@@ -106,6 +109,9 @@ func planCmd() *cobra.Command {
 			if doneID != "" {
 				if err := setTaskStatus(&plan, doneID, "completed"); err != nil {
 					return err
+				}
+				if err := ensureProgressEvidence(artifactsDir, doneID); err != nil {
+					return fmt.Errorf("failed to record progress for task %s: %w", doneID, err)
 				}
 				modified = true
 				fmt.Printf("Marked task %s as completed\n", doneID)
@@ -273,4 +279,54 @@ func addDependency(plan *PlanData, taskID, depID string) error {
 
 	task.Dependencies = append(task.Dependencies, depID)
 	return nil
+}
+
+func ensureProgressEvidence(artifactsDir, taskID string) error {
+	progressPath := filepath.Join(artifactsDir, small.SmallDir, "progress.small.yml")
+	var data map[string]interface{}
+	if small.ArtifactExists(artifactsDir, "progress.small.yml") {
+		raw, err := os.ReadFile(progressPath)
+		if err != nil {
+			return err
+		}
+		if err := yaml.Unmarshal(raw, &data); err != nil {
+			return err
+		}
+	} else {
+		data = map[string]interface{}{
+			"small_version": small.ProtocolVersion,
+			"owner":         "agent",
+			"entries":       []interface{}{},
+		}
+	}
+
+	entries, _ := data["entries"].([]interface{})
+	if entries == nil {
+		entries = []interface{}{}
+	}
+	for _, entry := range entries {
+		if entryMap, ok := entry.(map[string]interface{}); ok {
+			if id, _ := entryMap["task_id"].(string); id == taskID && small.ProgressEntryHasValidEvidence(entryMap) {
+				return nil
+			}
+		}
+	}
+
+	entry := map[string]interface{}{
+		"task_id":   taskID,
+		"status":    "completed",
+		"timestamp": time.Now().UTC().Format(time.RFC3339),
+		"evidence":  fmt.Sprintf("Recorded completion via small plan --done %s", taskID),
+		"notes":     planDoneProgressNote,
+	}
+	entries = append(entries, entry)
+	data["entries"] = entries
+	data["small_version"] = small.ProtocolVersion
+	data["owner"] = "agent"
+
+	yamlData, err := yaml.Marshal(data)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(progressPath, yamlData, 0644)
 }

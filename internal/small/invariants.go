@@ -3,7 +3,9 @@ package small
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
+	"time"
 )
 
 type InvariantViolation struct {
@@ -80,7 +82,14 @@ func CheckInvariants(artifacts map[string]*Artifact, strict bool) []InvariantVio
 		}
 	}
 
+	if planArtifact, planOk := artifacts["plan"]; planOk {
+		if progressArtifact, progressOk := artifacts["progress"]; progressOk {
+			violations = append(violations, validateCompletedTaskProgress(planArtifact, progressArtifact)...)
+		}
+	}
+
 	return violations
+
 }
 
 func allowedTopLevelKeys(artifactType string) map[string]bool {
@@ -253,6 +262,105 @@ func validateProgress(path string, root map[string]interface{}, owner string) []
 	}
 
 	return v
+}
+
+func validateCompletedTaskProgress(planArtifact, progressArtifact *Artifact) []InvariantViolation {
+	var violations []InvariantViolation
+	if planArtifact == nil || progressArtifact == nil || planArtifact.Data == nil || progressArtifact.Data == nil {
+		return violations
+	}
+
+	tasks, ok := planArtifact.Data["tasks"].([]interface{})
+	if !ok {
+		return violations
+	}
+
+	completed := map[string]struct{}{}
+	for _, t := range tasks {
+		taskMap, ok := t.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		status, _ := taskMap["status"].(string)
+		if strings.ToLower(strings.TrimSpace(status)) != "completed" {
+			continue
+		}
+		id, _ := taskMap["id"].(string)
+		if strings.TrimSpace(id) == "" {
+			continue
+		}
+		completed[id] = struct{}{}
+	}
+
+	if len(completed) == 0 {
+		return violations
+	}
+
+	entries, ok := progressArtifact.Data["entries"].([]interface{})
+	if !ok {
+		return violations
+	}
+
+	satisfied := map[string]struct{}{}
+	for _, entry := range entries {
+		entryMap, ok := entry.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		taskID, _ := entryMap["task_id"].(string)
+		if strings.TrimSpace(taskID) == "" {
+			continue
+		}
+		if ProgressEntryHasValidEvidence(entryMap) {
+			satisfied[taskID] = struct{}{}
+		}
+	}
+
+	var missing []string
+	for id := range completed {
+		if _, ok := satisfied[id]; !ok {
+			missing = append(missing, id)
+		}
+	}
+	if len(missing) == 0 {
+		return violations
+	}
+
+	sort.Strings(missing)
+	violations = append(violations, InvariantViolation{
+		File:    progressArtifact.Path,
+		Message: fmt.Sprintf("progress entries missing or invalid for completed plan tasks: %s", strings.Join(missing, ", ")),
+	})
+	return violations
+}
+
+func ProgressEntryHasValidEvidence(entry map[string]interface{}) bool {
+	if entry == nil {
+		return false
+	}
+	ts, _ := entry["timestamp"].(string)
+	if strings.TrimSpace(ts) == "" {
+		return false
+	}
+	if _, err := time.Parse(time.RFC3339, ts); err != nil {
+		return false
+	}
+	if hasNonEmptyStringField(entry, "notes") || hasNonEmptyStringField(entry, "evidence") {
+		return true
+	}
+	return false
+}
+
+func hasNonEmptyStringField(entry map[string]interface{}, field string) bool {
+	val, ok := entry[field]
+	if !ok {
+		return false
+	}
+	s, ok := val.(string)
+	if !ok {
+		return false
+	}
+	return strings.TrimSpace(s) != ""
 }
 
 func validateHandoff(path string, root map[string]interface{}, owner string) []InvariantViolation {

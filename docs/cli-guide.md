@@ -24,6 +24,24 @@ small status  # Still works
 small status --dir /path/to/other/project
 ```
 
+### Git contract: what to commit
+
+SMALL uses `.small/` in two different ways:
+
+1) Runtime workspace (repo root)
+   - Path: `./.small/`
+   - Purpose: active execution state for the current run
+   - Policy: do NOT commit
+   - Reason: it churns every run and becomes noise
+
+2) Published examples (committed)
+   - Path: `examples/**/.small/` (and `spec/**/examples/.small/`)
+   - Purpose: stable, reviewable examples of correct SMALL runs
+   - Policy: DO commit
+   - Reason: examples are part of the specification and documentation
+
+In this repo, root `./.small/` is ignored, but example `.small/` folders are tracked.
+
 ## Commands
 
 ### small version
@@ -438,6 +456,7 @@ small verify
 - All required files exist
 - Schema validation of all artifacts
 - Invariant enforcement (ownership, required fields)
+- Completed plan tasks require at least one progress entry referencing the task before verify passes
 - ReplayId format validation (if present)
 
 **CI integration example:**
@@ -455,6 +474,7 @@ small verify
 | `Missing required files` | Files don't exist | Run `small init` |
 | `Schema validation failed` | Invalid structure | Fix the schema violation |
 | `Invariant violation` | Protocol rule broken | Fix the invariant |
+| `progress entries missing for completed plan tasks: <task ids>` | Completed task lacks a corresponding progress entry | Record at least one progress entry referencing every completed task before re-running verify |
 
 ### small doctor
 
