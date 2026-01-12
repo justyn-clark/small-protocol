@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -42,9 +43,10 @@ type linkOut struct {
 
 func handoffCmd() *cobra.Command {
 	var (
-		summary  string
-		dir      string
-		replayId string
+		summary       string
+		dir           string
+		replayId      string
+		workspaceFlag string
 	)
 
 	cmd := &cobra.Command{
@@ -52,11 +54,10 @@ func handoffCmd() *cobra.Command {
 		Short: "Generate or update handoff.small.yml",
 		Long: `Generates handoff.small.yml from current plan with resume information.
 
-ReplayId is emitted automatically by hashing the run-defining artifacts
-(intent + plan + optional constraints). Use --replay-id to override with
-a manual value.
+	ReplayId is emitted automatically by hashing the run-defining artifacts
+	(intent + plan + optional constraints). Use --replay-id to override with
 
-Note: replayId is optional metadata; git history remains the canonical audit trail.`,
+	Note: replayId is optional metadata; git history remains the canonical audit trail.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if dir == "" {
 				dir = baseDir
@@ -64,7 +65,21 @@ Note: replayId is optional metadata; git history remains the canonical audit tra
 
 			artifactsDir := resolveArtifactsDir(dir)
 
+			scope, err := workspace.ParseScope(workspaceFlag)
+			if err != nil {
+				return err
+			}
+			if scope == workspace.ScopeExamples {
+				return fmt.Errorf("--workspace examples is not supported for handoff (use --workspace any to bypass)")
+			}
+			if scope != workspace.ScopeAny {
+				if err := enforceWorkspaceScope(artifactsDir, workspace.ScopeRoot); err != nil {
+					return err
+				}
+			}
+
 			planArtifact, err := small.LoadArtifact(artifactsDir, "plan.small.yml")
+
 			if err != nil {
 				return fmt.Errorf("failed to load plan.small.yml: %w", err)
 			}
@@ -150,6 +165,7 @@ Note: replayId is optional metadata; git history remains the canonical audit tra
 	cmd.Flags().StringVar(&summary, "summary", "", "Summary description for the handoff")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&replayId, "replay-id", "", "Manual replayId override (64 hex chars, normalized to lowercase)")
+	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root or any)")
 
 	return cmd
 }

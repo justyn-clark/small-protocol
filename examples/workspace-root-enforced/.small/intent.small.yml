@@ -1,0 +1,7 @@
+small_version: "1.0.0"
+owner: "human"
+intent: "Example workspace root enforcement"
+scope:
+  include: []
+  exclude: []
+success_criteria: []

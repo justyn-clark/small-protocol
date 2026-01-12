@@ -1,0 +1,8 @@
+small_version: "1.0.0"
+owner: human
+intent: Demonstrate mandatory replayId and evidence gate requirements
+scope:
+  include: []
+  exclude: []
+success_criteria:
+  - small verify passes with all invariants satisfied

@@ -1,0 +1,13 @@
+small_version: "1.0.0"
+owner: agent
+entries:
+  - task_id: demonstrate-evidence-gate
+    timestamp: "2026-01-12T20:00:00.000000000Z"
+    status: completed
+    evidence: Implemented evidence gate check in verify command
+    notes: Tests added for failure case when completed task lacks progress entry
+  - task_id: demonstrate-replayid
+    timestamp: "2026-01-12T20:10:00.000000000Z"
+    status: completed
+    evidence: Made replayId mandatory in verify command
+    notes: Tests added for failure case when handoff lacks replayId

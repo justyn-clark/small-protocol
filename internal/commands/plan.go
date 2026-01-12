@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -36,14 +37,15 @@ const planDoneProgressNote = "completed via CLI"
 
 func planCmd() *cobra.Command {
 	var (
-		reset      bool
-		yes        bool
-		addTask    string
-		doneID     string
-		pendingID  string
-		blockedID  string
-		dependsArg string
-		dir        string
+		reset         bool
+		yes           bool
+		addTask       string
+		doneID        string
+		pendingID     string
+		blockedID     string
+		dependsArg    string
+		dir           string
+		workspaceFlag string
 	)
 
 	cmd := &cobra.Command{
@@ -62,7 +64,21 @@ func planCmd() *cobra.Command {
 				return fmt.Errorf(".small/ directory does not exist. Run 'small init' first")
 			}
 
+			scope, err := workspace.ParseScope(workspaceFlag)
+			if err != nil {
+				return err
+			}
+			if scope == workspace.ScopeExamples {
+				return fmt.Errorf("--workspace examples is not supported for plan (use --workspace any to bypass)")
+			}
+			if scope != workspace.ScopeAny {
+				if err := enforceWorkspaceScope(artifactsDir, workspace.ScopeRoot); err != nil {
+					return err
+				}
+			}
+
 			planPath := filepath.Join(smallDir, "plan.small.yml")
+
 			planExists := small.ArtifactExists(artifactsDir, "plan.small.yml")
 
 			// Handle --reset flag
@@ -174,6 +190,7 @@ func planCmd() *cobra.Command {
 	cmd.Flags().StringVar(&blockedID, "blocked", "", "Mark task as blocked by ID")
 	cmd.Flags().StringVar(&dependsArg, "depends", "", "Add dependency edge (format: <task-id>:<dep-id>)")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
+	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root or any)")
 
 	return cmd
 }
@@ -315,7 +332,7 @@ func ensureProgressEvidence(artifactsDir, taskID string) error {
 	entry := map[string]interface{}{
 		"task_id":   taskID,
 		"status":    "completed",
-		"timestamp": time.Now().UTC().Format(time.RFC3339),
+		"timestamp": time.Now().UTC().Format(time.RFC3339Nano),
 		"evidence":  fmt.Sprintf("Recorded completion via small plan --done %s", taskID),
 		"notes":     planDoneProgressNote,
 	}

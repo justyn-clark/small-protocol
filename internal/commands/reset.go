@@ -8,12 +8,14 @@ import (
 	"strings"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
 )
 
 func resetCmd() *cobra.Command {
 	var yes bool
 	var keepIntent bool
+	var workspaceFlag string
 
 	cmd := &cobra.Command{
 		Use:   "reset",
@@ -36,7 +38,21 @@ Preserved audit artifacts:
 				return fmt.Errorf(".small/ directory does not exist. Use 'small init' first")
 			}
 
+			scope, err := workspace.ParseScope(workspaceFlag)
+			if err != nil {
+				return err
+			}
+			if scope == workspace.ScopeExamples {
+				return fmt.Errorf("--workspace examples is not supported for reset (use --workspace any to bypass)")
+			}
+			if scope != workspace.ScopeAny {
+				if err := enforceWorkspaceScope(baseDir, workspace.ScopeRoot); err != nil {
+					return err
+				}
+			}
+
 			// Confirm unless --yes flag is provided
+
 			if !yes {
 				fmt.Print("This will reset ephemeral .small/ files for a new run.\n")
 				fmt.Print("Progress and constraints will be preserved.\n")
@@ -101,6 +117,7 @@ Preserved audit artifacts:
 
 	cmd.Flags().BoolVarP(&yes, "yes", "y", false, "Non-interactive mode (skip confirmation)")
 	cmd.Flags().BoolVar(&keepIntent, "keep-intent", false, "Preserve intent.small.yml")
+	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root or any)")
 
 	return cmd
 }

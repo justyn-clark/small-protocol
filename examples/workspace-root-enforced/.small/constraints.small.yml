@@ -1,0 +1,6 @@
+small_version: "1.0.0"
+owner: "human"
+constraints:
+  - id: "example"
+    rule: "Example constraint"
+    severity: "error"

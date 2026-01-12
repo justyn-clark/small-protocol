@@ -86,6 +86,8 @@ small init --intent "Build a user authentication system"
 └── handoff.small.yml      # Initial handoff state
 ```
 
+`small init` also writes `.small/workspace.small.yml` containing workspace metadata (`small_version` and `kind`). Root workspaces use `kind: repo-root`, while example workspaces under `examples/**` retain `kind: examples`. Keep the repository root `.small/` directory local (do not commit it); shared sample workspaces live under `examples/**/.small/` so their metadata stays in version control.
+
 **Common errors:**
 
 | Error | Cause | Resolution |
@@ -106,7 +108,7 @@ small validate
 | Flag | Description |
 |------|-------------|
 | `--dir <path>` | Directory containing .small/ |
-| `--spec-dir <path>` | Path to spec/ directory for schemas |
+
 
 **Schema resolution order:**
 
@@ -442,6 +444,7 @@ small verify
 | `--strict` | Enable strict mode (secrets, insecure links) |
 | `--ci` | CI mode (minimal output, just errors) |
 | `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`; default `root`) |
 
 **Exit codes:**
 
@@ -475,6 +478,10 @@ small verify
 | `Schema validation failed` | Invalid structure | Fix the schema violation |
 | `Invariant violation` | Protocol rule broken | Fix the invariant |
 | `progress entries missing for completed plan tasks: <task ids>` | Completed task lacks a corresponding progress entry | Record at least one progress entry referencing every completed task before re-running verify |
+
+#### Workspace metadata
+
+`small verify` loads `.small/workspace.small.yml` and expects `kind` to be either `repo-root` or `examples`. Example workspaces under `examples/**` keep their own `.small/` directories with `kind: examples`; the repository root uses `kind: repo-root`. Any other value produces `Workspace validation failed: invalid workspace kind "<value>"; valid kinds: ["repo-root", "examples"]`, so regenerate the metadata (for example with `small init`) or set the kind explicitly to a supported value. Keep the root `.small/` directory local (do not commit it); the `examples/**/.small/` directories are the only `.small` artifacts that stay in source control.
 
 ### small doctor
 
