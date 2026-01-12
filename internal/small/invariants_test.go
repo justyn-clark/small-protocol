@@ -241,7 +241,7 @@ func TestCheckInvariants_PlanTaskMissingTitle(t *testing.T) {
 				"tasks": []interface{}{
 					map[string]interface{}{
 						"id":    "task-1",
-						"title": "", // Empty title should fail
+						"title": "",
 					},
 				},
 			},
@@ -261,7 +261,188 @@ func TestCheckInvariants_PlanTaskMissingTitle(t *testing.T) {
 	}
 }
 
+func TestCheckInvariants_CompletedTaskMissingProgressEvidence(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []interface{}{
+					map[string]interface{}{
+						"id":     "task-evidence-rule",
+						"title":  "Record progress before completing tasks",
+						"status": "completed",
+					},
+				},
+			},
+		},
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries":       []interface{}{},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, false)
+	hasMissingProgress := false
+	for _, v := range violations {
+		if contains(v.Message, "progress entries missing or invalid for completed plan tasks") {
+			hasMissingProgress = true
+			break
+		}
+	}
+	if !hasMissingProgress {
+		t.Error("expected violation for completed task without progress evidence")
+	}
+}
+
+func TestCheckInvariants_CompletedTaskHasProgressEvidence(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []interface{}{
+					map[string]interface{}{
+						"id":     "task-evidence-rule",
+						"title":  "Record progress before completing tasks",
+						"status": "completed",
+					},
+				},
+			},
+		},
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-evidence-rule",
+						"status":    "completed",
+						"timestamp": "2025-01-01T00:00:00Z",
+						"evidence":  "Linked completed tasks to progress entries",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, false)
+	for _, v := range violations {
+		if contains(v.Message, "progress entries missing or invalid for completed plan tasks") {
+			t.Fatalf("unexpected missing progress violation: %s", v.Message)
+		}
+	}
+}
+
+func TestCheckInvariants_CompletedTaskProgressEntryEmptyNote(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []interface{}{
+					map[string]interface{}{
+						"id":     "task-evidence-rule",
+						"title":  "Record progress before completing tasks",
+						"status": "completed",
+					},
+				},
+			},
+		},
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-evidence-rule",
+						"status":    "completed",
+						"timestamp": "2025-01-02T00:00:00Z",
+						"notes":     "   ",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, false)
+	hasMissingProgress := false
+	for _, v := range violations {
+		if contains(v.Message, "progress entries missing or invalid for completed plan tasks") {
+			hasMissingProgress = true
+			break
+		}
+	}
+	if !hasMissingProgress {
+		t.Error("expected violation for completed task with empty note")
+	}
+}
+
+func TestCheckInvariants_CompletedTaskProgressEntryInvalidTimestamp(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []interface{}{
+					map[string]interface{}{
+						"id":     "task-evidence-rule",
+						"title":  "Record progress before completing tasks",
+						"status": "completed",
+					},
+				},
+			},
+		},
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-evidence-rule",
+						"status":    "completed",
+						"timestamp": "not-a-time",
+						"notes":     "completed",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, false)
+	hasMissingProgress := false
+	for _, v := range violations {
+		if contains(v.Message, "progress entries missing or invalid for completed plan tasks") {
+			hasMissingProgress = true
+			break
+		}
+	}
+	if !hasMissingProgress {
+		t.Error("expected violation for completed task with invalid timestamp")
+	}
+}
+
 func TestCheckInvariants_StrictModeSecrets(t *testing.T) {
+
 	artifacts := map[string]*Artifact{
 		"progress": {
 			Path: "test/progress.small.yml",
