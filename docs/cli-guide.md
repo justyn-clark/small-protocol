@@ -322,7 +322,7 @@ small handoff --summary "Completed authentication module"
 | Flag | Description |
 |------|-------------|
 | `--summary <string>` | Custom summary text |
-| `--replay-id <string>` | Manual replayId override (must be 64 lowercase hex chars) |
+| `--replay-id <string>` | Manual replayId override (64 hex chars, normalized to lowercase) |
 | `--dir <path>` | Directory containing .small/ |
 
 **What gets generated:**
@@ -339,11 +339,11 @@ ReplayId is the stable identifier for a SMALL run. The CLI emits replayId automa
 
 ```yaml
 replayId:
-  value: "a1b2c3d4..."  # 64 lowercase hex chars (SHA256)
+  value: "a1b2c3d4..."  # 64 hex chars (SHA256), stored in lowercase
   source: "auto"        # "auto" when generated, "manual" when provided
 ```
 
-If you supply `--replay-id`, the CLI will validate the value (must be 64 lowercase hex characters) and use it instead, marking `source: "manual"`.
+If you supply `--replay-id`, the CLI will validate the value (must be 64 hex characters) and normalize it to lowercase before storing, marking `source: "manual"`. This means you can provide uppercase or lowercase hex, and the result will always be lowercase.
 
 ```bash
 # Auto-generated (default)
@@ -367,7 +367,7 @@ small handoff --replay-id a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3
 |-------|-------|------------|
 | `.small/ not found` | Workspace not initialized | Run `small init` first |
 | `no tasks in plan` | Empty plan | Add tasks with `small plan --add` |
-| `invalid replayId format` | Manual replayId not 64 lowercase hex | Provide valid SHA256 hash |
+| `invalid replayId format` | Manual replayId not 64 hex | Provide a valid 64-character hex string |
 
 ### small reset
 
