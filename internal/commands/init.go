@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -14,13 +15,20 @@ import (
 func initCmd() *cobra.Command {
 	var force bool
 	var intentStr string
+	var dir string
 
 	cmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialize a new SMALL v" + small.ProtocolVersion + " project",
 		Long:  "Creates .small/ directory and all five canonical files from templates.",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			smallDir := filepath.Join(baseDir, ".small")
+			targetDir := baseDir
+			if dir != "" {
+				targetDir = dir
+			}
+			targetDir = resolveArtifactsDir(targetDir)
+
+			smallDir := filepath.Join(targetDir, small.SmallDir)
 
 			if !force {
 				if _, err := os.Stat(smallDir); err == nil {
@@ -61,6 +69,10 @@ func initCmd() *cobra.Command {
 				}
 			}
 
+			if err := workspace.Save(targetDir, workspace.KindRepoRoot); err != nil {
+				return err
+			}
+
 			fmt.Printf("Initialized SMALL v%s project in %s\n", small.ProtocolVersion, smallDir)
 			return nil
 		},
@@ -68,6 +80,7 @@ func initCmd() *cobra.Command {
 
 	cmd.Flags().BoolVar(&force, "force", false, "Overwrite existing .small/ directory")
 	cmd.Flags().StringVar(&intentStr, "intent", "", "Intent string to seed in intent.small.yml")
+	cmd.Flags().StringVar(&dir, "dir", "", "Target directory for the new workspace (default: current working directory)")
 
 	return cmd
 }

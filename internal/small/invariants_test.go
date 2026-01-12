@@ -130,7 +130,8 @@ func TestCheckInvariants_ProgressWithoutEvidence(t *testing.T) {
 				"owner":         "agent",
 				"entries": []interface{}{
 					map[string]interface{}{
-						"task_id": "task-1",
+						"task_id":   "task-1",
+						"timestamp": "2025-01-01T00:00:00.000000000Z",
 						// No evidence field - should fail
 					},
 				},
@@ -141,7 +142,7 @@ func TestCheckInvariants_ProgressWithoutEvidence(t *testing.T) {
 	violations := CheckInvariants(artifacts, false)
 	hasEvidenceError := false
 	for _, v := range violations {
-		if contains(v.Message, "evidence") {
+		if contains(v.Message, "must have at least one evidence field") {
 			hasEvidenceError = true
 			break
 		}
@@ -329,7 +330,7 @@ func TestCheckInvariants_CompletedTaskHasProgressEvidence(t *testing.T) {
 					map[string]interface{}{
 						"task_id":   "task-evidence-rule",
 						"status":    "completed",
-						"timestamp": "2025-01-01T00:00:00Z",
+						"timestamp": "2025-01-01T00:00:00.000000000Z",
 						"evidence":  "Linked completed tasks to progress entries",
 					},
 				},

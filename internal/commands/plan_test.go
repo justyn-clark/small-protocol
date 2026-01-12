@@ -250,7 +250,7 @@ func TestEnsureProgressEvidenceWritesValidEntry(t *testing.T) {
 	if !ok {
 		t.Fatalf("timestamp missing or not a string: %v", entry["timestamp"])
 	}
-	if _, err := time.Parse(time.RFC3339, timestamp); err != nil {
+	if _, err := time.Parse(time.RFC3339Nano, timestamp); err != nil {
 		t.Fatalf("timestamp not parseable: %v", err)
 	}
 

@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 )
 
 func TestResetCommand(t *testing.T) {
@@ -58,6 +60,10 @@ func TestResetCommand(t *testing.T) {
 		if err := os.WriteFile(filepath.Join(smallDir, name), []byte(content), 0644); err != nil {
 			t.Fatalf("failed to write %s: %v", name, err)
 		}
+	}
+
+	if err := workspace.Save(tmpDir, workspace.KindRepoRoot); err != nil {
+		t.Fatalf("failed to write workspace metadata: %v", err)
 	}
 
 	t.Run("resets ephemeral files and preserves audit files", func(t *testing.T) {
@@ -118,6 +124,10 @@ func TestResetCommand(t *testing.T) {
 		if err := os.WriteFile(filepath.Join(smallDir, name), []byte(content), 0644); err != nil {
 			t.Fatalf("failed to write %s: %v", name, err)
 		}
+	}
+
+	if err := workspace.Save(tmpDir, workspace.KindRepoRoot); err != nil {
+		t.Fatalf("failed to write workspace metadata: %v", err)
 	}
 
 	t.Run("--keep-intent preserves intent file", func(t *testing.T) {

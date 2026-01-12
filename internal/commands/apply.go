@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -21,11 +22,12 @@ type ProgressData struct {
 
 func applyCmd() *cobra.Command {
 	var (
-		cmdArg  string
-		handoff bool
-		taskID  string
-		dryRun  bool
-		dir     string
+		cmdArg        string
+		handoff       bool
+		taskID        string
+		dryRun        bool
+		dir           string
+		workspaceFlag string
 	)
 
 	cmd := &cobra.Command{
@@ -48,7 +50,21 @@ If no command is provided, defaults to dry-run mode.`,
 				return fmt.Errorf(".small/ directory does not exist. Run 'small init' first")
 			}
 
+			scope, err := workspace.ParseScope(workspaceFlag)
+			if err != nil {
+				return err
+			}
+			if scope == workspace.ScopeExamples {
+				return fmt.Errorf("--workspace examples is not supported for apply (use --workspace any to bypass)")
+			}
+			if scope != workspace.ScopeAny {
+				if err := enforceWorkspaceScope(artifactsDir, workspace.ScopeRoot); err != nil {
+					return err
+				}
+			}
+
 			// Check required artifacts exist
+
 			if !small.ArtifactExists(artifactsDir, "progress.small.yml") {
 				return fmt.Errorf("progress.small.yml not found. Run 'small init' first")
 			}
@@ -58,7 +74,7 @@ If no command is provided, defaults to dry-run mode.`,
 				dryRun = true
 			}
 
-			timestamp := time.Now().UTC().Format(time.RFC3339)
+			timestamp := time.Now().UTC().Format(time.RFC3339Nano)
 
 			if dryRun {
 				fmt.Println("Dry-run mode: no command will be executed")
@@ -133,7 +149,7 @@ If no command is provided, defaults to dry-run mode.`,
 			}
 
 			// Record completion entry
-			endTimestamp := time.Now().UTC().Format(time.RFC3339)
+			endTimestamp := time.Now().UTC().Format(time.RFC3339Nano)
 			endEntry := map[string]interface{}{
 				"timestamp": endTimestamp,
 				"task_id":   normalizeTaskID(taskID),
@@ -186,6 +202,7 @@ If no command is provided, defaults to dry-run mode.`,
 	cmd.Flags().StringVar(&taskID, "task", "", "Associate this apply run with a specific task ID")
 	cmd.Flags().BoolVar(&dryRun, "dry-run", false, "Do not execute, only record intent")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
+	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root or any)")
 
 	return cmd
 }

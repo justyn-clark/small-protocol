@@ -1,0 +1,13 @@
+small_version: "1.0.0"
+owner: agent
+summary: Example demonstrating mandatory replayId and evidence gate invariants
+resume:
+  current_task_id: ""
+  next_steps:
+    - Run small verify to see passing validation
+    - Remove replayId to see failure
+    - Remove progress entries to see evidence gate failure
+links: []
+replayId:
+  value: b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3
+  source: manual

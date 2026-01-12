@@ -5,91 +5,91 @@ entries:
       notes: 'apply --dry-run (cmd: "")'
       status: pending
       task_id: apply
-      timestamp: "2026-01-07T03:23:38Z"
+      timestamp: "2026-01-07T03:23:38.000000001Z"
     - evidence: 'Dry-run: no command executed'
       notes: 'apply --dry-run (cmd: "echo hello")'
       status: pending
       task_id: apply
-      timestamp: "2026-01-07T03:23:38Z"
+      timestamp: "2026-01-07T03:23:38.000000002Z"
     - command: echo 'SMALL apply test'
       evidence: Apply started
       notes: 'apply: execution started'
       status: in_progress
       task_id: apply
-      timestamp: "2026-01-07T03:23:38Z"
+      timestamp: "2026-01-07T03:23:38.000000003Z"
     - command: echo 'SMALL apply test'
       evidence: Command completed successfully
       notes: 'apply: exit code 0'
       status: completed
       task_id: apply
-      timestamp: "2026-01-07T03:23:38Z"
+      timestamp: "2026-01-07T03:23:38.000000004Z"
     - task_id: phase1-intent
       status: completed
-      timestamp: "2026-01-09T23:30:00Z"
+      timestamp: "2026-01-09T23:30:00.000000000Z"
       notes: "Phase 1 INTENT: Updated intent.small.yml with v1 completion goals"
       evidence: "small validate passed, intent.small.yml written with success_criteria"
     - task_id: phase2-plan
       status: completed
-      timestamp: "2026-01-09T23:31:00Z"
+      timestamp: "2026-01-09T23:31:00.000000000Z"
       notes: "Phase 2 PLAN: Created plan.small.yml with 6 structured tasks"
       evidence: "small validate passed, plan includes cli-reset, cli-verify, cli-doctor, replayid-schema, docs-cli-reference, docs-website"
     - task_id: cli-reset
       status: completed
-      timestamp: "2026-01-09T23:35:00Z"
+      timestamp: "2026-01-09T23:35:00.000000000Z"
       notes: "Implemented small reset command with --yes and --keep-intent flags"
       evidence: "reset.go created, reset_test.go passes all tests, command registered in root.go"
     - task_id: cli-verify
       status: completed
-      timestamp: "2026-01-09T23:40:00Z"
+      timestamp: "2026-01-09T23:40:00.000000000Z"
       notes: "Implemented small verify command with --strict and --ci flags, exit codes 0/1/2"
       evidence: "verify.go created, verify_test.go passes all tests, includes replayId validation"
     - task_id: cli-doctor
       status: completed
-      timestamp: "2026-01-09T23:45:00Z"
+      timestamp: "2026-01-09T23:45:00.000000000Z"
       notes: "Implemented small doctor command for workspace diagnosis"
       evidence: "doctor.go created, doctor_test.go passes all tests, read-only verified"
     - task_id: replayid-schema
       status: completed
-      timestamp: "2026-01-09T23:50:00Z"
+      timestamp: "2026-01-09T23:50:00.000000000Z"
       notes: "Added ReplayId schema to handoff, updated invariants, added --replay-id flag to handoff command"
       evidence: "handoff.schema.json updated, invariants.go updated, handoff.go updated with --replay-id flag, all tests pass"
     - task_id: docs-cli-reference
       status: completed
-      timestamp: "2026-01-09T23:55:00Z"
+      timestamp: "2026-01-09T23:55:00.000000000Z"
       notes: "Updated CLI documentation with reset, verify, doctor commands and replayId"
       evidence: "cli.md updated with new commands, cli-guide.md updated with detailed docs and cheat sheet"
     - task_id: docs-website
       status: completed
-      timestamp: "2026-01-09T23:56:00Z"
+      timestamp: "2026-01-09T23:56:00.000000000Z"
       notes: "Documentation aligned with CLI behavior, no marketing phrasing, canonical definitions"
       evidence: "All tests pass, small validate passes, small verify passes"
     - task_id: replayid-schema-alignment
       status: completed
-      timestamp: "2026-01-11T00:00:00Z"
+      timestamp: "2026-01-11T00:00:00.000000000Z"
       notes: "Updated handoff schema source enum from [cli,agent,ci,manual] to [auto,manual]"
       evidence: "spec/small/v1.0.0/schemas/handoff.schema.json updated, internal/specembed/schemas/handoff.schema.json synced"
     - task_id: replayid-generation-auto
       status: completed
-      timestamp: "2026-01-11T00:05:00Z"
+      timestamp: "2026-01-11T00:05:00.000000000Z"
       notes: "Implemented deterministic sha256 hash from intent + plan + optional constraints with LF normalization"
       evidence: "handoff.go generateReplayId function rewritten, time.Now removed, normalizeLineEndings added"
     - task_id: replayid-flag-manual
       status: completed
-      timestamp: "2026-01-11T00:10:00Z"
+      timestamp: "2026-01-11T00:10:00.000000000Z"
       notes: "Changed --replay-id from boolean to string flag with ^[a-f0-9]{64}$ validation"
       evidence: "handoff.go updated with StringVar flag, replayIdPattern regex validates input"
     - task_id: remove-nondeterminism
       status: completed
-      timestamp: "2026-01-11T00:15:00Z"
+      timestamp: "2026-01-11T00:15:00.000000000Z"
       notes: "Removed time.Now().UnixNano() from replayId generation, now uses artifact content hash only"
       evidence: "time import removed from handoff.go, generateReplayId is purely deterministic"
     - task_id: tests
       status: completed
-      timestamp: "2026-01-11T00:20:00Z"
+      timestamp: "2026-01-11T00:20:00.000000000Z"
       notes: "Added comprehensive handoff_test.go with determinism, manual override, validation, and line-ending tests"
       evidence: "go test ./... passes, 7 new test cases in handoff_test.go, verify_test.go updated for new source values"
     - task_id: docs-sync
       status: completed
-      timestamp: "2026-01-11T00:25:00Z"
+      timestamp: "2026-01-11T00:25:00.000000000Z"
       notes: "Updated docs/cli-guide.md with replayId section explaining auto/manual modes"
       evidence: "CLI guide updated with ReplayId documentation, cheat sheet updated, all acceptance criteria met"

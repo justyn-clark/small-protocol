@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +23,7 @@ func verifyCmd() *cobra.Command {
 	var strict bool
 	var ci bool
 	var dir string
+	var workspaceFlag string
 
 	cmd := &cobra.Command{
 		Use:   "verify",
@@ -42,11 +44,17 @@ Flags:
   --strict   Enable strict mode (check for secrets, insecure links)
   --ci       CI mode (minimal output, just errors)`,
 		Run: func(cmd *cobra.Command, args []string) {
+			scope, err := workspace.ParseScope(workspaceFlag)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Invalid workspace scope: %v\n", err)
+				os.Exit(ExitSystemError)
+			}
+
 			if dir == "" {
 				dir = baseDir
 			}
 
-			exitCode := runVerify(dir, strict, ci)
+			exitCode := runVerify(dir, strict, ci, scope)
 			os.Exit(exitCode)
 		},
 	}
@@ -54,17 +62,24 @@ Flags:
 	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (secrets, insecure links)")
 	cmd.Flags().BoolVar(&ci, "ci", false, "CI mode (minimal output)")
 	cmd.Flags().StringVar(&dir, "dir", "", "Directory containing .small/ artifacts")
+	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root, examples, or any)")
 
 	return cmd
 }
 
-func runVerify(dir string, strict, ci bool) int {
+func runVerify(dir string, strict, ci bool, scope workspace.Scope) int {
 	smallDir := filepath.Join(dir, ".small")
 
 	// Check if .small/ directory exists
 	if _, err := os.Stat(smallDir); os.IsNotExist(err) {
 		fmt.Fprintf(os.Stderr, "Error: .small/ directory does not exist\n")
 		return ExitSystemError
+	}
+
+	artifactsDir := resolveArtifactsDir(dir)
+	if err := enforceWorkspaceScope(artifactsDir, scope); err != nil {
+		fmt.Fprintf(os.Stderr, "Workspace validation failed: %v\n", err)
+		return ExitInvalid
 	}
 
 	// Required files
@@ -94,7 +109,6 @@ func runVerify(dir string, strict, ci bool) int {
 	}
 
 	// Load artifacts
-	artifactsDir := resolveArtifactsDir(dir)
 	artifacts, err := small.LoadAllArtifacts(artifactsDir)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading artifacts: %v\n", err)
@@ -139,7 +153,8 @@ func runVerify(dir string, strict, ci bool) int {
 	return ExitValid
 }
 
-// validateReplayId checks if replayId field (if present) has valid format
+// validateReplayId checks if replayId field exists and has valid format
+// replayId is REQUIRED in handoff.small.yml for verify to pass
 func validateReplayId(handoff *small.Artifact) []string {
 	var errors []string
 
@@ -150,7 +165,8 @@ func validateReplayId(handoff *small.Artifact) []string {
 
 	replayId, ok := root["replayId"].(map[string]interface{})
 	if !ok {
-		// replayId is optional, no error if missing
+		// replayId is REQUIRED - fail if missing
+		errors = append(errors, "handoff.small.yml must include replayId (use 'small handoff' to generate)")
 		return errors
 	}
 

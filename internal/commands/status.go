@@ -303,7 +303,7 @@ func printArtifactStatus(name string, exists bool) {
 }
 
 func formatTimestamp(ts string) string {
-	t, err := time.Parse(time.RFC3339, ts)
+	t, err := time.Parse(time.RFC3339Nano, ts)
 	if err != nil {
 		return ts
 	}

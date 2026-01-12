@@ -1,0 +1,6 @@
+small_version: "1.0.0"
+owner: "agent"
+tasks:
+  - id: "task-1"
+    title: "Example task"
+    status: "completed"

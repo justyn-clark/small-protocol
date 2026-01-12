@@ -70,6 +70,15 @@ small verify --ci   # Minimal output for CI pipelines
 small verify --strict  # Enable strict checks (secrets, insecure links)
 ```
 
+The `verify` command enforces:
+
+- All completed tasks must have progress entries with evidence
+- `handoff.small.yml` must include a valid `replayId`
+- Schema validation for all artifacts
+- Ownership rules (human/agent) for each artifact type
+
+If you forget to update SMALL files after completing work, `verify` will fail.
+
 Diagnose workspace issues:
 
 ```bash

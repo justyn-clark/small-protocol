@@ -224,6 +224,7 @@ func validateProgress(path string, root map[string]interface{}, owner string) []
 		return v
 	}
 
+	var prevTime time.Time
 	evidenceFields := []string{"evidence", "verification", "command", "test", "link", "commit"}
 
 	for i, entry := range entries {
@@ -236,6 +237,24 @@ func validateProgress(path string, root map[string]interface{}, owner string) []
 		if s, _ := em["task_id"].(string); strings.TrimSpace(s) == "" {
 			v = append(v, InvariantViolation{File: path, Message: fmt.Sprintf("progress entry %d must include task_id (non-empty string)", i)})
 		}
+
+		tsValue, _ := em["timestamp"].(string)
+		parsedTs, tsErr := parseProgressTimestamp(tsValue)
+		if tsErr != nil {
+			v = append(v, InvariantViolation{
+				File:    path,
+				Message: fmt.Sprintf("progress entry %d timestamp invalid: %v", i, tsErr),
+			})
+			continue
+		}
+		if !prevTime.IsZero() && !parsedTs.After(prevTime) {
+			v = append(v, InvariantViolation{
+				File:    path,
+				Message: fmt.Sprintf("progress entry %d timestamp (%s) must be after previous entry (%s)", i, parsedTs.Format(time.RFC3339Nano), prevTime.Format(time.RFC3339Nano)),
+			})
+			continue
+		}
+		prevTime = parsedTs
 
 		hasEvidence := false
 		for _, f := range evidenceFields {
@@ -262,6 +281,21 @@ func validateProgress(path string, root map[string]interface{}, owner string) []
 	}
 
 	return v
+}
+
+func parseProgressTimestamp(value string) (time.Time, error) {
+	trimmed := strings.TrimSpace(value)
+	if trimmed == "" {
+		return time.Time{}, fmt.Errorf("timestamp is required")
+	}
+	if !strings.Contains(trimmed, ".") {
+		return time.Time{}, fmt.Errorf("timestamp must include fractional seconds")
+	}
+	parsed, err := time.Parse(time.RFC3339Nano, trimmed)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("invalid RFC3339 timestamp: %w", err)
+	}
+	return parsed, nil
 }
 
 func validateCompletedTaskProgress(planArtifact, progressArtifact *Artifact) []InvariantViolation {
@@ -342,7 +376,7 @@ func ProgressEntryHasValidEvidence(entry map[string]interface{}) bool {
 	if strings.TrimSpace(ts) == "" {
 		return false
 	}
-	if _, err := time.Parse(time.RFC3339, ts); err != nil {
+	if _, err := parseProgressTimestamp(ts); err != nil {
 		return false
 	}
 	if hasNonEmptyStringField(entry, "notes") || hasNonEmptyStringField(entry, "evidence") {
@@ -434,7 +468,17 @@ func checkSecrets(artifact *Artifact) []InvariantViolation {
 	secretKeys := []string{"api_key", "apikey", "password", "secret", "token", "access_token", "private_key"}
 	tokenPattern := regexp.MustCompile(`^[A-Za-z0-9+/]{32,}={0,2}$`)
 
-	checkValue := func(key string, value interface{}) bool {
+	// Paths to exclude from secrets check (known safe fields)
+	excludedPaths := map[string]bool{
+		"replayId.value": true, // SHA256 hash for session replay, not a secret
+	}
+
+	checkValue := func(key string, value interface{}, path string) bool {
+		// Skip excluded paths
+		if excludedPaths[path] {
+			return false
+		}
+
 		keyLower := strings.ToLower(key)
 		for _, secretKey := range secretKeys {
 			if strings.Contains(keyLower, secretKey) {
@@ -457,7 +501,7 @@ func checkSecrets(artifact *Artifact) []InvariantViolation {
 				path = k
 			}
 
-			if checkValue(k, val) {
+			if checkValue(k, val, path) {
 				violations = append(violations, InvariantViolation{
 					File:    artifact.Path,
 					Message: fmt.Sprintf("potential secret detected at %s", path),
