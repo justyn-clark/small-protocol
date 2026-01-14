@@ -12,22 +12,27 @@
 | `small reset`    | Reset workspace for new run           |
 | `small verify`   | CI/local enforcement gate             |
 | `small doctor`   | Diagnose workspace issues             |
+| `small selftest` | Built-in CLI self-test                |
+| `small archive`  | Archive run state for lineage         |
 
 ## Execution Commands
 
-| Command        | Description                         |
-|----------------|-------------------------------------|
-| `small plan`   | Manage plan tasks                   |
-| `small status` | Project state summary               |
-| `small apply`  | Execute and record bounded commands |
+| Command            | Description                         |
+|--------------------|-------------------------------------|
+| `small plan`       | Manage plan tasks                   |
+| `small status`     | Project state summary               |
+| `small apply`      | Execute and record bounded commands |
+| `small progress`   | Progress utilities (migrate)        |
 
 ## Common Flags
 
-| Flag       | Description                          |
-|------------|--------------------------------------|
-| `--strict` | Fail on warnings                     |
-| `--json`   | Output in JSON format                |
-| `--help`   | Show help for any command            |
+| Flag          | Description                              |
+|---------------|------------------------------------------|
+| `--dir`       | Target directory containing .small/      |
+| `--workspace` | Workspace scope (root, examples, or any) |
+| `--strict`    | Enable strict mode (lint, verify)        |
+| `--json`      | Output in JSON format (status)           |
+| `--help`      | Show help for any command                |
 
 ## Examples
 

@@ -231,7 +231,7 @@ Progress entries must be verifiable. Good evidence:
 ```yaml
 entries:
   - task_id: "task-1"
-    timestamp: "2025-01-04T10:00:00Z"
+    timestamp: "2025-01-04T10:00:00.000000000Z"
     status: "completed"
     command: "npm test"
     evidence: "All 47 tests passed"

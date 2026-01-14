@@ -74,8 +74,8 @@ Schema violations are hard errors and will block execution.
 When a task in `plan.small.yml` is marked as `status: completed`, there MUST be a corresponding entry in `progress.small.yml` that:
 
 1. References the same `task_id`
-2. Includes a valid RFC3339 `timestamp`
-3. Contains at least one evidence field (`notes` or `evidence`)
+2. Includes a valid RFC3339Nano `timestamp` with fractional seconds
+3. Contains at least one evidence field (`evidence`, `verification`, `command`, `test`, `link`, or `commit`)
 
 This ensures that completed tasks have auditable evidence of completion.
 

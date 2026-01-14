@@ -73,6 +73,8 @@ spec/small/v1.0.0/
 | [Invariants](docs/invariants.md) | Non-negotiable protocol rules |
 | [Enterprise Integration](docs/enterprise.md) | Git, CI/CD, and audit patterns |
 | [Philosophy](docs/philosophy.md) | Design rationale and non-goals |
+| [FAQ](docs/FAQ.md) | Frequently asked questions |
+| [Execution Model](docs/EXECUTION_MODEL.md) | Single-writer design and concurrency |
 | [Development](docs/DEVELOPMENT.md) | Building, testing, and schema updates during development |
 | [Releasing](docs/releasing.md) | How releases are built and verified |
 
