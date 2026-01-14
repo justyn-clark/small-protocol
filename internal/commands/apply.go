@@ -13,13 +13,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// ProgressData represents the progress.small.yml structure
-type ProgressData struct {
-	SmallVersion string                   `yaml:"small_version"`
-	Owner        string                   `yaml:"owner"`
-	Entries      []map[string]interface{} `yaml:"entries"`
-}
-
 func applyCmd() *cobra.Command {
 	var (
 		cmdArg        string
@@ -74,7 +67,7 @@ If no command is provided, defaults to dry-run mode.`,
 				dryRun = true
 			}
 
-			timestamp := time.Now().UTC().Format(time.RFC3339Nano)
+			timestamp := formatProgressTimestamp(time.Now().UTC())
 
 			if dryRun {
 				fmt.Println("Dry-run mode: no command will be executed")
@@ -149,7 +142,7 @@ If no command is provided, defaults to dry-run mode.`,
 			}
 
 			// Record completion entry
-			endTimestamp := time.Now().UTC().Format(time.RFC3339Nano)
+			endTimestamp := formatProgressTimestamp(time.Now().UTC())
 			endEntry := map[string]interface{}{
 				"timestamp": endTimestamp,
 				"task_id":   normalizeTaskID(taskID),
@@ -212,36 +205,6 @@ func normalizeTaskID(taskID string) string {
 		return "apply"
 	}
 	return taskID
-}
-
-func appendProgressEntry(baseDir string, entry map[string]interface{}) error {
-	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
-
-	// Load existing progress
-	data, err := os.ReadFile(progressPath)
-	if err != nil {
-		return fmt.Errorf("failed to read progress file: %w", err)
-	}
-
-	var progress ProgressData
-	if err := yaml.Unmarshal(data, &progress); err != nil {
-		return fmt.Errorf("failed to parse progress file: %w", err)
-	}
-
-	// Append new entry
-	progress.Entries = append(progress.Entries, entry)
-
-	// Write back
-	yamlData, err := yaml.Marshal(&progress)
-	if err != nil {
-		return fmt.Errorf("failed to marshal progress: %w", err)
-	}
-
-	if err := os.WriteFile(progressPath, yamlData, 0644); err != nil {
-		return fmt.Errorf("failed to write progress file: %w", err)
-	}
-
-	return nil
 }
 
 func generateHandoffFromApply(baseDir string) error {

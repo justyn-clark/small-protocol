@@ -6,7 +6,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
+	"gopkg.in/yaml.v3"
 )
 
 func TestResetCommand(t *testing.T) {
@@ -44,7 +46,14 @@ func TestResetCommand(t *testing.T) {
 	// Write test files
 	testIntent := "intent: test intent content\nowner: human\n"
 	testPlan := "plan: test plan content\nowner: agent\n"
-	testProgress := "progress: test progress content\nowner: agent\n"
+	testProgress := `small_version: "1.0.0"
+owner: "agent"
+entries:
+  - task_id: "task-0"
+    status: "completed"
+    timestamp: "2026-01-01T00:00:00.000000000Z"
+    evidence: "Initial progress"
+`
 	testConstraints := "constraints: test constraints content\nowner: human\n"
 	testHandoff := "handoff: test handoff content\nowner: agent\n"
 
@@ -73,13 +82,27 @@ func TestResetCommand(t *testing.T) {
 			t.Fatalf("reset failed: %v", err)
 		}
 
-		// Check progress was preserved
+		// Check progress was preserved and appended
 		progressContent, err := os.ReadFile(filepath.Join(smallDir, "progress.small.yml"))
 		if err != nil {
 			t.Fatalf("failed to read progress: %v", err)
 		}
-		if string(progressContent) != testProgress {
-			t.Error("progress.small.yml was modified but should have been preserved")
+		var progress ProgressData
+		if err := yaml.Unmarshal(progressContent, &progress); err != nil {
+			t.Fatalf("failed to parse progress: %v", err)
+		}
+		if len(progress.Entries) != 2 {
+			t.Fatalf("expected 2 progress entries, got %d", len(progress.Entries))
+		}
+		if progress.Entries[0]["task_id"] != "task-0" {
+			t.Fatalf("expected original progress entry, got %v", progress.Entries[0]["task_id"])
+		}
+		if progress.Entries[1]["task_id"] != "reset" {
+			t.Fatalf("expected reset progress entry, got %v", progress.Entries[1]["task_id"])
+		}
+		resetTimestamp, _ := progress.Entries[1]["timestamp"].(string)
+		if _, err := small.ParseProgressTimestamp(resetTimestamp); err != nil {
+			t.Fatalf("invalid reset timestamp %q: %v", resetTimestamp, err)
 		}
 
 		// Check constraints was preserved
@@ -153,6 +176,25 @@ func TestResetCommand(t *testing.T) {
 		}
 		if string(planContent) == testPlan {
 			t.Error("plan.small.yml was not reset")
+		}
+
+		progressContent, err := os.ReadFile(filepath.Join(smallDir, "progress.small.yml"))
+		if err != nil {
+			t.Fatalf("failed to read progress: %v", err)
+		}
+		var progress ProgressData
+		if err := yaml.Unmarshal(progressContent, &progress); err != nil {
+			t.Fatalf("failed to parse progress: %v", err)
+		}
+		if len(progress.Entries) != 2 {
+			t.Fatalf("expected 2 progress entries, got %d", len(progress.Entries))
+		}
+		if progress.Entries[1]["task_id"] != "reset" {
+			t.Fatalf("expected reset progress entry, got %v", progress.Entries[1]["task_id"])
+		}
+		resetTimestamp, _ := progress.Entries[1]["timestamp"].(string)
+		if _, err := small.ParseProgressTimestamp(resetTimestamp); err != nil {
+			t.Fatalf("invalid reset timestamp %q: %v", resetTimestamp, err)
 		}
 	})
 }

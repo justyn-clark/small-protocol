@@ -89,6 +89,9 @@ func planCmd() *cobra.Command {
 				if err := writePlanTemplate(planPath); err != nil {
 					return err
 				}
+				if err := appendPlanProgress(artifactsDir, "plan-reset", "completed", "Reset plan.small.yml to template", "small plan --reset"); err != nil {
+					return err
+				}
 				fmt.Println("Plan reset to template")
 				return nil
 			}
@@ -117,6 +120,9 @@ func planCmd() *cobra.Command {
 					Status: "pending",
 				}
 				plan.Tasks = append(plan.Tasks, newTask)
+				if err := appendPlanProgress(artifactsDir, newID, "pending", fmt.Sprintf("Added task %s via small plan --add", newID), addTask); err != nil {
+					return err
+				}
 				modified = true
 				fmt.Printf("Added task %s: %s\n", newID, addTask)
 			}
@@ -138,6 +144,9 @@ func planCmd() *cobra.Command {
 				if err := setTaskStatus(&plan, pendingID, "pending"); err != nil {
 					return err
 				}
+				if err := appendPlanProgress(artifactsDir, pendingID, "pending", fmt.Sprintf("Updated task %s to pending", pendingID), "small plan --pending"); err != nil {
+					return err
+				}
 				modified = true
 				fmt.Printf("Marked task %s as pending\n", pendingID)
 			}
@@ -145,6 +154,9 @@ func planCmd() *cobra.Command {
 			// Handle --blocked flag
 			if blockedID != "" {
 				if err := setTaskStatus(&plan, blockedID, "blocked"); err != nil {
+					return err
+				}
+				if err := appendPlanProgress(artifactsDir, blockedID, "blocked", fmt.Sprintf("Updated task %s to blocked", blockedID), "small plan --blocked"); err != nil {
 					return err
 				}
 				modified = true
@@ -160,6 +172,13 @@ func planCmd() *cobra.Command {
 				taskID := strings.TrimSpace(parts[0])
 				depID := strings.TrimSpace(parts[1])
 				if err := addDependency(&plan, taskID, depID); err != nil {
+					return err
+				}
+				status := ""
+				if task, _ := findTask(&plan, taskID); task != nil {
+					status = task.Status
+				}
+				if err := appendPlanProgress(artifactsDir, taskID, status, fmt.Sprintf("Added dependency %s to %s", depID, taskID), "small plan --depends"); err != nil {
 					return err
 				}
 				modified = true
@@ -301,20 +320,28 @@ func addDependency(plan *PlanData, taskID, depID string) error {
 func ensureProgressEvidence(artifactsDir, taskID string) error {
 	progressPath := filepath.Join(artifactsDir, small.SmallDir, "progress.small.yml")
 	var data map[string]interface{}
-	if small.ArtifactExists(artifactsDir, "progress.small.yml") {
-		raw, err := os.ReadFile(progressPath)
+
+	if !small.ArtifactExists(artifactsDir, "progress.small.yml") {
+		progress := ProgressData{
+			SmallVersion: small.ProtocolVersion,
+			Owner:        "agent",
+			Entries:      []map[string]interface{}{},
+		}
+		yamlData, err := yaml.Marshal(&progress)
 		if err != nil {
 			return err
 		}
-		if err := yaml.Unmarshal(raw, &data); err != nil {
+		if err := os.WriteFile(progressPath, yamlData, 0o644); err != nil {
 			return err
 		}
-	} else {
-		data = map[string]interface{}{
-			"small_version": small.ProtocolVersion,
-			"owner":         "agent",
-			"entries":       []interface{}{},
-		}
+	}
+
+	raw, err := os.ReadFile(progressPath)
+	if err != nil {
+		return err
+	}
+	if err := yaml.Unmarshal(raw, &data); err != nil {
+		return err
 	}
 
 	entries, _ := data["entries"].([]interface{})
@@ -332,18 +359,26 @@ func ensureProgressEvidence(artifactsDir, taskID string) error {
 	entry := map[string]interface{}{
 		"task_id":   taskID,
 		"status":    "completed",
-		"timestamp": time.Now().UTC().Format(time.RFC3339Nano),
+		"timestamp": formatProgressTimestamp(time.Now().UTC()),
 		"evidence":  fmt.Sprintf("Recorded completion via small plan --done %s", taskID),
 		"notes":     planDoneProgressNote,
 	}
-	entries = append(entries, entry)
-	data["entries"] = entries
-	data["small_version"] = small.ProtocolVersion
-	data["owner"] = "agent"
 
-	yamlData, err := yaml.Marshal(data)
-	if err != nil {
-		return err
+	return appendProgressEntry(artifactsDir, entry)
+}
+
+func appendPlanProgress(artifactsDir, taskID, status, evidence, notes string) error {
+	entry := map[string]interface{}{
+		"task_id":   taskID,
+		"timestamp": formatProgressTimestamp(time.Now().UTC()),
+		"evidence":  evidence,
 	}
-	return os.WriteFile(progressPath, yamlData, 0644)
+	if status != "" {
+		entry["status"] = status
+	}
+	if strings.TrimSpace(notes) != "" {
+		entry["notes"] = notes
+	}
+
+	return appendProgressEntry(artifactsDir, entry)
 }

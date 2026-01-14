@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
@@ -71,6 +72,18 @@ func initCmd() *cobra.Command {
 
 			if err := workspace.Save(targetDir, workspace.KindRepoRoot); err != nil {
 				return err
+			}
+
+			entry := map[string]interface{}{
+				"task_id":   "init",
+				"status":    "completed",
+				"timestamp": formatProgressTimestamp(time.Now().UTC()),
+				"evidence":  "Initialized .small workspace and seeded canonical artifacts",
+				"notes":     fmt.Sprintf("small init in %s", targetDir),
+				"command":   "small init",
+			}
+			if err := appendProgressEntry(targetDir, entry); err != nil {
+				return fmt.Errorf("failed to record init progress: %w", err)
 			}
 
 			fmt.Printf("Initialized SMALL v%s project in %s\n", small.ProtocolVersion, smallDir)

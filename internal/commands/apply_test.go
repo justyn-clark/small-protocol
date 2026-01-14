@@ -31,7 +31,6 @@ func TestNormalizeTaskID(t *testing.T) {
 }
 
 func TestAppendProgressEntry(t *testing.T) {
-	// Create temp directory with .small structure
 	tmpDir, err := os.MkdirTemp("", "small-test-*")
 	if err != nil {
 		t.Fatalf("failed to create temp dir: %v", err)
@@ -43,7 +42,6 @@ func TestAppendProgressEntry(t *testing.T) {
 		t.Fatalf("failed to create .small dir: %v", err)
 	}
 
-	// Create initial progress file
 	initialProgress := ProgressData{
 		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
@@ -60,9 +58,8 @@ func TestAppendProgressEntry(t *testing.T) {
 		t.Fatalf("failed to write initial progress: %v", err)
 	}
 
-	// Test appending entry
 	entry := map[string]interface{}{
-		"timestamp": "2024-01-15T09:00:00Z",
+		"timestamp": "2024-01-15T09:00:00.000000000Z",
 		"task_id":   "task-1",
 		"status":    "completed",
 		"evidence":  "Test evidence",
@@ -73,7 +70,6 @@ func TestAppendProgressEntry(t *testing.T) {
 		t.Fatalf("appendProgressEntry() error = %v", err)
 	}
 
-	// Verify entry was appended
 	updatedData, err := os.ReadFile(progressPath)
 	if err != nil {
 		t.Fatalf("failed to read updated progress: %v", err)
@@ -92,9 +88,13 @@ func TestAppendProgressEntry(t *testing.T) {
 		t.Errorf("expected task_id 'task-1', got %v", updatedProgress.Entries[0]["task_id"])
 	}
 
-	// Test appending second entry
+	firstTimestamp, _ := updatedProgress.Entries[0]["timestamp"].(string)
+	if _, err := small.ParseProgressTimestamp(firstTimestamp); err != nil {
+		t.Fatalf("expected valid RFC3339Nano timestamp, got %q (%v)", firstTimestamp, err)
+	}
+
 	entry2 := map[string]interface{}{
-		"timestamp": "2024-01-15T10:00:00Z",
+		"timestamp": "2024-01-15T10:00:00.000000000Z",
 		"task_id":   "task-2",
 		"status":    "in_progress",
 		"evidence":  "Second entry",
@@ -104,7 +104,6 @@ func TestAppendProgressEntry(t *testing.T) {
 		t.Fatalf("appendProgressEntry() second entry error = %v", err)
 	}
 
-	// Verify both entries exist
 	updatedData, err = os.ReadFile(progressPath)
 	if err != nil {
 		t.Fatalf("failed to read progress after second append: %v", err)
@@ -117,10 +116,20 @@ func TestAppendProgressEntry(t *testing.T) {
 	if len(updatedProgress.Entries) != 2 {
 		t.Errorf("expected 2 entries, got %d", len(updatedProgress.Entries))
 	}
+
+	secondTimestamp, _ := updatedProgress.Entries[1]["timestamp"].(string)
+	secondParsed, err := small.ParseProgressTimestamp(secondTimestamp)
+	if err != nil {
+		t.Fatalf("expected valid timestamp for second entry, got %q (%v)", secondTimestamp, err)
+	}
+
+	firstParsed, _ := small.ParseProgressTimestamp(firstTimestamp)
+	if !secondParsed.After(firstParsed) {
+		t.Fatalf("expected second timestamp after first: %s <= %s", secondTimestamp, firstTimestamp)
+	}
 }
 
 func TestAppendProgressEntryMissingFile(t *testing.T) {
-	// Create temp directory without progress file
 	tmpDir, err := os.MkdirTemp("", "small-test-*")
 	if err != nil {
 		t.Fatalf("failed to create temp dir: %v", err)
@@ -133,7 +142,7 @@ func TestAppendProgressEntryMissingFile(t *testing.T) {
 	}
 
 	entry := map[string]interface{}{
-		"timestamp": "2024-01-15T09:00:00Z",
+		"timestamp": "2024-01-15T09:00:00.000000000Z",
 		"task_id":   "task-1",
 		"status":    "completed",
 	}
@@ -145,10 +154,7 @@ func TestAppendProgressEntryMissingFile(t *testing.T) {
 }
 
 func TestProgressEntryStatusValues(t *testing.T) {
-	// Verify that apply uses valid status values
 	validStatuses := []string{"pending", "in_progress", "completed", "blocked"}
-
-	// These are the statuses used in apply.go
 	applyStatuses := []string{"pending", "in_progress", "completed", "blocked"}
 
 	for _, status := range applyStatuses {

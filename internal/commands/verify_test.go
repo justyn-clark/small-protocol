@@ -135,6 +135,31 @@ entries:
 	}
 }
 
+func TestVerifyProgressTimestampRequiresFractional(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "small-verify-fractional")
+	if err != nil {
+		t.Fatalf("failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	artifacts := cloneArtifacts(defaultArtifacts())
+	artifacts["progress.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+entries:
+  - task_id: "task-1"
+    status: "completed"
+    timestamp: "2025-01-01T00:00:00Z"
+    evidence: "missing fractional"
+`
+	writeArtifacts(t, tmpDir, artifacts)
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	code := runVerify(tmpDir, false, true, workspace.ScopeRoot)
+	if code != ExitInvalid {
+		t.Errorf("expected exit code %d for missing fractional seconds, got %d", ExitInvalid, code)
+	}
+}
+
 func TestVerifyProgressIncreasingTimestamps(t *testing.T) {
 	nanoDir, err := os.MkdirTemp("", "small-verify-nano")
 	if err != nil {

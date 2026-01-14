@@ -35,6 +35,7 @@ func Execute() error {
 	rootCmd.AddCommand(statusCmd())
 	rootCmd.AddCommand(applyCmd())
 	rootCmd.AddCommand(resetCmd())
+	rootCmd.AddCommand(progressCmd())
 	rootCmd.AddCommand(verifyCmd())
 	rootCmd.AddCommand(doctorCmd())
 

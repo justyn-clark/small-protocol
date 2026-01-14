@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
@@ -103,6 +104,23 @@ Preserved audit artifacts:
 					return fmt.Errorf("failed to reset %s: %w", filename, err)
 				}
 				fmt.Printf("Reset: %s\n", filename)
+			}
+
+			evidence := "Reset ephemeral .small artifacts"
+			notes := "small reset"
+			if keepIntent {
+				evidence = "Reset plan and handoff (intent preserved)"
+				notes = "small reset --keep-intent"
+			}
+			entry := map[string]interface{}{
+				"task_id":   "reset",
+				"status":    "completed",
+				"timestamp": formatProgressTimestamp(time.Now().UTC()),
+				"evidence":  evidence,
+				"notes":     notes,
+			}
+			if err := appendProgressEntry(baseDir, entry); err != nil {
+				return fmt.Errorf("failed to record reset progress: %w", err)
 			}
 
 			fmt.Printf("\nSMALL v%s reset complete. Ready for new run.\n", small.ProtocolVersion)

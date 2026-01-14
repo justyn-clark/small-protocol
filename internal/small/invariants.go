@@ -239,18 +239,24 @@ func validateProgress(path string, root map[string]interface{}, owner string) []
 		}
 
 		tsValue, _ := em["timestamp"].(string)
-		parsedTs, tsErr := parseProgressTimestamp(tsValue)
+		parsedTs, tsErr := ParseProgressTimestamp(tsValue)
 		if tsErr != nil {
 			v = append(v, InvariantViolation{
-				File:    path,
-				Message: fmt.Sprintf("progress entry %d timestamp invalid: %v", i, tsErr),
+				File: path,
+				Message: fmt.Sprintf(
+					"progress entry %d timestamp %q invalid: %v (expected RFC3339Nano with fractional seconds, strictly increasing)",
+					i, tsValue, tsErr,
+				),
 			})
 			continue
 		}
 		if !prevTime.IsZero() && !parsedTs.After(prevTime) {
 			v = append(v, InvariantViolation{
-				File:    path,
-				Message: fmt.Sprintf("progress entry %d timestamp (%s) must be after previous entry (%s)", i, parsedTs.Format(time.RFC3339Nano), prevTime.Format(time.RFC3339Nano)),
+				File: path,
+				Message: fmt.Sprintf(
+					"progress entry %d timestamp %q must be after previous entry %q (expected strictly increasing RFC3339Nano)",
+					i, parsedTs.Format(time.RFC3339Nano), prevTime.Format(time.RFC3339Nano),
+				),
 			})
 			continue
 		}
@@ -283,19 +289,35 @@ func validateProgress(path string, root map[string]interface{}, owner string) []
 	return v
 }
 
-func parseProgressTimestamp(value string) (time.Time, error) {
+func ParseProgressTimestamp(value string) (time.Time, error) {
 	trimmed := strings.TrimSpace(value)
 	if trimmed == "" {
-		return time.Time{}, fmt.Errorf("timestamp is required")
+		return time.Time{}, fmt.Errorf("timestamp is required (RFC3339Nano with fractional seconds)")
 	}
-	if !strings.Contains(trimmed, ".") {
+	if !hasFractionalSeconds(trimmed) {
 		return time.Time{}, fmt.Errorf("timestamp must include fractional seconds")
 	}
 	parsed, err := time.Parse(time.RFC3339Nano, trimmed)
 	if err != nil {
-		return time.Time{}, fmt.Errorf("invalid RFC3339 timestamp: %w", err)
+		return time.Time{}, fmt.Errorf("timestamp must be RFC3339Nano: %w", err)
 	}
 	return parsed, nil
+}
+
+func hasFractionalSeconds(value string) bool {
+	tIndex := strings.Index(value, "T")
+	timePart := value
+	if tIndex >= 0 && tIndex+1 < len(value) {
+		timePart = value[tIndex+1:]
+	}
+	end := len(timePart)
+	if idx := strings.IndexAny(timePart, "Z+-"); idx >= 0 {
+		end = idx
+	}
+	if end < 0 || end > len(timePart) {
+		end = len(timePart)
+	}
+	return strings.Contains(timePart[:end], ".")
 }
 
 func validateCompletedTaskProgress(planArtifact, progressArtifact *Artifact) []InvariantViolation {
@@ -376,7 +398,7 @@ func ProgressEntryHasValidEvidence(entry map[string]interface{}) bool {
 	if strings.TrimSpace(ts) == "" {
 		return false
 	}
-	if _, err := parseProgressTimestamp(ts); err != nil {
+	if _, err := ParseProgressTimestamp(ts); err != nil {
 		return false
 	}
 	if hasNonEmptyStringField(entry, "notes") || hasNonEmptyStringField(entry, "evidence") {

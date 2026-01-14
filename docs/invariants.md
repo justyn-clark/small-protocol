@@ -34,6 +34,21 @@ The `progress.small.yml` artifact is append-only.
 - Entries may not be deleted
 - Each entry must include evidence of execution
 
+## Progress Timestamp Contract
+
+Every progress entry timestamp must meet this contract:
+
+- RFC3339Nano format
+- Includes fractional seconds
+- Strictly increasing within the file
+
+Verification errors include the entry index and offending timestamp. If you have
+older logs, run:
+
+```bash
+small progress migrate
+```
+
 ## Version Constraint
 
 All artifacts must declare:
@@ -83,7 +98,7 @@ entries: []  # No corresponding entry -> FAILS verify
 # progress.small.yml
 entries:
   - task_id: "my-task"
-    timestamp: "2026-01-12T12:00:00Z"
+    timestamp: "2026-01-12T12:00:00.000000000Z"
     evidence: "Implemented feature X"
 ```
 
