@@ -14,6 +14,7 @@
 | `small doctor`   | Diagnose workspace issues             |
 | `small selftest` | Built-in CLI self-test                |
 | `small archive`  | Archive run state for lineage         |
+| `small run`      | Run history snapshots and diff        |
 
 ## Execution Commands
 
@@ -58,6 +59,13 @@ Generate a handoff checkpoint:
 
 ```bash
 small handoff
+```
+
+Snapshot and list run history:
+
+```bash
+small run snapshot
+small run list
 ```
 
 Reset workspace for a new run:

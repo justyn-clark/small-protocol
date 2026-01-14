@@ -40,6 +40,7 @@ func Execute() error {
 	rootCmd.AddCommand(doctorCmd())
 	rootCmd.AddCommand(selftestCmd())
 	rootCmd.AddCommand(archiveCmd())
+	rootCmd.AddCommand(runCmd())
 
 	return rootCmd.Execute()
 }
