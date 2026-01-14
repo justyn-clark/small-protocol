@@ -42,6 +42,28 @@ SMALL uses `.small/` in two different ways:
 
 In this repo, root `./.small/` is ignored, but example `.small/` folders are tracked.
 
+### Temp directories
+
+The following directories are ephemeral and should never be committed:
+
+| Directory | Purpose |
+|-----------|---------|
+| `.tmp/` | Local scratch space for debugging (ignored) |
+| `.small/archive/` | Run archives (local by default, see `small archive`) |
+| OS temp (`/tmp/`, `$TMPDIR`) | Selftest and CI workspaces |
+
+The `small selftest` command uses OS temp by default so it never touches repo state.
+
+### Run archiving
+
+Use `small archive` to preserve run state without committing `.small/`:
+
+```bash
+small archive
+```
+
+Archives are stored in `.small/archive/<replayId>/` with a manifest containing SHA256 hashes. Archives are local by default (ignored in .gitignore), but you may commit them in product repos if you want persistent lineage. See `small archive --help` for details.
+
 ## Live Progress Logging
 
 Mutating commands append progress entries immediately (no end-of-run batching). Each
@@ -530,6 +552,124 @@ small verify
 
 `small verify` loads `.small/workspace.small.yml` and expects `kind` to be either `repo-root` or `examples`. Example workspaces under `examples/**` keep their own `.small/` directories with `kind: examples`; the repository root uses `kind: repo-root`. Any other value produces `Workspace validation failed: invalid workspace kind "<value>"; valid kinds: ["repo-root", "examples"]`, so regenerate the metadata (for example with `small init`) or set the kind explicitly to a supported value. Keep the root `.small/` directory local (do not commit it); the `examples/**/.small/` directories are the only `.small` artifacts that stay in source control.
 
+### small selftest
+
+Run a built-in self-test to verify CLI functionality in an isolated workspace.
+
+```bash
+small selftest
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--keep` | Do not delete temp directory after test |
+| `--dir <path>` | Run selftest in explicit directory (default: OS temp) |
+| `--workspace <scope>` | Workspace scope for verify step (default: any) |
+
+**Steps performed:**
+
+1. `init` - Creates a selftest workspace
+2. `plan --add` - Adds a test task
+3. `plan --done` - Marks the task complete
+4. `apply --dry-run` - Records a dry-run
+5. `handoff` - Generates handoff with replayId
+6. `verify` - Validates the workspace
+
+**Example output:**
+
+```
+SMALL Selftest
+==============
+Workspace: /var/folders/.../small-selftest-123456
+
+[1/6] init... OK
+[2/6] plan --add... OK
+[3/6] plan --done... OK
+[4/6] apply --dry-run... OK
+[5/6] handoff... OK
+[6/6] verify... OK
+
+All selftest steps passed!
+```
+
+**When to use selftest:**
+
+- Day-1 verification after installing the CLI
+- Debugging CLI issues
+- CI smoke test
+- Verifying a new release works correctly
+
+**Common errors:**
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| `selftest failed at step "verify"` | Workspace invalid | Check error details, may indicate CLI bug |
+| `failed to create temp directory` | Permission issue | Check OS temp permissions or use --dir |
+
+### small archive
+
+Archive the current run state for lineage retention without committing `.small/`.
+
+```bash
+small archive
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--dir <path>` | Directory containing .small/ |
+| `--out <path>` | Output directory (default: .small/archive/<replayId>/) |
+| `--include <files>` | Files to include (default: all canonical artifacts) |
+
+**What gets archived:**
+
+- All canonical SMALL artifacts (intent, constraints, plan, progress, handoff)
+- workspace.small.yml
+- A manifest (`archive.small.yml`) with SHA256 hashes for integrity verification
+
+**Manifest contents:**
+
+```yaml
+small_version: "1.0.0"
+archived_at: "2025-01-15T10:30:00.123456789Z"
+source_dir: "/path/to/project"
+replayId: "a1b2c3d4..."
+files:
+  - name: "intent.small.yml"
+    sha256: "abc123..."
+  - name: "plan.small.yml"
+    sha256: "def456..."
+```
+
+**Requirements:**
+
+- `handoff.small.yml` must have a valid replayId (run `small handoff` first)
+
+**When to archive:**
+
+- Before starting a new run (to preserve the previous run's state)
+- At project milestones
+- Before destructive operations
+- For audit/compliance requirements
+
+**Common errors:**
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| `missing replayId` | handoff lacks session ID | Run `small handoff` first |
+| `.small/ does not exist` | Workspace not initialized | Run `small init` first |
+
+**Storage policy:**
+
+Archives are stored in `.small/archive/<replayId>/` by default and are ignored in `.gitignore`. You may:
+
+1. Keep archives local (default) for debugging/reference
+2. Commit archives in product repos for persistent lineage
+3. Copy archives to external storage for compliance
+
 ### small doctor
 
 Diagnose workspace issues and suggest fixes. This command is **read-only** and never mutates state.
@@ -681,7 +821,13 @@ small progress migrate      # Normalize progress timestamps
 # CI/Verification
 small verify                # Exit 0 valid, 1 invalid, 2 error
 small verify --ci --strict  # CI mode with strict checks
+small selftest              # Built-in CLI self-test
+small selftest --keep       # Keep temp workspace for inspection
 
 # Diagnosis
 small doctor                # Read-only workspace diagnosis
+
+# Archiving
+small archive               # Archive current run to .small/archive/
+small archive --out ./backup  # Archive to custom directory
 ```

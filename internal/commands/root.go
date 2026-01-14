@@ -38,6 +38,8 @@ func Execute() error {
 	rootCmd.AddCommand(progressCmd())
 	rootCmd.AddCommand(verifyCmd())
 	rootCmd.AddCommand(doctorCmd())
+	rootCmd.AddCommand(selftestCmd())
+	rootCmd.AddCommand(archiveCmd())
 
 	return rootCmd.Execute()
 }

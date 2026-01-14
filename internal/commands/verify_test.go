@@ -493,3 +493,133 @@ func mustSaveWorkspace(t *testing.T, baseDir string, kind workspace.Kind) {
 		t.Fatalf("failed to write workspace metadata: %v", err)
 	}
 }
+
+func TestVerifyActionableFixes(t *testing.T) {
+	t.Run("missing replayId suggests small handoff", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		artifacts := cloneArtifacts(defaultArtifacts())
+		artifacts["handoff.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+summary: "Test handoff WITHOUT replayId"
+resume:
+  current_task_id: ""
+  next_steps: []
+links: []
+`
+		writeArtifacts(t, tmpDir, artifacts)
+		mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+		// Capture stderr
+		oldStderr := os.Stderr
+		r, w, err := os.Pipe()
+		if err != nil {
+			t.Fatalf("failed to capture stderr: %v", err)
+		}
+		os.Stderr = w
+		defer func() {
+			os.Stderr = oldStderr
+		}()
+
+		var buf bytes.Buffer
+		done := make(chan struct{})
+		go func() {
+			_, _ = io.Copy(&buf, r)
+			r.Close()
+			close(done)
+		}()
+
+		code := runVerify(tmpDir, false, false, workspace.ScopeRoot)
+		w.Close()
+		<-done
+
+		if code != ExitInvalid {
+			t.Errorf("expected exit code %d, got %d", ExitInvalid, code)
+		}
+
+		output := buf.String()
+		if !strings.Contains(output, "small handoff") {
+			t.Errorf("expected fix message to mention 'small handoff', got: %s", output)
+		}
+	})
+
+	t.Run("progress timestamp issues suggest small progress migrate", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		artifacts := cloneArtifacts(defaultArtifacts())
+		artifacts["progress.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+entries:
+  - task_id: "task-1"
+    status: "completed"
+    timestamp: "2025-01-01T00:00:00Z"
+    evidence: "missing fractional"
+`
+		writeArtifacts(t, tmpDir, artifacts)
+		mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+		oldStderr := os.Stderr
+		r, w, err := os.Pipe()
+		if err != nil {
+			t.Fatalf("failed to capture stderr: %v", err)
+		}
+		os.Stderr = w
+		defer func() {
+			os.Stderr = oldStderr
+		}()
+
+		var buf bytes.Buffer
+		done := make(chan struct{})
+		go func() {
+			_, _ = io.Copy(&buf, r)
+			r.Close()
+			close(done)
+		}()
+
+		code := runVerify(tmpDir, false, false, workspace.ScopeRoot)
+		w.Close()
+		<-done
+
+		if code != ExitInvalid {
+			t.Errorf("expected exit code %d, got %d", ExitInvalid, code)
+		}
+
+		output := buf.String()
+		if !strings.Contains(output, "small progress migrate") {
+			t.Errorf("expected fix message to mention 'small progress migrate', got: %s", output)
+		}
+	})
+
+	t.Run("missing .small directory suggests small init", func(t *testing.T) {
+		tmpDir := t.TempDir()
+
+		oldStderr := os.Stderr
+		r, w, err := os.Pipe()
+		if err != nil {
+			t.Fatalf("failed to capture stderr: %v", err)
+		}
+		os.Stderr = w
+		defer func() {
+			os.Stderr = oldStderr
+		}()
+
+		var buf bytes.Buffer
+		done := make(chan struct{})
+		go func() {
+			_, _ = io.Copy(&buf, r)
+			r.Close()
+			close(done)
+		}()
+
+		code := runVerify(tmpDir, false, false, workspace.ScopeRoot)
+		w.Close()
+		<-done
+
+		if code != ExitSystemError {
+			t.Errorf("expected exit code %d, got %d", ExitSystemError, code)
+		}
+
+		output := buf.String()
+		if !strings.Contains(output, "small init") {
+			t.Errorf("expected fix message to mention 'small init', got: %s", output)
+		}
+	})
+}
