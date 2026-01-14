@@ -85,7 +85,7 @@ small_version: "1.0.0"
 owner: "agent"
 entries:
   - task_id: "task-1"
-    timestamp: "2025-01-04T10:00:00Z"
+    timestamp: "2025-01-04T10:00:00.000000000Z"
     status: "completed"
     evidence: "Created src/ directory structure"
     commit: "abc1234"
