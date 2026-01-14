@@ -71,9 +71,13 @@ dist/
 # ================================
 # SMALL runtime artifacts
 # - Ignore live workspace at repo root
+# - Ignore archive directories (local by default)
 # - Allow committed fixtures under examples/**/.small/**
 # ================================
 /.small/**
+
+# Archives are local by default; users may commit if desired
+.small/archive/
 
 # Allow committed examples
 !/examples/**/.small/

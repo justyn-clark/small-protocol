@@ -4,14 +4,22 @@ set -euo pipefail
 # Verification script for small-protocol
 # Creates an isolated SMALL workspace so repo-root .small is never touched.
 # Fails on any dirty working tree changes or go mod tidy diffs.
+#
+# The script uses OS temp by default for isolation.
+# Set SMALL_VERIFY_DIR to use a specific directory (e.g., for debugging).
 
 BIN="${BIN_PATH:-./bin/small}"
 
-WORKDIR="${SMALL_VERIFY_DIR:-.tmp/small-verify}"
+# Use OS temp by default, or SMALL_VERIFY_DIR if set
+if [ -n "${SMALL_VERIFY_DIR:-}" ]; then
+  WORKDIR="$SMALL_VERIFY_DIR"
+  rm -rf "$WORKDIR"
+  mkdir -p "$WORKDIR"
+else
+  WORKDIR="$(mktemp -d)"
+  trap "rm -rf $WORKDIR" EXIT
+fi
 SMALLDIR="$WORKDIR/.small"
-
-rm -rf "$WORKDIR"
-mkdir -p "$WORKDIR"
 
 echo "=== Step 1: Go version ==="
 GO_VER="$(go version)"
@@ -95,5 +103,11 @@ echo "=== Step 13: Verify isolated workspace ==="
 echo "=== Step 14: Run tests and format check ==="
 make small-test
 make small-format-check
+
+echo "=== Step 15: Run built-in selftest ==="
+"$BIN" selftest
+
+echo "=== Step 16: Test archive command ==="
+"$BIN" archive --dir "$WORKDIR"
 
 echo "=== All verification steps passed ==="
