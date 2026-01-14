@@ -4,7 +4,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"gopkg.in/yaml.v3"
@@ -250,8 +249,8 @@ func TestEnsureProgressEvidenceWritesValidEntry(t *testing.T) {
 	if !ok {
 		t.Fatalf("timestamp missing or not a string: %v", entry["timestamp"])
 	}
-	if _, err := time.Parse(time.RFC3339Nano, timestamp); err != nil {
-		t.Fatalf("timestamp not parseable: %v", err)
+	if _, err := small.ParseProgressTimestamp(timestamp); err != nil {
+		t.Fatalf("timestamp not RFC3339Nano with fractional seconds: %v", err)
 	}
 
 	if !small.ProgressEntryHasValidEvidence(entry) {

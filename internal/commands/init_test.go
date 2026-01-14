@@ -5,7 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
+	"gopkg.in/yaml.v3"
 )
 
 func TestInitCommandWritesWorkspaceMetadata(t *testing.T) {
@@ -29,6 +31,29 @@ func TestInitCommandWritesWorkspaceMetadata(t *testing.T) {
 
 	if info.Kind != workspace.KindRepoRoot {
 		t.Fatalf("expected workspace kind %q, got %q", workspace.KindRepoRoot, info.Kind)
+	}
+
+	progressPath := filepath.Join(tmpDir, ".small", "progress.small.yml")
+	data, err := os.ReadFile(progressPath)
+	if err != nil {
+		t.Fatalf("failed to read progress file: %v", err)
+	}
+
+	var progress ProgressData
+	if err := yaml.Unmarshal(data, &progress); err != nil {
+		t.Fatalf("failed to parse progress file: %v", err)
+	}
+	if len(progress.Entries) == 0 {
+		t.Fatal("expected init to append a progress entry")
+	}
+
+	entry := progress.Entries[len(progress.Entries)-1]
+	if entry["task_id"] != "init" {
+		t.Fatalf("expected init task_id, got %v", entry["task_id"])
+	}
+	timestamp, _ := entry["timestamp"].(string)
+	if _, err := small.ParseProgressTimestamp(timestamp); err != nil {
+		t.Fatalf("invalid init timestamp %q: %v", timestamp, err)
 	}
 }
 

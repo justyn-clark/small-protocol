@@ -42,6 +42,29 @@ SMALL uses `.small/` in two different ways:
 
 In this repo, root `./.small/` is ignored, but example `.small/` folders are tracked.
 
+## Live Progress Logging
+
+Mutating commands append progress entries immediately (no end-of-run batching). Each
+entry uses RFC3339Nano timestamps with fractional seconds and strictly increasing
+order. Use `small progress migrate` to repair older logs.
+
+**Commands that write progress:**
+
+| Command | Progress entry behavior |
+|---------|--------------------------|
+| `small init` | `task_id: init`, `status: completed`, evidence about workspace creation |
+| `small plan --add` | `task_id: <new task>`, `status: pending`, evidence about the new task |
+| `small plan --done` | `task_id: <task>`, `status: completed`, evidence of completion |
+| `small plan --pending` | `task_id: <task>`, `status: pending`, evidence of status change |
+| `small plan --blocked` | `task_id: <task>`, `status: blocked`, evidence of status change |
+| `small plan --depends` | `task_id: <task>`, evidence of dependency update |
+| `small apply` | start entry `in_progress`, end entry `completed` or `blocked` |
+| `small apply --dry-run` | `status: pending`, evidence of dry-run |
+| `small reset` | `task_id: reset`, `status: completed`, evidence of reset |
+
+`small handoff`, `small status`, `small doctor`, and `small verify` are read-only
+and do not append progress.
+
 ## Commands
 
 ### small version
@@ -429,6 +452,29 @@ small reset --yes
 | `.small/ does not exist` | Workspace not initialized | Run `small init` first |
 | `Reset cancelled` | User declined confirmation | Use `--yes` to skip confirmation |
 
+### small progress migrate
+
+Rewrite progress timestamps to the strict contract (RFC3339Nano, fractional seconds,
+strictly increasing). This command is explicit and only runs when invoked.
+
+```bash
+small progress migrate
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`) |
+
+**Behavior:**
+
+- Parses every entry timestamp
+- Normalizes to UTC RFC3339Nano with fractional seconds
+- Adds nanosecond offsets when entries collide
+- Fails fast on unparseable timestamps (no rewrite)
+
 ### small verify
 
 CI and local enforcement gate for SMALL artifacts.
@@ -459,6 +505,7 @@ small verify
 - All required files exist
 - Schema validation of all artifacts
 - Invariant enforcement (ownership, required fields)
+- Progress timestamps must be RFC3339Nano with fractional seconds and strict ordering
 - Completed plan tasks require at least one progress entry referencing the task before verify passes
 - ReplayId format validation (if present)
 
@@ -629,6 +676,7 @@ small handoff --replay-id abc123...  # Manual replayId override
 # New run
 small reset --yes           # Reset ephemeral files
 small reset --keep-intent   # Keep intent, reset others
+small progress migrate      # Normalize progress timestamps
 
 # CI/Verification
 small verify                # Exit 0 valid, 1 invalid, 2 error

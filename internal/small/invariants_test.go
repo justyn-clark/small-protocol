@@ -152,6 +152,112 @@ func TestCheckInvariants_ProgressWithoutEvidence(t *testing.T) {
 	}
 }
 
+func TestCheckInvariants_ProgressTimestampRequiresFractional(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-1",
+						"timestamp": "2025-01-01T00:00:00Z",
+						"evidence":  "missing fractional",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, false)
+	hasFractionalError := false
+	for _, v := range violations {
+		if contains(v.Message, "fractional seconds") {
+			hasFractionalError = true
+			break
+		}
+	}
+	if !hasFractionalError {
+		t.Error("expected error for missing fractional seconds, got none")
+	}
+}
+
+func TestCheckInvariants_ProgressTimestampEqual(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-1",
+						"timestamp": "2025-01-01T00:00:00.000000001Z",
+						"evidence":  "first",
+					},
+					map[string]interface{}{
+						"task_id":   "task-2",
+						"timestamp": "2025-01-01T00:00:00.000000001Z",
+						"evidence":  "duplicate",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, false)
+	hasOrderingError := false
+	for _, v := range violations {
+		if contains(v.Message, "must be after previous entry") {
+			hasOrderingError = true
+			break
+		}
+	}
+	if !hasOrderingError {
+		t.Error("expected error for equal timestamps, got none")
+	}
+}
+
+func TestCheckInvariants_ProgressTimestampDecreasing(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-1",
+						"timestamp": "2025-01-01T00:00:01.000000000Z",
+						"evidence":  "later",
+					},
+					map[string]interface{}{
+						"task_id":   "task-2",
+						"timestamp": "2025-01-01T00:00:00.000000000Z",
+						"evidence":  "earlier",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, false)
+	hasOrderingError := false
+	for _, v := range violations {
+		if contains(v.Message, "must be after previous entry") {
+			hasOrderingError = true
+			break
+		}
+	}
+	if !hasOrderingError {
+		t.Error("expected error for decreasing timestamps, got none")
+	}
+}
+
 func TestCheckInvariants_ConstraintsEmpty(t *testing.T) {
 	artifacts := map[string]*Artifact{
 		"constraints": {
