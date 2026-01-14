@@ -50,6 +50,7 @@ The following directories are ephemeral and should never be committed:
 |-----------|---------|
 | `.tmp/` | Local scratch space for debugging (ignored) |
 | `.small/archive/` | Run archives (local by default, see `small archive`) |
+| `.small-runs/` | Run history snapshots (local by default, see `small run`) |
 | OS temp (`/tmp/`, `$TMPDIR`) | Selftest and CI workspaces |
 
 The `small selftest` command uses OS temp by default so it never touches repo state.
@@ -63,6 +64,20 @@ small archive
 ```
 
 Archives are stored in `.small/archive/<replayId>/` with a manifest containing SHA256 hashes. Archives are local by default (ignored in .gitignore), but you may commit them in product repos if you want persistent lineage. See `small archive --help` for details.
+
+### Run history (Git-like UX)
+
+`small run` provides immutable, local run snapshots you can list, diff, and restore without touching `.small/` history. Snapshots live in `.small-runs/<replayId>/` by default and are ignored in `.gitignore`.
+
+```bash
+small run snapshot
+small run list
+small run show <replayId>
+small run diff <from> <to>
+small run checkout <replayId>
+```
+
+Use `--store` to point at another run store, and `--force` to overwrite or restore into a workspace with local changes.
 
 ## Live Progress Logging
 
@@ -608,6 +623,48 @@ All selftest steps passed!
 | `selftest failed at step "verify"` | Workspace invalid | Check error details, may indicate CLI bug |
 | `failed to create temp directory` | Permission issue | Check OS temp permissions or use --dir |
 
+### small run
+
+Git-like run history utilities: snapshot, list, show, diff, and checkout.
+
+```bash
+small run snapshot
+small run list
+small run show <replayId>
+small run diff <from> <to>
+small run checkout <replayId>
+```
+
+**Flags (snapshot/list/show/diff/checkout):**
+
+| Flag | Description |
+|------|-------------|
+| `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`) |
+| `--store <path>` | Run store directory (default: `<workspace>/.small-runs/`) |
+
+**Snapshot**
+
+- Captures intent, plan, progress, handoff, and optional constraints
+- Writes `meta.json` with replayId, git info, and CLI version
+- Fails if replayId is missing (run `small handoff` first)
+
+**List output columns:**
+
+- `created_at`, `replayId` (short), `summary`, `git_sha` (short), `git_dirty`
+
+**Diff behavior:**
+
+- Unified diff for YAML artifacts (intent, constraints, plan, handoff)
+- Progress summarized by entry count delta, completed task delta, and newest timestamps
+- Use `--full` to include the full progress diff
+
+**Checkout safety:**
+
+- Restores snapshot YAMLs into `.small/`
+- Preserves `workspace.small.yml`
+- Refuses to overwrite local `.small` changes unless `--force`
+
 ### small archive
 
 Archive the current run state for lineage retention without committing `.small/`.
@@ -826,6 +883,13 @@ small selftest --keep       # Keep temp workspace for inspection
 
 # Diagnosis
 small doctor                # Read-only workspace diagnosis
+
+# Run history
+small run snapshot
+small run list
+small run show <replayId>
+small run diff <from> <to>
+small run checkout <replayId>
 
 # Archiving
 small archive               # Archive current run to .small/archive/

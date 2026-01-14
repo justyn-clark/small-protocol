@@ -79,6 +79,9 @@ dist/
 # Archives are local by default; users may commit if desired
 .small/archive/
 
+# Run history snapshots (local by default)
+.small-runs/
+
 # Allow committed examples
 !/examples/**/.small/
 !/examples/**/.small/**
