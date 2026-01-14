@@ -69,8 +69,14 @@ echo "=== Step 8: Generate handoff in isolated workspace ==="
 "$BIN" handoff --dir "$WORKDIR" --summary "Verification checkpoint"
 
 echo "=== Step 9: Test plan command in isolated workspace ==="
-"$BIN" plan --dir "$WORKDIR" --add task-2 --title "Verification test task"
-"$BIN" plan --dir "$WORKDIR" --done task-2
+ADD_OUT="$("$BIN" plan --dir "$WORKDIR" --add "Verification test task")"
+echo "$ADD_OUT"
+TASK_ID="$(echo "$ADD_OUT" | sed -nE 's/^Added task ([^:]+):.*/\1/p' | tail -n1)"
+if [ -z "$TASK_ID" ]; then
+  echo "ERROR: could not parse task id from plan --add output"
+  exit 1
+fi
+"$BIN" plan --dir "$WORKDIR" --done "$TASK_ID"
 
 echo "=== Step 10: Test status command in isolated workspace ==="
 "$BIN" status --dir "$WORKDIR"
