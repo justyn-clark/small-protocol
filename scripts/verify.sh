@@ -26,11 +26,11 @@ GO_VER="$(go version)"
 echo "$GO_VER"
 
 echo "=== Enforcing Go toolchain version ==="
-echo "$GO_VER" | grep -E "go1\.22\." >/dev/null || {
-  echo "ERROR: Go 1.22.x is required, found: $GO_VER"
+echo "$GO_VER" | grep -E "go1\.24\." >/dev/null || {
+  echo "ERROR: Go 1.24.x is required, found: $GO_VER"
   exit 1
 }
-echo "✓ Go toolchain pinned to 1.22.x"
+echo "✓ Go toolchain pinned to 1.24.x"
 
 echo "=== README acronym check ==="
 grep -q 'SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle)' README.md || {
