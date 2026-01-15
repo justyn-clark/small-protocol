@@ -20,6 +20,8 @@ func init() {
 }
 
 func Execute() error {
+	printBannerIfEligible(os.Args)
+
 	rootCmd := &cobra.Command{
 		Use:   "small",
 		Short: "SMALL protocol CLI tool",
