@@ -31,11 +31,6 @@ requiring the small-protocol spec directory to be present.`,
 
 			artifactsDir := resolveArtifactsDir(dir)
 
-			artifacts, err := small.LoadAllArtifacts(artifactsDir)
-			if err != nil {
-				return fmt.Errorf("failed to load artifacts: %w", err)
-			}
-
 			// Build schema config
 			config := small.SchemaConfig{
 				SpecDir: specDir,
@@ -47,7 +42,10 @@ requiring the small-protocol spec directory to be present.`,
 				fmt.Printf("Schema resolution: %s\n", small.DescribeSchemaResolution(config))
 			}
 
-			errors := small.ValidateAllArtifactsWithConfig(artifacts, config)
+			errors, err := runValidateArtifacts(artifactsDir, config)
+			if err != nil {
+				return fmt.Errorf("failed to load artifacts: %w", err)
+			}
 			if len(errors) > 0 {
 				fmt.Fprintf(os.Stderr, "Validation failed:\n")
 				for _, err := range errors {
@@ -66,4 +64,14 @@ requiring the small-protocol spec directory to be present.`,
 		"Directory containing spec/ (e.g., path/to/small-protocol). Falls back to $SMALL_SPEC_DIR")
 
 	return cmd
+}
+
+func runValidateArtifacts(baseDir string, config small.SchemaConfig) ([]error, error) {
+	artifacts, err := small.LoadAllArtifacts(baseDir)
+	if err != nil {
+		return nil, err
+	}
+
+	errors := small.ValidateAllArtifactsWithConfig(artifacts, config)
+	return errors, nil
 }

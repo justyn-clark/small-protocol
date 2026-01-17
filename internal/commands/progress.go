@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -21,6 +22,20 @@ type ProgressData struct {
 	Entries      []map[string]interface{} `yaml:"entries"`
 }
 
+var progressTimestampNow = time.Now
+
+type progressAddResult struct {
+	Entry            map[string]interface{}
+	WorkspaceDir     string
+	TaskExistsInPlan bool
+}
+
+type progressAddOutput struct {
+	Workspace        string                 `json:"workspace"`
+	Entry            map[string]interface{} `json:"entry"`
+	TaskExistsInPlan bool                   `json:"task_exists_in_plan"`
+}
+
 func progressCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "progress",
@@ -28,7 +43,149 @@ func progressCmd() *cobra.Command {
 		Long:  "Utilities for maintaining progress.small.yml, including timestamp migration.",
 	}
 
+	cmd.AddCommand(progressAddCmd())
 	cmd.AddCommand(progressMigrateCmd())
+	return cmd
+}
+
+func progressAddCmd() *cobra.Command {
+	var (
+		taskID        string
+		status        string
+		evidence      string
+		notes         string
+		dir           string
+		workspaceFlag string
+		jsonOutput    bool
+	)
+
+	cmd := &cobra.Command{
+		Use:   "add",
+		Short: "Append a progress entry",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if dir == "" {
+				dir = baseDir
+			}
+			artifactsDir := resolveArtifactsDir(dir)
+			smallDir := filepath.Join(artifactsDir, small.SmallDir)
+
+			if _, err := os.Stat(smallDir); os.IsNotExist(err) {
+				return fmt.Errorf(".small/ directory does not exist. Run 'small init' first")
+			}
+
+			scope, err := workspace.ParseScope(workspaceFlag)
+			if err != nil {
+				return err
+			}
+			if scope != workspace.ScopeAny {
+				if err := enforceWorkspaceScope(artifactsDir, scope); err != nil {
+					return err
+				}
+			}
+
+			status = strings.ToLower(strings.TrimSpace(status))
+			if !isValidProgressStatus(status) {
+				return fmt.Errorf("invalid status %q (must be pending, in_progress, completed, blocked, or cancelled)", status)
+			}
+
+			progressPath := filepath.Join(artifactsDir, small.SmallDir, "progress.small.yml")
+			progress, err := loadProgressData(progressPath)
+			if err != nil {
+				if os.IsNotExist(err) {
+					progress = ProgressData{
+						SmallVersion: small.ProtocolVersion,
+						Owner:        "agent",
+						Entries:      []map[string]interface{}{},
+					}
+				} else {
+					return fmt.Errorf("failed to read progress.small.yml: %w", err)
+				}
+			}
+
+			entry := map[string]interface{}{
+				"task_id":   strings.TrimSpace(taskID),
+				"status":    status,
+				"timestamp": formatProgressTimestamp(progressTimestampNow().UTC()),
+			}
+			if strings.TrimSpace(evidence) != "" {
+				entry["evidence"] = evidence
+			}
+			if strings.TrimSpace(notes) != "" {
+				entry["notes"] = notes
+			}
+			if strings.TrimSpace(evidence) == "" {
+				entry["evidence"] = "Recorded progress via small progress add"
+			}
+
+			if err := validateProgressEntry(entry); err != nil {
+				return err
+			}
+
+			originalContent, err := os.ReadFile(progressPath)
+			if err != nil {
+				if os.IsNotExist(err) {
+					originalContent = nil
+				} else {
+					return fmt.Errorf("failed to read progress.small.yml: %w", err)
+				}
+			}
+
+			if err := appendProgressEntryWithData(artifactsDir, entry, progress); err != nil {
+				return fmt.Errorf("failed to append progress entry: %w", err)
+			}
+
+			createdProgress, err := loadProgressData(progressPath)
+			if err != nil {
+				return fmt.Errorf("failed to reload progress.small.yml: %w", err)
+			}
+			if len(createdProgress.Entries) > 0 {
+				entry = createdProgress.Entries[len(createdProgress.Entries)-1]
+			}
+
+			if err := validateProgressArtifact(artifactsDir); err != nil {
+				if originalContent == nil {
+					_ = os.Remove(progressPath)
+				} else {
+					_ = os.WriteFile(progressPath, originalContent, 0o644)
+				}
+				return err
+			}
+
+			taskExists, err := taskExistsInPlan(artifactsDir, taskID)
+			if err != nil {
+				return err
+			}
+
+			result := progressAddResult{
+				Entry:            entry,
+				WorkspaceDir:     artifactsDir,
+				TaskExistsInPlan: taskExists,
+			}
+
+			if jsonOutput {
+				return outputProgressAddJSON(result)
+			}
+
+			if !taskExists {
+				fmt.Printf("Warning: task %s not found in plan.small.yml\n", taskID)
+			}
+
+			fmt.Printf("progress added: %s %s %s\n", taskID, status, stringVal(entry["timestamp"]))
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&taskID, "task", "", "Task ID for the progress entry")
+	cmd.Flags().StringVar(&status, "status", "", "Status (pending, in_progress, completed, blocked, cancelled)")
+	cmd.Flags().StringVar(&evidence, "evidence", "", "Evidence for the progress entry")
+	cmd.Flags().StringVar(&notes, "notes", "", "Additional notes for the progress entry")
+	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
+	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root, examples, or any)")
+	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
+
+	_ = cmd.MarkFlagRequired("task")
+	_ = cmd.MarkFlagRequired("status")
+
 	return cmd
 }
 
@@ -86,17 +243,9 @@ monotonic contract.`,
 }
 
 func migrateProgressFile(progressPath string) (int, error) {
-	data, err := os.ReadFile(progressPath)
+	progress, err := loadProgressData(progressPath)
 	if err != nil {
 		return 0, fmt.Errorf("failed to read progress file: %w", err)
-	}
-
-	var progress ProgressData
-	if err := yaml.Unmarshal(data, &progress); err != nil {
-		return 0, fmt.Errorf("failed to parse progress file: %w", err)
-	}
-	if progress.Entries == nil {
-		progress.Entries = []map[string]interface{}{}
 	}
 
 	changed, err := normalizeProgressEntries(progress.Entries)
@@ -156,17 +305,9 @@ func normalizeProgressEntries(entries []map[string]interface{}) (int, error) {
 func appendProgressEntry(baseDir string, entry map[string]interface{}) error {
 	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
 
-	data, err := os.ReadFile(progressPath)
+	progress, err := loadProgressData(progressPath)
 	if err != nil {
 		return fmt.Errorf("failed to read progress file: %w", err)
-	}
-
-	var progress ProgressData
-	if err := yaml.Unmarshal(data, &progress); err != nil {
-		return fmt.Errorf("failed to parse progress file: %w", err)
-	}
-	if progress.Entries == nil {
-		progress.Entries = []map[string]interface{}{}
 	}
 
 	lastTimestamp, err := lastProgressTimestamp(progress.Entries)
@@ -175,6 +316,34 @@ func appendProgressEntry(baseDir string, entry map[string]interface{}) error {
 	}
 
 	if _, err := normalizeEntryTimestamp(entry, lastTimestamp); err != nil {
+		return err
+	}
+
+	progress.Entries = append(progress.Entries, entry)
+	progress.SmallVersion = small.ProtocolVersion
+	progress.Owner = "agent"
+
+	yamlData, err := yaml.Marshal(&progress)
+	if err != nil {
+		return fmt.Errorf("failed to marshal progress: %w", err)
+	}
+
+	if err := os.WriteFile(progressPath, yamlData, 0o644); err != nil {
+		return fmt.Errorf("failed to write progress file: %w", err)
+	}
+
+	return nil
+}
+
+func appendProgressEntryWithData(baseDir string, entry map[string]interface{}, progress ProgressData) error {
+	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
+
+	lastTimestamp, err := lastProgressTimestamp(progress.Entries)
+	if err != nil {
+		return fmt.Errorf("existing progress timestamps invalid: %w (run 'small progress migrate' to repair)", err)
+	}
+
+	if _, err := normalizeEntryTimestampWithNow(entry, lastTimestamp); err != nil {
 		return err
 	}
 
@@ -214,15 +383,36 @@ func lastProgressTimestamp(entries []map[string]interface{}) (time.Time, error) 
 }
 
 func normalizeEntryTimestamp(entry map[string]interface{}, last time.Time) (time.Time, error) {
-	tsValue, _ := entry["timestamp"].(string)
-	tsValue = strings.TrimSpace(tsValue)
-	if tsValue == "" {
-		tsValue = formatProgressTimestamp(time.Now().UTC())
+	sValue, _ := entry["timestamp"].(string)
+	sValue = strings.TrimSpace(sValue)
+	if sValue == "" {
+		sValue = formatProgressTimestamp(time.Now().UTC())
 	}
 
-	parsed, err := time.Parse(time.RFC3339Nano, tsValue)
+	parsed, err := time.Parse(time.RFC3339Nano, sValue)
 	if err != nil {
-		return time.Time{}, fmt.Errorf("timestamp %q must be RFC3339Nano: %w", tsValue, err)
+		return time.Time{}, fmt.Errorf("timestamp %q must be RFC3339Nano: %w", sValue, err)
+	}
+	parsed = parsed.UTC()
+
+	if !last.IsZero() && !parsed.After(last) {
+		parsed = last.Add(time.Nanosecond)
+	}
+
+	entry["timestamp"] = formatProgressTimestamp(parsed)
+	return parsed, nil
+}
+
+func normalizeEntryTimestampWithNow(entry map[string]interface{}, last time.Time) (time.Time, error) {
+	sValue, _ := entry["timestamp"].(string)
+	sValue = strings.TrimSpace(sValue)
+	if sValue == "" {
+		sValue = formatProgressTimestamp(progressTimestampNow().UTC())
+	}
+
+	parsed, err := time.Parse(time.RFC3339Nano, sValue)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("timestamp %q must be RFC3339Nano: %w", sValue, err)
 	}
 	parsed = parsed.UTC()
 
@@ -236,4 +426,99 @@ func normalizeEntryTimestamp(entry map[string]interface{}, last time.Time) (time
 
 func formatProgressTimestamp(ts time.Time) string {
 	return ts.UTC().Format("2006-01-02T15:04:05.000000000Z")
+}
+
+func isValidProgressStatus(status string) bool {
+	switch status {
+	case "pending", "in_progress", "completed", "blocked", "cancelled":
+		return true
+	default:
+		return false
+	}
+}
+
+func taskExistsInPlan(baseDir, taskID string) (bool, error) {
+	if strings.TrimSpace(taskID) == "" {
+		return false, nil
+	}
+	planPath := filepath.Join(baseDir, small.SmallDir, "plan.small.yml")
+	if _, err := os.Stat(planPath); os.IsNotExist(err) {
+		return false, nil
+	}
+	plan, err := loadPlan(planPath)
+	if err != nil {
+		return false, fmt.Errorf("failed to load plan.small.yml: %w", err)
+	}
+
+	_, index := findTask(plan, taskID)
+	return index >= 0, nil
+}
+
+func validateProgressArtifact(baseDir string) error {
+	progressArtifact, err := small.LoadArtifact(baseDir, "progress.small.yml")
+	if err != nil {
+		return fmt.Errorf("failed to load progress.small.yml: %w", err)
+	}
+	config := small.SchemaConfig{BaseDir: baseDir}
+	if err := small.ValidateArtifactWithConfig(progressArtifact, config); err != nil {
+		return fmt.Errorf("validation failed: %v", err)
+	}
+	violations := small.CheckInvariants(map[string]*small.Artifact{"progress": progressArtifact}, false)
+	if len(violations) > 0 {
+		return fmt.Errorf("invariant violations found: %s", violations[0].Message)
+	}
+	return nil
+}
+
+func loadProgressData(progressPath string) (ProgressData, error) {
+	data, err := os.ReadFile(progressPath)
+	if err != nil {
+		return ProgressData{}, err
+	}
+
+	var progress ProgressData
+	if err := yaml.Unmarshal(data, &progress); err != nil {
+		return ProgressData{}, err
+	}
+	if progress.Entries == nil {
+		progress.Entries = []map[string]interface{}{}
+	}
+	return progress, nil
+}
+
+func outputProgressAddJSON(result progressAddResult) error {
+	payload := progressAddOutput{
+		Workspace:        result.WorkspaceDir,
+		Entry:            result.Entry,
+		TaskExistsInPlan: result.TaskExistsInPlan,
+	}
+	data, err := json.MarshalIndent(payload, "", "  ")
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(data))
+	return nil
+}
+
+func validateProgressEntry(entry map[string]interface{}) error {
+	if strings.TrimSpace(stringVal(entry["task_id"])) == "" {
+		return fmt.Errorf("task_id is required")
+	}
+	status := strings.TrimSpace(stringVal(entry["status"]))
+	if status != "" && !isValidProgressStatus(status) {
+		return fmt.Errorf("invalid status %q", status)
+	}
+
+	if !small.ProgressEntryHasValidEvidence(entry) {
+		return fmt.Errorf("entry must include evidence or notes")
+	}
+
+	timestamp := strings.TrimSpace(stringVal(entry["timestamp"]))
+	if timestamp != "" {
+		if _, err := small.ParseProgressTimestamp(timestamp); err != nil {
+			return fmt.Errorf("timestamp %q invalid: %w", timestamp, err)
+		}
+	}
+
+	return nil
 }
