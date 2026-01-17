@@ -1,10 +1,12 @@
 package commands
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
@@ -15,12 +17,14 @@ import (
 
 func applyCmd() *cobra.Command {
 	var (
-		cmdArg        string
-		handoff       bool
-		taskID        string
-		dryRun        bool
-		dir           string
-		workspaceFlag string
+		cmdArg         string
+		handoff        bool
+		taskID         string
+		dryRun         bool
+		autoProgress   bool
+		autoCheckpoint bool
+		dir            string
+		workspaceFlag  string
 	)
 
 	cmd := &cobra.Command{
@@ -60,6 +64,19 @@ If no command is provided, defaults to dry-run mode.`,
 
 			if !small.ArtifactExists(artifactsDir, "progress.small.yml") {
 				return fmt.Errorf("progress.small.yml not found. Run 'small init' first")
+			}
+
+			if autoCheckpoint && taskID == "" {
+				return fmt.Errorf("--auto-checkpoint requires --task")
+			}
+			if autoCheckpoint && !small.ArtifactExists(artifactsDir, "plan.small.yml") {
+				return fmt.Errorf("plan.small.yml not found. Run 'small init' first")
+			}
+			if autoCheckpoint && dryRun {
+				return fmt.Errorf("--auto-checkpoint cannot be used with --dry-run")
+			}
+			if autoProgress && dryRun {
+				return fmt.Errorf("--auto-progress cannot be used with --dry-run")
 			}
 
 			// Default to dry-run if no command provided
@@ -124,9 +141,16 @@ If no command is provided, defaults to dry-run mode.`,
 
 			// Execute command using sh -lc for portability
 			shellCmd := exec.Command("sh", "-lc", cmdArg)
-			shellCmd.Stdout = os.Stdout
-			shellCmd.Stderr = os.Stderr
 			shellCmd.Dir = artifactsDir
+
+			var outputBuffer bytes.Buffer
+			if autoProgress {
+				shellCmd.Stdout = &outputBuffer
+				shellCmd.Stderr = &outputBuffer
+			} else {
+				shellCmd.Stdout = os.Stdout
+				shellCmd.Stderr = os.Stderr
+			}
 
 			cmdErr := shellCmd.Run()
 			exitCode := 0
@@ -150,7 +174,10 @@ If no command is provided, defaults to dry-run mode.`,
 				"command":   cmdArg,
 			}
 
-			if status == "completed" {
+			if autoProgress {
+				endEntry["evidence"] = buildAutoProgressEvidence(outputBuffer.String(), exitCode)
+				endEntry["notes"] = fmt.Sprintf("apply: exit code %d", exitCode)
+			} else if status == "completed" {
 				endEntry["evidence"] = "Command completed successfully"
 				endEntry["notes"] = fmt.Sprintf("apply: exit code %d", exitCode)
 			} else {
@@ -160,6 +187,20 @@ If no command is provided, defaults to dry-run mode.`,
 
 			if err := appendProgressEntry(artifactsDir, endEntry); err != nil {
 				fmt.Fprintf(os.Stderr, "Warning: failed to record completion: %v\n", err)
+			}
+
+			if autoCheckpoint {
+				if err := ensureCheckpointTask(taskID); err != nil {
+					return err
+				}
+				checkpointStatus := "completed"
+				if status != "completed" {
+					checkpointStatus = "blocked"
+				}
+				checkpointEvidence := buildAutoProgressEvidence(outputBuffer.String(), exitCode)
+				if err := runCheckpointApply(artifactsDir, taskID, checkpointStatus, checkpointEvidence); err != nil {
+					return err
+				}
 			}
 
 			fmt.Println()
@@ -194,6 +235,9 @@ If no command is provided, defaults to dry-run mode.`,
 	cmd.Flags().BoolVar(&handoff, "handoff", false, "Generate handoff after successful execution")
 	cmd.Flags().StringVar(&taskID, "task", "", "Associate this apply run with a specific task ID")
 	cmd.Flags().BoolVar(&dryRun, "dry-run", false, "Do not execute, only record intent")
+	cmd.Flags().BoolVar(&autoProgress, "auto-progress", false, "Capture output in progress evidence")
+	cmd.Flags().BoolVar(&autoCheckpoint, "auto-checkpoint", false, "Checkpoint the task based on command result")
+
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root or any)")
 
@@ -260,5 +304,110 @@ func generateHandoffFromApply(baseDir string) error {
 		return fmt.Errorf("failed to write handoff: %w", err)
 	}
 
+	return nil
+}
+
+func buildAutoProgressEvidence(output string, exitCode int) string {
+	const maxLen = 4000
+	trimmed := strings.TrimRight(output, "\n")
+	truncated := false
+	if len(trimmed) > maxLen {
+		trimmed = trimmed[:maxLen]
+		truncated = true
+	}
+
+	payload := fmt.Sprintf("exit_code=%d", exitCode)
+	if strings.TrimSpace(trimmed) != "" {
+		payload = payload + " output=\"" + trimmed + "\""
+	}
+	if truncated {
+		payload = payload + fmt.Sprintf(" truncated=true limit=%d", maxLen)
+	}
+	return payload
+}
+
+func ensureCheckpointTask(taskID string) error {
+	if taskID == "" {
+		return fmt.Errorf("checkpoint requires --task")
+	}
+	return nil
+}
+
+func runCheckpointApply(baseDir, taskID, status string, evidence string) error {
+	if status != "completed" && status != "blocked" {
+		return fmt.Errorf("checkpoint status must be completed or blocked")
+	}
+
+	planPath := filepath.Join(baseDir, small.SmallDir, "plan.small.yml")
+	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
+
+	plan, err := loadPlan(planPath)
+	if err != nil {
+		return fmt.Errorf("failed to load plan.small.yml: %w", err)
+	}
+
+	progress, err := loadProgressData(progressPath)
+	if err != nil {
+		return fmt.Errorf("failed to load progress.small.yml: %w", err)
+	}
+
+	originalPlanData, err := yaml.Marshal(plan)
+	if err != nil {
+		return fmt.Errorf("failed to snapshot plan.small.yml: %w", err)
+	}
+	originalProgressData, err := yaml.Marshal(&progress)
+	if err != nil {
+		return fmt.Errorf("failed to snapshot progress.small.yml: %w", err)
+	}
+
+	if err := setTaskStatus(plan, taskID, status); err != nil {
+		return err
+	}
+
+	entry := map[string]interface{}{
+		"task_id":   taskID,
+		"status":    status,
+		"timestamp": formatProgressTimestamp(time.Now().UTC()),
+	}
+	if strings.TrimSpace(evidence) != "" {
+		entry["evidence"] = evidence
+	}
+	if err := validateProgressEntry(entry); err != nil {
+		return err
+	}
+
+	if err := appendProgressEntryWithData(baseDir, entry, progress); err != nil {
+		return err
+	}
+
+	if err := savePlan(planPath, plan); err != nil {
+		_ = os.WriteFile(planPath, originalPlanData, 0o644)
+		_ = os.WriteFile(progressPath, originalProgressData, 0o644)
+		return err
+	}
+
+	if err := validateCheckpointArtifacts(baseDir); err != nil {
+		_ = os.WriteFile(planPath, originalPlanData, 0o644)
+		_ = os.WriteFile(progressPath, originalProgressData, 0o644)
+		return err
+	}
+
+	return nil
+}
+
+func validateCheckpointArtifacts(baseDir string) error {
+	artifacts, err := small.LoadAllArtifacts(baseDir)
+	if err != nil {
+		return fmt.Errorf("failed to load artifacts: %w", err)
+	}
+	config := small.SchemaConfig{BaseDir: baseDir}
+	errors := small.ValidateAllArtifactsWithConfig(artifacts, config)
+	if len(errors) > 0 {
+		return fmt.Errorf("validation failed: %v", errors[0])
+	}
+	violations := small.CheckInvariants(artifacts, false)
+	if len(violations) > 0 {
+		return fmt.Errorf("invariant violations found: %s", violations[0].Message)
+	}
 	return nil
 }

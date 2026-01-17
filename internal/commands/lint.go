@@ -28,12 +28,11 @@ Schema Resolution (for any validation performed):
 			}
 
 			artifactsDir := resolveArtifactsDir(dir)
-			artifacts, err := small.LoadAllArtifacts(artifactsDir)
+			violations, err := runLintArtifacts(artifactsDir, strict)
 			if err != nil {
 				return fmt.Errorf("failed to load artifacts: %w", err)
 			}
 
-			violations := small.CheckInvariants(artifacts, strict)
 			if len(violations) > 0 {
 				fmt.Fprintf(os.Stderr, "Invariant violations found:\n")
 				for _, violation := range violations {
@@ -55,4 +54,13 @@ Schema Resolution (for any validation performed):
 	_ = specDir
 
 	return cmd
+}
+
+func runLintArtifacts(baseDir string, strict bool) ([]small.InvariantViolation, error) {
+	artifacts, err := small.LoadAllArtifacts(baseDir)
+	if err != nil {
+		return nil, err
+	}
+	violations := small.CheckInvariants(artifacts, strict)
+	return violations, nil
 }

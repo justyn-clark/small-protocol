@@ -4,8 +4,10 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"gopkg.in/yaml.v3"
 )
 
@@ -126,6 +128,92 @@ func TestMigrateProgressFileRewritesTimestamps(t *testing.T) {
 	}
 	if !secondParsed.After(firstParsed) {
 		t.Fatalf("expected timestamps to be strictly increasing: %s <= %s", secondTs, firstTs)
+	}
+}
+
+func TestProgressAddMonotonicTimestamp(t *testing.T) {
+	oldNow := progressTimestampNow
+	defer func() { progressTimestampNow = oldNow }()
+
+	fixed := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	progressTimestampNow = func() time.Time { return fixed }
+
+	tmpDir := t.TempDir()
+	smallDir := filepath.Join(tmpDir, ".small")
+	if err := os.MkdirAll(smallDir, 0o755); err != nil {
+		t.Fatalf("failed to create .small dir: %v", err)
+	}
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	progress := ProgressData{
+		SmallVersion: small.ProtocolVersion,
+		Owner:        "agent",
+		Entries:      []map[string]interface{}{},
+	}
+	data, err := yaml.Marshal(&progress)
+	if err != nil {
+		t.Fatalf("failed to marshal progress: %v", err)
+	}
+	progressPath := filepath.Join(smallDir, "progress.small.yml")
+	if err := os.WriteFile(progressPath, data, 0o644); err != nil {
+		t.Fatalf("failed to write progress file: %v", err)
+	}
+
+	entry := map[string]interface{}{
+		"task_id": "task-1",
+		"status":  "in_progress",
+	}
+	if err := appendProgressEntryWithData(tmpDir, entry, progress); err != nil {
+		t.Fatalf("appendProgressEntryWithData error: %v", err)
+	}
+	updatedProgress, err := loadProgressData(progressPath)
+	if err != nil {
+		t.Fatalf("loadProgressData error: %v", err)
+	}
+	second := map[string]interface{}{
+		"task_id": "task-2",
+		"status":  "in_progress",
+	}
+	if err := appendProgressEntryWithData(tmpDir, second, updatedProgress); err != nil {
+		t.Fatalf("appendProgressEntryWithData second error: %v", err)
+	}
+
+	updated, err := loadProgressData(progressPath)
+	if err != nil {
+		t.Fatalf("loadProgressData error: %v", err)
+	}
+	if len(updated.Entries) != 2 {
+		t.Fatalf("expected 2 entries, got %d", len(updated.Entries))
+	}
+	firstTs := updated.Entries[0]["timestamp"].(string)
+	secondTs := updated.Entries[1]["timestamp"].(string)
+	firstParsed, _ := small.ParseProgressTimestamp(firstTs)
+	secondParsed, _ := small.ParseProgressTimestamp(secondTs)
+	if !secondParsed.After(firstParsed) {
+		t.Fatalf("expected monotonic timestamps: %s <= %s", secondTs, firstTs)
+	}
+}
+
+func TestProgressAddCreatesFileIfMissing(t *testing.T) {
+	tmpDir := t.TempDir()
+	smallDir := filepath.Join(tmpDir, ".small")
+	if err := os.MkdirAll(smallDir, 0o755); err != nil {
+		t.Fatalf("failed to create .small dir: %v", err)
+	}
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	progressPath := filepath.Join(smallDir, "progress.small.yml")
+	progress := ProgressData{SmallVersion: small.ProtocolVersion, Owner: "agent", Entries: []map[string]interface{}{}}
+	entry := map[string]interface{}{
+		"task_id": "task-1",
+		"status":  "pending",
+		"notes":   "created via test",
+	}
+	if err := appendProgressEntryWithData(tmpDir, entry, progress); err != nil {
+		t.Fatalf("appendProgressEntryWithData error: %v", err)
+	}
+	if _, err := os.Stat(progressPath); err != nil {
+		t.Fatalf("expected progress.small.yml to exist: %v", err)
 	}
 }
 
