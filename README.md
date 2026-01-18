@@ -5,9 +5,9 @@
 [![Go Version](https://img.shields.io/badge/go-1.22%2B-blue)](https://go.dev)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
-**SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle)** is a formal execution protocol for making AI-assisted work legible, deterministic, and resumable.
+**SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle)** is a formal state protocol that makes AI-assisted work legible, auditable, and resumable by separating durable state from ephemeral execution.
 
-It defines a minimal, fixed set of machine-readable artifacts that replace ephemeral chat history with durable execution state.
+It defines a minimal, fixed set of machine-readable artifacts that replace ephemeral chat history with durable project state.
 
 ## What SMALL Is Not
 

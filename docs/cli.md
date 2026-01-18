@@ -8,6 +8,7 @@
 | `small init`     | Initialize `.small/` artifacts        |
 | `small validate` | Schema validation                     |
 | `small lint`     | Invariant enforcement                 |
+| `small check`    | Run validate, lint, and verify        |
 | `small handoff`  | Generate resume checkpoint            |
 | `small reset`    | Reset workspace for new run           |
 | `small verify`   | CI/local enforcement gate             |
@@ -22,8 +23,10 @@
 |--------------------|-------------------------------------|
 | `small plan`       | Manage plan tasks                   |
 | `small status`     | Project state summary               |
+| `small emit`       | Emit structured JSON state          |
 | `small apply`      | Execute and record bounded commands |
-| `small progress`   | Progress utilities (migrate)        |
+| `small progress`   | Progress utilities (add, migrate)   |
+| `small checkpoint` | Update plan and progress atomically |
 
 ## Common Flags
 
@@ -32,7 +35,7 @@
 | `--dir`       | Target directory containing .small/      |
 | `--workspace` | Workspace scope (root, examples, or any) |
 | `--strict`    | Enable strict mode (lint, verify)        |
-| `--json`      | Output in JSON format (status)           |
+| `--json`      | Output in JSON format (status, check)    |
 | `--help`      | Show help for any command                |
 
 ## Examples
@@ -53,6 +56,12 @@ Check project status:
 
 ```bash
 small status
+```
+
+Emit JSON for integrations:
+
+```bash
+small emit --check --workspace root
 ```
 
 Generate a handoff checkpoint:

@@ -30,6 +30,8 @@ func checkpointCmd() *cobra.Command {
 	var status string
 	var evidence string
 	var notes string
+	var timestampAt string
+	var timestampAfter string
 	var dir string
 	var workspaceFlag string
 	var jsonOutput bool
@@ -75,6 +77,19 @@ func checkpointCmd() *cobra.Command {
 				return fmt.Errorf("failed to load progress.small.yml: %w", err)
 			}
 
+			lastTimestamp, err := lastProgressTimestamp(progress.Entries)
+			if err != nil {
+				return fmt.Errorf("existing progress timestamps invalid: %w (run 'small progress migrate' to repair)", err)
+			}
+
+			checkpointTimestamp, err := resolveProgressTimestamp(lastTimestamp, timestampAt, timestampAfter)
+			if err != nil {
+				return err
+			}
+			if checkpointTimestamp == "" {
+				checkpointTimestamp = formatProgressTimestamp(progressTimestampNow().UTC())
+			}
+
 			originalPlanData, err := yaml.Marshal(plan)
 			if err != nil {
 				return fmt.Errorf("failed to snapshot plan.small.yml: %w", err)
@@ -91,7 +106,7 @@ func checkpointCmd() *cobra.Command {
 			entry := map[string]interface{}{
 				"task_id":   strings.TrimSpace(taskID),
 				"status":    status,
-				"timestamp": formatProgressTimestamp(progressTimestampNow().UTC()),
+				"timestamp": checkpointTimestamp,
 			}
 			if strings.TrimSpace(evidence) != "" {
 				entry["evidence"] = evidence
@@ -133,7 +148,7 @@ func checkpointCmd() *cobra.Command {
 				entry = createdProgress.Entries[len(createdProgress.Entries)-1]
 			}
 
-			checkpointTimestamp := stringVal(entry["timestamp"])
+			checkpointTimestamp = stringVal(entry["timestamp"])
 			output := checkpointOutput{
 				TaskID:       taskID,
 				Status:       status,
@@ -164,6 +179,8 @@ func checkpointCmd() *cobra.Command {
 	cmd.Flags().StringVar(&status, "status", "", "Status (completed or blocked)")
 	cmd.Flags().StringVar(&evidence, "evidence", "", "Evidence for the checkpoint")
 	cmd.Flags().StringVar(&notes, "notes", "", "Additional notes for the checkpoint")
+	cmd.Flags().StringVar(&timestampAt, "at", "", "Use exact RFC3339Nano timestamp (must be after last entry)")
+	cmd.Flags().StringVar(&timestampAfter, "after", "", "Generate timestamp after provided RFC3339Nano time")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root, examples, or any)")
 	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")

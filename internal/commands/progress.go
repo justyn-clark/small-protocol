@@ -50,13 +50,15 @@ func progressCmd() *cobra.Command {
 
 func progressAddCmd() *cobra.Command {
 	var (
-		taskID        string
-		status        string
-		evidence      string
-		notes         string
-		dir           string
-		workspaceFlag string
-		jsonOutput    bool
+		taskID         string
+		status         string
+		evidence       string
+		notes          string
+		timestampAt    string
+		timestampAfter string
+		dir            string
+		workspaceFlag  string
+		jsonOutput     bool
 	)
 
 	cmd := &cobra.Command{
@@ -102,10 +104,23 @@ func progressAddCmd() *cobra.Command {
 				}
 			}
 
+			lastTimestamp, err := lastProgressTimestamp(progress.Entries)
+			if err != nil {
+				return fmt.Errorf("existing progress timestamps invalid: %w (run 'small progress migrate' to repair)", err)
+			}
+
+			timestamp, err := resolveProgressTimestamp(lastTimestamp, timestampAt, timestampAfter)
+			if err != nil {
+				return err
+			}
+			if timestamp == "" {
+				timestamp = formatProgressTimestamp(progressTimestampNow().UTC())
+			}
+
 			entry := map[string]interface{}{
 				"task_id":   strings.TrimSpace(taskID),
 				"status":    status,
-				"timestamp": formatProgressTimestamp(progressTimestampNow().UTC()),
+				"timestamp": timestamp,
 			}
 			if strings.TrimSpace(evidence) != "" {
 				entry["evidence"] = evidence
@@ -179,6 +194,8 @@ func progressAddCmd() *cobra.Command {
 	cmd.Flags().StringVar(&status, "status", "", "Status (pending, in_progress, completed, blocked, cancelled)")
 	cmd.Flags().StringVar(&evidence, "evidence", "", "Evidence for the progress entry")
 	cmd.Flags().StringVar(&notes, "notes", "", "Additional notes for the progress entry")
+	cmd.Flags().StringVar(&timestampAt, "at", "", "Use exact RFC3339Nano timestamp (must be after last entry)")
+	cmd.Flags().StringVar(&timestampAfter, "after", "", "Generate timestamp after provided RFC3339Nano time")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root, examples, or any)")
 	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
@@ -343,7 +360,7 @@ func appendProgressEntryWithData(baseDir string, entry map[string]interface{}, p
 		return fmt.Errorf("existing progress timestamps invalid: %w (run 'small progress migrate' to repair)", err)
 	}
 
-	if _, err := normalizeEntryTimestampWithNow(entry, lastTimestamp); err != nil {
+	if _, err := normalizeEntryTimestamp(entry, lastTimestamp); err != nil {
 		return err
 	}
 
@@ -386,7 +403,7 @@ func normalizeEntryTimestamp(entry map[string]interface{}, last time.Time) (time
 	sValue, _ := entry["timestamp"].(string)
 	sValue = strings.TrimSpace(sValue)
 	if sValue == "" {
-		sValue = formatProgressTimestamp(time.Now().UTC())
+		sValue = formatProgressTimestamp(progressTimestampNow().UTC())
 	}
 
 	parsed, err := time.Parse(time.RFC3339Nano, sValue)
@@ -403,25 +420,40 @@ func normalizeEntryTimestamp(entry map[string]interface{}, last time.Time) (time
 	return parsed, nil
 }
 
-func normalizeEntryTimestampWithNow(entry map[string]interface{}, last time.Time) (time.Time, error) {
-	sValue, _ := entry["timestamp"].(string)
-	sValue = strings.TrimSpace(sValue)
-	if sValue == "" {
-		sValue = formatProgressTimestamp(progressTimestampNow().UTC())
+func resolveProgressTimestamp(last time.Time, atValue string, afterValue string) (string, error) {
+	if strings.TrimSpace(atValue) != "" && strings.TrimSpace(afterValue) != "" {
+		return "", fmt.Errorf("only one of --at or --after may be set")
 	}
 
-	parsed, err := time.Parse(time.RFC3339Nano, sValue)
-	if err != nil {
-		return time.Time{}, fmt.Errorf("timestamp %q must be RFC3339Nano: %w", sValue, err)
+	if strings.TrimSpace(atValue) != "" {
+		parsed, err := small.ParseProgressTimestamp(atValue)
+		if err != nil {
+			return "", fmt.Errorf("--at timestamp %q invalid: %w", atValue, err)
+		}
+		parsed = parsed.UTC()
+		if !last.IsZero() && !parsed.After(last) {
+			return "", fmt.Errorf("--at timestamp must be after last progress entry %s", formatProgressTimestamp(last))
+		}
+		return formatProgressTimestamp(parsed), nil
 	}
-	parsed = parsed.UTC()
 
-	if !last.IsZero() && !parsed.After(last) {
-		parsed = last.Add(time.Nanosecond)
+	if strings.TrimSpace(afterValue) != "" {
+		parsed, err := small.ParseProgressTimestamp(afterValue)
+		if err != nil {
+			return "", fmt.Errorf("--after timestamp %q invalid: %w", afterValue, err)
+		}
+		parsed = parsed.UTC()
+		candidate := parsed.Add(time.Nanosecond)
+		if !last.IsZero() && !candidate.After(last) {
+			candidate = last.Add(time.Nanosecond)
+		}
+		if !candidate.After(parsed) {
+			candidate = parsed.Add(time.Nanosecond)
+		}
+		return formatProgressTimestamp(candidate), nil
 	}
 
-	entry["timestamp"] = formatProgressTimestamp(parsed)
-	return parsed, nil
+	return "", nil
 }
 
 func formatProgressTimestamp(ts time.Time) string {

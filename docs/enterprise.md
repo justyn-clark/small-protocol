@@ -17,14 +17,14 @@ Lineage and audit are captured by exporting artifacts into existing systems.
 
 ## Git Integration
 
-Commit the `.small/` directory to preserve execution history:
+Commit the `.small/` directory to preserve state history:
 
 ```bash
 git add .small/
-git commit -m "Record SMALL execution state"
+git commit -m "Record SMALL state"
 ```
 
-Each commit provides an immutable snapshot of execution state at that point in time.
+Each commit provides an immutable snapshot of project state at that point in time.
 
 ## CI/CD Integration
 

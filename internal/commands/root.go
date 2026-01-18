@@ -40,6 +40,7 @@ func Execute() error {
 	rootCmd.AddCommand(progressCmd())
 	rootCmd.AddCommand(checkpointCmd())
 	rootCmd.AddCommand(checkCmd())
+	rootCmd.AddCommand(emitCmd())
 	rootCmd.AddCommand(verifyCmd())
 	rootCmd.AddCommand(doctorCmd())
 	rootCmd.AddCommand(selftestCmd())
