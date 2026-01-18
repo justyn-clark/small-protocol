@@ -43,7 +43,7 @@ SMALL does not detect or prevent this at runtime. Prevention is the responsibili
 
 `handoff.small.yml` is the only resume entrypoint. Agents do not attempt to reconstruct state from raw artifacts. The handoff provides:
 
-- Deterministic snapshot of current state
+- Stable snapshot of current state
 - Recent progress for context
 - Clear next actions
 

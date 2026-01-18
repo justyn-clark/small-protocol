@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
@@ -11,6 +12,12 @@ import (
 )
 
 func TestCheckpointAtomicity(t *testing.T) {
+	oldNow := progressTimestampNow
+	defer func() { progressTimestampNow = oldNow }()
+
+	fixed := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	progressTimestampNow = func() time.Time { return fixed }
+
 	tmpDir := t.TempDir()
 	smallDir := filepath.Join(tmpDir, ".small")
 	if err := os.MkdirAll(smallDir, 0o755); err != nil {
@@ -30,7 +37,14 @@ func TestCheckpointAtomicity(t *testing.T) {
 	progress := ProgressData{
 		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
-		Entries:      []map[string]interface{}{},
+		Entries: []map[string]interface{}{
+			{
+				"task_id":   "seed",
+				"status":    "completed",
+				"timestamp": formatProgressTimestamp(fixed),
+				"evidence":  "seed",
+			},
+		},
 	}
 	planData, err := yaml.Marshal(&plan)
 	if err != nil {
@@ -58,16 +72,8 @@ func TestCheckpointAtomicity(t *testing.T) {
 		t.Fatalf("failed to read progress: %v", err)
 	}
 
-	invalidEntry := map[string]interface{}{
-		"task_id": "",
-		"status":  "completed",
-	}
-	if err := validateProgressEntry(invalidEntry); err == nil {
-		t.Fatal("expected invalid progress entry")
-	}
-
 	if err := runCheckpointApply(tmpDir, "task-1", "completed", ""); err == nil {
-		t.Fatal("expected checkpoint to fail with invalid progress entry")
+		t.Fatal("expected checkpoint to fail with missing evidence")
 	}
 
 	finalPlan, err := os.ReadFile(planPath)

@@ -66,6 +66,11 @@ func TestNormalizeProgressEntriesResolvesCollisions(t *testing.T) {
 }
 
 func TestMigrateProgressFileRewritesTimestamps(t *testing.T) {
+	oldNow := progressTimestampNow
+	defer func() { progressTimestampNow = oldNow }()
+
+	fixed := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	progressTimestampNow = func() time.Time { return fixed }
 	tmpDir := t.TempDir()
 	progressPath := filepath.Join(tmpDir, "progress.small.yml")
 
@@ -160,8 +165,9 @@ func TestProgressAddMonotonicTimestamp(t *testing.T) {
 	}
 
 	entry := map[string]interface{}{
-		"task_id": "task-1",
-		"status":  "in_progress",
+		"task_id":   "task-1",
+		"status":    "in_progress",
+		"timestamp": formatProgressTimestamp(fixed),
 	}
 	if err := appendProgressEntryWithData(tmpDir, entry, progress); err != nil {
 		t.Fatalf("appendProgressEntryWithData error: %v", err)
@@ -171,8 +177,9 @@ func TestProgressAddMonotonicTimestamp(t *testing.T) {
 		t.Fatalf("loadProgressData error: %v", err)
 	}
 	second := map[string]interface{}{
-		"task_id": "task-2",
-		"status":  "in_progress",
+		"task_id":   "task-2",
+		"status":    "in_progress",
+		"timestamp": formatProgressTimestamp(fixed),
 	}
 	if err := appendProgressEntryWithData(tmpDir, second, updatedProgress); err != nil {
 		t.Fatalf("appendProgressEntryWithData second error: %v", err)
@@ -195,6 +202,11 @@ func TestProgressAddMonotonicTimestamp(t *testing.T) {
 }
 
 func TestProgressAddCreatesFileIfMissing(t *testing.T) {
+	oldNow := progressTimestampNow
+	defer func() { progressTimestampNow = oldNow }()
+
+	fixed := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	progressTimestampNow = func() time.Time { return fixed }
 	tmpDir := t.TempDir()
 	smallDir := filepath.Join(tmpDir, ".small")
 	if err := os.MkdirAll(smallDir, 0o755); err != nil {
@@ -205,9 +217,10 @@ func TestProgressAddCreatesFileIfMissing(t *testing.T) {
 	progressPath := filepath.Join(smallDir, "progress.small.yml")
 	progress := ProgressData{SmallVersion: small.ProtocolVersion, Owner: "agent", Entries: []map[string]interface{}{}}
 	entry := map[string]interface{}{
-		"task_id": "task-1",
-		"status":  "pending",
-		"notes":   "created via test",
+		"task_id":   "task-1",
+		"status":    "pending",
+		"notes":     "created via test",
+		"timestamp": formatProgressTimestamp(fixed),
 	}
 	if err := appendProgressEntryWithData(tmpDir, entry, progress); err != nil {
 		t.Fatalf("appendProgressEntryWithData error: %v", err)
@@ -218,6 +231,11 @@ func TestProgressAddCreatesFileIfMissing(t *testing.T) {
 }
 
 func TestMigrateProgressFileRejectsUnparseable(t *testing.T) {
+	oldNow := progressTimestampNow
+	defer func() { progressTimestampNow = oldNow }()
+
+	fixed := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	progressTimestampNow = func() time.Time { return fixed }
 	tmpDir := t.TempDir()
 	progressPath := filepath.Join(tmpDir, "progress.small.yml")
 
@@ -243,5 +261,51 @@ func TestMigrateProgressFileRejectsUnparseable(t *testing.T) {
 
 	if _, err := migrateProgressFile(progressPath); err == nil {
 		t.Fatal("expected error for unparseable timestamp")
+	}
+}
+
+func TestResolveProgressTimestampAtValidation(t *testing.T) {
+	last := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	_, err := resolveProgressTimestamp(last, "2025-01-01T00:00:00Z", "")
+	if err == nil {
+		t.Fatal("expected error for non-RFC3339Nano timestamp")
+	}
+
+	_, err = resolveProgressTimestamp(last, formatProgressTimestamp(last), "")
+	if err == nil {
+		t.Fatal("expected error for non-monotonic --at timestamp")
+	}
+
+	at := formatProgressTimestamp(last.Add(time.Second))
+	resolved, err := resolveProgressTimestamp(last, at, "")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resolved != at {
+		t.Fatalf("expected resolved timestamp %q, got %q", at, resolved)
+	}
+}
+
+func TestResolveProgressTimestampAfterGeneratesMonotonic(t *testing.T) {
+	last := time.Date(2026, 1, 1, 0, 0, 0, 5, time.UTC)
+	after := "2026-01-01T00:00:00.000000001Z"
+	resolved, err := resolveProgressTimestamp(last, "", after)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	resolvedTime, err := small.ParseProgressTimestamp(resolved)
+	if err != nil {
+		t.Fatalf("resolved timestamp invalid: %v", err)
+	}
+	afterTime, err := small.ParseProgressTimestamp(after)
+	if err != nil {
+		t.Fatalf("after timestamp invalid: %v", err)
+	}
+	if !resolvedTime.After(afterTime) {
+		t.Fatalf("expected resolved timestamp after --after value")
+	}
+	if !resolvedTime.After(last) {
+		t.Fatalf("expected resolved timestamp after last entry")
 	}
 }

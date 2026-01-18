@@ -30,7 +30,7 @@ SMALL uses `.small/` in two different ways:
 
 1) Runtime workspace (repo root)
    - Path: `./.small/`
-   - Purpose: active execution state for the current run
+   - Purpose: active project state for the current run
    - Policy: do NOT commit
    - Reason: it churns every run and becomes noise
 
@@ -95,11 +95,13 @@ order. Use `small progress migrate` to repair older logs.
 | `small plan --pending` | `task_id: <task>`, `status: pending`, evidence of status change |
 | `small plan --blocked` | `task_id: <task>`, `status: blocked`, evidence of status change |
 | `small plan --depends` | `task_id: <task>`, evidence of dependency update |
+| `small progress add` | Appends a progress entry with monotonic timestamp |
+| `small checkpoint` | Updates plan status and appends progress entry |
 | `small apply` | start entry `in_progress`, end entry `completed` or `blocked` |
 | `small apply --dry-run` | `status: pending`, evidence of dry-run |
 | `small reset` | `task_id: reset`, `status: completed`, evidence of reset |
 
-`small handoff`, `small status`, `small doctor`, and `small verify` are read-only
+`small handoff`, `small status`, `small doctor`, `small verify`, and `small emit` are read-only
 and do not append progress.
 
 ## Commands
@@ -489,6 +491,30 @@ small reset --yes
 | `.small/ does not exist` | Workspace not initialized | Run `small init` first |
 | `Reset cancelled` | User declined confirmation | Use `--yes` to skip confirmation |
 
+### small progress add
+
+Append a progress entry with a strictly increasing RFC3339Nano timestamp. The CLI
+generates timestamps by default so you never need to construct them manually. Use
+--at or --after only for advanced integration cases.
+
+```bash
+small progress add --task task-1 --status in_progress --evidence "Started work"
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--task <id>` | Task ID for the progress entry (required) |
+| `--status <status>` | Status (pending, in_progress, completed, blocked, cancelled) |
+| `--evidence <string>` | Evidence for the entry |
+| `--notes <string>` | Additional notes |
+| `--at <timestamp>` | Use exact RFC3339Nano timestamp (must be after last entry) |
+| `--after <timestamp>` | Generate timestamp after provided RFC3339Nano time |
+| `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`) |
+| `--json` | JSON output |
+
 ### small progress migrate
 
 Rewrite progress timestamps to the strict contract (RFC3339Nano, fractional seconds,
@@ -511,6 +537,95 @@ small progress migrate
 - Normalizes to UTC RFC3339Nano with fractional seconds
 - Adds nanosecond offsets when entries collide
 - Fails fast on unparseable timestamps (no rewrite)
+
+### small checkpoint
+
+Update plan and progress in one atomic step.
+
+```bash
+small checkpoint --task task-1 --status completed --evidence "Completed work"
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--task <id>` | Task ID for the checkpoint (required) |
+| `--status <status>` | Status (completed or blocked) |
+| `--evidence <string>` | Evidence for the checkpoint |
+| `--notes <string>` | Additional notes |
+| `--at <timestamp>` | Use exact RFC3339Nano timestamp (must be after last entry) |
+| `--after <timestamp>` | Generate timestamp after provided RFC3339Nano time |
+| `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`) |
+| `--json` | JSON output |
+
+### small check
+
+Unified enforcement gate that runs validate, lint, and verify.
+
+```bash
+small check --json
+```
+
+**Stages:**
+
+- validate: schema validation
+- lint: invariant enforcement
+- verify: CI-grade gate
+
+**Exit codes:**
+
+| Code | Meaning |
+|------|---------|
+| 0 | All artifacts valid |
+| 1 | Artifacts invalid (validation or invariant failures) |
+| 2 | System error (missing directory, read errors) |
+
+**Example:**
+
+```bash
+small check --strict --ci
+```
+
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--strict` | Enable strict mode (propagates to verify) |
+| `--ci` | CI mode (minimal output) |
+| `--json` | JSON output |
+| `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`; default `root`) |
+
+**Exit codes:**
+
+| Code | Meaning |
+|------|---------|
+| 0 | All artifacts valid |
+| 1 | Artifacts invalid (validation or invariant failures) |
+| 2 | System error (missing directory, read errors) |
+
+### small emit
+
+Emit structured JSON for integrations. Emit is read-only unless --check is used,
+which runs small check and includes enforcement results. Output is JSON only.
+
+```bash
+small emit --check --workspace root
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`) |
+| `--recent <n>` | Recent progress entries to include (default: 5) |
+| `--tasks <n>` | Next actionable tasks to include (default: 3) |
+| `--include <list>` | Comma-separated sections (status, intent, constraints, plan, progress, paths, enforcement) |
+| `--check` | Run small check and include enforcement results |
 
 ### small verify
 

@@ -97,7 +97,7 @@ Spec-only tools help humans write specifications. SMALL enforces execution again
 
 - Enforces artifact structure via JSON Schema
 - Validates invariants (no secrets, verifiable progress)
-- Tracks execution state
+- Tracks project state
 - Provides machine-readable resume points
 - Progress is append-only and auditable
 

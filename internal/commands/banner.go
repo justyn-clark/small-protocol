@@ -13,7 +13,8 @@ const bannerA = `  ██████  ███    ███  █████  
        ██ ██  ██  ██ ██   ██ ██      ██
  ██████  ██      ██ ██   ██ ███████ ███████
 
- Deterministic execution with auditable lineage.
+  Deterministic state with auditable lineage.
+
 `
 
 const bannerB = `SMALL

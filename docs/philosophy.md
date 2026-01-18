@@ -14,13 +14,13 @@ Traditional AI-assisted workflows rely on ephemeral chat history that is:
 
 - Lost when sessions end
 - Difficult to audit
-- Impossible to resume deterministically
+- Hard to resume reliably
 
 SMALL replaces this with durable, machine-readable artifacts that:
 
 - Persist beyond any single session
 - Support audit and compliance requirements
-- Enable deterministic resumption from any checkpoint
+- Enable reliable resumption from any checkpoint
 
 ## Explicit Non-Goals
 
