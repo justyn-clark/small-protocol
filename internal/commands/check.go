@@ -63,7 +63,7 @@ func checkCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (secrets, insecure links)")
+	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (strict invariants, secrets, insecure links)")
 	cmd.Flags().BoolVar(&ci, "ci", false, "CI mode (minimal output)")
 	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")

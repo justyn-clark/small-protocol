@@ -46,7 +46,7 @@ Schema Resolution (for any validation performed):
 		},
 	}
 
-	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (includes secret detection)")
+	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (strict invariants, secrets, insecure links)")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&specDir, "spec-dir", os.Getenv("SMALL_SPEC_DIR"),
 		"Directory containing spec/ (e.g., path/to/small-protocol). Falls back to $SMALL_SPEC_DIR")

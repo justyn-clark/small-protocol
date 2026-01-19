@@ -239,7 +239,7 @@ replayId:
 	writeArtifacts(t, tmpDir, artifacts)
 	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
 
-	code := runVerify(tmpDir, false, true, workspace.ScopeRoot)
+	code := runVerify(tmpDir, true, true, workspace.ScopeRoot)
 	if code != ExitInvalid {
 		t.Errorf("expected exit code %d (ExitInvalid) for completed task without progress evidence, got %d", ExitInvalid, code)
 	}
@@ -291,10 +291,11 @@ links: []
 	writeArtifacts(t, tmpDir, artifacts)
 	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
 
-	code := runVerify(tmpDir, false, true, workspace.ScopeRoot)
+	code := runVerify(tmpDir, true, true, workspace.ScopeRoot)
 	if code != ExitInvalid {
-		t.Errorf("expected exit code %d (ExitInvalid) for handoff without replayId, got %d", ExitInvalid, code)
+		t.Errorf("expected exit code %d (ExitInvalid) for completed task without progress evidence, got %d", ExitInvalid, code)
 	}
+
 }
 
 func TestValidateReplayId(t *testing.T) {
