@@ -79,6 +79,31 @@ When a task in `plan.small.yml` is marked as `status: completed`, there MUST be 
 
 This ensures that completed tasks have auditable evidence of completion.
 
+## Strict Mode Invariants
+
+Strict mode is opt-in (`--strict`) and extends invariant enforcement with additional safety checks.
+
+### Strict Invariant S1: Completed or Blocked Tasks Need Evidence
+
+When `plan.small.yml` marks a task as `completed` or `blocked`, there must be at least one progress entry with:
+
+- matching `task_id`
+- non-empty `evidence` or `notes`
+
+Failure messages include the task id, task title, and whether evidence is missing or empty.
+
+### Strict Invariant S2: Progress Task IDs Must Be Known (or Meta)
+
+Each progress entry must reference a task id that exists in `plan.small.yml`, unless the id starts with `meta/`.
+
+### Strict Invariant S3: Handoff References Must Match Plan
+
+If `handoff.small.yml` sets `resume.current_task_id`, the referenced task id must exist in the plan.
+
+### Strict Invariant S4: Reconciliation Marker (Optional)
+
+When enabled, strict mode can require a `meta/reconcile-plan` progress entry if the plan was retroactively edited after progress entries were logged. This guard is optional and disabled by default until reliable plan-change detection is available.
+
 **Example failure:**
 
 ```yaml

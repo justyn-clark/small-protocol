@@ -208,7 +208,7 @@ small lint
 
 | Flag | Description |
 |------|-------------|
-| `--strict` | Enable strict mode (includes secret detection) |
+| `--strict` | Enable strict mode (strict invariants, secrets, insecure links) |
 | `--dir <path>` | Directory containing .small/ |
 | `--spec-dir <path>` | Path to spec/ directory |
 
@@ -443,6 +443,12 @@ small handoff --replay-id a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3
 - Task milestone completed
 - Unrecoverable error
 
+**Dangling tasks check:**
+
+Before generating a handoff, the CLI checks for "dangling tasks" - tasks that have progress entries but are not in a terminal state (completed or blocked). If dangling tasks exist, handoff generation is blocked with an error explaining which tasks need to be closed.
+
+This prevents generating a misleading end-of-run state where work was started but not properly completed.
+
 **Common errors:**
 
 | Error | Cause | Resolution |
@@ -450,6 +456,7 @@ small handoff --replay-id a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3
 | `.small/ not found` | Workspace not initialized | Run `small init` first |
 | `no tasks in plan` | Empty plan | Add tasks with `small plan --add` |
 | `invalid replayId format` | Manual replayId not 64 hex | Provide a valid 64-character hex string |
+| `dangling tasks detected` | Tasks have progress but not completed/blocked | Run `small checkpoint --task <id> --status completed` or `--status blocked` |
 
 ### small reset
 
@@ -593,7 +600,7 @@ small check --strict --ci
 
 | Flag | Description |
 |------|-------------|
-| `--strict` | Enable strict mode (propagates to verify) |
+| `--strict` | Enable strict mode (strict invariants, secrets, insecure links) |
 | `--ci` | CI mode (minimal output) |
 | `--json` | JSON output |
 | `--dir <path>` | Directory containing .small/ |
@@ -639,7 +646,7 @@ small verify
 
 | Flag | Description |
 |------|-------------|
-| `--strict` | Enable strict mode (secrets, insecure links) |
+| `--strict` | Enable strict mode (strict invariants, secrets, insecure links) |
 | `--ci` | CI mode (minimal output, just errors) |
 | `--dir <path>` | Directory containing .small/ |
 | `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`; default `root`) |
@@ -659,7 +666,8 @@ small verify
 - Invariant enforcement (ownership, required fields)
 - Progress timestamps must be RFC3339Nano with fractional seconds and strict ordering
 - Completed plan tasks require at least one progress entry referencing the task before verify passes
-- ReplayId format validation (if present)
+- Strict mode adds S1-S3 invariants for evidence on completed/blocked tasks, progress task IDs, and handoff alignment
+- ReplayId validation (required in handoff.small.yml)
 
 **CI integration example:**
 

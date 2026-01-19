@@ -34,7 +34,7 @@
 |---------------|------------------------------------------|
 | `--dir`       | Target directory containing .small/      |
 | `--workspace` | Workspace scope (root, examples, or any) |
-| `--strict`    | Enable strict mode (lint, verify)        |
+| `--strict`    | Enable strict mode (lint, verify, check) |
 | `--json`      | Output in JSON format (status, check)    |
 | `--help`      | Show help for any command                |
 
@@ -89,7 +89,7 @@ Verify artifacts for CI:
 ```bash
 small verify        # Exit 0 if valid, 1 if invalid, 2 if system error
 small verify --ci   # Minimal output for CI pipelines
-small verify --strict  # Enable strict checks (secrets, insecure links)
+small verify --strict  # Enable strict checks (invariants, secrets, insecure links)
 ```
 
 The `verify` command enforces:
@@ -98,6 +98,7 @@ The `verify` command enforces:
 - `handoff.small.yml` must include a valid `replayId`
 - Schema validation for all artifacts
 - Ownership rules (human/agent) for each artifact type
+- Strict mode adds S1-S3 invariants for evidence, task ids, and handoff alignment
 
 If you forget to update SMALL files after completing work, `verify` will fail.
 

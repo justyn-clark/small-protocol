@@ -118,6 +118,48 @@ Work through tasks in `plan.small.yml` in dependency order:
 
 Do not skip tasks. Do not work on tasks with unmet dependencies.
 
+### Completion Rule
+
+Agents MUST NOT use `small plan --done` (or any plan status toggle) to represent completion.
+
+Completion MUST be recorded using `small checkpoint`, which performs an atomic state transition and appends progress evidence.
+
+**Required completion patterns:**
+
+Start work:
+
+```bash
+small progress add --task <task-id> --status in_progress --evidence "Starting <task>"
+```
+
+Finish work:
+
+```bash
+small checkpoint --task <task-id> --status completed --evidence "<what was completed>"
+```
+
+Block work:
+
+```bash
+small checkpoint --task <task-id> --status blocked --evidence "<why blocked>"
+```
+
+**Handoff gate:**
+
+Before generating a handoff, agents MUST run:
+
+```bash
+small check --strict
+```
+
+Handoff is only valid if strict mode passes and all completed or blocked tasks have progress evidence.
+
+**Rationale:**
+
+- Plan status alone is not evidence
+- Checkpoint is the canonical completion primitive for agents
+- Strict mode prevents "completed in plan, missing in progress" drift
+
 ## When Stuck
 
 ### Missing Intent or Constraints
@@ -256,6 +298,8 @@ Evidence should allow a future agent or human to verify the claim.
 | Validate | Run validate and lint before claiming success |
 | Human files | Never edit intent or constraints |
 | Progress | Append-only with evidence |
+| Completion | Use `small checkpoint`, not `plan --done` |
+| Strict gate | Run `small check --strict` before handoff |
 | Handoff | Required when stopping |
 | When stuck | Ask, don't guess |
 | Constraints | Respect all, especially severity: error |

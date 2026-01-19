@@ -33,7 +33,7 @@ func verifyCmd() *cobra.Command {
 Performs:
   - Schema validation of all artifacts
   - Invariant enforcement (required files, ownership, format)
-  - ReplayId format validation (if present)
+  - ReplayId validation (required in handoff.small.yml)
 
 Exit codes:
   0 - All artifacts valid
@@ -41,7 +41,7 @@ Exit codes:
   2 - System error (missing directory, read errors, etc.)
 
 Flags:
-  --strict   Enable strict mode (check for secrets, insecure links)
+  --strict   Enable strict mode (strict invariants, secrets, insecure links)
   --ci       CI mode (minimal output, just errors)`,
 		Run: func(cmd *cobra.Command, args []string) {
 			scope, err := workspace.ParseScope(workspaceFlag)
@@ -59,7 +59,7 @@ Flags:
 		},
 	}
 
-	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (secrets, insecure links)")
+	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (strict invariants, secrets, insecure links)")
 	cmd.Flags().BoolVar(&ci, "ci", false, "CI mode (minimal output)")
 	cmd.Flags().StringVar(&dir, "dir", "", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root, examples, or any)")
@@ -145,7 +145,7 @@ func runVerify(dir string, strict, ci bool, scope workspace.Scope) int {
 		allErrors = append(allErrors, ve)
 	}
 
-	// ReplayId format validation (if present in handoff)
+	// ReplayId validation (required in handoff)
 	if handoff, ok := artifacts["handoff"]; ok {
 		replayIdErrors := validateReplayIdWithFixes(handoff, dir)
 		allErrors = append(allErrors, replayIdErrors...)

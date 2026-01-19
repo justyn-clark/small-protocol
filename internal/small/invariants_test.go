@@ -396,16 +396,16 @@ func TestCheckInvariants_CompletedTaskMissingProgressEvidence(t *testing.T) {
 		},
 	}
 
-	violations := CheckInvariants(artifacts, false)
+	violations := CheckInvariants(artifacts, true)
 	hasMissingProgress := false
 	for _, v := range violations {
-		if contains(v.Message, "progress entries missing or invalid for completed plan tasks") {
+		if contains(v.Message, "strict invariant S1 failed") {
 			hasMissingProgress = true
 			break
 		}
 	}
 	if !hasMissingProgress {
-		t.Error("expected violation for completed task without progress evidence")
+		t.Error("expected strict violation for completed task without progress evidence")
 	}
 }
 
@@ -444,10 +444,10 @@ func TestCheckInvariants_CompletedTaskHasProgressEvidence(t *testing.T) {
 		},
 	}
 
-	violations := CheckInvariants(artifacts, false)
+	violations := CheckInvariants(artifacts, true)
 	for _, v := range violations {
-		if contains(v.Message, "progress entries missing or invalid for completed plan tasks") {
-			t.Fatalf("unexpected missing progress violation: %s", v.Message)
+		if contains(v.Message, "strict invariant S1 failed") {
+			t.Fatalf("unexpected strict progress violation: %s", v.Message)
 		}
 	}
 }
@@ -487,16 +487,16 @@ func TestCheckInvariants_CompletedTaskProgressEntryEmptyNote(t *testing.T) {
 		},
 	}
 
-	violations := CheckInvariants(artifacts, false)
+	violations := CheckInvariants(artifacts, true)
 	hasMissingProgress := false
 	for _, v := range violations {
-		if contains(v.Message, "progress entries missing or invalid for completed plan tasks") {
+		if contains(v.Message, "strict invariant S1 failed") {
 			hasMissingProgress = true
 			break
 		}
 	}
 	if !hasMissingProgress {
-		t.Error("expected violation for completed task with empty note")
+		t.Error("expected strict violation for completed task with empty note")
 	}
 }
 
@@ -535,16 +535,176 @@ func TestCheckInvariants_CompletedTaskProgressEntryInvalidTimestamp(t *testing.T
 		},
 	}
 
-	violations := CheckInvariants(artifacts, false)
-	hasMissingProgress := false
+	violations := CheckInvariants(artifacts, true)
+	hasInvalidTimestamp := false
 	for _, v := range violations {
-		if contains(v.Message, "progress entries missing or invalid for completed plan tasks") {
-			hasMissingProgress = true
+		if contains(v.Message, "timestamp") && contains(v.Message, "RFC3339Nano") {
+			hasInvalidTimestamp = true
 			break
 		}
 	}
-	if !hasMissingProgress {
+	if !hasInvalidTimestamp {
 		t.Error("expected violation for completed task with invalid timestamp")
+	}
+}
+
+func TestCheckInvariants_StrictModePlanProgressEvidence(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []interface{}{
+					map[string]interface{}{
+						"id":     "task-completed",
+						"title":  "Done task",
+						"status": "completed",
+					},
+					map[string]interface{}{
+						"id":     "task-blocked",
+						"title":  "Blocked task",
+						"status": "blocked",
+					},
+				},
+			},
+		},
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-blocked",
+						"status":    "blocked",
+						"timestamp": "2025-01-01T00:00:00.000000001Z",
+						"evidence":  " ",
+						"notes":     "",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	var s1Violation string
+	for _, v := range violations {
+		if contains(v.Message, "strict invariant S1 failed") {
+			s1Violation = v.Message
+			break
+		}
+	}
+	if s1Violation == "" {
+		t.Fatal("expected strict mode S1 violation")
+	}
+	if !contains(s1Violation, "task-completed") || !contains(s1Violation, "Done task") || !contains(s1Violation, "no progress entry") {
+		t.Fatalf("expected completed task details in violation: %s", s1Violation)
+	}
+	if !contains(s1Violation, "task-blocked") || !contains(s1Violation, "Blocked task") || !contains(s1Violation, "empty evidence/notes") {
+		t.Fatalf("expected blocked task details in violation: %s", s1Violation)
+	}
+}
+
+func TestCheckInvariants_StrictModeProgressTaskIDs(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []interface{}{
+					map[string]interface{}{
+						"id":    "task-1",
+						"title": "Known task",
+					},
+				},
+			},
+		},
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-unknown",
+						"status":    "completed",
+						"timestamp": "2025-01-01T00:00:00.000000001Z",
+						"evidence":  "unexpected",
+					},
+					map[string]interface{}{
+						"task_id":   "meta/reconcile-plan",
+						"status":    "completed",
+						"timestamp": "2025-01-01T00:00:00.000000002Z",
+						"evidence":  "Reconciled plan to match completed work",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	hasS2 := false
+	for _, v := range violations {
+		if contains(v.Message, "strict invariant S2 failed") {
+			if contains(v.Message, "task-unknown") {
+				hasS2 = true
+			}
+		}
+	}
+	if !hasS2 {
+		t.Error("expected strict mode S2 violation for unknown task id")
+	}
+}
+
+func TestCheckInvariants_StrictModeHandoffTaskReference(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []interface{}{
+					map[string]interface{}{
+						"id":    "task-1",
+						"title": "Known task",
+					},
+				},
+			},
+		},
+		"handoff": {
+			Path: "test/handoff.small.yml",
+			Type: "handoff",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"summary":       "Test handoff",
+				"resume": map[string]interface{}{
+					"current_task_id": "task-missing",
+					"next_steps":      []interface{}{},
+				},
+				"links": []interface{}{},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	hasS3 := false
+	for _, v := range violations {
+		if contains(v.Message, "strict invariant S3 failed") {
+			if contains(v.Message, "resume.current_task_id") && contains(v.Message, "task-missing") {
+				hasS3 = true
+			}
+		}
+	}
+	if !hasS3 {
+		t.Error("expected strict mode S3 violation for missing current task")
 	}
 }
 
@@ -699,4 +859,232 @@ func makeValidArtifact(artifactType string) map[string]interface{} {
 	}
 
 	return base
+}
+
+func TestCheckDanglingTasks_NoDanglingTasks(t *testing.T) {
+	plan := &Artifact{
+		Path: "test/plan.small.yml",
+		Type: "plan",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"tasks": []interface{}{
+				map[string]interface{}{
+					"id":     "task-1",
+					"title":  "Completed task",
+					"status": "completed",
+				},
+			},
+		},
+	}
+	progress := &Artifact{
+		Path: "test/progress.small.yml",
+		Type: "progress",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"entries": []interface{}{
+				map[string]interface{}{
+					"task_id":   "task-1",
+					"timestamp": "2025-01-01T00:00:00.000000000Z",
+					"evidence":  "Done",
+				},
+			},
+		},
+	}
+
+	dangling := CheckDanglingTasks(plan, progress)
+	if len(dangling) != 0 {
+		t.Errorf("expected 0 dangling tasks, got %d", len(dangling))
+	}
+}
+
+func TestCheckDanglingTasks_TaskWithProgressButPending(t *testing.T) {
+	plan := &Artifact{
+		Path: "test/plan.small.yml",
+		Type: "plan",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"tasks": []interface{}{
+				map[string]interface{}{
+					"id":     "task-1",
+					"title":  "Started but not finished",
+					"status": "pending",
+				},
+			},
+		},
+	}
+	progress := &Artifact{
+		Path: "test/progress.small.yml",
+		Type: "progress",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"entries": []interface{}{
+				map[string]interface{}{
+					"task_id":   "task-1",
+					"timestamp": "2025-01-01T00:00:00.000000000Z",
+					"evidence":  "Started work",
+				},
+			},
+		},
+	}
+
+	dangling := CheckDanglingTasks(plan, progress)
+	if len(dangling) != 1 {
+		t.Fatalf("expected 1 dangling task, got %d", len(dangling))
+	}
+	if dangling[0].ID != "task-1" {
+		t.Errorf("expected task-1, got %s", dangling[0].ID)
+	}
+}
+
+func TestCheckDanglingTasks_TaskWithProgressButInProgress(t *testing.T) {
+	plan := &Artifact{
+		Path: "test/plan.small.yml",
+		Type: "plan",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"tasks": []interface{}{
+				map[string]interface{}{
+					"id":     "task-1",
+					"title":  "Work in progress",
+					"status": "in_progress",
+				},
+			},
+		},
+	}
+	progress := &Artifact{
+		Path: "test/progress.small.yml",
+		Type: "progress",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"entries": []interface{}{
+				map[string]interface{}{
+					"task_id":   "task-1",
+					"timestamp": "2025-01-01T00:00:00.000000000Z",
+					"evidence":  "Working on it",
+				},
+			},
+		},
+	}
+
+	dangling := CheckDanglingTasks(plan, progress)
+	if len(dangling) != 1 {
+		t.Fatalf("expected 1 dangling task, got %d", len(dangling))
+	}
+	if dangling[0].Status != "in_progress" {
+		t.Errorf("expected in_progress status, got %s", dangling[0].Status)
+	}
+}
+
+func TestCheckDanglingTasks_BlockedTaskIsNotDangling(t *testing.T) {
+	plan := &Artifact{
+		Path: "test/plan.small.yml",
+		Type: "plan",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"tasks": []interface{}{
+				map[string]interface{}{
+					"id":     "task-1",
+					"title":  "Blocked task",
+					"status": "blocked",
+				},
+			},
+		},
+	}
+	progress := &Artifact{
+		Path: "test/progress.small.yml",
+		Type: "progress",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"entries": []interface{}{
+				map[string]interface{}{
+					"task_id":   "task-1",
+					"timestamp": "2025-01-01T00:00:00.000000000Z",
+					"evidence":  "Blocked on dependency",
+				},
+			},
+		},
+	}
+
+	dangling := CheckDanglingTasks(plan, progress)
+	if len(dangling) != 0 {
+		t.Errorf("expected 0 dangling tasks (blocked is terminal), got %d", len(dangling))
+	}
+}
+
+func TestCheckDanglingTasks_TaskWithoutProgressIsNotDangling(t *testing.T) {
+	plan := &Artifact{
+		Path: "test/plan.small.yml",
+		Type: "plan",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"tasks": []interface{}{
+				map[string]interface{}{
+					"id":     "task-1",
+					"title":  "Not yet started",
+					"status": "pending",
+				},
+			},
+		},
+	}
+	progress := &Artifact{
+		Path: "test/progress.small.yml",
+		Type: "progress",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"entries":       []interface{}{},
+		},
+	}
+
+	dangling := CheckDanglingTasks(plan, progress)
+	if len(dangling) != 0 {
+		t.Errorf("expected 0 dangling tasks (no progress means not started), got %d", len(dangling))
+	}
+}
+
+func TestCheckDanglingTasks_MetaTasksIgnored(t *testing.T) {
+	plan := &Artifact{
+		Path: "test/plan.small.yml",
+		Type: "plan",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"tasks": []interface{}{
+				map[string]interface{}{
+					"id":     "task-1",
+					"title":  "Regular task",
+					"status": "pending",
+				},
+			},
+		},
+	}
+	progress := &Artifact{
+		Path: "test/progress.small.yml",
+		Type: "progress",
+		Data: map[string]interface{}{
+			"small_version": ProtocolVersion,
+			"owner":         "agent",
+			"entries": []interface{}{
+				map[string]interface{}{
+					"task_id":   "meta/reconcile-plan",
+					"timestamp": "2025-01-01T00:00:00.000000000Z",
+					"evidence":  "Reconciled plan",
+				},
+			},
+		},
+	}
+
+	dangling := CheckDanglingTasks(plan, progress)
+	if len(dangling) != 0 {
+		t.Errorf("expected 0 dangling tasks (meta/ tasks should be ignored), got %d", len(dangling))
+	}
 }

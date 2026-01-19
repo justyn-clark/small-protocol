@@ -13,6 +13,13 @@ type InvariantViolation struct {
 	Message string
 }
 
+// DanglingTask represents a task that has progress entries but is not in a terminal state
+type DanglingTask struct {
+	ID     string
+	Title  string
+	Status string
+}
+
 func CheckInvariants(artifacts map[string]*Artifact, strict bool) []InvariantViolation {
 	var violations []InvariantViolation
 
@@ -82,14 +89,48 @@ func CheckInvariants(artifacts map[string]*Artifact, strict bool) []InvariantVio
 		}
 	}
 
-	if planArtifact, planOk := artifacts["plan"]; planOk {
-		if progressArtifact, progressOk := artifacts["progress"]; progressOk {
-			violations = append(violations, validateCompletedTaskProgress(planArtifact, progressArtifact)...)
-		}
+	if strict {
+		violations = append(violations, validateStrictInvariants(artifacts)...)
 	}
 
 	return violations
 
+}
+
+type planTask struct {
+	ID     string
+	Title  string
+	Status string
+}
+
+type strictInvariantConfig struct {
+	RequireReconcileMarker bool
+}
+
+func validateStrictInvariants(artifacts map[string]*Artifact) []InvariantViolation {
+	return validateStrictInvariantsWithConfig(artifacts, strictInvariantConfig{RequireReconcileMarker: false})
+}
+
+func validateStrictInvariantsWithConfig(artifacts map[string]*Artifact, config strictInvariantConfig) []InvariantViolation {
+	var violations []InvariantViolation
+
+	planArtifact, hasPlan := artifacts["plan"]
+	progressArtifact, hasProgress := artifacts["progress"]
+	if hasPlan && hasProgress {
+		violations = append(violations, validateStrictPlanTaskEvidence(planArtifact, progressArtifact)...)
+		violations = append(violations, validateStrictProgressTaskIDs(planArtifact, progressArtifact)...)
+		if config.RequireReconcileMarker {
+			violations = append(violations, validatePlanReconciliation(planArtifact, progressArtifact)...)
+		}
+	}
+
+	if hasPlan {
+		if handoffArtifact, hasHandoff := artifacts["handoff"]; hasHandoff {
+			violations = append(violations, validateStrictHandoffTasks(planArtifact, handoffArtifact)...)
+		}
+	}
+
+	return violations
 }
 
 func allowedTopLevelKeys(artifactType string) map[string]bool {
@@ -122,6 +163,275 @@ func allowedTopLevelKeys(artifactType string) map[string]bool {
 	default:
 		return nil
 	}
+}
+
+func validateStrictPlanTaskEvidence(planArtifact, progressArtifact *Artifact) []InvariantViolation {
+	if planArtifact == nil || progressArtifact == nil || planArtifact.Data == nil || progressArtifact.Data == nil {
+		return nil
+	}
+
+	tasks := extractPlanTasks(planArtifact)
+	if len(tasks) == 0 {
+		return nil
+	}
+
+	entries := extractProgressEntries(progressArtifact)
+	if entries == nil {
+		return nil
+	}
+
+	satisfied := map[string]struct{}{}
+	for _, entry := range entries {
+		entryMap, ok := entry.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		taskID := strings.TrimSpace(stringVal(entryMap["task_id"]))
+		if taskID == "" {
+			continue
+		}
+		if ProgressEntryHasStrictEvidence(entryMap) {
+			satisfied[taskID] = struct{}{}
+		}
+	}
+
+	var missing []string
+	for _, task := range tasks {
+		status := strings.ToLower(strings.TrimSpace(task.Status))
+		if status != "completed" && status != "blocked" {
+			continue
+		}
+		if task.ID == "" {
+			continue
+		}
+		if _, ok := satisfied[task.ID]; !ok {
+			reason := "no progress entry"
+			if hasProgressEntriesForTask(entries, task.ID) {
+				reason = "empty evidence/notes"
+			}
+			missing = append(missing, fmt.Sprintf("%s (%s) [%s]", task.ID, task.Title, reason))
+		}
+	}
+
+	if len(missing) == 0 {
+		return nil
+	}
+
+	sort.Strings(missing)
+	return []InvariantViolation{{
+		File:    progressArtifact.Path,
+		Message: fmt.Sprintf("strict invariant S1 failed: %s", strings.Join(missing, "; ")),
+	}}
+}
+
+func validateStrictProgressTaskIDs(planArtifact, progressArtifact *Artifact) []InvariantViolation {
+	if planArtifact == nil || progressArtifact == nil || planArtifact.Data == nil || progressArtifact.Data == nil {
+		return nil
+	}
+
+	tasks := extractPlanTasks(planArtifact)
+	if len(tasks) == 0 {
+		return nil
+	}
+
+	knownTasks := map[string]struct{}{}
+	for _, task := range tasks {
+		if task.ID != "" {
+			knownTasks[task.ID] = struct{}{}
+		}
+	}
+
+	entries := extractProgressEntries(progressArtifact)
+	if entries == nil {
+		return nil
+	}
+
+	var offenders []string
+	for _, entry := range entries {
+		entryMap, ok := entry.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		taskID := strings.TrimSpace(stringVal(entryMap["task_id"]))
+		if taskID == "" {
+			continue
+		}
+		if strings.HasPrefix(taskID, "meta/") {
+			continue
+		}
+		if _, ok := knownTasks[taskID]; ok {
+			continue
+		}
+		closest := closestTaskIDs(taskID, tasks, 3)
+		if len(closest) > 0 {
+			offenders = append(offenders, fmt.Sprintf("%s (closest: %s)", taskID, strings.Join(closest, ", ")))
+		} else {
+			offenders = append(offenders, taskID)
+		}
+	}
+
+	if len(offenders) == 0 {
+		return nil
+	}
+
+	sort.Strings(offenders)
+	return []InvariantViolation{{
+		File:    progressArtifact.Path,
+		Message: fmt.Sprintf("strict invariant S2 failed: unknown progress task ids: %s", strings.Join(offenders, "; ")),
+	}}
+}
+
+func validateStrictHandoffTasks(planArtifact, handoffArtifact *Artifact) []InvariantViolation {
+	if planArtifact == nil || handoffArtifact == nil || planArtifact.Data == nil || handoffArtifact.Data == nil {
+		return nil
+	}
+
+	tasks := extractPlanTasks(planArtifact)
+	if len(tasks) == 0 {
+		return nil
+	}
+
+	knownTasks := map[string]planTask{}
+	for _, task := range tasks {
+		if task.ID != "" {
+			knownTasks[task.ID] = task
+		}
+	}
+
+	handoffRoot := handoffArtifact.Data
+	resume, _ := handoffRoot["resume"].(map[string]interface{})
+	if resume == nil {
+		return nil
+	}
+
+	currentTaskID := strings.TrimSpace(stringVal(resume["current_task_id"]))
+	if currentTaskID == "" {
+		return nil
+	}
+
+	var violations []InvariantViolation
+	if _, ok := knownTasks[currentTaskID]; !ok {
+		violations = append(violations, InvariantViolation{
+			File:    handoffArtifact.Path,
+			Message: fmt.Sprintf("strict invariant S3 failed: resume.current_task_id references %q which is missing from plan", currentTaskID),
+		})
+	}
+
+	return violations
+}
+
+func validatePlanReconciliation(planArtifact, progressArtifact *Artifact) []InvariantViolation {
+	if planArtifact == nil || progressArtifact == nil {
+		return nil
+	}
+	return nil
+}
+
+func extractPlanTasks(planArtifact *Artifact) []planTask {
+	tasks, ok := planArtifact.Data["tasks"].([]interface{})
+	if !ok {
+		return nil
+	}
+
+	var result []planTask
+	for _, raw := range tasks {
+		taskMap, ok := raw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		result = append(result, planTask{
+			ID:     strings.TrimSpace(stringVal(taskMap["id"])),
+			Title:  strings.TrimSpace(stringVal(taskMap["title"])),
+			Status: strings.TrimSpace(stringVal(taskMap["status"])),
+		})
+	}
+
+	return result
+}
+
+func extractProgressEntries(progressArtifact *Artifact) []interface{} {
+	entries, ok := progressArtifact.Data["entries"].([]interface{})
+	if !ok {
+		return nil
+	}
+	return entries
+}
+
+func hasProgressEntriesForTask(entries []interface{}, taskID string) bool {
+	for _, entry := range entries {
+		entryMap, ok := entry.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if strings.TrimSpace(stringVal(entryMap["task_id"])) == taskID {
+			return true
+		}
+	}
+	return false
+}
+
+func ProgressEntryHasStrictEvidence(entry map[string]interface{}) bool {
+	if entry == nil {
+		return false
+	}
+	if strings.TrimSpace(stringVal(entry["evidence"])) != "" {
+		return true
+	}
+	if strings.TrimSpace(stringVal(entry["notes"])) != "" {
+		return true
+	}
+	return false
+}
+
+func stringVal(value interface{}) string {
+	if value == nil {
+		return ""
+	}
+	if s, ok := value.(string); ok {
+		return s
+	}
+	return fmt.Sprintf("%v", value)
+}
+
+func closestTaskIDs(taskID string, tasks []planTask, limit int) []string {
+	if limit <= 0 {
+		return nil
+	}
+
+	var matches []string
+	for _, task := range tasks {
+		if task.ID == "" {
+			continue
+		}
+		if strings.Contains(task.ID, taskID) || strings.Contains(taskID, task.ID) {
+			matches = append(matches, task.ID)
+		}
+	}
+	if len(matches) > 0 {
+		sort.Strings(matches)
+		if len(matches) > limit {
+			return matches[:limit]
+		}
+		return matches
+	}
+
+	for _, task := range tasks {
+		if task.ID == "" {
+			continue
+		}
+		if strings.EqualFold(task.ID, taskID) {
+			matches = append(matches, task.ID)
+		}
+	}
+	if len(matches) > 0 {
+		sort.Strings(matches)
+		if len(matches) > limit {
+			return matches[:limit]
+		}
+		return matches
+	}
+
+	return nil
 }
 
 func validateIntent(path string, root map[string]interface{}, owner string) []InvariantViolation {
@@ -545,4 +855,61 @@ func checkSecrets(artifact *Artifact) []InvariantViolation {
 	checkMap(root, "")
 
 	return violations
+}
+
+// CheckDanglingTasks returns tasks that have progress entries but are not in a terminal state
+// (completed or blocked). These are tasks where work was started but not properly closed.
+func CheckDanglingTasks(planArtifact, progressArtifact *Artifact) []DanglingTask {
+	if planArtifact == nil || progressArtifact == nil || planArtifact.Data == nil || progressArtifact.Data == nil {
+		return nil
+	}
+
+	tasks := extractPlanTasks(planArtifact)
+	if len(tasks) == 0 {
+		return nil
+	}
+
+	entries := extractProgressEntries(progressArtifact)
+	if entries == nil || len(entries) == 0 {
+		return nil
+	}
+
+	// Build a set of task IDs that have progress entries
+	tasksWithProgress := make(map[string]struct{})
+	for _, entry := range entries {
+		entryMap, ok := entry.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		taskID := strings.TrimSpace(stringVal(entryMap["task_id"]))
+		if taskID == "" || strings.HasPrefix(taskID, "meta/") {
+			continue
+		}
+		tasksWithProgress[taskID] = struct{}{}
+	}
+
+	// Find tasks that have progress but are not in a terminal state
+	var dangling []DanglingTask
+	for _, task := range tasks {
+		if task.ID == "" {
+			continue
+		}
+		// Check if this task has progress entries
+		if _, hasProgress := tasksWithProgress[task.ID]; !hasProgress {
+			continue
+		}
+		// Check if status is not terminal (completed or blocked)
+		status := strings.ToLower(task.Status)
+		if status == "completed" || status == "blocked" {
+			continue
+		}
+		// This task has progress but is not closed
+		dangling = append(dangling, DanglingTask{
+			ID:     task.ID,
+			Title:  task.Title,
+			Status: task.Status,
+		})
+	}
+
+	return dangling
 }

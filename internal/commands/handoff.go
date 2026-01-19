@@ -25,7 +25,7 @@ type handoffOut struct {
 	ReplayId     *replayIdOut `yaml:"replayId,omitempty"`
 }
 
-// replayIdOut represents optional deterministic metadata for replay identification
+// replayIdOut represents the required deterministic identifier for replay and session tracking
 type replayIdOut struct {
 	Value  string `yaml:"value"`
 	Source string `yaml:"source"`
@@ -54,10 +54,9 @@ func handoffCmd() *cobra.Command {
 		Short: "Generate or update handoff.small.yml",
 		Long: `Generates handoff.small.yml from current plan with resume information.
 
-	ReplayId is emitted automatically by hashing the run-defining artifacts
-	(intent + plan + optional constraints). Use --replay-id to override with
-
-	Note: replayId is optional metadata; git history remains the canonical audit trail.`,
+	ReplayId is required in handoff.small.yml. It is generated automatically by
+	hashing the run-defining artifacts (intent + plan + optional constraints).
+	Use --replay-id to override with a manual value if needed.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if dir == "" {
 				dir = baseDir
@@ -79,9 +78,36 @@ func handoffCmd() *cobra.Command {
 			}
 
 			planArtifact, err := small.LoadArtifact(artifactsDir, "plan.small.yml")
-
 			if err != nil {
 				return fmt.Errorf("failed to load plan.small.yml: %w", err)
+			}
+
+			// Load progress artifact for dangling tasks check
+			progressArtifact, err := small.LoadArtifact(artifactsDir, "progress.small.yml")
+			if err != nil {
+				return fmt.Errorf("failed to load progress.small.yml: %w", err)
+			}
+
+			// Check for dangling tasks (tasks with progress but not completed/blocked)
+			danglingTasks := small.CheckDanglingTasks(planArtifact, progressArtifact)
+			if len(danglingTasks) > 0 {
+				fmt.Fprintln(os.Stderr, "")
+				fmt.Fprintln(os.Stderr, "Cannot generate handoff with unfinished tasks.")
+				fmt.Fprintln(os.Stderr, "")
+				fmt.Fprintln(os.Stderr, "Tasks with progress but not completed or blocked:")
+				for _, task := range danglingTasks {
+					status := task.Status
+					if status == "" {
+						status = "pending"
+					}
+					fmt.Fprintf(os.Stderr, "  - %s: %s (status: %s)\n", task.ID, task.Title, status)
+				}
+				fmt.Fprintln(os.Stderr, "")
+				fmt.Fprintln(os.Stderr, "Required fix:")
+				fmt.Fprintln(os.Stderr, "  - Complete the task with: small checkpoint --task <id> --status completed --evidence \"...\"")
+				fmt.Fprintln(os.Stderr, "  - Or mark it blocked with: small checkpoint --task <id> --status blocked --evidence \"...\"")
+				fmt.Fprintln(os.Stderr, "")
+				return fmt.Errorf("dangling tasks detected: %d task(s) have progress but are not completed or blocked", len(danglingTasks))
 			}
 
 			// Build next_steps from pending tasks and find current task

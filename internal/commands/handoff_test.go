@@ -232,3 +232,165 @@ constraints:
 		}
 	})
 }
+
+func TestHandoffBlocksDanglingTasks(t *testing.T) {
+	// Create temp directory for tests
+	tmpDir, err := os.MkdirTemp("", "small-handoff-dangling-test")
+	if err != nil {
+		t.Fatalf("failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	smallDir := filepath.Join(tmpDir, ".small")
+	if err := os.MkdirAll(smallDir, 0755); err != nil {
+		t.Fatalf("failed to create .small dir: %v", err)
+	}
+
+	// Create test artifacts with a dangling task (has progress but status is pending)
+	intentContent := `small_version: "1.0.0"
+owner: human
+intent: "Test intent"
+scope:
+  include: []
+  exclude: []
+success_criteria: []
+`
+	planContent := `small_version: "1.0.0"
+owner: agent
+tasks:
+  - id: task-1
+    title: "Started but not finished"
+    status: pending
+`
+	constraintsContent := `small_version: "1.0.0"
+owner: human
+constraints:
+  - id: no-secrets
+    rule: "No secrets"
+    severity: error
+`
+	progressContent := `small_version: "1.0.0"
+owner: agent
+entries:
+  - task_id: task-1
+    timestamp: "2025-01-01T00:00:00.000000000Z"
+    evidence: "Started working on this task"
+`
+
+	if err := os.WriteFile(filepath.Join(smallDir, "intent.small.yml"), []byte(intentContent), 0644); err != nil {
+		t.Fatalf("failed to write intent: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(smallDir, "plan.small.yml"), []byte(planContent), 0644); err != nil {
+		t.Fatalf("failed to write plan: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(smallDir, "constraints.small.yml"), []byte(constraintsContent), 0644); err != nil {
+		t.Fatalf("failed to write constraints: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(smallDir, "progress.small.yml"), []byte(progressContent), 0644); err != nil {
+		t.Fatalf("failed to write progress: %v", err)
+	}
+
+	// Create handoff command and execute it
+	cmd := handoffCmd()
+	cmd.SetArgs([]string{"--dir", tmpDir, "--workspace", "any"})
+
+	err = cmd.Execute()
+	if err == nil {
+		t.Error("expected error for dangling tasks, got nil")
+	}
+	if err != nil && !contains(err.Error(), "dangling tasks") {
+		t.Errorf("expected error about dangling tasks, got: %v", err)
+	}
+
+	// Verify handoff.small.yml was NOT created
+	handoffPath := filepath.Join(smallDir, "handoff.small.yml")
+	if _, err := os.Stat(handoffPath); !os.IsNotExist(err) {
+		t.Error("handoff.small.yml should not be created when dangling tasks exist")
+	}
+}
+
+func TestHandoffAllowsCompletedTasks(t *testing.T) {
+	// Create temp directory for tests
+	tmpDir, err := os.MkdirTemp("", "small-handoff-completed-test")
+	if err != nil {
+		t.Fatalf("failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	smallDir := filepath.Join(tmpDir, ".small")
+	if err := os.MkdirAll(smallDir, 0755); err != nil {
+		t.Fatalf("failed to create .small dir: %v", err)
+	}
+
+	// Create test artifacts with a completed task
+	intentContent := `small_version: "1.0.0"
+owner: human
+intent: "Test intent"
+scope:
+  include: []
+  exclude: []
+success_criteria: []
+`
+	planContent := `small_version: "1.0.0"
+owner: agent
+tasks:
+  - id: task-1
+    title: "Properly completed task"
+    status: completed
+`
+	constraintsContent := `small_version: "1.0.0"
+owner: human
+constraints:
+  - id: no-secrets
+    rule: "No secrets"
+    severity: error
+`
+	progressContent := `small_version: "1.0.0"
+owner: agent
+entries:
+  - task_id: task-1
+    timestamp: "2025-01-01T00:00:00.000000000Z"
+    evidence: "Completed the work"
+`
+
+	if err := os.WriteFile(filepath.Join(smallDir, "intent.small.yml"), []byte(intentContent), 0644); err != nil {
+		t.Fatalf("failed to write intent: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(smallDir, "plan.small.yml"), []byte(planContent), 0644); err != nil {
+		t.Fatalf("failed to write plan: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(smallDir, "constraints.small.yml"), []byte(constraintsContent), 0644); err != nil {
+		t.Fatalf("failed to write constraints: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(smallDir, "progress.small.yml"), []byte(progressContent), 0644); err != nil {
+		t.Fatalf("failed to write progress: %v", err)
+	}
+
+	// Create handoff command and execute it
+	cmd := handoffCmd()
+	cmd.SetArgs([]string{"--dir", tmpDir, "--workspace", "any"})
+
+	err = cmd.Execute()
+	if err != nil {
+		t.Errorf("expected no error for completed tasks, got: %v", err)
+	}
+
+	// Verify handoff.small.yml was created
+	handoffPath := filepath.Join(smallDir, "handoff.small.yml")
+	if _, err := os.Stat(handoffPath); os.IsNotExist(err) {
+		t.Error("handoff.small.yml should be created when all tasks are properly completed")
+	}
+}
+
+func contains(s, substr string) bool {
+	return len(s) >= len(substr) && (s == substr || len(s) > 0 && containsSubstring(s, substr))
+}
+
+func containsSubstring(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
+}
