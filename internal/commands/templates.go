@@ -5,7 +5,7 @@ import "github.com/justyn-clark/small-protocol/internal/small"
 var (
 	intentTemplate = `small_version: "` + small.ProtocolVersion + `"
 owner: "human"
-intent: ""
+intent: "Define project intent"
 scope:
   include: []
   exclude: []
@@ -35,14 +35,5 @@ tasks:
 	progressTemplate = `small_version: "` + small.ProtocolVersion + `"
 owner: "agent"
 entries: []
-`
-
-	handoffTemplate = `small_version: "` + small.ProtocolVersion + `"
-owner: "agent"
-summary: "Project initialized"
-resume:
-  current_task_id: ""
-  next_steps: []
-links: []
 `
 )

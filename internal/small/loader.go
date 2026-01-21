@@ -72,7 +72,7 @@ func SaveArtifact(baseDir, filename string, data map[string]interface{}) error {
 
 	path := filepath.Join(smallDir, filename)
 
-	yamlData, err := yaml.Marshal(data)
+	yamlData, err := MarshalYAMLWithQuotedVersion(data)
 	if err != nil {
 		return fmt.Errorf("failed to marshal YAML: %w", err)
 	}

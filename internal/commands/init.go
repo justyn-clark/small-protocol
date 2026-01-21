@@ -46,7 +46,6 @@ func initCmd() *cobra.Command {
 				"constraints.small.yml": constraintsTemplate,
 				"plan.small.yml":        planTemplate,
 				"progress.small.yml":    progressTemplate,
-				"handoff.small.yml":     handoffTemplate,
 			}
 
 			for filename, template := range templates {
@@ -57,7 +56,7 @@ func initCmd() *cobra.Command {
 					var data map[string]interface{}
 					if err := yaml.Unmarshal([]byte(template), &data); err == nil {
 						data["intent"] = intentStr
-						updated, err := yaml.Marshal(data)
+						updated, err := small.MarshalYAMLWithQuotedVersion(data)
 						if err == nil {
 							content = string(updated)
 						}
@@ -68,6 +67,14 @@ func initCmd() *cobra.Command {
 				if err := os.WriteFile(path, []byte(content), 0644); err != nil {
 					return fmt.Errorf("failed to write %s: %w", path, err)
 				}
+			}
+
+			handoff, err := buildHandoff(targetDir, "Project initialized", "", nil, nil, nil, defaultNextStepsLimit)
+			if err != nil {
+				return err
+			}
+			if err := writeHandoff(targetDir, handoff); err != nil {
+				return err
 			}
 
 			if err := workspace.Save(targetDir, workspace.KindRepoRoot); err != nil {

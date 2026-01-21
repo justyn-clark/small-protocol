@@ -276,7 +276,7 @@ func migrateProgressFile(progressPath string) (int, error) {
 	progress.SmallVersion = small.ProtocolVersion
 	progress.Owner = "agent"
 
-	updated, err := yaml.Marshal(&progress)
+	updated, err := small.MarshalYAMLWithQuotedVersion(&progress)
 	if err != nil {
 		return 0, fmt.Errorf("failed to marshal progress file: %w", err)
 	}
@@ -340,7 +340,7 @@ func appendProgressEntry(baseDir string, entry map[string]interface{}) error {
 	progress.SmallVersion = small.ProtocolVersion
 	progress.Owner = "agent"
 
-	yamlData, err := yaml.Marshal(&progress)
+	yamlData, err := small.MarshalYAMLWithQuotedVersion(&progress)
 	if err != nil {
 		return fmt.Errorf("failed to marshal progress: %w", err)
 	}
@@ -368,7 +368,7 @@ func appendProgressEntryWithData(baseDir string, entry map[string]interface{}, p
 	progress.SmallVersion = small.ProtocolVersion
 	progress.Owner = "agent"
 
-	yamlData, err := yaml.Marshal(&progress)
+	yamlData, err := small.MarshalYAMLWithQuotedVersion(&progress)
 	if err != nil {
 		return fmt.Errorf("failed to marshal progress: %w", err)
 	}

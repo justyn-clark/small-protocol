@@ -33,6 +33,12 @@ Preserved audit artifacts:
   - constraints.small.yml (human-owned)`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			smallDir := filepath.Join(baseDir, ".small")
+			var previousReplayID string
+			if small.ArtifactExists(baseDir, "handoff.small.yml") {
+				if existing, err := loadExistingHandoff(baseDir); err == nil && existing.ReplayId != nil {
+					previousReplayID = existing.ReplayId.Value
+				}
+			}
 
 			// Check if .small/ directory exists
 			if _, err := os.Stat(smallDir); os.IsNotExist(err) {
@@ -87,9 +93,8 @@ Preserved audit artifacts:
 
 			// Templates for reset files
 			templates := map[string]string{
-				"intent.small.yml":  intentTemplate,
-				"plan.small.yml":    planTemplate,
-				"handoff.small.yml": handoffTemplate,
+				"intent.small.yml": intentTemplate,
+				"plan.small.yml":   planTemplate,
 			}
 
 			// Reset ephemeral files
@@ -105,6 +110,20 @@ Preserved audit artifacts:
 				}
 				fmt.Printf("Reset: %s\n", filename)
 			}
+
+			handoffRun := &runOut{
+				CreatedAt:        time.Now().UTC().Format(time.RFC3339Nano),
+				TransitionReason: "reset",
+				PreviousReplayID: previousReplayID,
+			}
+			handoff, err := buildHandoff(baseDir, "", "", nil, nil, handoffRun, defaultNextStepsLimit)
+			if err != nil {
+				return err
+			}
+			if err := writeHandoff(baseDir, handoff); err != nil {
+				return err
+			}
+			fmt.Println("Reset: handoff.small.yml")
 
 			evidence := "Reset ephemeral .small artifacts"
 			notes := "small reset"

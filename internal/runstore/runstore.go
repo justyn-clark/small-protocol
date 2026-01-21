@@ -163,6 +163,17 @@ func WriteSnapshot(baseDir, storeDir string, force bool) (*Snapshot, error) {
 		return nil, err
 	}
 
+	entry := small.RunIndexEntry{
+		ReplayID:  handoffInfo.ReplayID,
+		Timestamp: meta.CreatedAt,
+		GitSHA:    gitSHA,
+		Summary:   handoffInfo.Summary,
+		Reason:    "snapshot",
+	}
+	if err := small.AppendRunIndexEntry(baseDir, entry); err != nil {
+		return nil, err
+	}
+
 	createdAt, _ := time.Parse(time.RFC3339Nano, meta.CreatedAt)
 	return &Snapshot{
 		ReplayID:         handoffInfo.ReplayID,

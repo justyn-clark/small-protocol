@@ -127,7 +127,7 @@ func Save(baseDir string, kind Kind) error {
 		CreatedAt:    time.Now().UTC().Format(time.RFC3339Nano),
 	}
 
-	data, err := yaml.Marshal(info)
+	data, err := small.MarshalYAMLWithQuotedVersion(info)
 	if err != nil {
 		return fmt.Errorf("failed to marshal workspace metadata: %w", err)
 	}

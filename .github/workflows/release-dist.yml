@@ -1,0 +1,118 @@
+name: Release to Distribution
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  DIST_REPO_OWNER: justyn-clark
+  DIST_REPO_NAME: small-dist
+  BUILD_PATH: ./cmd/small
+  BINARY_NAME: small
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Create dist directory
+        run: mkdir -p dist
+
+      - name: Build binaries
+        run: |
+          # Darwin AMD64
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X main.Version=${{ steps.version.outputs.VERSION }}" -o dist/${BINARY_NAME} ${BUILD_PATH}
+          tar -czvf dist/${BINARY_NAME}_darwin_amd64.tar.gz -C dist ${BINARY_NAME}
+          rm dist/${BINARY_NAME}
+
+          # Darwin ARM64
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X main.Version=${{ steps.version.outputs.VERSION }}" -o dist/${BINARY_NAME} ${BUILD_PATH}
+          tar -czvf dist/${BINARY_NAME}_darwin_arm64.tar.gz -C dist ${BINARY_NAME}
+          rm dist/${BINARY_NAME}
+
+          # Linux AMD64
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X main.Version=${{ steps.version.outputs.VERSION }}" -o dist/${BINARY_NAME} ${BUILD_PATH}
+          tar -czvf dist/${BINARY_NAME}_linux_amd64.tar.gz -C dist ${BINARY_NAME}
+          rm dist/${BINARY_NAME}
+
+          # Linux ARM64
+          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X main.Version=${{ steps.version.outputs.VERSION }}" -o dist/${BINARY_NAME} ${BUILD_PATH}
+          tar -czvf dist/${BINARY_NAME}_linux_arm64.tar.gz -C dist ${BINARY_NAME}
+          rm dist/${BINARY_NAME}
+
+          # Windows AMD64
+          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X main.Version=${{ steps.version.outputs.VERSION }}" -o dist/${BINARY_NAME}.exe ${BUILD_PATH}
+          cd dist && zip ${BINARY_NAME}_windows_amd64.zip ${BINARY_NAME}.exe && rm ${BINARY_NAME}.exe && cd ..
+
+      - name: Generate SHA256SUMS
+        run: |
+          cd dist
+          sha256sum *.tar.gz *.zip > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Create release in dist repo
+        env:
+          GH_TOKEN: ${{ secrets.DIST_REPO_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+
+          # Check if release already exists
+          EXISTING=$(gh release view "$VERSION" --repo "${{ env.DIST_REPO_OWNER }}/${{ env.DIST_REPO_NAME }}" 2>&1 || true)
+
+          if echo "$EXISTING" | grep -q "release not found"; then
+            echo "Creating new release $VERSION"
+            gh release create "$VERSION" \
+              --repo "${{ env.DIST_REPO_OWNER }}/${{ env.DIST_REPO_NAME }}" \
+              --title "$VERSION" \
+              --notes "Release $VERSION" \
+              --draft=false
+          else
+            echo "Release $VERSION already exists, will update assets"
+          fi
+
+      - name: Upload assets to dist repo
+        env:
+          GH_TOKEN: ${{ secrets.DIST_REPO_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+
+          for file in dist/*; do
+            filename=$(basename "$file")
+            echo "Uploading $filename..."
+
+            # Delete existing asset if present (clobber)
+            gh release delete-asset "$VERSION" "$filename" \
+              --repo "${{ env.DIST_REPO_OWNER }}/${{ env.DIST_REPO_NAME }}" \
+              --yes 2>/dev/null || true
+
+            # Upload new asset
+            gh release upload "$VERSION" "$file" \
+              --repo "${{ env.DIST_REPO_OWNER }}/${{ env.DIST_REPO_NAME }}" \
+              --clobber
+          done
+
+      - name: Verify release
+        env:
+          GH_TOKEN: ${{ secrets.DIST_REPO_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          echo "Release assets:"
+          gh release view "$VERSION" \
+            --repo "${{ env.DIST_REPO_OWNER }}/${{ env.DIST_REPO_NAME }}" \
+            --json assets --jq '.assets[].name'

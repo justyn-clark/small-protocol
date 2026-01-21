@@ -12,23 +12,30 @@ import (
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 )
 
 // handoffOut represents the v1.0.0 handoff structure
 type handoffOut struct {
-	SmallVersion string       `yaml:"small_version"`
-	Owner        string       `yaml:"owner"`
-	Summary      string       `yaml:"summary"`
-	Resume       resumeOut    `yaml:"resume"`
-	Links        []linkOut    `yaml:"links"`
-	ReplayId     *replayIdOut `yaml:"replayId,omitempty"`
+	SmallVersion string      `yaml:"small_version"`
+	Owner        string      `yaml:"owner"`
+	Summary      string      `yaml:"summary"`
+	Resume       resumeOut   `yaml:"resume"`
+	Links        []linkOut   `yaml:"links"`
+	ReplayId     replayIdOut `yaml:"replayId"`
+	Run          *runOut     `yaml:"run,omitempty"`
 }
 
 // replayIdOut represents the required deterministic identifier for replay and session tracking
 type replayIdOut struct {
 	Value  string `yaml:"value"`
 	Source string `yaml:"source"`
+}
+
+type runOut struct {
+	CreatedAt        string `yaml:"created_at,omitempty"`
+	TransitionReason string `yaml:"transition_reason,omitempty"`
+	PreviousReplayID string `yaml:"previous_replay_id,omitempty"`
+	PreviousRunRef   string `yaml:"previous_run_ref,omitempty"`
 }
 
 type resumeOut struct {
@@ -110,79 +117,18 @@ func handoffCmd() *cobra.Command {
 				return fmt.Errorf("dangling tasks detected: %d task(s) have progress but are not completed or blocked", len(danglingTasks))
 			}
 
-			// Build next_steps from pending tasks and find current task
-			var nextSteps []string
-			var currentTaskID string
-			if rawTasks, ok := planArtifact.Data["tasks"].([]interface{}); ok {
-				for _, t := range rawTasks {
-					m, ok := t.(map[string]interface{})
-					if !ok {
-						continue
-					}
-
-					taskID := stringVal(m["id"])
-					title := stringVal(m["title"])
-					status := stringVal(m["status"])
-
-					// Find the first in_progress task as current
-					if status == "in_progress" && currentTaskID == "" {
-						currentTaskID = taskID
-					}
-
-					// Add pending and in_progress tasks to next_steps
-					if status == "pending" || status == "in_progress" || status == "" {
-						step := title
-						if step == "" {
-							step = taskID
-						}
-						if step != "" {
-							nextSteps = append(nextSteps, step)
-						}
-					}
-				}
-			}
-
-			// Use provided summary or generate a default one
-			handoffSummary := summary
-			if handoffSummary == "" {
-				handoffSummary = "Handoff generated from current plan state"
-			}
-
-			h := handoffOut{
-				SmallVersion: small.ProtocolVersion,
-				Owner:        "agent",
-				Summary:      handoffSummary,
-				Resume: resumeOut{
-					CurrentTaskID: currentTaskID,
-					NextSteps:     nextSteps,
-				},
-				Links: []linkOut{},
-			}
-
-			// Generate or validate replayId
-			smallDir := filepath.Join(artifactsDir, small.SmallDir)
-			generatedReplayId, err := generateReplayId(smallDir, replayId)
+			h, err := buildHandoff(artifactsDir, summary, replayId, nil, nil, nil, defaultNextStepsLimit)
 			if err != nil {
-				return fmt.Errorf("replayId error: %w", err)
-			}
-			h.ReplayId = generatedReplayId
-
-			yml, err := yaml.Marshal(h)
-			if err != nil {
-				return fmt.Errorf("failed to marshal handoff: %w", err)
+				return err
 			}
 
-			// Write to .small/handoff.small.yml
-			if err := os.MkdirAll(smallDir, 0755); err != nil {
-				return fmt.Errorf("failed to create .small directory: %w", err)
-			}
-			outPath := filepath.Join(smallDir, "handoff.small.yml")
-			if err := os.WriteFile(outPath, yml, 0644); err != nil {
-				return fmt.Errorf("failed to write %s: %w", outPath, err)
+			if err := writeHandoff(artifactsDir, h); err != nil {
+				return err
 			}
 
-			fmt.Printf("Generated handoff.small.yml with %d next steps\n", len(nextSteps))
+			fmt.Printf("Generated handoff.small.yml with %d next steps\n", len(h.Resume.NextSteps))
 			fmt.Printf("replayId: %s (source: %s)\n", h.ReplayId.Value[:16]+"...", h.ReplayId.Source)
+			yml, _ := small.MarshalYAMLWithQuotedVersion(h)
 			fmt.Println(string(yml))
 			return nil
 		},

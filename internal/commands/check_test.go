@@ -23,7 +23,7 @@ success_criteria: []
 		writeArtifacts(t, tmpDir, artifacts)
 		mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
 
-		code, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot)
+		code, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot, false)
 		if err != nil {
 			t.Fatalf("runCheck error: %v", err)
 		}
@@ -50,7 +50,7 @@ entries:
 		writeArtifacts(t, tmpDir, artifacts)
 		mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
 
-		code, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot)
+		code, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot, false)
 		if err != nil {
 			t.Fatalf("runCheck error: %v", err)
 		}
@@ -73,7 +73,7 @@ links: []
 		writeArtifacts(t, tmpDir, artifacts)
 		mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
 
-		code, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot)
+		code, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot, false)
 		if err != nil {
 			t.Fatalf("runCheck error: %v", err)
 		}
@@ -88,7 +88,7 @@ func TestCheckSuccess(t *testing.T) {
 	writeArtifacts(t, tmpDir, defaultArtifacts())
 	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
 
-	code, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot)
+	code, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot, false)
 	if err != nil {
 		t.Fatalf("runCheck error: %v", err)
 	}
@@ -103,7 +103,7 @@ func TestCheckMissingWorkspace(t *testing.T) {
 	if err := os.Remove(filepath.Join(tmpDir, ".small", "workspace.small.yml")); err != nil && !os.IsNotExist(err) {
 		t.Fatalf("failed to remove workspace metadata: %v", err)
 	}
-	_, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot)
+	_, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot, false)
 	if err == nil {
 		t.Fatal("expected runCheck to error on missing workspace")
 	}

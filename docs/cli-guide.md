@@ -209,12 +209,14 @@ small lint
 | Flag | Description |
 |------|-------------|
 | `--strict` | Enable strict mode (strict invariants, secrets, insecure links) |
+| `--format-strict` | Treat small_version formatting drift as an error |
 | `--dir <path>` | Directory containing .small/ |
 | `--spec-dir <path>` | Path to spec/ directory |
 
 **What gets checked:**
 
 - Version consistency across all artifacts
+- small_version formatting drift (warns when not quoted; fix with `small fix --versions`)
 - Ownership rules (human owns intent/constraints, agent owns plan/progress)
 - Evidence requirement in progress entries
 - Secret detection (with `--strict`)
@@ -234,6 +236,22 @@ Both must pass for a valid workspace.
 | `owner must be "agent"` | Wrong owner in plan/progress | Set owner: "agent" |
 | `progress entry missing evidence` | No evidence field | Add evidence, command, commit, link, test, or verification |
 | `potential secret detected` (strict) | Possible credential in artifact | Remove or redact the secret |
+
+### small fix
+
+Normalize known SMALL formatting issues in-place.
+
+```bash
+small fix --versions
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--versions` | Normalize `small_version` to a quoted string |
+| `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`; default `root`) |
 
 ### small plan
 
@@ -601,6 +619,7 @@ small check --strict --ci
 | Flag | Description |
 |------|-------------|
 | `--strict` | Enable strict mode (strict invariants, secrets, insecure links) |
+| `--format-strict` | Treat small_version formatting drift as an error |
 | `--ci` | CI mode (minimal output) |
 | `--json` | JSON output |
 | `--dir <path>` | Directory containing .small/ |
