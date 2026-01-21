@@ -252,59 +252,12 @@ func normalizeTaskID(taskID string) string {
 }
 
 func generateHandoffFromApply(baseDir string) error {
-	// Load plan to derive next steps
-	planArtifact, err := small.LoadArtifact(baseDir, "plan.small.yml")
+	handoff, err := buildHandoff(baseDir, "Auto-generated handoff from apply command", "", nil, nil, nil, defaultNextStepsLimit)
 	if err != nil {
-		return fmt.Errorf("failed to load plan: %w", err)
+		return err
 	}
 
-	// Build next_steps from pending tasks
-	var nextSteps []interface{}
-	var currentTaskID string
-	if tasks, ok := planArtifact.Data["tasks"].([]interface{}); ok {
-		for _, t := range tasks {
-			if tm, ok := t.(map[string]interface{}); ok {
-				status, _ := tm["status"].(string)
-				taskID, _ := tm["id"].(string)
-				title, _ := tm["title"].(string)
-				if status == "in_progress" && currentTaskID == "" {
-					currentTaskID = taskID
-				}
-				if status == "pending" || status == "in_progress" {
-					if title != "" {
-						nextSteps = append(nextSteps, title)
-					} else if taskID != "" {
-						nextSteps = append(nextSteps, taskID)
-					}
-				}
-			}
-		}
-	}
-
-	// Build handoff structure matching v1.0.0 schema
-	handoffData := map[string]interface{}{
-		"small_version": small.ProtocolVersion,
-		"owner":         "agent",
-		"summary":       "Auto-generated handoff from apply command",
-		"resume": map[string]interface{}{
-			"current_task_id": currentTaskID,
-			"next_steps":      nextSteps,
-		},
-		"links": []interface{}{},
-	}
-
-	// Write handoff
-	yamlData, err := yaml.Marshal(handoffData)
-	if err != nil {
-		return fmt.Errorf("failed to marshal handoff: %w", err)
-	}
-
-	handoffPath := filepath.Join(baseDir, small.SmallDir, "handoff.small.yml")
-	if err := os.WriteFile(handoffPath, yamlData, 0644); err != nil {
-		return fmt.Errorf("failed to write handoff: %w", err)
-	}
-
-	return nil
+	return writeHandoff(baseDir, handoff)
 }
 
 func buildAutoProgressEvidence(output string, exitCode int) string {

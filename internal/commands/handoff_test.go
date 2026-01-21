@@ -3,6 +3,7 @@ package commands
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -380,6 +381,13 @@ entries:
 	if _, err := os.Stat(handoffPath); os.IsNotExist(err) {
 		t.Error("handoff.small.yml should be created when all tasks are properly completed")
 	}
+	handoffContent, err := os.ReadFile(handoffPath)
+	if err != nil {
+		t.Fatalf("failed to read handoff: %v", err)
+	}
+	if !strings.Contains(string(handoffContent), `small_version: "1.0.0"`) {
+		t.Fatalf("expected quoted small_version in handoff output")
+	}
 }
 
 func contains(s, substr string) bool {
@@ -393,4 +401,49 @@ func containsSubstring(s, substr string) bool {
 		}
 	}
 	return false
+}
+
+func TestComputeHandoffResumeDeterministic(t *testing.T) {
+	plan := &PlanData{
+		Tasks: []PlanTask{
+			{ID: "task-0", Title: "Active task", Status: "in_progress"},
+			{ID: "task-1", Title: "Completed task", Status: "completed"},
+			{ID: "task-2", Title: "Blocked by task-1", Status: "pending", Dependencies: []string{"task-1"}},
+			{ID: "task-3", Title: "Blocked by task-2", Status: "pending", Dependencies: []string{"task-2"}},
+			{ID: "task-4", Title: "Independent pending", Status: "pending"},
+		},
+	}
+
+	resume := computeHandoffResume(plan, 3)
+	if resume.CurrentTaskID != "task-0" {
+		t.Fatalf("expected current_task_id task-0, got %q", resume.CurrentTaskID)
+	}
+	if len(resume.NextSteps) != 3 {
+		t.Fatalf("expected 3 next steps, got %d", len(resume.NextSteps))
+	}
+	if resume.NextSteps[0] != "Active task" {
+		t.Fatalf("expected first next step to be current task, got %q", resume.NextSteps[0])
+	}
+	if resume.NextSteps[1] != "Blocked by task-1" {
+		t.Fatalf("expected second next step to be task-2, got %q", resume.NextSteps[1])
+	}
+	if resume.NextSteps[2] != "Independent pending" {
+		t.Fatalf("expected third next step to be task-4, got %q", resume.NextSteps[2])
+	}
+}
+
+func TestComputeHandoffResumeDefaultsWhenNoActionableTasks(t *testing.T) {
+	plan := &PlanData{
+		Tasks: []PlanTask{
+			{ID: "task-1", Title: "Done", Status: "completed"},
+		},
+	}
+
+	resume := computeHandoffResume(plan, 3)
+	if len(resume.NextSteps) != 1 {
+		t.Fatalf("expected default next steps when none are actionable")
+	}
+	if resume.NextSteps[0] != defaultNextStepMessage {
+		t.Fatalf("expected default guidance next step, got %q", resume.NextSteps[0])
+	}
 }

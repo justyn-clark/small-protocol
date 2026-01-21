@@ -28,6 +28,7 @@ func checkCmd() *cobra.Command {
 	var dir string
 	var workspaceFlag string
 	var jsonOutput bool
+	var formatStrict bool
 
 	cmd := &cobra.Command{
 		Use:   "check",
@@ -42,7 +43,7 @@ func checkCmd() *cobra.Command {
 				os.Exit(ExitSystemError)
 			}
 
-			code, output, err := runCheck(dir, strict, ci, jsonOutput, scope)
+			code, output, err := runCheck(dir, strict, ci, jsonOutput, scope, formatStrict)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 				os.Exit(ExitSystemError)
@@ -64,6 +65,7 @@ func checkCmd() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (strict invariants, secrets, insecure links)")
+	cmd.Flags().BoolVar(&formatStrict, "format-strict", false, "Treat small_version formatting drift as an error")
 	cmd.Flags().BoolVar(&ci, "ci", false, "CI mode (minimal output)")
 	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
@@ -72,7 +74,7 @@ func checkCmd() *cobra.Command {
 	return cmd
 }
 
-func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope) (int, checkOutput, error) {
+func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, formatStrict bool) (int, checkOutput, error) {
 	artifactsDir := resolveArtifactsDir(dir)
 	if scope != workspace.ScopeAny {
 		if err := enforceWorkspaceScope(artifactsDir, scope); err != nil {
@@ -123,6 +125,32 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope) (i
 			fmt.Fprintf(os.Stderr, "Lint failed with %d violation(s)\n", len(lintViolations))
 		}
 		return ExitInvalid, result, nil
+	}
+
+	versionWarnings, err := findVersionFormatWarnings(artifactsDir)
+	if err != nil {
+		result.Lint.Status = "error"
+		result.Lint.Errors = []string{err.Error()}
+		result.ExitCode = ExitSystemError
+		return ExitSystemError, result, err
+	}
+	if len(versionWarnings) > 0 {
+		if formatStrict {
+			result.Lint.Status = "failed"
+			for _, warning := range versionWarnings {
+				result.Lint.Errors = append(result.Lint.Errors, fmt.Sprintf("%s: small_version should be a quoted string", warning))
+			}
+			result.ExitCode = ExitInvalid
+			if !ci && !jsonOutput {
+				fmt.Fprintf(os.Stderr, "Lint failed with %d violation(s)\n", len(versionWarnings))
+			}
+			return ExitInvalid, result, nil
+		}
+		if !ci && !jsonOutput {
+			for _, warning := range versionWarnings {
+				fmt.Fprintf(os.Stderr, "WARN %s: small_version should be a quoted string. Fix: small fix --versions\n", warning)
+			}
+		}
 	}
 
 	verifyCi := ci || jsonOutput

@@ -319,7 +319,7 @@ func buildEmitOutput(rootDir, artifactsDir string, include emitInclude, scope wo
 	}
 
 	if runCheckFlag {
-		checkCode, checkOutput, err := runCheck(artifactsDir, false, true, true, scope)
+		checkCode, checkOutput, err := runCheck(artifactsDir, false, true, true, scope, false)
 		if err != nil {
 			return emitOutput{}, ExitSystemError, err
 		}

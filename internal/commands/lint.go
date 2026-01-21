@@ -12,11 +12,15 @@ func lintCmd() *cobra.Command {
 	var strict bool
 	var dir string
 	var specDir string
+	var formatStrict bool
 
 	cmd := &cobra.Command{
 		Use:   "lint",
 		Short: "Lint SMALL artifacts for invariant violations",
 		Long: `Checks invariants beyond schema validation (version, ownership, evidence, secrets).
+
+Also warns when small_version is not a quoted string. Fix with: small fix --versions
+Use --format-strict to treat formatting drift as an error.
 
 Schema Resolution (for any validation performed):
   1. If --spec-dir is set, load schemas from that directory
@@ -41,12 +45,26 @@ Schema Resolution (for any validation performed):
 				os.Exit(1)
 			}
 
+			warnings, err := findVersionFormatWarnings(artifactsDir)
+			if err != nil {
+				return err
+			}
+			if len(warnings) > 0 {
+				for _, warning := range warnings {
+					fmt.Fprintf(os.Stderr, "WARN %s: small_version should be a quoted string. Fix: small fix --versions\n", warning)
+				}
+				if formatStrict {
+					os.Exit(1)
+				}
+			}
+
 			fmt.Println("All invariants satisfied")
 			return nil
 		},
 	}
 
 	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode (strict invariants, secrets, insecure links)")
+	cmd.Flags().BoolVar(&formatStrict, "format-strict", false, "Treat small_version formatting drift as an error")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&specDir, "spec-dir", os.Getenv("SMALL_SPEC_DIR"),
 		"Directory containing spec/ (e.g., path/to/small-protocol). Falls back to $SMALL_SPEC_DIR")

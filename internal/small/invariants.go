@@ -159,6 +159,7 @@ func allowedTopLevelKeys(artifactType string) map[string]bool {
 		base["resume"] = true
 		base["links"] = true
 		base["replayId"] = true
+		base["run"] = true
 		return base
 	default:
 		return nil
@@ -744,6 +745,9 @@ func validateHandoff(path string, root map[string]interface{}, owner string) []I
 	if !ok || resume == nil {
 		v = append(v, InvariantViolation{File: path, Message: "handoff.resume must be an object"})
 		return v
+	}
+	if _, ok := resume["current_task_id"].(string); !ok {
+		v = append(v, InvariantViolation{File: path, Message: "handoff.resume.current_task_id must be a string"})
 	}
 	if _, ok := resume["next_steps"].([]interface{}); !ok {
 		v = append(v, InvariantViolation{File: path, Message: "handoff.resume.next_steps must be an array"})

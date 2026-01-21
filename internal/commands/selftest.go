@@ -219,16 +219,12 @@ entries: []
 		return fmt.Errorf("failed to write progress: %w", err)
 	}
 
-	handoff := `small_version: "1.0.0"
-owner: "agent"
-summary: "Selftest initial state"
-resume:
-  current_task_id: ""
-  next_steps: []
-links: []
-`
-	if err := os.WriteFile(filepath.Join(smallDir, "handoff.small.yml"), []byte(handoff), 0644); err != nil {
-		return fmt.Errorf("failed to write handoff: %w", err)
+	handoff, err := buildHandoff(dir, "Selftest initial state", "", nil, nil, nil, defaultNextStepsLimit)
+	if err != nil {
+		return err
+	}
+	if err := writeHandoff(dir, handoff); err != nil {
+		return err
 	}
 
 	// Write workspace metadata
@@ -339,45 +335,16 @@ func runSelftestApplyDryRun(dir string) error {
 func runSelftestHandoff(dir string) error {
 	smallDir := filepath.Join(dir, ".small")
 
-	// Generate replayId
-	replayId, err := generateReplayId(smallDir, "")
+	if _, err := os.Stat(smallDir); err != nil {
+		return fmt.Errorf("missing .small directory: %w", err)
+	}
+
+	handoff, err := buildHandoff(dir, "Selftest checkpoint", "", nil, nil, nil, defaultNextStepsLimit)
 	if err != nil {
-		return fmt.Errorf("failed to generate replayId: %w", err)
+		return err
 	}
-
-	// Load plan to get next steps
-	planPath := filepath.Join(smallDir, "plan.small.yml")
-	plan, err := loadPlan(planPath)
-	if err != nil {
-		return fmt.Errorf("failed to load plan: %w", err)
-	}
-
-	var nextSteps []string
-	for _, task := range plan.Tasks {
-		if task.Status == "pending" || task.Status == "in_progress" || task.Status == "" {
-			if task.Title != "" {
-				nextSteps = append(nextSteps, task.Title)
-			} else {
-				nextSteps = append(nextSteps, task.ID)
-			}
-		}
-	}
-
-	handoff := fmt.Sprintf(`small_version: "1.0.0"
-owner: "agent"
-summary: "Selftest checkpoint"
-resume:
-  current_task_id: ""
-  next_steps: %s
-links: []
-replayId:
-  value: "%s"
-  source: "%s"
-`, formatYAMLStringArray(nextSteps), replayId.Value, replayId.Source)
-
-	handoffPath := filepath.Join(smallDir, "handoff.small.yml")
-	if err := os.WriteFile(handoffPath, []byte(handoff), 0644); err != nil {
-		return fmt.Errorf("failed to write handoff: %w", err)
+	if err := writeHandoff(dir, handoff); err != nil {
+		return err
 	}
 
 	return nil

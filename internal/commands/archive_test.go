@@ -97,6 +97,18 @@ func TestArchiveCommand(t *testing.T) {
 		if err := runSelftestInit(tmpDir); err != nil {
 			t.Fatalf("failed to init workspace: %v", err)
 		}
+		handoffPath := filepath.Join(tmpDir, ".small", "handoff.small.yml")
+		handoff := `small_version: "1.0.0"
+owner: "agent"
+summary: "Missing replayId"
+resume:
+  current_task_id: ""
+  next_steps: []
+links: []
+`
+		if err := os.WriteFile(handoffPath, []byte(handoff), 0644); err != nil {
+			t.Fatalf("failed to overwrite handoff: %v", err)
+		}
 
 		// Archive should fail
 		defaultInclude := []string{"intent.small.yml"}

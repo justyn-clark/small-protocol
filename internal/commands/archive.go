@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
@@ -153,16 +155,18 @@ func runArchive(artifactsDir, outDir string, include []string) error {
 		})
 	}
 
+	archivedAt := time.Now().UTC().Format(time.RFC3339Nano)
+
 	// Create manifest
 	manifest := archiveManifest{
 		SmallVersion: small.ProtocolVersion,
-		ArchivedAt:   time.Now().UTC().Format(time.RFC3339Nano),
+		ArchivedAt:   archivedAt,
 		SourceDir:    artifactsDir,
 		ReplayId:     replayId,
 		Files:        files,
 	}
 
-	manifestData, err := yaml.Marshal(&manifest)
+	manifestData, err := small.MarshalYAMLWithQuotedVersion(&manifest)
 	if err != nil {
 		return fmt.Errorf("failed to marshal manifest: %w", err)
 	}
@@ -170,6 +174,17 @@ func runArchive(artifactsDir, outDir string, include []string) error {
 	manifestPath := filepath.Join(outDir, "archive.small.yml")
 	if err := os.WriteFile(manifestPath, manifestData, 0644); err != nil {
 		return fmt.Errorf("failed to write manifest: %w", err)
+	}
+
+	entry := small.RunIndexEntry{
+		ReplayID:  replayId,
+		Timestamp: archivedAt,
+		GitSHA:    resolveGitSHA(artifactsDir),
+		Summary:   stringVal(handoff["summary"]),
+		Reason:    "archive",
+	}
+	if err := small.AppendRunIndexEntry(artifactsDir, entry); err != nil {
+		return fmt.Errorf("failed to append run index: %w", err)
 	}
 
 	fmt.Printf("Archived %d files to %s\n", len(files), outDir)
@@ -212,4 +227,21 @@ func copyFile(src, dst string) error {
 	}
 
 	return dstFile.Sync()
+}
+
+func resolveGitSHA(baseDir string) string {
+	if baseDir == "" {
+		return ""
+	}
+	if _, err := exec.LookPath("git"); err != nil {
+		return ""
+	}
+
+	cmd := exec.Command("git", "rev-parse", "HEAD")
+	cmd.Dir = baseDir
+	output, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(output))
 }

@@ -10,3 +10,6 @@ resume:
 links:
   - url: "https://github.com/example/small-protocol"
     description: "Project repository"
+replayId:
+  value: 46311ca6450b7e168171e919f8a39de8f980ca0c98870f0e35f2bcc608fe32a0
+  source: "auto"

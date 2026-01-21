@@ -87,6 +87,9 @@ resume:
   current_task_id: ""
   next_steps: []
 links: []
+replayId:
+  value: "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
+  source: "auto"
 `,
 	}
 

@@ -3,6 +3,7 @@ owner: "agent"
 tasks:
   - id: "task-1"
     title: "Set up project structure"
+    status: "completed"
     steps:
       - "Create .small directory"
       - "Initialize canonical artifacts"
@@ -11,6 +12,7 @@ tasks:
       - "Files pass validation"
   - id: "task-2"
     title: "Implement core functionality"
+    status: "pending"
     steps:
       - "Implement loader"
       - "Implement validator"

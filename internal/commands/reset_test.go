@@ -45,7 +45,12 @@ func TestResetCommand(t *testing.T) {
 
 	// Write test files
 	testIntent := "intent: test intent content\nowner: human\n"
-	testPlan := "plan: test plan content\nowner: agent\n"
+	testPlan := `small_version: "1.0.0"
+owner: "agent"
+tasks:
+  - id: "task-1"
+    title: "Test task"
+`
 	testProgress := `small_version: "1.0.0"
 owner: "agent"
 entries:
@@ -55,7 +60,17 @@ entries:
     evidence: "Initial progress"
 `
 	testConstraints := "constraints: test constraints content\nowner: human\n"
-	testHandoff := "handoff: test handoff content\nowner: agent\n"
+	testHandoff := `small_version: "1.0.0"
+owner: "agent"
+summary: "Old handoff"
+resume:
+  current_task_id: ""
+  next_steps: []
+links: []
+replayId:
+  value: "1111111111111111111111111111111111111111111111111111111111111111"
+  source: "auto"
+`
 
 	files := map[string]string{
 		"intent.small.yml":      testIntent,
@@ -132,7 +147,7 @@ entries:
 			t.Error("intent.small.yml was not reset")
 		}
 
-		// Check handoff was reset
+		// Check handoff was reset and includes required fields
 		handoffContent, err := os.ReadFile(filepath.Join(smallDir, "handoff.small.yml"))
 		if err != nil {
 			t.Fatalf("failed to read handoff: %v", err)
@@ -140,6 +155,31 @@ entries:
 		if string(handoffContent) == testHandoff {
 			t.Error("handoff.small.yml was not reset")
 		}
+		if !strings.Contains(string(handoffContent), `small_version: "1.0.0"`) {
+			t.Fatalf("expected quoted small_version in reset handoff output")
+		}
+		var handoff map[string]interface{}
+		if err := yaml.Unmarshal(handoffContent, &handoff); err != nil {
+			t.Fatalf("failed to parse handoff: %v", err)
+		}
+		replayId, ok := handoff["replayId"].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected replayId in handoff after reset")
+		}
+		if stringVal(replayId["value"]) == "" {
+			t.Fatalf("expected replayId.value to be populated after reset")
+		}
+		runInfo, ok := handoff["run"].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected run metadata in handoff after reset")
+		}
+		if stringVal(runInfo["transition_reason"]) != "reset" {
+			t.Fatalf("expected transition_reason reset, got %q", stringVal(runInfo["transition_reason"]))
+		}
+		if stringVal(runInfo["previous_replay_id"]) != "1111111111111111111111111111111111111111111111111111111111111111" {
+			t.Fatalf("expected previous_replay_id to match prior handoff replayId")
+		}
+
 	})
 
 	// Restore files for next test

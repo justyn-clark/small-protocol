@@ -9,7 +9,8 @@
     "owner",
     "summary",
     "resume",
-    "links"
+    "links",
+    "replayId"
   ],
   "properties": {
     "small_version": {
@@ -29,7 +30,7 @@
     },
     "resume": {
       "type": "object",
-      "required": ["next_steps"],
+      "required": ["current_task_id", "next_steps"],
       "properties": {
         "current_task_id": {
           "type": "string",
@@ -78,6 +79,32 @@
         }
       },
       "required": ["value", "source"],
+      "additionalProperties": false
+    },
+    "run": {
+      "type": "object",
+      "description": "Optional run transition metadata",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp for the run transition"
+        },
+        "transition_reason": {
+          "type": "string",
+          "enum": ["reset", "archive", "manual", "self_heal"],
+          "description": "Reason for the run transition"
+        },
+        "previous_replay_id": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$",
+          "description": "Prior replayId, when known"
+        },
+        "previous_run_ref": {
+          "type": "string",
+          "description": "Optional reference to the previous run snapshot or archive"
+        }
+      },
       "additionalProperties": false
     }
   },

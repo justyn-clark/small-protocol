@@ -247,7 +247,7 @@ func loadPlan(path string) (*PlanData, error) {
 }
 
 func savePlan(path string, plan *PlanData) error {
-	data, err := yaml.Marshal(plan)
+	data, err := small.MarshalYAMLWithQuotedVersion(plan)
 	if err != nil {
 		return err
 	}
@@ -327,7 +327,7 @@ func ensureProgressEvidence(artifactsDir, taskID string) error {
 			Owner:        "agent",
 			Entries:      []map[string]interface{}{},
 		}
-		yamlData, err := yaml.Marshal(&progress)
+		yamlData, err := small.MarshalYAMLWithQuotedVersion(&progress)
 		if err != nil {
 			return err
 		}
