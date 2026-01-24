@@ -42,10 +42,13 @@ type PlanStatus struct {
 
 // ProgressEntry represents a progress entry for status output
 type ProgressEntry struct {
-	Timestamp string `json:"timestamp"`
-	TaskID    string `json:"task_id"`
-	Status    string `json:"status"`
-	Notes     string `json:"notes,omitempty"`
+	Timestamp      string `json:"timestamp"`
+	TaskID         string `json:"task_id"`
+	Status         string `json:"status"`
+	Notes          string `json:"notes,omitempty"`
+	CommandSummary string `json:"command_summary,omitempty"`
+	CommandRef     string `json:"command_ref,omitempty"`
+	CommandSha256  string `json:"command_sha256,omitempty"`
 }
 
 func statusCmd() *cobra.Command {
@@ -61,6 +64,7 @@ func statusCmd() *cobra.Command {
 		Short: "Show SMALL project status summary",
 		Long:  "Displays a compact summary of the current SMALL project state.",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			p := currentPrinter()
 			if dir == "" {
 				dir = baseDir
 			}
@@ -77,9 +81,10 @@ func statusCmd() *cobra.Command {
 				if jsonOutput {
 					return outputJSON(status)
 				}
-				fmt.Printf("small %s\n", version.GetVersion())
-				fmt.Println("\n.small/ directory does not exist")
-				fmt.Println("Run 'small init' to create a SMALL project")
+				p.PrintInfo(fmt.Sprintf("small %s", version.GetVersion()))
+				p.PrintInfo("")
+				p.PrintInfo(".small/ directory does not exist")
+				p.PrintInfo("Run 'small init' to create a SMALL project")
 				return nil
 			}
 			status.SmallDirExists = true
@@ -210,6 +215,17 @@ func getRecentProgress(baseDir string, n int) ([]ProgressEntry, error) {
 		if notes, ok := m["notes"].(string); ok {
 			entry.Notes = notes
 		}
+		if summary, ok := m["command_summary"].(string); ok {
+			entry.CommandSummary = summary
+		} else if cmd, ok := m["command"].(string); ok {
+			entry.CommandSummary = cmd
+		}
+		if ref, ok := m["command_ref"].(string); ok {
+			entry.CommandRef = ref
+		}
+		if sha, ok := m["command_sha256"].(string); ok {
+			entry.CommandSha256 = sha
+		}
 		progressEntries = append(progressEntries, entry)
 	}
 
@@ -249,56 +265,70 @@ func outputJSON(status StatusOutput) error {
 }
 
 func outputText(status StatusOutput) error {
-	fmt.Printf("small v%s\n", status.Version)
-	fmt.Println()
+	p := currentPrinter()
+	if p == nil {
+		return nil
+	}
+	p.PrintInfo(fmt.Sprintf("small v%s", status.Version))
+	p.PrintInfo("")
 
 	// Artifact checklist
-	fmt.Println("Artifacts:")
-	printArtifactStatus("  intent.small.yml", status.Artifacts.Intent)
-	printArtifactStatus("  constraints.small.yml", status.Artifacts.Constraints)
-	printArtifactStatus("  plan.small.yml", status.Artifacts.Plan)
-	printArtifactStatus("  progress.small.yml", status.Artifacts.Progress)
-	printArtifactStatus("  handoff.small.yml", status.Artifacts.Handoff)
-	fmt.Println()
+	p.PrintLabel("Artifacts:", "")
+	printArtifactStatus(p, "  intent.small.yml", status.Artifacts.Intent)
+	printArtifactStatus(p, "  constraints.small.yml", status.Artifacts.Constraints)
+	printArtifactStatus(p, "  plan.small.yml", status.Artifacts.Plan)
+	printArtifactStatus(p, "  progress.small.yml", status.Artifacts.Progress)
+	printArtifactStatus(p, "  handoff.small.yml", status.Artifacts.Handoff)
+	p.PrintInfo("")
 
 	// Plan summary
 	if status.Plan != nil {
-		fmt.Printf("Plan: %d tasks\n", status.Plan.TotalTasks)
+		p.PrintInfo(fmt.Sprintf("Plan: %d tasks", status.Plan.TotalTasks))
 		for statusName, count := range status.Plan.TasksByStatus {
-			fmt.Printf("  %s: %d\n", statusName, count)
+			p.PrintInfo(fmt.Sprintf("  %s: %d", statusName, count))
 		}
 		if len(status.Plan.NextActionable) > 0 {
-			fmt.Printf("Next actionable: %v\n", status.Plan.NextActionable)
+			p.PrintInfo(fmt.Sprintf("Next actionable: %v", status.Plan.NextActionable))
 		} else {
-			fmt.Println("Next actionable: none")
+			p.PrintInfo("Next actionable: none")
 		}
-		fmt.Println()
+		p.PrintInfo("")
 	}
 
 	// Recent progress
 	if len(status.RecentProgress) > 0 {
-		fmt.Printf("Recent progress (%d entries):\n", len(status.RecentProgress))
+		p.PrintInfo(fmt.Sprintf("Recent progress (%d entries):", len(status.RecentProgress)))
 		for _, entry := range status.RecentProgress {
 			ts := formatTimestamp(entry.Timestamp)
-			fmt.Printf("  [%s] %s: %s\n", ts, entry.TaskID, entry.Status)
+			cmdInfo := ""
+			if entry.CommandSummary != "" {
+				cmdInfo = fmt.Sprintf(" cmd=%s", entry.CommandSummary)
+				if entry.CommandRef != "" {
+					cmdInfo = fmt.Sprintf("%s ref=%s", cmdInfo, entry.CommandRef)
+				}
+			}
+			p.PrintInfo(fmt.Sprintf("  [%s] %s: %s%s", ts, entry.TaskID, entry.Status, cmdInfo))
 		}
-		fmt.Println()
+		p.PrintInfo("")
 	}
 
 	// Last handoff
 	if status.LastHandoff != "" {
 		ts := formatTimestamp(status.LastHandoff)
-		fmt.Printf("Last handoff: %s\n", ts)
+		p.PrintInfo(fmt.Sprintf("Last handoff: %s", ts))
 	}
 
 	return nil
 }
 
-func printArtifactStatus(name string, exists bool) {
+func printArtifactStatus(p *Printer, name string, exists bool) {
+	if p == nil {
+		return
+	}
 	if exists {
-		fmt.Printf("%s [x]\n", name)
+		p.PrintInfo(fmt.Sprintf("%s [x]", name))
 	} else {
-		fmt.Printf("%s [ ]\n", name)
+		p.PrintInfo(fmt.Sprintf("%s [ ]", name))
 	}
 }
 

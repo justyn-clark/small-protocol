@@ -1,0 +1,9 @@
+small_version: "1.0.0"
+owner: "human"
+constraints:
+  - id: "no-secrets"
+    rule: "No secrets in .small artifacts"
+    severity: "error"
+  - id: "no-prod-writes"
+    rule: "No writes to production by default"
+    severity: "error"

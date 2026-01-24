@@ -110,7 +110,19 @@ If no command is provided, defaults to dry-run mode.`,
 					"task_id":   normalizeTaskID(taskID),
 					"status":    "pending",
 					"evidence":  "Dry-run: no command executed",
-					"notes":     fmt.Sprintf("apply --dry-run (cmd: %q)", cmdArg),
+					"notes":     "apply --dry-run",
+				}
+
+				if cmdArg != "" {
+					summary, ref, sha, err := applyCommandMetadata(artifactsDir, timestamp, cmdArg)
+					if err != nil {
+						return err
+					}
+					entry["command"] = summary
+					entry["command_summary"] = summary
+					entry["command_ref"] = ref
+					entry["command_sha256"] = sha
+					entry["notes"] = fmt.Sprintf("apply --dry-run (cmd: %q)", summary)
 				}
 
 				if err := appendProgressEntry(artifactsDir, entry); err != nil {
@@ -128,8 +140,18 @@ If no command is provided, defaults to dry-run mode.`,
 				"task_id":   normalizeTaskID(taskID),
 				"status":    "in_progress",
 				"evidence":  "Apply started",
-				"command":   cmdArg,
 				"notes":     "apply: execution started",
+			}
+
+			if cmdArg != "" {
+				summary, ref, sha, err := applyCommandMetadata(artifactsDir, timestamp, cmdArg)
+				if err != nil {
+					return err
+				}
+				startEntry["command"] = summary
+				startEntry["command_summary"] = summary
+				startEntry["command_ref"] = ref
+				startEntry["command_sha256"] = sha
 			}
 
 			if err := appendProgressEntry(artifactsDir, startEntry); err != nil {
@@ -171,7 +193,17 @@ If no command is provided, defaults to dry-run mode.`,
 				"timestamp": endTimestamp,
 				"task_id":   normalizeTaskID(taskID),
 				"status":    status,
-				"command":   cmdArg,
+			}
+
+			if cmdArg != "" {
+				summary, ref, sha, err := applyCommandMetadata(artifactsDir, endTimestamp, cmdArg)
+				if err != nil {
+					return err
+				}
+				endEntry["command"] = summary
+				endEntry["command_summary"] = summary
+				endEntry["command_ref"] = ref
+				endEntry["command_sha256"] = sha
 			}
 
 			if autoProgress {
@@ -258,6 +290,20 @@ func generateHandoffFromApply(baseDir string) error {
 	}
 
 	return writeHandoff(baseDir, handoff)
+}
+
+func applyCommandMetadata(baseDir, timestamp, command string) (string, string, string, error) {
+	summary := small.SummarizeCommand(command, small.DefaultCommandSummaryCap)
+	existing, err := loadExistingHandoff(baseDir)
+	if err != nil || existing == nil || existing.ReplayId == nil || strings.TrimSpace(existing.ReplayId.Value) == "" {
+		return "", "", "", fmt.Errorf("cannot record command log: replayId missing (run small start)")
+	}
+	replayId := strings.TrimSpace(existing.ReplayId.Value)
+	ref, sha, err := small.WriteCommandLog(baseDir, replayId, timestamp, command)
+	if err != nil {
+		return "", "", "", fmt.Errorf("failed to write command log: %w", err)
+	}
+	return summary, ref, sha, nil
 }
 
 func buildAutoProgressEvidence(output string, exitCode int) string {

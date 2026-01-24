@@ -1,9 +1,12 @@
 package commands
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"gopkg.in/yaml.v3"
@@ -168,5 +171,95 @@ func TestProgressEntryStatusValues(t *testing.T) {
 		if !found {
 			t.Errorf("apply uses invalid status %q", status)
 		}
+	}
+}
+
+func TestApplyCommandMetadataLogging(t *testing.T) {
+	tmpDir := t.TempDir()
+	smallDir := filepath.Join(tmpDir, ".small")
+	if err := os.MkdirAll(smallDir, 0o755); err != nil {
+		t.Fatalf("failed to create .small dir: %v", err)
+	}
+
+	replayId := strings.Repeat("a", 64)
+	handoff := fmt.Sprintf(`small_version: %q
+owner: %q
+summary: %q
+resume:
+  current_task_id: %q
+  next_steps: []
+links: []
+replayId:
+  value: %q
+  source: %q
+`,
+		small.ProtocolVersion,
+		"agent",
+		"test",
+		"",
+		replayId,
+		"test",
+	)
+
+	if err := os.WriteFile(filepath.Join(smallDir, "handoff.small.yml"), []byte(handoff), 0o644); err != nil {
+		t.Fatalf("failed to write handoff: %v", err)
+	}
+
+	progress := ProgressData{
+		SmallVersion: small.ProtocolVersion,
+		Owner:        "agent",
+		Entries:      []map[string]interface{}{},
+	}
+	progressBytes, err := yaml.Marshal(&progress)
+	if err != nil {
+		t.Fatalf("failed to marshal progress: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(smallDir, "progress.small.yml"), progressBytes, 0o644); err != nil {
+		t.Fatalf("failed to write progress: %v", err)
+	}
+
+	command := "echo " + strings.Repeat("x", 300)
+	timestamp := formatProgressTimestamp(time.Date(2026, 1, 22, 10, 40, 42, 0, time.UTC))
+	summary, ref, sha, err := applyCommandMetadata(tmpDir, timestamp, command)
+	if err != nil {
+		t.Fatalf("applyCommandMetadata error: %v", err)
+	}
+	entry := map[string]interface{}{
+		"timestamp":       timestamp,
+		"task_id":         "task-1",
+		"status":          "in_progress",
+		"evidence":        "Apply started",
+		"command":         summary,
+		"command_summary": summary,
+		"command_ref":     ref,
+		"command_sha256":  sha,
+	}
+	if err := appendProgressEntry(tmpDir, entry); err != nil {
+		t.Fatalf("appendProgressEntry error: %v", err)
+	}
+
+	created, err := loadProgressData(filepath.Join(smallDir, "progress.small.yml"))
+	if err != nil {
+		t.Fatalf("failed to load progress: %v", err)
+	}
+	if len(created.Entries) != 1 {
+		t.Fatalf("expected 1 entry, got %d", len(created.Entries))
+	}
+	stored := created.Entries[0]
+	if stored["command_summary"] == nil || stored["command_ref"] == nil || stored["command_sha256"] == nil {
+		t.Fatalf("expected command fields to be set")
+	}
+
+	logPath := filepath.Join(tmpDir, filepath.FromSlash(ref))
+	content, err := os.ReadFile(logPath)
+	if err != nil {
+		t.Fatalf("expected command log to exist: %v", err)
+	}
+	if string(content) != command {
+		t.Fatalf("expected command log content to match")
+	}
+
+	if len(summary) > small.DefaultCommandSummaryCap {
+		t.Fatalf("expected command summary to be truncated")
 	}
 }

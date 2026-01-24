@@ -1,0 +1,17 @@
+small_version: "1.0.0"
+archived_at: "2026-01-24T00:19:06.379363Z"
+source_dir: /Users/justin/Documents/Justyn Clark Network/REPOS/small-protocol
+replayId: d554777579ce31fefc6297f2e63e977f05f1bde425d7bba4f79203b5b78a7ba3
+files:
+    - name: intent.small.yml
+      sha256: db28f41cfdf898056f1282c0585982c9f58d9fa3525997e8dd18316e4e1d33c3
+    - name: constraints.small.yml
+      sha256: 837611a0f5487d21c9f6e1d470fd5f6511e390a60c872470bb531fd88fa628cd
+    - name: plan.small.yml
+      sha256: 0627908752b2ed32efc70d8082f369516e161564e7f88e73a0e677c24250e572
+    - name: progress.small.yml
+      sha256: b018a89546ad82be4ff22f258f12fc18e64f43b5c2c9f7dfc62a1c25fb1a43e5
+    - name: handoff.small.yml
+      sha256: 95b4dfb234b7b853a3f855a4896e20e034a1a36c1d4f14a4a83441ff3098c503
+    - name: workspace.small.yml
+      sha256: 35771b4078deb23e939c03cb7399de7e71d1fd6d148eed1399a5c9d46e822a10

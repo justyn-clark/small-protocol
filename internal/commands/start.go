@@ -4,19 +4,21 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/small/fixers"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
 )
 
 func startCmd() *cobra.Command {
 	var (
-		strict        bool
-		summary       string
-		dir           string
-		workspaceFlag string
+		fixOrphanProgress bool
+		summary           string
+		dir               string
+		workspaceFlag     string
 	)
 
 	cmd := &cobra.Command{
@@ -27,6 +29,7 @@ func startCmd() *cobra.Command {
 				dir = baseDir
 			}
 			artifactsDir := resolveArtifactsDir(dir)
+			p := currentPrinter()
 
 			scope, err := workspace.ParseScope(workspaceFlag)
 			if err != nil {
@@ -105,21 +108,52 @@ func startCmd() *cobra.Command {
 				}
 			}
 
-			code, output, err := runCheck(artifactsDir, strict, false, false, scope, false)
+			strictCheck := true
+			p.PrintInfo("Running strict check (validate, lint, verify)...")
+			code, output, err := runCheck(artifactsDir, strictCheck, false, false, scope, false)
 			if err != nil {
 				return err
 			}
 			if code != ExitValid {
+				if isOrphanProgressOnly(output) {
+					if fixOrphanProgress {
+						result, err := fixers.FixOrphanProgress(artifactsDir)
+						if err != nil {
+							return err
+						}
+						if err := recordOrphanProgressReconcileEntry(artifactsDir, result); err != nil {
+							return err
+						}
+						p.PrintInfo("Applied orphan progress fix. Re-running strict check...")
+						code, output, err = runCheck(artifactsDir, strictCheck, false, false, scope, false)
+						if err != nil {
+							return err
+						}
+						if code != ExitValid {
+							return fmt.Errorf("check failed (validate=%s lint=%s verify=%s)", output.Validate.Status, output.Lint.Status, output.Verify.Status)
+						}
+						p.PrintInfo("Strict check passed. Start complete. Handoff ready.")
+						return nil
+					}
+					lines := []string{
+						"Why: orphan progress entries exist in the current replayId scope.",
+						"Fix:",
+						"small fix --orphan-progress",
+						"small start --fix",
+					}
+					p.PrintError(p.FormatBlock("Strict check failed (orphan progress)", lines))
+					return fmt.Errorf("check failed (orphan progress)")
+				}
 				return fmt.Errorf("check failed (validate=%s lint=%s verify=%s)", output.Validate.Status, output.Lint.Status, output.Verify.Status)
 			}
 
-			fmt.Println("Start complete. Handoff ready.")
+			p.PrintInfo("Strict check passed. Start complete. Handoff ready.")
 			return nil
 		},
 	}
 
-	cmd.Flags().BoolVar(&strict, "strict", false, "Enable strict mode checks")
 	cmd.Flags().StringVar(&summary, "summary", "", "Summary description for the handoff")
+	cmd.Flags().BoolVar(&fixOrphanProgress, "fix", false, "Auto-fix orphan progress if strict check fails")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root or any)")
 
@@ -176,6 +210,27 @@ func validateIntentAndPlan(artifactsDir string) bool {
 	}
 	if err := small.ValidateArtifactWithConfig(plan, config); err != nil {
 		return false
+	}
+	return true
+}
+
+func isOrphanProgressOnly(output checkOutput) bool {
+	if output.Validate.Status != "ok" {
+		return false
+	}
+	if output.Verify.Status != "ok" {
+		return false
+	}
+	if output.Lint.Status != "failed" {
+		return false
+	}
+	if len(output.Lint.Errors) == 0 {
+		return false
+	}
+	for _, message := range output.Lint.Errors {
+		if !strings.Contains(message, "strict invariant S2 failed") {
+			return false
+		}
 	}
 	return true
 }

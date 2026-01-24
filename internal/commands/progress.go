@@ -319,6 +319,24 @@ func normalizeProgressEntries(entries []map[string]interface{}) (int, error) {
 	return changed, nil
 }
 
+func attachProgressReplayID(baseDir string, entry map[string]interface{}) {
+	if entry == nil {
+		return
+	}
+	if _, ok := entry["replayId"]; ok {
+		return
+	}
+	existing, err := loadExistingHandoff(baseDir)
+	if err != nil || existing == nil || existing.ReplayId == nil {
+		return
+	}
+	value := strings.TrimSpace(existing.ReplayId.Value)
+	if value == "" {
+		return
+	}
+	entry["replayId"] = value
+}
+
 func appendProgressEntry(baseDir string, entry map[string]interface{}) error {
 	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
 
@@ -336,6 +354,7 @@ func appendProgressEntry(baseDir string, entry map[string]interface{}) error {
 		return err
 	}
 
+	attachProgressReplayID(baseDir, entry)
 	progress.Entries = append(progress.Entries, entry)
 	progress.SmallVersion = small.ProtocolVersion
 	progress.Owner = "agent"
@@ -364,6 +383,7 @@ func appendProgressEntryWithData(baseDir string, entry map[string]interface{}, p
 		return err
 	}
 
+	attachProgressReplayID(baseDir, entry)
 	progress.Entries = append(progress.Entries, entry)
 	progress.SmallVersion = small.ProtocolVersion
 	progress.Owner = "agent"

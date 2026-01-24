@@ -34,31 +34,32 @@ func checkCmd() *cobra.Command {
 		Use:   "check",
 		Short: "Run validate, lint, and verify",
 		Run: func(cmd *cobra.Command, args []string) {
+			p := currentPrinter()
 			if dir == "" {
 				dir = baseDir
 			}
 			scope, err := workspace.ParseScope(workspaceFlag)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Invalid workspace scope: %v\n", err)
+				p.PrintError(fmt.Sprintf("Invalid workspace scope: %v", err))
 				os.Exit(ExitSystemError)
 			}
 
 			code, output, err := runCheck(dir, strict, ci, jsonOutput, scope, formatStrict)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+				p.PrintError(fmt.Sprintf("Error: %v", err))
 				os.Exit(ExitSystemError)
 			}
 
 			if jsonOutput {
 				if err := outputCheckJSON(output); err != nil {
-					fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+					p.PrintError(fmt.Sprintf("Error: %v", err))
 					os.Exit(ExitSystemError)
 				}
 				os.Exit(code)
 			}
 
 			if code == ExitValid && !ci {
-				fmt.Println("Check passed")
+				p.PrintSuccess("Check passed")
 			}
 			os.Exit(code)
 		},
@@ -76,6 +77,7 @@ func checkCmd() *cobra.Command {
 
 func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, formatStrict bool) (int, checkOutput, error) {
 	artifactsDir := resolveArtifactsDir(dir)
+	p := currentPrinter()
 	if scope != workspace.ScopeAny {
 		if err := enforceWorkspaceScope(artifactsDir, scope); err != nil {
 			return ExitInvalid, checkOutput{}, err
@@ -103,7 +105,7 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, fo
 		}
 		result.ExitCode = ExitInvalid
 		if !ci && !jsonOutput {
-			fmt.Fprintf(os.Stderr, "Validate failed with %d error(s)\n", len(validationErrors))
+			p.PrintError(fmt.Sprintf("Validate failed with %d error(s)", len(validationErrors)))
 		}
 		return ExitInvalid, result, nil
 	}
@@ -122,7 +124,17 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, fo
 		}
 		result.ExitCode = ExitInvalid
 		if !ci && !jsonOutput {
-			fmt.Fprintf(os.Stderr, "Lint failed with %d violation(s)\n", len(lintViolations))
+			if strict {
+				report, other := buildStrictS2ReportFromViolations(lintViolations)
+				if report != nil {
+					p.PrintError(p.FormatBlock("Strict S2 failed (current run only)", strictS2ReportLines(*report)))
+					if len(other) > 0 {
+						p.PrintError(p.FormatBlock("Other invariant violations", formatBulletList(other)))
+					}
+					return ExitInvalid, result, nil
+				}
+			}
+			p.PrintError(fmt.Sprintf("Lint failed with %d violation(s)", len(lintViolations)))
 		}
 		return ExitInvalid, result, nil
 	}
@@ -142,13 +154,13 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, fo
 			}
 			result.ExitCode = ExitInvalid
 			if !ci && !jsonOutput {
-				fmt.Fprintf(os.Stderr, "Lint failed with %d violation(s)\n", len(versionWarnings))
+				p.PrintError(fmt.Sprintf("Lint failed with %d violation(s)", len(versionWarnings)))
 			}
 			return ExitInvalid, result, nil
 		}
 		if !ci && !jsonOutput {
 			for _, warning := range versionWarnings {
-				fmt.Fprintf(os.Stderr, "WARN %s: small_version should be a quoted string. Fix: small fix --versions\n", warning)
+				p.PrintWarn(fmt.Sprintf("%s: small_version should be a quoted string. Fix: small fix --versions", warning))
 			}
 		}
 	}

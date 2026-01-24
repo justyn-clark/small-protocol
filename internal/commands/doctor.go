@@ -39,7 +39,9 @@ Provides actionable suggestions for resolving issues.`,
 			}
 
 			results := runDoctor(dir)
+			p := currentPrinter()
 			printDiagnostics(results)
+			maybePrintUpdateNotice(p, false)
 			return nil
 		},
 	}
@@ -279,9 +281,13 @@ func analyzeRunState(artifacts map[string]*small.Artifact) []DiagnosticResult {
 }
 
 func printDiagnostics(results []DiagnosticResult) {
-	fmt.Println("SMALL Doctor Report")
-	fmt.Println("===================")
-	fmt.Println()
+	p := currentPrinter()
+	if p == nil {
+		return
+	}
+	p.PrintInfo("SMALL Doctor Report")
+	p.PrintInfo("===================")
+	p.PrintInfo("")
 
 	// Group by category
 	categories := []string{"Workspace", "Files", "Loading", "Schema", "Invariant", "Version", "Run State", "Progress", "Handoff"}
@@ -309,20 +315,38 @@ func printDiagnostics(results []DiagnosticResult) {
 					hasErrors = true
 				}
 
-				fmt.Printf("%s %s: %s\n", icon, r.Category, r.Message)
+				line := fmt.Sprintf("%s %s: %s", icon, r.Category, r.Message)
+				suggestion := ""
 				if r.Suggestion != "" {
-					fmt.Printf("     -> %s\n", r.Suggestion)
+					suggestion = fmt.Sprintf("     -> %s", r.Suggestion)
+				}
+				switch r.Status {
+				case "warning":
+					p.PrintWarn(line)
+					if suggestion != "" {
+						p.PrintWarn(suggestion)
+					}
+				case "error":
+					p.PrintError(line)
+					if suggestion != "" {
+						p.PrintError(suggestion)
+					}
+				default:
+					p.PrintInfo(line)
+					if suggestion != "" {
+						p.PrintInfo(suggestion)
+					}
 				}
 			}
 		}
 	}
 
-	fmt.Println()
+	p.PrintInfo("")
 	if hasErrors {
-		fmt.Println("Summary: Issues found. See suggestions above.")
+		p.PrintError("Summary: Issues found. See suggestions above.")
 	} else if hasWarnings {
-		fmt.Println("Summary: Warnings present. Review suggestions above.")
+		p.PrintWarn("Summary: Warnings present. Review suggestions above.")
 	} else {
-		fmt.Println("Summary: All checks passed!")
+		p.PrintSuccess("Summary: All checks passed!")
 	}
 }

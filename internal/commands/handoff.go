@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
@@ -70,6 +71,7 @@ func handoffCmd() *cobra.Command {
 			}
 
 			artifactsDir := resolveArtifactsDir(dir)
+			p := currentPrinter()
 
 			scope, err := workspace.ParseScope(workspaceFlag)
 			if err != nil {
@@ -98,22 +100,30 @@ func handoffCmd() *cobra.Command {
 			// Check for dangling tasks (tasks with progress but not completed/blocked)
 			danglingTasks := small.CheckDanglingTasks(planArtifact, progressArtifact)
 			if len(danglingTasks) > 0 {
-				fmt.Fprintln(os.Stderr, "")
-				fmt.Fprintln(os.Stderr, "Cannot generate handoff with unfinished tasks.")
-				fmt.Fprintln(os.Stderr, "")
-				fmt.Fprintln(os.Stderr, "Tasks with progress but not completed or blocked:")
-				for _, task := range danglingTasks {
+				sort.Slice(danglingTasks, func(i, j int) bool {
+					return danglingTasks[i].ID < danglingTasks[j].ID
+				})
+				p := currentPrinter()
+				lines := []string{
+					fmt.Sprintf("Why: %d task(s) have progress but are not completed or blocked.", len(danglingTasks)),
+					"Tasks:",
+				}
+				limit := defaultListCap
+				for i, task := range danglingTasks {
+					if i >= limit {
+						lines = append(lines, fmt.Sprintf("and %d more", len(danglingTasks)-limit))
+						break
+					}
 					status := task.Status
 					if status == "" {
 						status = "pending"
 					}
-					fmt.Fprintf(os.Stderr, "  - %s: %s (status: %s)\n", task.ID, task.Title, status)
+					lines = append(lines, fmt.Sprintf("- %s: %s (status: %s)", task.ID, task.Title, status))
 				}
-				fmt.Fprintln(os.Stderr, "")
-				fmt.Fprintln(os.Stderr, "Required fix:")
-				fmt.Fprintln(os.Stderr, "  - Complete the task with: small checkpoint --task <id> --status completed --evidence \"...\"")
-				fmt.Fprintln(os.Stderr, "  - Or mark it blocked with: small checkpoint --task <id> --status blocked --evidence \"...\"")
-				fmt.Fprintln(os.Stderr, "")
+				lines = append(lines, "", "Fix:")
+				lines = append(lines, "small checkpoint --task <id> --status completed --evidence \"...\"")
+				lines = append(lines, "small checkpoint --task <id> --status blocked --evidence \"...\"")
+				p.PrintError(p.FormatBlock("Handoff blocked by dangling tasks", lines))
 				return fmt.Errorf("dangling tasks detected: %d task(s) have progress but are not completed or blocked", len(danglingTasks))
 			}
 
@@ -126,10 +136,10 @@ func handoffCmd() *cobra.Command {
 				return err
 			}
 
-			fmt.Printf("Generated handoff.small.yml with %d next steps\n", len(h.Resume.NextSteps))
-			fmt.Printf("replayId: %s (source: %s)\n", h.ReplayId.Value[:16]+"...", h.ReplayId.Source)
+			p.PrintInfo(fmt.Sprintf("Generated handoff.small.yml with %d next steps", len(h.Resume.NextSteps)))
+			p.PrintInfo(fmt.Sprintf("replayId: %s (source: %s)", h.ReplayId.Value[:16]+"...", h.ReplayId.Source))
 			yml, _ := small.MarshalYAMLWithQuotedVersion(h)
-			fmt.Println(string(yml))
+			p.PrintInfo(string(yml))
 			return nil
 		},
 	}

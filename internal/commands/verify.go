@@ -44,9 +44,10 @@ Flags:
   --strict   Enable strict mode (strict invariants, secrets, insecure links)
   --ci       CI mode (minimal output, just errors)`,
 		Run: func(cmd *cobra.Command, args []string) {
+			p := currentPrinter()
 			scope, err := workspace.ParseScope(workspaceFlag)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Invalid workspace scope: %v\n", err)
+				p.PrintError(fmt.Sprintf("Invalid workspace scope: %v", err))
 				os.Exit(ExitSystemError)
 			}
 
@@ -68,22 +69,27 @@ Flags:
 }
 
 func runVerify(dir string, strict, ci bool, scope workspace.Scope) int {
+	p := currentPrinter()
 	smallDir := filepath.Join(dir, ".small")
 
 	// Check if .small/ directory exists
 	if _, err := os.Stat(smallDir); os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "Error: .small/ directory does not exist\n")
-		fmt.Fprintf(os.Stderr, "  Fix: small init --dir %q\n", dir)
+		p.PrintError("Error: .small/ directory does not exist")
+		if !ci {
+			p.PrintError(fmt.Sprintf("Fix: small init --dir %q", dir))
+		}
 		return ExitSystemError
 	}
 
 	artifactsDir := resolveArtifactsDir(dir)
 	if err := enforceWorkspaceScope(artifactsDir, scope); err != nil {
-		fmt.Fprintf(os.Stderr, "Workspace validation failed: %v\n", err)
+		p.PrintError(fmt.Sprintf("Workspace validation failed: %v", err))
 		// Check if workspace.small.yml is missing
 		wsPath := filepath.Join(smallDir, "workspace.small.yml")
-		if _, wsErr := os.Stat(wsPath); os.IsNotExist(wsErr) {
-			fmt.Fprintf(os.Stderr, "  Fix: small init --dir %q --force\n", dir)
+		if !ci {
+			if _, wsErr := os.Stat(wsPath); os.IsNotExist(wsErr) {
+				p.PrintError(fmt.Sprintf("Fix: small init --dir %q --force", dir))
+			}
 		}
 		return ExitInvalid
 	}
@@ -107,18 +113,20 @@ func runVerify(dir string, strict, ci bool, scope workspace.Scope) int {
 	}
 
 	if len(missingFiles) > 0 {
-		fmt.Fprintf(os.Stderr, "Missing required files:\n")
+		p.PrintError("Missing required files:")
 		for _, f := range missingFiles {
-			fmt.Fprintf(os.Stderr, "  - %s\n", f)
+			p.PrintError(fmt.Sprintf("- %s", f))
 		}
-		fmt.Fprintf(os.Stderr, "  Fix: small init --dir %q --force\n", dir)
+		if !ci {
+			p.PrintError(fmt.Sprintf("Fix: small init --dir %q --force", dir))
+		}
 		return ExitInvalid
 	}
 
 	// Load artifacts
 	artifacts, err := small.LoadAllArtifacts(artifactsDir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error loading artifacts: %v\n", err)
+		p.PrintError(fmt.Sprintf("Error loading artifacts: %v", err))
 		return ExitSystemError
 	}
 
@@ -153,20 +161,36 @@ func runVerify(dir string, strict, ci bool, scope workspace.Scope) int {
 
 	// Report results
 	if len(allErrors) > 0 {
-		if !ci {
-			fmt.Fprintf(os.Stderr, "Verification failed with %d error(s):\n", len(allErrors))
-		}
-		for _, ve := range allErrors {
-			fmt.Fprintf(os.Stderr, "  %s\n", ve.message)
-			if ve.fix != "" && !ci {
-				fmt.Fprintf(os.Stderr, "    Fix: %s\n", ve.fix)
+		if strict && !ci {
+			report, remaining := buildStrictS2ReportFromVerifyErrors(allErrors)
+			if report != nil {
+				p.PrintError(p.FormatBlock("Strict S2 failed (current run only)", strictS2ReportLines(*report)))
+				allErrors = remaining
 			}
+		}
+
+		if len(allErrors) > 0 {
+			if !ci {
+				lines := make([]string, 0, len(allErrors)*2)
+				for _, ve := range allErrors {
+					lines = append(lines, fmt.Sprintf("- %s", ve.message))
+					if ve.fix != "" {
+						lines = append(lines, fmt.Sprintf("  Fix: %s", ve.fix))
+					}
+				}
+				p.PrintError(p.FormatBlock(fmt.Sprintf("Verification failed (%d error(s))", len(allErrors)), lines))
+			} else {
+				for _, ve := range allErrors {
+					p.PrintError(ve.message)
+				}
+			}
+			return ExitInvalid
 		}
 		return ExitInvalid
 	}
 
 	if !ci {
-		fmt.Println("Verification passed")
+		p.PrintInfo("Verification passed")
 	}
 	return ExitValid
 }

@@ -609,6 +609,7 @@ func TestCheckInvariants_StrictModePlanProgressEvidence(t *testing.T) {
 }
 
 func TestCheckInvariants_StrictModeProgressTaskIDs(t *testing.T) {
+	currentReplayID := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 	artifacts := map[string]*Artifact{
 		"plan": {
 			Path: "test/plan.small.yml",
@@ -636,13 +637,33 @@ func TestCheckInvariants_StrictModeProgressTaskIDs(t *testing.T) {
 						"status":    "completed",
 						"timestamp": "2025-01-01T00:00:00.000000001Z",
 						"evidence":  "unexpected",
+						"replayId":  currentReplayID,
 					},
 					map[string]interface{}{
 						"task_id":   "meta/reconcile-plan",
 						"status":    "completed",
 						"timestamp": "2025-01-01T00:00:00.000000002Z",
 						"evidence":  "Reconciled plan to match completed work",
+						"replayId":  currentReplayID,
 					},
+				},
+			},
+		},
+		"handoff": {
+			Path: "test/handoff.small.yml",
+			Type: "handoff",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"summary":       "Test handoff",
+				"resume": map[string]interface{}{
+					"current_task_id": "",
+					"next_steps":      []interface{}{},
+				},
+				"links": []interface{}{},
+				"replayId": map[string]interface{}{
+					"value":  currentReplayID,
+					"source": "auto",
 				},
 			},
 		},
@@ -652,13 +673,76 @@ func TestCheckInvariants_StrictModeProgressTaskIDs(t *testing.T) {
 	hasS2 := false
 	for _, v := range violations {
 		if contains(v.Message, "strict invariant S2 failed") {
-			if contains(v.Message, "task-unknown") {
+			if contains(v.Message, "task-unknown") && contains(v.Message, currentReplayID) {
 				hasS2 = true
 			}
 		}
 	}
 	if !hasS2 {
-		t.Error("expected strict mode S2 violation for unknown task id")
+		t.Error("expected strict mode S2 violation for unknown task id in replay scope")
+	}
+}
+
+func TestCheckInvariants_StrictModeProgressTaskIDsIgnoresOtherReplayID(t *testing.T) {
+	currentReplayID := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	otherReplayID := "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []interface{}{
+					map[string]interface{}{
+						"id":    "task-1",
+						"title": "Known task",
+					},
+				},
+			},
+		},
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-unknown",
+						"status":    "completed",
+						"timestamp": "2025-01-01T00:00:00.000000001Z",
+						"evidence":  "unexpected",
+						"replayId":  otherReplayID,
+					},
+				},
+			},
+		},
+		"handoff": {
+			Path: "test/handoff.small.yml",
+			Type: "handoff",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"summary":       "Test handoff",
+				"resume": map[string]interface{}{
+					"current_task_id": "",
+					"next_steps":      []interface{}{},
+				},
+				"links": []interface{}{},
+				"replayId": map[string]interface{}{
+					"value":  currentReplayID,
+					"source": "auto",
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	for _, v := range violations {
+		if contains(v.Message, "strict invariant S2 failed") {
+			t.Fatalf("unexpected strict mode S2 violation: %s", v.Message)
+		}
 	}
 }
 

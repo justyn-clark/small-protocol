@@ -21,9 +21,8 @@ Thumbs.db
 # Cursor / AI
 # ================================
 .cursorrules
-/.claude
-/.claude/
-AGENTS.md
+.claude/
+.claude
 
 # ================================
 # Temp / Logs
@@ -35,12 +34,10 @@ tmp/
 # ================================
 # Go build artifacts
 # ================================
-# Folders
 /bin/
 dist/
 coverage/
 
-# Binaries / objects
 *.exe
 *.dll
 *.so
@@ -50,9 +47,7 @@ coverage/
 *.out
 *.test
 
-# IMPORTANT:
-# Ignore ONLY the root-level built binary named "small"
-# (do NOT ignore "spec/small/**")
+# Root-level built binary only
 /small
 /small.exe
 /small.dSYM/
@@ -71,28 +66,24 @@ dist/
 
 # ================================
 # SMALL runtime artifacts
-# - Ignore live workspace at repo root
-# - Ignore archive directories (local by default)
-# - Allow committed fixtures under examples/**/.small/**
 # ================================
-/.small/**
 
-# Archives are local by default; users may commit if desired
-.small/archive/
+# Root workspace canonical artifacts are committed, so do NOT ignore /.small/ entirely.
+# Ignore only the noisy parts.
+.small/logs/
+.small/runs/
 
-# Run history snapshots (local by default)
-.small-runs/
+# Root archives and run snapshots are allowed (curated). Do not ignore them here.
 
-# Allow committed examples
+# Run history snapshots (curated)
+#.small-runs/
+
+# Allow committed examples fixtures
 !/examples/**/.small/
 !/examples/**/.small/**
 
-# ================================
-# Terraform
-# ================================
-.terraform/
-.terraform.lock.hcl
-terraform.tfstate
-terraform.tfstate.backup
-*.tfvars
-!*.tfvars.example
+# But still ignore noisy subdirs inside examples, if they ever appear
+examples/**/.small/logs/
+examples/**/.small/runs/
+examples/**/.small/archive/
+examples/**/.small-runs/

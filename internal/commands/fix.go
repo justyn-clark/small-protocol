@@ -7,28 +7,31 @@ import (
 	"strings"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/small/fixers"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
 )
 
 func fixCmd() *cobra.Command {
 	var (
-		fixVersions   bool
-		dir           string
-		workspaceFlag string
+		fixVersions       bool
+		fixOrphanProgress bool
+		dir               string
+		workspaceFlag     string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "fix",
 		Short: "Normalize SMALL artifacts in-place",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if !fixVersions {
-				return fmt.Errorf("no fix selected (use --versions)")
+			if !fixVersions && !fixOrphanProgress {
+				return fmt.Errorf("no fix selected (use --versions or --orphan-progress)")
 			}
 			if dir == "" {
 				dir = baseDir
 			}
 			artifactsDir := resolveArtifactsDir(dir)
+			p := currentPrinter()
 
 			scope, err := workspace.ParseScope(workspaceFlag)
 			if err != nil {
@@ -40,30 +43,80 @@ func fixCmd() *cobra.Command {
 				}
 			}
 
-			changed, canonical, err := fixVersionFormatting(artifactsDir)
-			if err != nil {
-				return err
+			if fixVersions {
+				changed, canonical, err := fixVersionFormatting(artifactsDir)
+				if err != nil {
+					return err
+				}
+
+				p.PrintInfo("small_version normalization complete.")
+				if len(changed) > 0 {
+					p.PrintInfo(fmt.Sprintf("Changed (%d):", len(changed)))
+					for _, file := range changed {
+						p.PrintInfo(fmt.Sprintf("- %s", file))
+					}
+				}
+				if len(canonical) > 0 {
+					p.PrintInfo(fmt.Sprintf("Already canonical (%d):", len(canonical)))
+					for _, file := range canonical {
+						p.PrintInfo(fmt.Sprintf("- %s", file))
+					}
+				}
 			}
 
-			fmt.Println("small_version normalization complete.")
-			if len(changed) > 0 {
-				fmt.Printf("Changed (%d):\n", len(changed))
-				for _, file := range changed {
-					fmt.Printf("  - %s\n", file)
+			if fixOrphanProgress {
+				result, err := fixers.FixOrphanProgress(artifactsDir)
+				if err != nil {
+					return err
+				}
+
+				scopeLabel := strings.TrimSpace(result.ReplayID)
+				if scopeLabel == "" {
+					scopeLabel = "unknown"
+				}
+
+				if len(result.Rewrites) == 0 {
+					lines := []string{
+						fmt.Sprintf("ReplayId scope: %s", scopeLabel),
+						"No orphan progress entries found.",
+					}
+					p.PrintInfo(p.FormatBlock("Orphan progress", lines))
+				} else {
+					byCategory := map[string][]string{
+						"operational": {},
+						"historical":  {},
+						"unknown":     {},
+					}
+					for _, rewrite := range result.Rewrites {
+						entry := fmt.Sprintf("%s -> %s", rewrite.OriginalTaskID, rewrite.NewTaskID)
+						byCategory[rewrite.Category] = append(byCategory[rewrite.Category], entry)
+					}
+
+					lines := []string{
+						fmt.Sprintf("ReplayId scope: %s", scopeLabel),
+						fmt.Sprintf("Rewrote %d orphan progress entr(ies).", len(result.Rewrites)),
+						fmt.Sprintf("Counts: operational=%d historical=%d unknown=%d", result.Counts.Operational, result.Counts.Historical, result.Counts.Unknown),
+						"Rewrites by category:",
+					}
+					lines = append(lines, fmt.Sprintf("  %s", formatCountedList("operational", byCategory["operational"], defaultListCap)))
+					lines = append(lines, fmt.Sprintf("  %s", formatCountedList("historical", byCategory["historical"], defaultListCap)))
+					lines = append(lines, fmt.Sprintf("  %s", formatCountedList("unknown", byCategory["unknown"], defaultListCap)))
+					if err := recordOrphanProgressReconcileEntry(artifactsDir, result); err != nil {
+						return err
+					}
+					lines = append(lines, "", "Recorded progress entry: meta/reconcile-plan")
+					lines = append(lines, "Fix:", "small check --strict")
+					p.PrintInfo(p.FormatBlock("Orphan progress rewritten", lines))
 				}
 			}
-			if len(canonical) > 0 {
-				fmt.Printf("Already canonical (%d):\n", len(canonical))
-				for _, file := range canonical {
-					fmt.Printf("  - %s\n", file)
-				}
-			}
-			fmt.Println("Next: small check --strict")
+
+			p.PrintInfo("Next: small check --strict")
 			return nil
 		},
 	}
 
 	cmd.Flags().BoolVar(&fixVersions, "versions", false, "Normalize small_version formatting (quoted string)")
+	cmd.Flags().BoolVar(&fixOrphanProgress, "orphan-progress", false, "Rewrite orphan progress task_ids to meta names")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root, examples, or any)")
 

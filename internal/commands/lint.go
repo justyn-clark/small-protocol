@@ -27,6 +27,7 @@ Schema Resolution (for any validation performed):
   2. Else if on-disk schemas found (dev mode in small-protocol repo), use those
   3. Else use embedded v1.0.0 schemas (default for installed CLI)`,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			p := currentPrinter()
 			if dir == "" {
 				dir = baseDir
 			}
@@ -38,10 +39,11 @@ Schema Resolution (for any validation performed):
 			}
 
 			if len(violations) > 0 {
-				fmt.Fprintf(os.Stderr, "Invariant violations found:\n")
+				lines := make([]string, 0, len(violations))
 				for _, violation := range violations {
-					fmt.Fprintf(os.Stderr, "  %s: %s\n", violation.File, violation.Message)
+					lines = append(lines, fmt.Sprintf("%s: %s", violation.File, violation.Message))
 				}
+				p.PrintError(p.FormatErrorBlock("Invariant violations found", lines))
 				os.Exit(1)
 			}
 
@@ -51,14 +53,14 @@ Schema Resolution (for any validation performed):
 			}
 			if len(warnings) > 0 {
 				for _, warning := range warnings {
-					fmt.Fprintf(os.Stderr, "WARN %s: small_version should be a quoted string. Fix: small fix --versions\n", warning)
+					p.PrintWarn(fmt.Sprintf("%s: small_version should be a quoted string. Fix: small fix --versions", warning))
 				}
 				if formatStrict {
 					os.Exit(1)
 				}
 			}
 
-			fmt.Println("All invariants satisfied")
+			p.PrintSuccess("All invariants satisfied")
 			return nil
 		},
 	}

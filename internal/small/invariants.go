@@ -116,18 +116,17 @@ func validateStrictInvariantsWithConfig(artifacts map[string]*Artifact, config s
 
 	planArtifact, hasPlan := artifacts["plan"]
 	progressArtifact, hasProgress := artifacts["progress"]
+	handoffArtifact, hasHandoff := artifacts["handoff"]
 	if hasPlan && hasProgress {
 		violations = append(violations, validateStrictPlanTaskEvidence(planArtifact, progressArtifact)...)
-		violations = append(violations, validateStrictProgressTaskIDs(planArtifact, progressArtifact)...)
+		violations = append(violations, validateStrictProgressTaskIDs(planArtifact, progressArtifact, handoffArtifact)...)
 		if config.RequireReconcileMarker {
 			violations = append(violations, validatePlanReconciliation(planArtifact, progressArtifact)...)
 		}
 	}
 
-	if hasPlan {
-		if handoffArtifact, hasHandoff := artifacts["handoff"]; hasHandoff {
-			violations = append(violations, validateStrictHandoffTasks(planArtifact, handoffArtifact)...)
-		}
+	if hasPlan && hasHandoff {
+		violations = append(violations, validateStrictHandoffTasks(planArtifact, handoffArtifact)...)
 	}
 
 	return violations
@@ -225,7 +224,36 @@ func validateStrictPlanTaskEvidence(planArtifact, progressArtifact *Artifact) []
 	}}
 }
 
-func validateStrictProgressTaskIDs(planArtifact, progressArtifact *Artifact) []InvariantViolation {
+func extractHandoffReplayID(handoffArtifact *Artifact) string {
+	if handoffArtifact == nil || handoffArtifact.Data == nil {
+		return ""
+	}
+	metadata, ok := handoffArtifact.Data["replayId"].(map[string]interface{})
+	if !ok {
+		return ""
+	}
+	return strings.TrimSpace(stringVal(metadata["value"]))
+}
+
+func progressEntryReplayID(entry map[string]interface{}) string {
+	if entry == nil {
+		return ""
+	}
+	return strings.TrimSpace(stringVal(entry["replayId"]))
+}
+
+func shouldValidateProgressEntry(entry map[string]interface{}, replayID string) bool {
+	if replayID == "" {
+		return true
+	}
+	entryReplayID := progressEntryReplayID(entry)
+	if entryReplayID == "" {
+		return false
+	}
+	return entryReplayID == replayID
+}
+
+func validateStrictProgressTaskIDs(planArtifact, progressArtifact, handoffArtifact *Artifact) []InvariantViolation {
 	if planArtifact == nil || progressArtifact == nil || planArtifact.Data == nil || progressArtifact.Data == nil {
 		return nil
 	}
@@ -247,10 +275,19 @@ func validateStrictProgressTaskIDs(planArtifact, progressArtifact *Artifact) []I
 		return nil
 	}
 
+	replayID := extractHandoffReplayID(handoffArtifact)
+	scopeLabel := replayID
+	if scopeLabel == "" {
+		scopeLabel = "unknown"
+	}
+
 	var offenders []string
 	for _, entry := range entries {
 		entryMap, ok := entry.(map[string]interface{})
 		if !ok {
+			continue
+		}
+		if !shouldValidateProgressEntry(entryMap, replayID) {
 			continue
 		}
 		taskID := strings.TrimSpace(stringVal(entryMap["task_id"]))
@@ -278,7 +315,7 @@ func validateStrictProgressTaskIDs(planArtifact, progressArtifact *Artifact) []I
 	sort.Strings(offenders)
 	return []InvariantViolation{{
 		File:    progressArtifact.Path,
-		Message: fmt.Sprintf("strict invariant S2 failed: unknown progress task ids: %s", strings.Join(offenders, "; ")),
+		Message: fmt.Sprintf("strict invariant S2 failed (replayId scope: %s): unknown progress task ids: %s", scopeLabel, strings.Join(offenders, "; ")),
 	}}
 }
 
@@ -811,7 +848,7 @@ func checkSecrets(artifact *Artifact) []InvariantViolation {
 
 	checkValue := func(key string, value interface{}, path string) bool {
 		// Skip excluded paths
-		if excludedPaths[path] {
+		if excludedPaths[path] || strings.HasSuffix(path, ".replayId") || path == "replayId" || strings.HasSuffix(path, ".command_sha256") {
 			return false
 		}
 

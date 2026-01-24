@@ -1,0 +1,7 @@
+small_version: "1.0.0"
+owner: "human"
+intent: "Harden SMALL for loop-driven agent workflows: strict invariants, self-heal, and best-in-class UX."
+scope:
+  include: []
+  exclude: []
+success_criteria: []
