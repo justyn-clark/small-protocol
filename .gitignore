@@ -69,20 +69,24 @@ dist/
 # ================================
 
 # Root workspace canonical artifacts are committed, so do NOT ignore /.small/ entirely.
-# Ignore only the noisy parts.
 .small/logs/
 .small/runs/
 
-# Root archives and run snapshots are allowed (curated). Do not ignore them here.
+# Always ignore runtime run snapshots at repo root
+.small-runs/
 
-# Run history snapshots (curated)
-#.small-runs/
+# Ignore all archives by default (curation only)
+.small/archive/*
 
-# Allow committed examples fixtures
+# Allowlist curated archives (add more ids as needed)
+!.small/archive/d554777579ce31fefc6297f2e63e977f05f1bde425d7bba4f79203b5b78a7ba3/
+!.small/archive/d554777579ce31fefc6297f2e63e977f05f1bde425d7bba4f79203b5b78a7ba3/**
+!.small/archive/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/
+!.small/archive/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/**
+
+# Examples are fixtures, not runtime noise
 !/examples/**/.small/
 !/examples/**/.small/**
-
-# But still ignore noisy subdirs inside examples, if they ever appear
 examples/**/.small/logs/
 examples/**/.small/runs/
 examples/**/.small/archive/
