@@ -100,12 +100,14 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, fo
 	}
 	if len(validationErrors) > 0 {
 		result.Validate.Status = "failed"
+		var errorLines []string
 		for _, vErr := range validationErrors {
 			result.Validate.Errors = append(result.Validate.Errors, vErr.Error())
+			errorLines = append(errorLines, vErr.Error())
 		}
 		result.ExitCode = ExitInvalid
 		if !ci && !jsonOutput {
-			p.PrintError(fmt.Sprintf("Validate failed with %d error(s)", len(validationErrors)))
+			p.PrintError(p.FormatBlock(fmt.Sprintf("Validate failed (%d error(s))", len(validationErrors)), errorLines))
 		}
 		return ExitInvalid, result, nil
 	}
@@ -134,7 +136,12 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, fo
 					return ExitInvalid, result, nil
 				}
 			}
-			p.PrintError(fmt.Sprintf("Lint failed with %d violation(s)", len(lintViolations)))
+			// Always show the actual violations so humans can understand what's wrong
+			var violationLines []string
+			for _, v := range lintViolations {
+				violationLines = append(violationLines, fmt.Sprintf("%s: %s", v.File, v.Message))
+			}
+			p.PrintError(p.FormatBlock(fmt.Sprintf("Lint failed (%d violation(s))", len(lintViolations)), violationLines))
 		}
 		return ExitInvalid, result, nil
 	}
@@ -149,12 +156,16 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, fo
 	if len(versionWarnings) > 0 {
 		if formatStrict {
 			result.Lint.Status = "failed"
+			var warningLines []string
 			for _, warning := range versionWarnings {
-				result.Lint.Errors = append(result.Lint.Errors, fmt.Sprintf("%s: small_version should be a quoted string", warning))
+				msg := fmt.Sprintf("%s: small_version should be a quoted string", warning)
+				result.Lint.Errors = append(result.Lint.Errors, msg)
+				warningLines = append(warningLines, msg)
 			}
+			warningLines = append(warningLines, "", "Fix: small fix --versions")
 			result.ExitCode = ExitInvalid
 			if !ci && !jsonOutput {
-				p.PrintError(fmt.Sprintf("Lint failed with %d violation(s)", len(versionWarnings)))
+				p.PrintError(p.FormatBlock(fmt.Sprintf("Lint failed (%d violation(s))", len(versionWarnings)), warningLines))
 			}
 			return ExitInvalid, result, nil
 		}

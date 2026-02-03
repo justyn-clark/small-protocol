@@ -68,6 +68,7 @@ func Execute() error {
 	rootCmd.AddCommand(selftestCmd())
 	rootCmd.AddCommand(archiveCmd())
 	rootCmd.AddCommand(runCmd())
+	rootCmd.AddCommand(agentsCmd())
 
 	err := rootCmd.Execute()
 	if errors.Is(err, errFlagError) {

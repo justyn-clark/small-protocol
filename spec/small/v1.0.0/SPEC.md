@@ -100,6 +100,50 @@ The following invariants are non-negotiable and MUST be enforced by all SMALL v1
 - Extensions MUST NOT be required for basic protocol compliance
 - Implementations MAY support extensions but MUST NOT fail if extensions are absent
 
+## AGENTS.md Semantics
+
+SMALL tooling MAY generate an `AGENTS.md` file to provide advisory documentation for AI agents.
+
+### Key Properties
+
+- **AGENTS.md is advisory documentation**, not canonical state
+- `.small/` artifacts always take precedence over AGENTS.md guidance
+- Presence or absence of AGENTS.md does not affect protocol validity
+- AGENTS.md is NOT stored in `.small/` (it lives at repository root)
+
+### Bounded Block Format
+
+When SMALL tooling writes to an existing AGENTS.md file, it MUST use a bounded block:
+
+```markdown
+<!-- BEGIN SMALL HARNESS v1.0.0 -->
+# SMALL Execution Harness
+...content...
+<!-- END SMALL HARNESS v1.0.0 -->
+```
+
+Rules for bounded blocks:
+
+- Only content within the SMALL harness block is tool-managed
+- Content outside the block MUST NOT be modified by SMALL tooling
+- If a block exists, it may be replaced in-place
+- The version in the markers MUST match the protocol version
+- Multiple SMALL blocks in a single file are an error
+
+### Composition Modes
+
+SMALL implementations MAY support the following modes for handling existing AGENTS.md:
+
+- **append**: Add SMALL block after existing content
+- **prepend**: Add SMALL block before existing content
+- **overwrite**: Replace entire file with SMALL block only
+
+### Non-Goals
+
+- SMALL MUST NOT merge prose from multiple sources
+- SMALL MUST NOT parse or interpret other agents' instructions
+- SMALL MUST NOT infer intent from existing AGENTS.md content
+
 ## Schema Validation
 
 All canonical artifacts MUST validate against their corresponding JSON Schema:

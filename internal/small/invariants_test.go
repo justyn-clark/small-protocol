@@ -1172,3 +1172,155 @@ func TestCheckDanglingTasks_MetaTasksIgnored(t *testing.T) {
 		t.Errorf("expected 0 dangling tasks (meta/ tasks should be ignored), got %d", len(dangling))
 	}
 }
+
+func TestCheckInvariants_StrictModeLocalhostHTTPAllowedInProgress(t *testing.T) {
+	tests := []struct {
+		name      string
+		url       string
+		wantError bool
+	}{
+		{"localhost passes", "http://localhost:3001/api", false},
+		{"localhost no port passes", "http://localhost/test", false},
+		{"127.0.0.1 passes", "http://127.0.0.1:8080/health", false},
+		{"0.0.0.0 passes", "http://0.0.0.0:3000", false},
+		{"[::1] passes", "http://[::1]:3000/api", false},
+		{"external http fails", "http://example.com", true},
+		{"external http fails 2", "http://api.example.com/v1", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			artifacts := map[string]*Artifact{
+				"progress": {
+					Path: "test/progress.small.yml",
+					Type: "progress",
+					Data: map[string]interface{}{
+						"small_version": ProtocolVersion,
+						"owner":         "agent",
+						"entries": []interface{}{
+							map[string]interface{}{
+								"task_id":   "task-1",
+								"timestamp": "2025-01-01T00:00:00.000000000Z",
+								"evidence":  "Started server at " + tt.url,
+							},
+						},
+					},
+				},
+			}
+
+			violations := CheckInvariants(artifacts, true)
+			hasInsecureError := false
+			for _, v := range violations {
+				if contains(v.Message, "insecure link detected") {
+					hasInsecureError = true
+					break
+				}
+			}
+			if hasInsecureError != tt.wantError {
+				t.Errorf("insecure error = %v, want %v", hasInsecureError, tt.wantError)
+			}
+		})
+	}
+}
+
+func TestCheckInvariants_StrictModeLocalhostHTTPBlockedInHandoff(t *testing.T) {
+	// Even localhost http should be blocked in non-progress files
+	artifacts := map[string]*Artifact{
+		"handoff": {
+			Path: "test/handoff.small.yml",
+			Type: "handoff",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"summary":       "Test handoff with http://localhost:3001",
+				"resume": map[string]interface{}{
+					"current_task_id": "",
+					"next_steps":      []interface{}{},
+				},
+				"links": []interface{}{},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	hasInsecureError := false
+	for _, v := range violations {
+		if contains(v.Message, "insecure link detected") {
+			hasInsecureError = true
+			break
+		}
+	}
+	if !hasInsecureError {
+		t.Error("expected insecure link error for localhost in handoff (allowlist only applies to progress)")
+	}
+}
+
+func TestCheckInvariants_StrictModeInsecureLinksErrorMessage(t *testing.T) {
+	// Test that the error message includes the localhost allowlist note for progress files
+	artifacts := map[string]*Artifact{
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-1",
+						"timestamp": "2025-01-01T00:00:00.000000000Z",
+						"evidence":  "Connected to http://example.com",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	var insecureMsg string
+	for _, v := range violations {
+		if contains(v.Message, "insecure link detected") {
+			insecureMsg = v.Message
+			break
+		}
+	}
+	if insecureMsg == "" {
+		t.Fatal("expected insecure link violation")
+	}
+	if !contains(insecureMsg, "localhost") || !contains(insecureMsg, "127.0.0.1") {
+		t.Errorf("expected error message to mention localhost allowlist, got: %s", insecureMsg)
+	}
+}
+
+func TestCheckInvariants_StrictModeIgnoresPartialHTTPInText(t *testing.T) {
+	// Test that "http://" appearing in descriptive text (not as a real URL) is ignored
+	// This handles cases like: "error: insecure link http:// in file"
+	artifacts := map[string]*Artifact{
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []interface{}{
+					map[string]interface{}{
+						"task_id":   "task-1",
+						"timestamp": "2025-01-01T00:00:00.000000000Z",
+						"evidence":  "small check --strict fails with insecure link http:// in .small/progress.small.yml",
+					},
+					map[string]interface{}{
+						"task_id":   "task-2",
+						"timestamp": "2025-01-01T00:00:00.000000002Z",
+						"evidence":  "Started server at http://localhost:3001 successfully",
+					},
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	for _, v := range violations {
+		if contains(v.Message, "insecure link detected") {
+			t.Errorf("should not flag partial 'http://' in descriptive text or localhost URLs, got: %s", v.Message)
+		}
+	}
+}

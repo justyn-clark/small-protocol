@@ -797,6 +797,61 @@ func validateHandoff(path string, root map[string]interface{}, owner string) []I
 	return v
 }
 
+// localhostHTTPPrefixes are http:// URLs allowed in progress files only.
+var localhostHTTPPrefixes = []string{
+	"http://localhost",
+	"http://127.0.0.1",
+	"http://0.0.0.0",
+	"http://[::1]",
+}
+
+// isAllowedLocalhostHTTP checks if a URL is an allowed localhost http URL.
+func isAllowedLocalhostHTTP(url string) bool {
+	for _, prefix := range localhostHTTPPrefixes {
+		if strings.HasPrefix(url, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+// extractHTTPURLs finds all http:// URLs in a string.
+// Only returns URLs that have a valid host (not just "http://" with no host).
+func extractHTTPURLs(s string) []string {
+	var urls []string
+	remaining := s
+	for {
+		idx := strings.Index(remaining, "http://")
+		if idx < 0 {
+			break
+		}
+		// Extract URL (until whitespace, quote, or end)
+		// Note: We need to handle IPv6 addresses like http://[::1]:3000
+		urlStart := remaining[idx:]
+		end := len(urlStart)
+		inBracket := false
+		for i, c := range urlStart {
+			if c == '[' {
+				inBracket = true
+			} else if c == ']' {
+				inBracket = false
+			} else if !inBracket && (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '"' || c == '\'' || c == '>') {
+				end = i
+				break
+			}
+		}
+		url := urlStart[:end]
+		// Only include URLs that have something after "http://" (a host)
+		// Skip things like "http://" or "http:// " which aren't real URLs
+		host := strings.TrimPrefix(url, "http://")
+		if len(host) > 0 && host[0] != ' ' && host[0] != '/' {
+			urls = append(urls, url)
+		}
+		remaining = remaining[idx+len("http://"):]
+	}
+	return urls
+}
+
 func checkInsecureLinks(artifact *Artifact) []InvariantViolation {
 	var v []InvariantViolation
 
@@ -804,6 +859,9 @@ func checkInsecureLinks(artifact *Artifact) []InvariantViolation {
 	if root == nil {
 		return v
 	}
+
+	// Check if this is a progress artifact (allow localhost http)
+	isProgress := artifact.Type == "progress"
 
 	var visit func(value interface{})
 	visit = func(value interface{}) {
@@ -818,10 +876,22 @@ func checkInsecureLinks(artifact *Artifact) []InvariantViolation {
 			}
 		case string:
 			if strings.Contains(vv, "http://") {
-				v = append(v, InvariantViolation{
-					File:    artifact.Path,
-					Message: "insecure link detected (http://). Use https://",
-				})
+				urls := extractHTTPURLs(vv)
+				for _, url := range urls {
+					// In progress files, allow localhost http
+					if isProgress && isAllowedLocalhostHTTP(url) {
+						continue
+					}
+					msg := "insecure link detected (http://). Use https://"
+					if isProgress {
+						msg += " (localhost/127.0.0.1/0.0.0.0/[::1] allowed in progress)"
+					}
+					v = append(v, InvariantViolation{
+						File:    artifact.Path,
+						Message: msg,
+					})
+					break // One violation per string is enough
+				}
 			}
 		}
 	}

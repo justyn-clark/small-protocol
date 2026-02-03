@@ -37,8 +37,10 @@ const (
 // Info describes the workspace metadata declared inside .small/workspace.small.yml.
 type Info struct {
 	SmallVersion string `yaml:"small_version"`
+	Owner        string `yaml:"owner,omitempty"`
 	Kind         Kind   `yaml:"kind"`
 	CreatedAt    string `yaml:"created_at,omitempty"`
+	UpdatedAt    string `yaml:"updated_at,omitempty"`
 }
 
 // ParseScope converts a CLI value into a Scope value.
@@ -121,10 +123,13 @@ func Save(baseDir string, kind Kind) error {
 		return fmt.Errorf("failed to create .small directory: %w", err)
 	}
 
+	now := time.Now().UTC().Format(time.RFC3339Nano)
 	info := Info{
 		SmallVersion: small.ProtocolVersion,
+		Owner:        "agent",
 		Kind:         kind,
-		CreatedAt:    time.Now().UTC().Format(time.RFC3339Nano),
+		CreatedAt:    now,
+		UpdatedAt:    now,
 	}
 
 	data, err := small.MarshalYAMLWithQuotedVersion(info)
@@ -137,4 +142,133 @@ func Save(baseDir string, kind Kind) error {
 	}
 
 	return nil
+}
+
+// FixResult describes what was fixed in the workspace file.
+type FixResult struct {
+	Created          bool
+	AddedOwner       bool
+	AddedCreatedAt   bool
+	AddedUpdatedAt   bool
+	NormalizedFormat bool
+}
+
+// Fix creates or repairs workspace.small.yml.
+// If force is true, it will overwrite all fields. Otherwise it only touches missing/invalid timestamps.
+func Fix(baseDir string, kind Kind, force bool) (FixResult, error) {
+	var result FixResult
+
+	if !IsValidKind(kind) {
+		return result, fmt.Errorf("cannot fix workspace metadata for invalid kind %q", kind)
+	}
+
+	smallDir := filepath.Join(baseDir, small.SmallDir)
+	path := filepath.Join(smallDir, "workspace.small.yml")
+
+	// Try to load existing workspace
+	existing, loadErr := Load(baseDir)
+	now := time.Now().UTC().Format(time.RFC3339Nano)
+
+	if loadErr != nil {
+		// File missing or invalid - create new
+		if err := os.MkdirAll(smallDir, 0755); err != nil {
+			return result, fmt.Errorf("failed to create .small directory: %w", err)
+		}
+		result.Created = true
+		result.AddedOwner = true
+		result.AddedCreatedAt = true
+		result.AddedUpdatedAt = true
+
+		info := Info{
+			SmallVersion: small.ProtocolVersion,
+			Owner:        "agent",
+			Kind:         kind,
+			CreatedAt:    now,
+			UpdatedAt:    now,
+		}
+
+		data, err := small.MarshalYAMLWithQuotedVersion(info)
+		if err != nil {
+			return result, fmt.Errorf("failed to marshal workspace metadata: %w", err)
+		}
+
+		if err := os.WriteFile(path, data, 0644); err != nil {
+			return result, fmt.Errorf("failed to write workspace metadata: %w", err)
+		}
+
+		return result, nil
+	}
+
+	// File exists, repair as needed
+	info := existing
+	needsWrite := false
+
+	// Always set version to current
+	if info.SmallVersion != small.ProtocolVersion {
+		info.SmallVersion = small.ProtocolVersion
+		result.NormalizedFormat = true
+		needsWrite = true
+	}
+
+	// Add owner if missing
+	if info.Owner == "" {
+		info.Owner = "agent"
+		result.AddedOwner = true
+		needsWrite = true
+	}
+
+	// Add createdAt if missing
+	if info.CreatedAt == "" {
+		info.CreatedAt = now
+		result.AddedCreatedAt = true
+		needsWrite = true
+	} else if !isValidRFC3339(info.CreatedAt) {
+		// Normalize invalid timestamp
+		info.CreatedAt = now
+		result.AddedCreatedAt = true
+		result.NormalizedFormat = true
+		needsWrite = true
+	}
+
+	// Always update updatedAt (set to now)
+	if info.UpdatedAt == "" || force {
+		info.UpdatedAt = now
+		result.AddedUpdatedAt = true
+		needsWrite = true
+	} else if !isValidRFC3339(info.UpdatedAt) {
+		info.UpdatedAt = now
+		result.AddedUpdatedAt = true
+		result.NormalizedFormat = true
+		needsWrite = true
+	}
+
+	// Update kind if force is set
+	if force && info.Kind != kind {
+		info.Kind = kind
+		needsWrite = true
+	}
+
+	if !needsWrite {
+		return result, nil
+	}
+
+	data, err := small.MarshalYAMLWithQuotedVersion(info)
+	if err != nil {
+		return result, fmt.Errorf("failed to marshal workspace metadata: %w", err)
+	}
+
+	if err := os.WriteFile(path, data, 0644); err != nil {
+		return result, fmt.Errorf("failed to write workspace metadata: %w", err)
+	}
+
+	return result, nil
+}
+
+// isValidRFC3339 checks if a timestamp string is valid RFC3339.
+func isValidRFC3339(ts string) bool {
+	_, err := time.Parse(time.RFC3339Nano, ts)
+	if err != nil {
+		_, err = time.Parse(time.RFC3339, ts)
+	}
+	return err == nil
 }

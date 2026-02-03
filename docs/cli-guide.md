@@ -136,6 +136,22 @@ small init --intent "Build a user authentication system"
 | `--intent <string>` | Seed the intent field in intent.small.yml |
 | `--force` | Overwrite existing .small/ directory |
 | `--dir <path>` | Target directory (default: current) |
+| `--no-agents` | Skip AGENTS.md creation entirely |
+| `--overwrite-agents` | Replace existing AGENTS.md completely |
+| `--agents-mode <mode>` | How to handle existing AGENTS.md: `append` (add block after content) or `prepend` (add block before content) |
+
+**AGENTS.md handling:**
+
+By default, `small init` creates an `AGENTS.md` file with the SMALL execution harness block. This block contains protocol rules for AI agents (ownership rules, artifact rules, strict mode invariants).
+
+- **No existing AGENTS.md**: Creates new file with harness block
+- **Existing AGENTS.md + no flags**: Fails with guidance message
+- **`--no-agents`**: Skips AGENTS.md entirely
+- **`--overwrite-agents`**: Replaces existing file with fresh harness block
+- **`--agents-mode=append`**: Preserves existing content, adds harness block at end
+- **`--agents-mode=prepend`**: Adds harness block at start, preserves existing content
+
+The harness block uses `<!-- BEGIN SMALL HARNESS -->` and `<!-- END SMALL HARNESS -->` markers. When using `--agents-mode`, if an existing block is found, it is replaced in-place (preserving content before and after).
 
 **What gets created:**
 
@@ -145,7 +161,10 @@ small init --intent "Build a user authentication system"
 ├── constraints.small.yml  # Template with example constraints
 ├── plan.small.yml         # Empty task list
 ├── progress.small.yml     # Empty entries list
-└── handoff.small.yml      # Initial handoff state
+├── handoff.small.yml      # Initial handoff state
+└── workspace.small.yml    # Workspace metadata
+
+AGENTS.md                  # Agent execution harness (unless --no-agents)
 ```
 
 `small init` also writes `.small/workspace.small.yml` containing workspace metadata (`small_version` and `kind`). Root workspaces use `kind: repo-root`, while example workspaces under `examples/**` retain `kind: examples`. Keep the repository root `.small/` directory local (do not commit it); shared sample workspaces live under `examples/**/.small/` so their metadata stays in version control.
@@ -243,6 +262,8 @@ Normalize known SMALL formatting issues in-place.
 
 ```bash
 small fix --versions
+small fix --all
+small fix workspace
 ```
 
 **Flags:**
@@ -250,8 +271,134 @@ small fix --versions
 | Flag | Description |
 |------|-------------|
 | `--versions` | Normalize `small_version` to a quoted string |
+| `--all` | Run all available fixes (versions + workspace) |
 | `--dir <path>` | Directory containing .small/ |
 | `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`; default `root`) |
+
+**Subcommands:**
+
+#### small fix workspace
+
+Create or repair `workspace.small.yml` metadata file.
+
+```bash
+small fix workspace
+small fix workspace --force
+```
+
+| Flag | Description |
+|------|-------------|
+| `--force` | Overwrite existing workspace.small.yml |
+| `--dir <path>` | Directory containing .small/ |
+
+This command creates `workspace.small.yml` if missing, or repairs it if malformed. The workspace file contains metadata like `small_version`, `kind`, `created_at`, and `updated_at`.
+
+### small agents
+
+Standalone commands for managing the SMALL harness block in AGENTS.md.
+
+**Important:** These commands NEVER touch the `.small/` directory. They only operate on AGENTS.md (or another file specified with `--file`).
+
+The SMALL harness block is a bounded section delimited by BEGIN/END markers that contains protocol rules for AI agents.
+
+#### small agents apply
+
+Write or update the SMALL harness block.
+
+```bash
+small agents apply
+small agents apply --force
+small agents apply --agents-mode=append
+small agents apply --dry-run
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--dir <path>` | Target directory (default: current) |
+| `--file <name>` | Target file name (default: AGENTS.md) |
+| `--agents-mode <mode>` | How to handle existing file: `append` or `prepend` |
+| `--force`, `-f` | Replace entire file with SMALL harness (shorthand for `--overwrite-agents`) |
+| `--overwrite-agents` | Replace entire file with SMALL harness |
+| `--dry-run` | Preview changes without writing |
+| `--print` | Print composed result to stdout (implies `--dry-run`) |
+
+**Behavior:**
+
+| Scenario | Action |
+|----------|--------|
+| File missing | Creates with SMALL block |
+| File exists with SMALL block | Replaces block in-place |
+| File exists without block + no flags | Error with guidance |
+| File exists + `--force` or `--overwrite-agents` | Replaces entire file |
+| File exists + `--agents-mode=append` | Adds block after content |
+| File exists + `--agents-mode=prepend` | Adds block before content |
+
+#### small agents check
+
+Validate AGENTS.md harness block (read-only). This is the **governance gate** for AGENTS.md.
+
+```bash
+small agents check
+small agents check --strict
+small agents check --format json
+```
+
+**Note:** This command validates AGENTS.md governance only. It does NOT validate `.small/` artifacts. For protocol state validation, use `small check`.
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--dir <path>` | Target directory (default: current) |
+| `--file <name>` | Target file name (default: AGENTS.md) |
+| `--allow-missing` | Do not fail if file is missing |
+| `--strict` | Fail if AGENTS.md is missing, has no SMALL block, or has drift |
+| `--format <type>` | Output format: `text` or `json` |
+
+**Strict mode (`--strict`) fails if:**
+
+- AGENTS.md is missing
+- SMALL harness block is malformed or missing
+- Harness block has drift from canonical template
+
+**Exit codes:**
+
+| Code | Meaning |
+|------|---------|
+| 0 | OK (file exists and block is valid, or `--allow-missing` and file missing) |
+| 1 | Missing / invalid / drift detected |
+| 2 | Usage error |
+
+**JSON output includes:**
+
+- `hasFile` - Whether file exists
+- `hasBlock` - Whether SMALL block was found
+- `blockValid` - Whether block structure is valid
+- `blockVersion` - Version string from BEGIN marker
+- `blockSpan` - Start/end indices of block in file
+- `hasDrift` - Whether block differs from canonical template
+- `error` - Error message if any
+- `recommendation` - Suggested action
+
+#### small agents print
+
+Print the canonical SMALL harness block to stdout.
+
+```bash
+small agents print
+small agents print --with-markers=false
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--with-markers` | Include BEGIN/END markers (default: true) |
+| `--format <type>` | Output format: `md` or `plain` |
+
+This command is read-only and performs no file operations. Useful for manual paste into other files or contexts.
 
 ### small plan
 
@@ -592,6 +739,8 @@ Unified enforcement gate that runs validate, lint, and verify.
 ```bash
 small check --json
 ```
+
+**Scope:** Validates canonical SMALL protocol state in `.small/` only. Does NOT check AGENTS.md governance. For AGENTS.md validation, use `small agents check`.
 
 **Stages:**
 
@@ -988,6 +1137,8 @@ File system access issue.
 ```bash
 # Initialize
 small init --intent "Project description"
+small init --intent "..." --no-agents      # Skip AGENTS.md
+small init --intent "..." --agents-mode=append  # Preserve existing AGENTS.md
 
 # Validate
 small validate
@@ -1016,6 +1167,19 @@ small handoff --replay-id abc123...  # Manual replayId override
 small reset --yes           # Reset ephemeral files
 small reset --keep-intent   # Keep intent, reset others
 small progress migrate      # Normalize progress timestamps
+
+# Repair
+small fix --versions        # Normalize small_version formatting
+small fix --all             # Run all fixes
+small fix workspace         # Create/repair workspace.small.yml
+
+# AGENTS.md management (standalone, never touches .small/)
+small agents apply                        # Create AGENTS.md
+small agents apply --agents-mode=append   # Add block to existing file
+small agents apply --dry-run              # Preview changes
+small agents check                        # Validate AGENTS.md
+small agents check --strict               # Fail if no SMALL block
+small agents print                        # Print canonical block
 
 # CI/Verification
 small verify                # Exit 0 valid, 1 invalid, 2 error

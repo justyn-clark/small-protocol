@@ -18,14 +18,20 @@ func fixCmd() *cobra.Command {
 		fixOrphanProgress bool
 		dir               string
 		workspaceFlag     string
+		fixAll            bool
 	)
 
 	cmd := &cobra.Command{
 		Use:   "fix",
 		Short: "Normalize SMALL artifacts in-place",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if !fixVersions && !fixOrphanProgress {
-				return fmt.Errorf("no fix selected (use --versions or --orphan-progress)")
+			if !fixVersions && !fixOrphanProgress && !fixAll {
+				return fmt.Errorf("no fix selected (use --versions, --orphan-progress, or --all)")
+			}
+
+			// --all includes workspace fix
+			if fixAll {
+				fixVersions = true
 			}
 			if dir == "" {
 				dir = baseDir
@@ -110,6 +116,43 @@ func fixCmd() *cobra.Command {
 				}
 			}
 
+			// --all includes workspace fix
+			if fixAll {
+				wsResult, err := workspace.Fix(artifactsDir, workspace.KindRepoRoot, false)
+				if err != nil {
+					return err
+				}
+
+				var wsLines []string
+				if wsResult.Created {
+					wsLines = append(wsLines, "Created workspace.small.yml")
+				} else {
+					wsLines = append(wsLines, "Checked workspace.small.yml")
+				}
+
+				var fixes []string
+				if wsResult.AddedOwner {
+					fixes = append(fixes, "owner")
+				}
+				if wsResult.AddedCreatedAt {
+					fixes = append(fixes, "created_at")
+				}
+				if wsResult.AddedUpdatedAt {
+					fixes = append(fixes, "updated_at")
+				}
+				if wsResult.NormalizedFormat {
+					fixes = append(fixes, "format")
+				}
+
+				if len(fixes) > 0 {
+					wsLines = append(wsLines, fmt.Sprintf("Fixed: %s", strings.Join(fixes, ", ")))
+				} else if !wsResult.Created {
+					wsLines = append(wsLines, "No changes needed")
+				}
+
+				p.PrintInfo(p.FormatBlock("Workspace fix", wsLines))
+			}
+
 			p.PrintInfo("Next: small check --strict")
 			return nil
 		},
@@ -117,8 +160,91 @@ func fixCmd() *cobra.Command {
 
 	cmd.Flags().BoolVar(&fixVersions, "versions", false, "Normalize small_version formatting (quoted string)")
 	cmd.Flags().BoolVar(&fixOrphanProgress, "orphan-progress", false, "Rewrite orphan progress task_ids to meta names")
+	cmd.Flags().BoolVar(&fixAll, "all", false, "Run all fixers (includes workspace)")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root, examples, or any)")
+
+	cmd.AddCommand(fixWorkspaceCmd())
+
+	return cmd
+}
+
+func fixWorkspaceCmd() *cobra.Command {
+	var (
+		dir   string
+		kind  string
+		force bool
+	)
+
+	cmd := &cobra.Command{
+		Use:   "workspace",
+		Short: "Create or repair workspace.small.yml",
+		Long: `Creates or repairs .small/workspace.small.yml.
+
+If the file is missing, it will be created with default values.
+If the file exists but has missing or invalid timestamps, they will be repaired.
+
+Fields:
+  small_version: "1.0.0"
+  owner: "agent"
+  kind: "repo-root" (or "examples")
+  created_at: UTC RFC3339 timestamp (set only if missing)
+  updated_at: UTC RFC3339 timestamp (set to now)
+
+Use --force to overwrite all fields including kind.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if dir == "" {
+				dir = baseDir
+			}
+			artifactsDir := resolveArtifactsDir(dir)
+			p := currentPrinter()
+
+			wsKind := workspace.KindRepoRoot
+			if kind == "examples" {
+				wsKind = workspace.KindExamples
+			}
+
+			result, err := workspace.Fix(artifactsDir, wsKind, force)
+			if err != nil {
+				return err
+			}
+
+			var lines []string
+			if result.Created {
+				lines = append(lines, "Created workspace.small.yml")
+			} else {
+				lines = append(lines, "Repaired workspace.small.yml")
+			}
+
+			var fixes []string
+			if result.AddedOwner {
+				fixes = append(fixes, "owner")
+			}
+			if result.AddedCreatedAt {
+				fixes = append(fixes, "created_at")
+			}
+			if result.AddedUpdatedAt {
+				fixes = append(fixes, "updated_at")
+			}
+			if result.NormalizedFormat {
+				fixes = append(fixes, "format")
+			}
+
+			if len(fixes) > 0 {
+				lines = append(lines, fmt.Sprintf("Fixed: %s", strings.Join(fixes, ", ")))
+			} else if !result.Created {
+				lines = append(lines, "No changes needed")
+			}
+
+			p.PrintSuccess(p.FormatBlock("Workspace fix", lines))
+			p.PrintInfo("Next: small check --strict")
+			return nil
+		},
+	}
+
+	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
+	cmd.Flags().StringVar(&kind, "kind", "repo-root", "Workspace kind (repo-root or examples)")
+	cmd.Flags().BoolVar(&force, "force", false, "Overwrite all fields including kind")
 
 	return cmd
 }
