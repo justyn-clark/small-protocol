@@ -12,15 +12,15 @@ import (
 
 // AgentsCheckResult contains the result of agents check command.
 type AgentsCheckResult struct {
-	HasFile        bool    `json:"hasFile"`
-	HasBlock       bool    `json:"hasBlock"`
-	BlockValid     bool    `json:"blockValid"`
-	BlockVersion   string  `json:"blockVersion,omitempty"`
-	BlockSpan      [2]int  `json:"blockSpan,omitempty"` // [start, end] indices
-	HasDrift       bool    `json:"hasDrift"`
-	Error          string  `json:"error,omitempty"`
-	Recommendation string  `json:"recommendation,omitempty"`
-	FilePath       string  `json:"filePath"`
+	HasFile        bool   `json:"hasFile"`
+	HasBlock       bool   `json:"hasBlock"`
+	BlockValid     bool   `json:"blockValid"`
+	BlockVersion   string `json:"blockVersion,omitempty"`
+	BlockSpan      [2]int `json:"blockSpan,omitempty"` // [start, end] indices
+	HasDrift       bool   `json:"hasDrift"`
+	Error          string `json:"error,omitempty"`
+	Recommendation string `json:"recommendation,omitempty"`
+	FilePath       string `json:"filePath"`
 }
 
 func agentsCheckCmd() *cobra.Command {
