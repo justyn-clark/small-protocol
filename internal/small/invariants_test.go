@@ -1324,3 +1324,73 @@ func TestCheckInvariants_StrictModeIgnoresPartialHTTPInText(t *testing.T) {
 		}
 	}
 }
+
+func TestCheckInvariants_StrictModeRunPreviousReplayIDNotSecret(t *testing.T) {
+	// run.previous_replay_id should be excluded from secret detection
+	// A 64-character hex string would normally trigger the token pattern, but this path is excluded
+	artifacts := map[string]*Artifact{
+		"handoff": {
+			Path: "test/handoff.small.yml",
+			Type: "handoff",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"summary":       "Test handoff",
+				"resume": map[string]interface{}{
+					"current_task_id": "",
+					"next_steps":      []interface{}{},
+				},
+				"links": []interface{}{},
+				"run": map[string]interface{}{
+					"previous_replay_id": "1111111111111111111111111111111111111111111111111111111111111111",
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	for _, v := range violations {
+		if contains(v.Message, "secret") || contains(v.Message, "run.previous_replay_id") {
+			t.Errorf("run.previous_replay_id should not be flagged as a secret, got: %s", v.Message)
+		}
+	}
+}
+
+func TestCheckInvariants_StrictModeRunAPIKeyIsSecret(t *testing.T) {
+	// run.api_key should be detected as a potential secret
+	artifacts := map[string]*Artifact{
+		"handoff": {
+			Path: "test/handoff.small.yml",
+			Type: "handoff",
+			Data: map[string]interface{}{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"summary":       "Test handoff",
+				"resume": map[string]interface{}{
+					"current_task_id": "",
+					"next_steps":      []interface{}{},
+				},
+				"links": []interface{}{},
+				"run": map[string]interface{}{
+					"api_key": "sk-live-abc123def456",
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	secretViolations := 0
+	var secretPath string
+	for _, v := range violations {
+		if contains(v.Message, "secret") && contains(v.Message, "run.api_key") {
+			secretViolations++
+			secretPath = v.Message
+		}
+	}
+	if secretViolations != 1 {
+		t.Errorf("expected exactly 1 secret violation at run.api_key, got %d", secretViolations)
+	}
+	if secretPath == "" {
+		t.Error("expected violation message to include 'run.api_key'")
+	}
+}

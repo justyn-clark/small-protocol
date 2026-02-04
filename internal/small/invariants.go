@@ -913,7 +913,9 @@ func checkSecrets(artifact *Artifact) []InvariantViolation {
 
 	// Paths to exclude from secrets check (known safe fields)
 	excludedPaths := map[string]bool{
-		"replayId.value": true, // SHA256 hash for session replay, not a secret
+		"replayId.value": true,
+		"run.previous_replay_id": true,
+		"run.replay_id": true,
 	}
 
 	checkValue := func(key string, value interface{}, path string) bool {
