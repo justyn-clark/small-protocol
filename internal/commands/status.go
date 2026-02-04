@@ -195,14 +195,14 @@ func getRecentProgress(baseDir string, n int) ([]ProgressEntry, error) {
 		return nil, err
 	}
 
-	entries, ok := artifact.Data["entries"].([]interface{})
+	entries, ok := artifact.Data["entries"].([]any)
 	if !ok {
 		return []ProgressEntry{}, nil
 	}
 
 	var progressEntries []ProgressEntry
 	for _, e := range entries {
-		m, ok := e.(map[string]interface{})
+		m, ok := e.(map[string]any)
 		if !ok {
 			continue
 		}

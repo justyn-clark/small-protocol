@@ -221,17 +221,17 @@ func TestEnsureProgressEvidenceWritesValidEntry(t *testing.T) {
 		t.Fatalf("failed to read progress file: %v", err)
 	}
 
-	var parsed map[string]interface{}
+	var parsed map[string]any
 	if err := yaml.Unmarshal(data, &parsed); err != nil {
 		t.Fatalf("failed to parse progress YAML: %v", err)
 	}
 
-	entries, ok := parsed["entries"].([]interface{})
+	entries, ok := parsed["entries"].([]any)
 	if !ok || len(entries) != 1 {
 		t.Fatalf("expected one progress entry, got %v", entries)
 	}
 
-	entry, ok := entries[0].(map[string]interface{})
+	entry, ok := entries[0].(map[string]any)
 	if !ok {
 		t.Fatalf("progress entry is not an object: %T", entries[0])
 	}
@@ -266,12 +266,12 @@ func TestEnsureProgressEvidenceWritesValidEntry(t *testing.T) {
 		t.Fatalf("failed to read progress file after second call: %v", err)
 	}
 
-	var parsedAfter map[string]interface{}
+	var parsedAfter map[string]any
 	if err := yaml.Unmarshal(data, &parsedAfter); err != nil {
 		t.Fatalf("failed to parse progress YAML after second call: %v", err)
 	}
 
-	entriesAfter, ok := parsedAfter["entries"].([]interface{})
+	entriesAfter, ok := parsedAfter["entries"].([]any)
 	if !ok {
 		t.Fatalf("progress entries missing after second call: %v", parsedAfter["entries"])
 	}
@@ -282,11 +282,11 @@ func TestEnsureProgressEvidenceWritesValidEntry(t *testing.T) {
 	planArtifact := &small.Artifact{
 		Path: filepath.Join(smallDir, "plan.small.yml"),
 		Type: "plan",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": small.ProtocolVersion,
 			"owner":         "agent",
-			"tasks": []interface{}{
-				map[string]interface{}{
+			"tasks": []any{
+				map[string]any{
 					"id":     taskID,
 					"title":  "Test CLI entry",
 					"status": "completed",

@@ -48,7 +48,7 @@ func TestAppendProgressEntry(t *testing.T) {
 	initialProgress := ProgressData{
 		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
-		Entries:      []map[string]interface{}{},
+		Entries:      []map[string]any{},
 	}
 
 	data, err := yaml.Marshal(&initialProgress)
@@ -61,7 +61,7 @@ func TestAppendProgressEntry(t *testing.T) {
 		t.Fatalf("failed to write initial progress: %v", err)
 	}
 
-	entry := map[string]interface{}{
+	entry := map[string]any{
 		"timestamp": "2024-01-15T09:00:00.000000000Z",
 		"task_id":   "task-1",
 		"status":    "completed",
@@ -96,7 +96,7 @@ func TestAppendProgressEntry(t *testing.T) {
 		t.Fatalf("expected valid RFC3339Nano timestamp, got %q (%v)", firstTimestamp, err)
 	}
 
-	entry2 := map[string]interface{}{
+	entry2 := map[string]any{
 		"timestamp": "2024-01-15T10:00:00.000000000Z",
 		"task_id":   "task-2",
 		"status":    "in_progress",
@@ -144,7 +144,7 @@ func TestAppendProgressEntryMissingFile(t *testing.T) {
 		t.Fatalf("failed to create .small dir: %v", err)
 	}
 
-	entry := map[string]interface{}{
+	entry := map[string]any{
 		"timestamp": "2024-01-15T09:00:00.000000000Z",
 		"task_id":   "task-1",
 		"status":    "completed",
@@ -208,7 +208,7 @@ replayId:
 	progress := ProgressData{
 		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
-		Entries:      []map[string]interface{}{},
+		Entries:      []map[string]any{},
 	}
 	progressBytes, err := yaml.Marshal(&progress)
 	if err != nil {
@@ -224,7 +224,7 @@ replayId:
 	if err != nil {
 		t.Fatalf("applyCommandMetadata error: %v", err)
 	}
-	entry := map[string]interface{}{
+	entry := map[string]any{
 		"timestamp":       timestamp,
 		"task_id":         "task-1",
 		"status":          "in_progress",

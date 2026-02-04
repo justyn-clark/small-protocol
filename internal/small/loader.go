@@ -23,7 +23,7 @@ var (
 )
 
 type Artifact struct {
-	Data map[string]interface{}
+	Data map[string]any
 	Path string
 	Type string
 }
@@ -36,7 +36,7 @@ func LoadArtifact(baseDir, filename string) (*Artifact, error) {
 		return nil, fmt.Errorf("failed to read %s: %w", path, err)
 	}
 
-	var artifact map[string]interface{}
+	var artifact map[string]any
 	if err := yaml.Unmarshal(data, &artifact); err != nil {
 		return nil, fmt.Errorf("failed to parse YAML in %s: %w", path, err)
 	}
@@ -64,7 +64,7 @@ func LoadAllArtifacts(baseDir string) (map[string]*Artifact, error) {
 	return artifacts, nil
 }
 
-func SaveArtifact(baseDir, filename string, data map[string]interface{}) error {
+func SaveArtifact(baseDir, filename string, data map[string]any) error {
 	smallDir := filepath.Join(baseDir, SmallDir)
 	if err := os.MkdirAll(smallDir, 0755); err != nil {
 		return fmt.Errorf("failed to create .small directory: %w", err)

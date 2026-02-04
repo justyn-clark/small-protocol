@@ -105,7 +105,7 @@ If no command is provided, defaults to dry-run mode.`,
 				}
 
 				// Record dry-run in progress
-				entry := map[string]interface{}{
+				entry := map[string]any{
 					"timestamp": timestamp,
 					"task_id":   normalizeTaskID(taskID),
 					"status":    "pending",
@@ -135,7 +135,7 @@ If no command is provided, defaults to dry-run mode.`,
 			}
 
 			// Record start entry
-			startEntry := map[string]interface{}{
+			startEntry := map[string]any{
 				"timestamp": timestamp,
 				"task_id":   normalizeTaskID(taskID),
 				"status":    "in_progress",
@@ -189,7 +189,7 @@ If no command is provided, defaults to dry-run mode.`,
 
 			// Record completion entry
 			endTimestamp := formatProgressTimestamp(time.Now().UTC())
-			endEntry := map[string]interface{}{
+			endEntry := map[string]any{
 				"timestamp": endTimestamp,
 				"task_id":   normalizeTaskID(taskID),
 				"status":    status,
@@ -363,7 +363,7 @@ func runCheckpointApply(baseDir, taskID, status string, evidence string) error {
 		return err
 	}
 
-	entry := map[string]interface{}{
+	entry := map[string]any{
 		"task_id":   taskID,
 		"status":    status,
 		"timestamp": formatProgressTimestamp(time.Now().UTC()),

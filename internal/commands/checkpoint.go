@@ -14,15 +14,15 @@ import (
 )
 
 type checkpointOutput struct {
-	TaskID       string                 `json:"task_id"`
-	Status       string                 `json:"status"`
-	Progress     map[string]interface{} `json:"progress_entry"`
-	Files        []string               `json:"files"`
-	Validated    bool                   `json:"validated"`
-	Workspace    string                 `json:"workspace"`
-	PlanStatus   string                 `json:"plan_status"`
-	Checkpoint   string                 `json:"checkpoint"`
-	CheckpointAt string                 `json:"checkpoint_at"`
+	TaskID       string         `json:"task_id"`
+	Status       string         `json:"status"`
+	Progress     map[string]any `json:"progress_entry"`
+	Files        []string       `json:"files"`
+	Validated    bool           `json:"validated"`
+	Workspace    string         `json:"workspace"`
+	PlanStatus   string         `json:"plan_status"`
+	Checkpoint   string         `json:"checkpoint"`
+	CheckpointAt string         `json:"checkpoint_at"`
 }
 
 func checkpointCmd() *cobra.Command {
@@ -103,7 +103,7 @@ func checkpointCmd() *cobra.Command {
 				return err
 			}
 
-			entry := map[string]interface{}{
+			entry := map[string]any{
 				"task_id":   strings.TrimSpace(taskID),
 				"status":    status,
 				"timestamp": checkpointTimestamp,

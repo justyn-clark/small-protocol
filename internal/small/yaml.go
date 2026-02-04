@@ -11,7 +11,7 @@ import (
 var smallVersionLinePattern = regexp.MustCompile(`^(\s*small_version:\s*)(.*)$`)
 
 // MarshalYAMLWithQuotedVersion encodes YAML while forcing small_version to be a quoted string.
-func MarshalYAMLWithQuotedVersion(value interface{}) ([]byte, error) {
+func MarshalYAMLWithQuotedVersion(value any) ([]byte, error) {
 	data, err := yaml.Marshal(value)
 	if err != nil {
 		return nil, err

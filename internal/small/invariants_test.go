@@ -7,7 +7,7 @@ import (
 func TestCheckInvariants_Version(t *testing.T) {
 	tests := []struct {
 		name       string
-		version    interface{}
+		version    any
 		wantErrors int
 	}{
 		{"correct version", ProtocolVersion, 0},
@@ -23,10 +23,10 @@ func TestCheckInvariants_Version(t *testing.T) {
 				"progress": {
 					Path: "test/progress.small.yml",
 					Type: "progress",
-					Data: map[string]interface{}{
+					Data: map[string]any{
 						"small_version": tt.version,
 						"owner":         "agent",
-						"entries":       []interface{}{},
+						"entries":       []any{},
 					},
 				},
 			}
@@ -97,12 +97,12 @@ func TestCheckInvariants_IntentMissingIntent(t *testing.T) {
 		"intent": {
 			Path: "test/intent.small.yml",
 			Type: "intent",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version":    ProtocolVersion,
 				"owner":            "human",
 				"intent":           "", // Empty intent should fail
-				"scope":            map[string]interface{}{"include": []interface{}{}, "exclude": []interface{}{}},
-				"success_criteria": []interface{}{},
+				"scope":            map[string]any{"include": []any{}, "exclude": []any{}},
+				"success_criteria": []any{},
 			},
 		},
 	}
@@ -125,11 +125,11 @@ func TestCheckInvariants_ProgressWithoutEvidence(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-1",
 						"timestamp": "2025-01-01T00:00:00.000000000Z",
 						// No evidence field - should fail
@@ -157,11 +157,11 @@ func TestCheckInvariants_ProgressTimestampRequiresFractional(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-1",
 						"timestamp": "2025-01-01T00:00:00Z",
 						"evidence":  "missing fractional",
@@ -189,16 +189,16 @@ func TestCheckInvariants_ProgressTimestampEqual(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-1",
 						"timestamp": "2025-01-01T00:00:00.000000001Z",
 						"evidence":  "first",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"task_id":   "task-2",
 						"timestamp": "2025-01-01T00:00:00.000000001Z",
 						"evidence":  "duplicate",
@@ -226,16 +226,16 @@ func TestCheckInvariants_ProgressTimestampDecreasing(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-1",
 						"timestamp": "2025-01-01T00:00:01.000000000Z",
 						"evidence":  "later",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"task_id":   "task-2",
 						"timestamp": "2025-01-01T00:00:00.000000000Z",
 						"evidence":  "earlier",
@@ -263,10 +263,10 @@ func TestCheckInvariants_ConstraintsEmpty(t *testing.T) {
 		"constraints": {
 			Path: "test/constraints.small.yml",
 			Type: "constraints",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "human",
-				"constraints":   []interface{}{}, // Empty constraints should fail
+				"constraints":   []any{},
 			},
 		},
 	}
@@ -289,10 +289,10 @@ func TestCheckInvariants_UnknownTopLevelKey(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries":       []interface{}{},
+				"entries":       []any{},
 				"typo_field":    "should fail", // Unknown key
 			},
 		},
@@ -316,10 +316,10 @@ func TestCheckInvariants_PlanTasksEmpty(t *testing.T) {
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks":         []interface{}{}, // Empty tasks should fail
+				"tasks":         []any{},
 			},
 		},
 	}
@@ -342,11 +342,11 @@ func TestCheckInvariants_PlanTaskMissingTitle(t *testing.T) {
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks": []interface{}{
-					map[string]interface{}{
+				"tasks": []any{
+					map[string]any{
 						"id":    "task-1",
 						"title": "",
 					},
@@ -373,11 +373,11 @@ func TestCheckInvariants_CompletedTaskMissingProgressEvidence(t *testing.T) {
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks": []interface{}{
-					map[string]interface{}{
+				"tasks": []any{
+					map[string]any{
 						"id":     "task-evidence-rule",
 						"title":  "Record progress before completing tasks",
 						"status": "completed",
@@ -388,10 +388,10 @@ func TestCheckInvariants_CompletedTaskMissingProgressEvidence(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries":       []interface{}{},
+				"entries":       []any{},
 			},
 		},
 	}
@@ -414,11 +414,11 @@ func TestCheckInvariants_CompletedTaskHasProgressEvidence(t *testing.T) {
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks": []interface{}{
-					map[string]interface{}{
+				"tasks": []any{
+					map[string]any{
 						"id":     "task-evidence-rule",
 						"title":  "Record progress before completing tasks",
 						"status": "completed",
@@ -429,11 +429,11 @@ func TestCheckInvariants_CompletedTaskHasProgressEvidence(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-evidence-rule",
 						"status":    "completed",
 						"timestamp": "2025-01-01T00:00:00.000000000Z",
@@ -457,11 +457,11 @@ func TestCheckInvariants_CompletedTaskProgressEntryEmptyNote(t *testing.T) {
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks": []interface{}{
-					map[string]interface{}{
+				"tasks": []any{
+					map[string]any{
 						"id":     "task-evidence-rule",
 						"title":  "Record progress before completing tasks",
 						"status": "completed",
@@ -472,11 +472,11 @@ func TestCheckInvariants_CompletedTaskProgressEntryEmptyNote(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-evidence-rule",
 						"status":    "completed",
 						"timestamp": "2025-01-02T00:00:00Z",
@@ -505,11 +505,11 @@ func TestCheckInvariants_CompletedTaskProgressEntryInvalidTimestamp(t *testing.T
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks": []interface{}{
-					map[string]interface{}{
+				"tasks": []any{
+					map[string]any{
 						"id":     "task-evidence-rule",
 						"title":  "Record progress before completing tasks",
 						"status": "completed",
@@ -520,11 +520,11 @@ func TestCheckInvariants_CompletedTaskProgressEntryInvalidTimestamp(t *testing.T
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-evidence-rule",
 						"status":    "completed",
 						"timestamp": "not-a-time",
@@ -553,16 +553,16 @@ func TestCheckInvariants_StrictModePlanProgressEvidence(t *testing.T) {
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks": []interface{}{
-					map[string]interface{}{
+				"tasks": []any{
+					map[string]any{
 						"id":     "task-completed",
 						"title":  "Done task",
 						"status": "completed",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"id":     "task-blocked",
 						"title":  "Blocked task",
 						"status": "blocked",
@@ -573,11 +573,11 @@ func TestCheckInvariants_StrictModePlanProgressEvidence(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-blocked",
 						"status":    "blocked",
 						"timestamp": "2025-01-01T00:00:00.000000001Z",
@@ -614,11 +614,11 @@ func TestCheckInvariants_StrictModeProgressTaskIDs(t *testing.T) {
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks": []interface{}{
-					map[string]interface{}{
+				"tasks": []any{
+					map[string]any{
 						"id":    "task-1",
 						"title": "Known task",
 					},
@@ -628,18 +628,18 @@ func TestCheckInvariants_StrictModeProgressTaskIDs(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-unknown",
 						"status":    "completed",
 						"timestamp": "2025-01-01T00:00:00.000000001Z",
 						"evidence":  "unexpected",
 						"replayId":  currentReplayID,
 					},
-					map[string]interface{}{
+					map[string]any{
 						"task_id":   "meta/reconcile-plan",
 						"status":    "completed",
 						"timestamp": "2025-01-01T00:00:00.000000002Z",
@@ -652,16 +652,16 @@ func TestCheckInvariants_StrictModeProgressTaskIDs(t *testing.T) {
 		"handoff": {
 			Path: "test/handoff.small.yml",
 			Type: "handoff",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
 				"summary":       "Test handoff",
-				"resume": map[string]interface{}{
+				"resume": map[string]any{
 					"current_task_id": "",
-					"next_steps":      []interface{}{},
+					"next_steps":      []any{},
 				},
-				"links": []interface{}{},
-				"replayId": map[string]interface{}{
+				"links": []any{},
+				"replayId": map[string]any{
 					"value":  currentReplayID,
 					"source": "auto",
 				},
@@ -690,11 +690,11 @@ func TestCheckInvariants_StrictModeProgressTaskIDsIgnoresOtherReplayID(t *testin
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks": []interface{}{
-					map[string]interface{}{
+				"tasks": []any{
+					map[string]any{
 						"id":    "task-1",
 						"title": "Known task",
 					},
@@ -704,11 +704,11 @@ func TestCheckInvariants_StrictModeProgressTaskIDsIgnoresOtherReplayID(t *testin
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-unknown",
 						"status":    "completed",
 						"timestamp": "2025-01-01T00:00:00.000000001Z",
@@ -721,16 +721,16 @@ func TestCheckInvariants_StrictModeProgressTaskIDsIgnoresOtherReplayID(t *testin
 		"handoff": {
 			Path: "test/handoff.small.yml",
 			Type: "handoff",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
 				"summary":       "Test handoff",
-				"resume": map[string]interface{}{
+				"resume": map[string]any{
 					"current_task_id": "",
-					"next_steps":      []interface{}{},
+					"next_steps":      []any{},
 				},
-				"links": []interface{}{},
-				"replayId": map[string]interface{}{
+				"links": []any{},
+				"replayId": map[string]any{
 					"value":  currentReplayID,
 					"source": "auto",
 				},
@@ -751,11 +751,11 @@ func TestCheckInvariants_StrictModeHandoffTaskReference(t *testing.T) {
 		"plan": {
 			Path: "test/plan.small.yml",
 			Type: "plan",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"tasks": []interface{}{
-					map[string]interface{}{
+				"tasks": []any{
+					map[string]any{
 						"id":    "task-1",
 						"title": "Known task",
 					},
@@ -765,15 +765,15 @@ func TestCheckInvariants_StrictModeHandoffTaskReference(t *testing.T) {
 		"handoff": {
 			Path: "test/handoff.small.yml",
 			Type: "handoff",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
 				"summary":       "Test handoff",
-				"resume": map[string]interface{}{
+				"resume": map[string]any{
 					"current_task_id": "task-missing",
-					"next_steps":      []interface{}{},
+					"next_steps":      []any{},
 				},
-				"links": []interface{}{},
+				"links": []any{},
 			},
 		},
 	}
@@ -798,10 +798,10 @@ func TestCheckInvariants_StrictModeSecrets(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries":       []interface{}{},
+				"entries":       []any{},
 				"api_key":       "secret123", // Should be caught in strict mode
 			},
 		},
@@ -839,16 +839,16 @@ func TestCheckInvariants_StrictModeInsecureLinks(t *testing.T) {
 		"handoff": {
 			Path: "test/handoff.small.yml",
 			Type: "handoff",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
 				"summary":       "Test handoff",
-				"resume": map[string]interface{}{
+				"resume": map[string]any{
 					"current_task_id": "",
-					"next_steps":      []interface{}{},
+					"next_steps":      []any{},
 				},
-				"links": []interface{}{
-					map[string]interface{}{
+				"links": []any{
+					map[string]any{
 						"url": "http://insecure.example.com", // Should fail in strict mode
 					},
 				},
@@ -898,8 +898,8 @@ func containsSubstring(s, substr string) bool {
 	return false
 }
 
-func makeValidArtifact(artifactType string) map[string]interface{} {
-	base := map[string]interface{}{
+func makeValidArtifact(artifactType string) map[string]any {
+	base := map[string]any{
 		"small_version": ProtocolVersion,
 	}
 
@@ -907,15 +907,15 @@ func makeValidArtifact(artifactType string) map[string]interface{} {
 	case "intent":
 		base["owner"] = "human"
 		base["intent"] = "Test intent"
-		base["scope"] = map[string]interface{}{
-			"include": []interface{}{},
-			"exclude": []interface{}{},
+		base["scope"] = map[string]any{
+			"include": []any{},
+			"exclude": []any{},
 		}
-		base["success_criteria"] = []interface{}{}
+		base["success_criteria"] = []any{}
 	case "constraints":
 		base["owner"] = "human"
-		base["constraints"] = []interface{}{
-			map[string]interface{}{
+		base["constraints"] = []any{
+			map[string]any{
 				"id":       "test-1",
 				"rule":     "Test rule",
 				"severity": "error",
@@ -923,23 +923,23 @@ func makeValidArtifact(artifactType string) map[string]interface{} {
 		}
 	case "plan":
 		base["owner"] = "agent"
-		base["tasks"] = []interface{}{
-			map[string]interface{}{
+		base["tasks"] = []any{
+			map[string]any{
 				"id":    "task-1",
 				"title": "Test task",
 			},
 		}
 	case "progress":
 		base["owner"] = "agent"
-		base["entries"] = []interface{}{}
+		base["entries"] = []any{}
 	case "handoff":
 		base["owner"] = "agent"
 		base["summary"] = "Test summary"
-		base["resume"] = map[string]interface{}{
+		base["resume"] = map[string]any{
 			"current_task_id": "",
-			"next_steps":      []interface{}{},
+			"next_steps":      []any{},
 		}
-		base["links"] = []interface{}{}
+		base["links"] = []any{}
 	}
 
 	return base
@@ -949,11 +949,11 @@ func TestCheckDanglingTasks_NoDanglingTasks(t *testing.T) {
 	plan := &Artifact{
 		Path: "test/plan.small.yml",
 		Type: "plan",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"tasks": []interface{}{
-				map[string]interface{}{
+			"tasks": []any{
+				map[string]any{
 					"id":     "task-1",
 					"title":  "Completed task",
 					"status": "completed",
@@ -964,11 +964,11 @@ func TestCheckDanglingTasks_NoDanglingTasks(t *testing.T) {
 	progress := &Artifact{
 		Path: "test/progress.small.yml",
 		Type: "progress",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"entries": []interface{}{
-				map[string]interface{}{
+			"entries": []any{
+				map[string]any{
 					"task_id":   "task-1",
 					"timestamp": "2025-01-01T00:00:00.000000000Z",
 					"evidence":  "Done",
@@ -987,11 +987,11 @@ func TestCheckDanglingTasks_TaskWithProgressButPending(t *testing.T) {
 	plan := &Artifact{
 		Path: "test/plan.small.yml",
 		Type: "plan",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"tasks": []interface{}{
-				map[string]interface{}{
+			"tasks": []any{
+				map[string]any{
 					"id":     "task-1",
 					"title":  "Started but not finished",
 					"status": "pending",
@@ -1002,11 +1002,11 @@ func TestCheckDanglingTasks_TaskWithProgressButPending(t *testing.T) {
 	progress := &Artifact{
 		Path: "test/progress.small.yml",
 		Type: "progress",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"entries": []interface{}{
-				map[string]interface{}{
+			"entries": []any{
+				map[string]any{
 					"task_id":   "task-1",
 					"timestamp": "2025-01-01T00:00:00.000000000Z",
 					"evidence":  "Started work",
@@ -1028,11 +1028,11 @@ func TestCheckDanglingTasks_TaskWithProgressButInProgress(t *testing.T) {
 	plan := &Artifact{
 		Path: "test/plan.small.yml",
 		Type: "plan",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"tasks": []interface{}{
-				map[string]interface{}{
+			"tasks": []any{
+				map[string]any{
 					"id":     "task-1",
 					"title":  "Work in progress",
 					"status": "in_progress",
@@ -1043,11 +1043,11 @@ func TestCheckDanglingTasks_TaskWithProgressButInProgress(t *testing.T) {
 	progress := &Artifact{
 		Path: "test/progress.small.yml",
 		Type: "progress",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"entries": []interface{}{
-				map[string]interface{}{
+			"entries": []any{
+				map[string]any{
 					"task_id":   "task-1",
 					"timestamp": "2025-01-01T00:00:00.000000000Z",
 					"evidence":  "Working on it",
@@ -1069,11 +1069,11 @@ func TestCheckDanglingTasks_BlockedTaskIsNotDangling(t *testing.T) {
 	plan := &Artifact{
 		Path: "test/plan.small.yml",
 		Type: "plan",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"tasks": []interface{}{
-				map[string]interface{}{
+			"tasks": []any{
+				map[string]any{
 					"id":     "task-1",
 					"title":  "Blocked task",
 					"status": "blocked",
@@ -1084,11 +1084,11 @@ func TestCheckDanglingTasks_BlockedTaskIsNotDangling(t *testing.T) {
 	progress := &Artifact{
 		Path: "test/progress.small.yml",
 		Type: "progress",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"entries": []interface{}{
-				map[string]interface{}{
+			"entries": []any{
+				map[string]any{
 					"task_id":   "task-1",
 					"timestamp": "2025-01-01T00:00:00.000000000Z",
 					"evidence":  "Blocked on dependency",
@@ -1107,11 +1107,11 @@ func TestCheckDanglingTasks_TaskWithoutProgressIsNotDangling(t *testing.T) {
 	plan := &Artifact{
 		Path: "test/plan.small.yml",
 		Type: "plan",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"tasks": []interface{}{
-				map[string]interface{}{
+			"tasks": []any{
+				map[string]any{
 					"id":     "task-1",
 					"title":  "Not yet started",
 					"status": "pending",
@@ -1122,10 +1122,10 @@ func TestCheckDanglingTasks_TaskWithoutProgressIsNotDangling(t *testing.T) {
 	progress := &Artifact{
 		Path: "test/progress.small.yml",
 		Type: "progress",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"entries":       []interface{}{},
+			"entries":       []any{},
 		},
 	}
 
@@ -1139,11 +1139,11 @@ func TestCheckDanglingTasks_MetaTasksIgnored(t *testing.T) {
 	plan := &Artifact{
 		Path: "test/plan.small.yml",
 		Type: "plan",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"tasks": []interface{}{
-				map[string]interface{}{
+			"tasks": []any{
+				map[string]any{
 					"id":     "task-1",
 					"title":  "Regular task",
 					"status": "pending",
@@ -1154,11 +1154,11 @@ func TestCheckDanglingTasks_MetaTasksIgnored(t *testing.T) {
 	progress := &Artifact{
 		Path: "test/progress.small.yml",
 		Type: "progress",
-		Data: map[string]interface{}{
+		Data: map[string]any{
 			"small_version": ProtocolVersion,
 			"owner":         "agent",
-			"entries": []interface{}{
-				map[string]interface{}{
+			"entries": []any{
+				map[string]any{
 					"task_id":   "meta/reconcile-plan",
 					"timestamp": "2025-01-01T00:00:00.000000000Z",
 					"evidence":  "Reconciled plan",
@@ -1194,11 +1194,11 @@ func TestCheckInvariants_StrictModeLocalhostHTTPAllowedInProgress(t *testing.T) 
 				"progress": {
 					Path: "test/progress.small.yml",
 					Type: "progress",
-					Data: map[string]interface{}{
+					Data: map[string]any{
 						"small_version": ProtocolVersion,
 						"owner":         "agent",
-						"entries": []interface{}{
-							map[string]interface{}{
+						"entries": []any{
+							map[string]any{
 								"task_id":   "task-1",
 								"timestamp": "2025-01-01T00:00:00.000000000Z",
 								"evidence":  "Started server at " + tt.url,
@@ -1229,15 +1229,15 @@ func TestCheckInvariants_StrictModeLocalhostHTTPBlockedInHandoff(t *testing.T) {
 		"handoff": {
 			Path: "test/handoff.small.yml",
 			Type: "handoff",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
 				"summary":       "Test handoff with http://localhost:3001",
-				"resume": map[string]interface{}{
+				"resume": map[string]any{
 					"current_task_id": "",
-					"next_steps":      []interface{}{},
+					"next_steps":      []any{},
 				},
-				"links": []interface{}{},
+				"links": []any{},
 			},
 		},
 	}
@@ -1261,11 +1261,11 @@ func TestCheckInvariants_StrictModeInsecureLinksErrorMessage(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-1",
 						"timestamp": "2025-01-01T00:00:00.000000000Z",
 						"evidence":  "Connected to http://example.com",
@@ -1298,16 +1298,16 @@ func TestCheckInvariants_StrictModeIgnoresPartialHTTPInText(t *testing.T) {
 		"progress": {
 			Path: "test/progress.small.yml",
 			Type: "progress",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
-				"entries": []interface{}{
-					map[string]interface{}{
+				"entries": []any{
+					map[string]any{
 						"task_id":   "task-1",
 						"timestamp": "2025-01-01T00:00:00.000000000Z",
 						"evidence":  "small check --strict fails with insecure link http:// in .small/progress.small.yml",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"task_id":   "task-2",
 						"timestamp": "2025-01-01T00:00:00.000000002Z",
 						"evidence":  "Started server at http://localhost:3001 successfully",
@@ -1332,16 +1332,16 @@ func TestCheckInvariants_StrictModeRunPreviousReplayIDNotSecret(t *testing.T) {
 		"handoff": {
 			Path: "test/handoff.small.yml",
 			Type: "handoff",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
 				"summary":       "Test handoff",
-				"resume": map[string]interface{}{
+				"resume": map[string]any{
 					"current_task_id": "",
-					"next_steps":      []interface{}{},
+					"next_steps":      []any{},
 				},
-				"links": []interface{}{},
-				"run": map[string]interface{}{
+				"links": []any{},
+				"run": map[string]any{
 					"previous_replay_id": "1111111111111111111111111111111111111111111111111111111111111111",
 				},
 			},
@@ -1362,16 +1362,16 @@ func TestCheckInvariants_StrictModeRunAPIKeyIsSecret(t *testing.T) {
 		"handoff": {
 			Path: "test/handoff.small.yml",
 			Type: "handoff",
-			Data: map[string]interface{}{
+			Data: map[string]any{
 				"small_version": ProtocolVersion,
 				"owner":         "agent",
 				"summary":       "Test handoff",
-				"resume": map[string]interface{}{
+				"resume": map[string]any{
 					"current_task_id": "",
-					"next_steps":      []interface{}{},
+					"next_steps":      []any{},
 				},
-				"links": []interface{}{},
-				"run": map[string]interface{}{
+				"links": []any{},
+				"run": map[string]any{
 					"api_key": "sk-live-abc123def456",
 				},
 			},

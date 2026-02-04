@@ -270,7 +270,7 @@ func formatRunShowOutput(snapshot *runstore.Snapshot, jsonOutput bool) (string, 
 	}
 
 	var buffer bytes.Buffer
-	writeLine := func(format string, args ...interface{}) {
+	writeLine := func(format string, args ...any) {
 		_, _ = fmt.Fprintf(&buffer, format, args...)
 	}
 

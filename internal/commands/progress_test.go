@@ -12,7 +12,7 @@ import (
 )
 
 func TestNormalizeProgressEntriesAddsFractional(t *testing.T) {
-	entries := []map[string]interface{}{
+	entries := []map[string]any{
 		{
 			"task_id":   "task-1",
 			"timestamp": "2025-01-01T00:00:00Z",
@@ -35,7 +35,7 @@ func TestNormalizeProgressEntriesAddsFractional(t *testing.T) {
 }
 
 func TestNormalizeProgressEntriesResolvesCollisions(t *testing.T) {
-	entries := []map[string]interface{}{
+	entries := []map[string]any{
 		{
 			"task_id":   "task-1",
 			"timestamp": "2025-01-01T00:00:00.000000000Z",
@@ -77,7 +77,7 @@ func TestMigrateProgressFileRewritesTimestamps(t *testing.T) {
 	progress := ProgressData{
 		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
-		Entries: []map[string]interface{}{
+		Entries: []map[string]any{
 			{
 				"task_id":   "task-1",
 				"timestamp": "2025-01-01T00:00:00Z",
@@ -153,7 +153,7 @@ func TestProgressAddMonotonicTimestamp(t *testing.T) {
 	progress := ProgressData{
 		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
-		Entries:      []map[string]interface{}{},
+		Entries:      []map[string]any{},
 	}
 	data, err := yaml.Marshal(&progress)
 	if err != nil {
@@ -164,7 +164,7 @@ func TestProgressAddMonotonicTimestamp(t *testing.T) {
 		t.Fatalf("failed to write progress file: %v", err)
 	}
 
-	entry := map[string]interface{}{
+	entry := map[string]any{
 		"task_id":   "task-1",
 		"status":    "in_progress",
 		"timestamp": formatProgressTimestamp(fixed),
@@ -176,7 +176,7 @@ func TestProgressAddMonotonicTimestamp(t *testing.T) {
 	if err != nil {
 		t.Fatalf("loadProgressData error: %v", err)
 	}
-	second := map[string]interface{}{
+	second := map[string]any{
 		"task_id":   "task-2",
 		"status":    "in_progress",
 		"timestamp": formatProgressTimestamp(fixed),
@@ -215,8 +215,8 @@ func TestProgressAddCreatesFileIfMissing(t *testing.T) {
 	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
 
 	progressPath := filepath.Join(smallDir, "progress.small.yml")
-	progress := ProgressData{SmallVersion: small.ProtocolVersion, Owner: "agent", Entries: []map[string]interface{}{}}
-	entry := map[string]interface{}{
+	progress := ProgressData{SmallVersion: small.ProtocolVersion, Owner: "agent", Entries: []map[string]any{}}
+	entry := map[string]any{
 		"task_id":   "task-1",
 		"status":    "pending",
 		"notes":     "created via test",
@@ -242,7 +242,7 @@ func TestMigrateProgressFileRejectsUnparseable(t *testing.T) {
 	progress := ProgressData{
 		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
-		Entries: []map[string]interface{}{
+		Entries: []map[string]any{
 			{
 				"task_id":   "task-1",
 				"timestamp": "not-a-time",

@@ -221,7 +221,7 @@ func normalizeLineEndings(content []byte) []byte {
 	return []byte(s)
 }
 
-func stringVal(v interface{}) string {
+func stringVal(v any) string {
 	if v == nil {
 		return ""
 	}

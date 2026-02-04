@@ -319,13 +319,13 @@ func addDependency(plan *PlanData, taskID, depID string) error {
 
 func ensureProgressEvidence(artifactsDir, taskID string) error {
 	progressPath := filepath.Join(artifactsDir, small.SmallDir, "progress.small.yml")
-	var data map[string]interface{}
+	var data map[string]any
 
 	if !small.ArtifactExists(artifactsDir, "progress.small.yml") {
 		progress := ProgressData{
 			SmallVersion: small.ProtocolVersion,
 			Owner:        "agent",
-			Entries:      []map[string]interface{}{},
+			Entries:      []map[string]any{},
 		}
 		yamlData, err := small.MarshalYAMLWithQuotedVersion(&progress)
 		if err != nil {
@@ -344,19 +344,19 @@ func ensureProgressEvidence(artifactsDir, taskID string) error {
 		return err
 	}
 
-	entries, _ := data["entries"].([]interface{})
+	entries, _ := data["entries"].([]any)
 	if entries == nil {
-		entries = []interface{}{}
+		entries = []any{}
 	}
 	for _, entry := range entries {
-		if entryMap, ok := entry.(map[string]interface{}); ok {
+		if entryMap, ok := entry.(map[string]any); ok {
 			if id, _ := entryMap["task_id"].(string); id == taskID && small.ProgressEntryHasValidEvidence(entryMap) {
 				return nil
 			}
 		}
 	}
 
-	entry := map[string]interface{}{
+	entry := map[string]any{
 		"task_id":   taskID,
 		"status":    "completed",
 		"timestamp": formatProgressTimestamp(time.Now().UTC()),
@@ -368,7 +368,7 @@ func ensureProgressEvidence(artifactsDir, taskID string) error {
 }
 
 func appendPlanProgress(artifactsDir, taskID, status, evidence, notes string) error {
-	entry := map[string]interface{}{
+	entry := map[string]any{
 		"task_id":   taskID,
 		"timestamp": formatProgressTimestamp(time.Now().UTC()),
 		"evidence":  evidence,

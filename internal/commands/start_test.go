@@ -28,29 +28,29 @@ func TestStartCommandCreatesCompleteHandoff(t *testing.T) {
 		t.Fatalf("expected quoted small_version in handoff output")
 	}
 
-	var handoff map[string]interface{}
+	var handoff map[string]any
 	if err := yaml.Unmarshal(handoffData, &handoff); err != nil {
 		t.Fatalf("failed to parse handoff: %v", err)
 	}
 
-	replayId, ok := handoff["replayId"].(map[string]interface{})
+	replayId, ok := handoff["replayId"].(map[string]any)
 	if !ok || stringVal(replayId["value"]) == "" || stringVal(replayId["source"]) == "" {
 		t.Fatalf("expected replayId.value and replayId.source to be populated")
 	}
 
-	resume, ok := handoff["resume"].(map[string]interface{})
+	resume, ok := handoff["resume"].(map[string]any)
 	if !ok {
 		t.Fatalf("expected resume object in handoff")
 	}
 	if _, ok := resume["current_task_id"].(string); !ok {
 		t.Fatalf("expected resume.current_task_id to be present")
 	}
-	nextSteps, ok := resume["next_steps"].([]interface{})
+	nextSteps, ok := resume["next_steps"].([]any)
 	if !ok || len(nextSteps) == 0 {
 		t.Fatalf("expected resume.next_steps to be populated")
 	}
 
-	runInfo, ok := handoff["run"].(map[string]interface{})
+	runInfo, ok := handoff["run"].(map[string]any)
 	if !ok {
 		t.Fatalf("expected run metadata to be present")
 	}

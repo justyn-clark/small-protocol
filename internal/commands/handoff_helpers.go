@@ -174,7 +174,7 @@ func loadExistingHandoff(artifactsDir string) (*existingHandoff, error) {
 		return nil, err
 	}
 
-	var payload map[string]interface{}
+	var payload map[string]any
 	if err := yaml.Unmarshal(data, &payload); err != nil {
 		return nil, fmt.Errorf("failed to parse handoff.small.yml: %w", err)
 	}
@@ -186,14 +186,14 @@ func loadExistingHandoff(artifactsDir string) (*existingHandoff, error) {
 	}, nil
 }
 
-func parseLinks(raw interface{}) []linkOut {
-	items, ok := raw.([]interface{})
+func parseLinks(raw any) []linkOut {
+	items, ok := raw.([]any)
 	if !ok {
 		return nil
 	}
 	links := make([]linkOut, 0, len(items))
 	for _, item := range items {
-		m, ok := item.(map[string]interface{})
+		m, ok := item.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -209,8 +209,8 @@ func parseLinks(raw interface{}) []linkOut {
 	return links
 }
 
-func parseReplayId(raw interface{}) *replayIdOut {
-	m, ok := raw.(map[string]interface{})
+func parseReplayId(raw any) *replayIdOut {
+	m, ok := raw.(map[string]any)
 	if !ok {
 		return nil
 	}

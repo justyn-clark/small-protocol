@@ -15022,3 +15022,335 @@ entries:
       status: completed
       task_id: task-17
       timestamp: "2026-02-04T02:15:47.798489000Z"
+    - command: 'small plan --add "Refactor: replace interface{} with any across codebase"'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T160413.905028000Z.txt
+      command_sha256: 1328e7a356c05ffcc1a824a0ad1c8cb9c44582c75000cf70a364699ad7fe6f89
+      command_summary: 'small plan --add "Refactor: replace interface{} with any across codebase"'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T16:04:13.905028000Z"
+    - evidence: Added task task-18 via small plan --add
+      notes: 'Refactor: replace interface{} with any across codebase'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: pending
+      task_id: task-18
+      timestamp: "2026-02-04T16:04:13.955498000Z"
+    - command: 'small plan --add "Refactor: replace interface{} with any across codebase"'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T160413.986536000Z.txt
+      command_sha256: 1328e7a356c05ffcc1a824a0ad1c8cb9c44582c75000cf70a364699ad7fe6f89
+      command_summary: 'small plan --add "Refactor: replace interface{} with any across codebase"'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T16:04:13.986536000Z"
+    - command: small progress add --task task-18 --status in_progress --evidence "Starting repo-wide interface{} to any refactor"
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T160417.490647000Z.txt
+      command_sha256: 7ec797370e9be85dd6423d9a355b724f245b942bf55978b12bfa9a9d8593eca9
+      command_summary: small progress add --task task-18 --status in_progress --evidence "Starting repo-wide interface{} to any refactor"
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T16:04:17.490647000Z"
+    - evidence: Starting repo-wide interface{} to any refactor
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T16:04:17.548682000Z"
+    - command: small progress add --task task-18 --status in_progress --evidence "Starting repo-wide interface{} to any refactor"
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T160417.618540000Z.txt
+      command_sha256: 7ec797370e9be85dd6423d9a355b724f245b942bf55978b12bfa9a9d8593eca9
+      command_summary: small progress add --task task-18 --status in_progress --evidence "Starting repo-wide interface{} to any refactor"
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T16:04:17.618540000Z"
+    - command: python - <<'PY' from pathlib import Path path = Path('internal/small/loader.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T214903.068276000Z.txt
+      command_sha256: c12ff546fe10621254f190c19d76b623d6d809342de2140688fec4b805bd42c7
+      command_summary: python - <<'PY' from pathlib import Path path = Path('internal/small/loader.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T21:49:03.068276000Z"
+    - command: python - <<'PY' from pathlib import Path path = Path('internal/small/loader.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T214903.122092000Z.txt
+      command_sha256: c12ff546fe10621254f190c19d76b623d6d809342de2140688fec4b805bd42c7
+      command_summary: python - <<'PY' from pathlib import Path path = Path('internal/small/loader.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      evidence: Command failed with exit code 127
+      notes: 'apply: failed with exit code 127'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: blocked
+      task_id: task-18
+      timestamp: "2026-02-04T21:49:03.122092000Z"
+    - command: python3 - <<'PY' from pathlib import Path path = Path('internal/small/loader.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T214906.470257000Z.txt
+      command_sha256: f32ee7717a500b2b26660231cbb52f713e44ed680290e94bbd02d238da726efb
+      command_summary: python3 - <<'PY' from pathlib import Path path = Path('internal/small/loader.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T21:49:06.470257000Z"
+    - command: python3 - <<'PY' from pathlib import Path path = Path('internal/small/loader.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T214906.747246000Z.txt
+      command_sha256: f32ee7717a500b2b26660231cbb52f713e44ed680290e94bbd02d238da726efb
+      command_summary: python3 - <<'PY' from pathlib import Path path = Path('internal/small/loader.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T21:49:06.747246000Z"
+    - command: rg -l --glob '*.go' 'interface\{\}' | while IFS= read -r file; do gofmt -w -r 'interface{} -> any' ""; done
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T214943.730321000Z.txt
+      command_sha256: 03485116f4896a51a8d9e0e81fd02cb32675907496c98a60d00c261215d1ab86
+      command_summary: rg -l --glob '*.go' 'interface\{\}' | while IFS= read -r file; do gofmt -w -r 'interface{} -> any' ""; done
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T21:49:43.730321000Z"
+    - command: rg -l --glob '*.go' 'interface\{\}' | while IFS= read -r file; do gofmt -w -r 'interface{} -> any' ""; done
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T214943.918349000Z.txt
+      command_sha256: 03485116f4896a51a8d9e0e81fd02cb32675907496c98a60d00c261215d1ab86
+      command_summary: rg -l --glob '*.go' 'interface\{\}' | while IFS= read -r file; do gofmt -w -r 'interface{} -> any' ""; done
+      evidence: Command failed with exit code 2
+      notes: 'apply: failed with exit code 2'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: blocked
+      task_id: task-18
+      timestamp: "2026-02-04T21:49:43.918349000Z"
+    - command: rg -l --glob '*.go' 'interface\{\}' | while IFS= read -r file; do gofmt -w -r 'interface{} -> any' "$file"; done
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T214953.522789000Z.txt
+      command_sha256: df61cddc52b9ecf8f4b2881253534ff526af70b675e19e0509f651c7029febf3
+      command_summary: rg -l --glob '*.go' 'interface\{\}' | while IFS= read -r file; do gofmt -w -r 'interface{} -> any' "$file"; done
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T21:49:53.522789000Z"
+    - command: rg -l --glob '*.go' 'interface\{\}' | while IFS= read -r file; do gofmt -w -r 'interface{} -> any' "$file"; done
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T214953.748596000Z.txt
+      command_sha256: df61cddc52b9ecf8f4b2881253534ff526af70b675e19e0509f651c7029febf3
+      command_summary: rg -l --glob '*.go' 'interface\{\}' | while IFS= read -r file; do gofmt -w -r 'interface{} -> any' "$file"; done
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T21:49:53.748596000Z"
+    - command: python3 - <<'PY' from pathlib import Path path = Path('internal/commands/progress.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T215002.129947000Z.txt
+      command_sha256: 28375140e060c6030f4144a92e9e5c64176d3c2011880bd3d2ed8cb8bb8ba2a0
+      command_summary: python3 - <<'PY' from pathlib import Path path = Path('internal/commands/progress.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T21:50:02.129947000Z"
+    - command: python3 - <<'PY' from pathlib import Path path = Path('internal/commands/progress.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T215002.233674000Z.txt
+      command_sha256: 28375140e060c6030f4144a92e9e5c64176d3c2011880bd3d2ed8cb8bb8ba2a0
+      command_summary: python3 - <<'PY' from pathlib import Path path = Path('internal/commands/progress.go') text = path.read_text() text = text.replace('map[string]interface{}', 'map[string]any') path.write_text(text) PY
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T21:50:02.233674000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T215020.112531000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T21:50:20.112531000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T215020.244546000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: blocked
+      task_id: task-18
+      timestamp: "2026-02-04T21:50:20.244546000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T215211.469314000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T21:52:11.469314000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T215219.707126000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T21:52:19.707126000Z"
+    - command: small checkpoint --task task-18 --status completed --evidence "Replaced interface{} with any across Go sources; updated artifact load/save boundary to map[string]any; go test ./..."
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T215236.773099000Z.txt
+      command_sha256: 4c81e04b0b08816ceb05462fa4ded4ca2c972e6da88a58a9bf419f020688ea9f
+      command_summary: small checkpoint --task task-18 --status completed --evidence "Replaced interface{} with any across Go sources; updated artifact load/save boundary to map[string]any; go test ./..."
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T21:52:36.773099000Z"
+    - evidence: Replaced interface{} with any across Go sources; updated artifact load/save boundary to map[string]any; go test ./...
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T21:52:36.847138000Z"
+    - command: small checkpoint --task task-18 --status completed --evidence "Replaced interface{} with any across Go sources; updated artifact load/save boundary to map[string]any; go test ./..."
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T215236.943528000Z.txt
+      command_sha256: 4c81e04b0b08816ceb05462fa4ded4ca2c972e6da88a58a9bf419f020688ea9f
+      command_summary: small checkpoint --task task-18 --status completed --evidence "Replaced interface{} with any across Go sources; updated artifact load/save boundary to map[string]any; go test ./..."
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T21:52:36.943528000Z"
+    - command: python3 - <<'PY' from pathlib import Path path = Path('internal/small/invariants.go') text = path.read_text() old = 'if entries == nil || len(entries) == 0 {\n' new = 'if len(entries) == 0 {\n' if ...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220100.052525000Z.txt
+      command_sha256: 363c1bcdcd9a01b6d78d3c99b80f7f310fd7c6ca41889a30dd85a70740e374fc
+      command_summary: python3 - <<'PY' from pathlib import Path path = Path('internal/small/invariants.go') text = path.read_text() old = 'if entries == nil || len(entries) == 0 {\n' new = 'if len(entries) == 0 {\n' if ...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T22:01:00.052525000Z"
+    - command: python3 - <<'PY' from pathlib import Path path = Path('internal/small/invariants.go') text = path.read_text() old = 'if entries == nil || len(entries) == 0 {\n' new = 'if len(entries) == 0 {\n' if ...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220100.157674000Z.txt
+      command_sha256: 363c1bcdcd9a01b6d78d3c99b80f7f310fd7c6ca41889a30dd85a70740e374fc
+      command_summary: python3 - <<'PY' from pathlib import Path path = Path('internal/small/invariants.go') text = path.read_text() old = 'if entries == nil || len(entries) == 0 {\n' new = 'if len(entries) == 0 {\n' if ...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T22:01:00.157674000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220107.344024000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-18
+      timestamp: "2026-02-04T22:01:07.344024000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220109.780728000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-18
+      timestamp: "2026-02-04T22:01:09.780728000Z"
+    - command: 'small plan --add "Lint: remove redundant nil check in invariants"'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220117.963882000Z.txt
+      command_sha256: 611a9d841bde313d391ea4e76031254862109592b6fa76d17ebadb0c2fe993a3
+      command_summary: 'small plan --add "Lint: remove redundant nil check in invariants"'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-19
+      timestamp: "2026-02-04T22:01:17.963882000Z"
+    - evidence: Added task task-19 via small plan --add
+      notes: 'Lint: remove redundant nil check in invariants'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: pending
+      task_id: task-19
+      timestamp: "2026-02-04T22:01:18.022608000Z"
+    - command: 'small plan --add "Lint: remove redundant nil check in invariants"'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220118.055449000Z.txt
+      command_sha256: 611a9d841bde313d391ea4e76031254862109592b6fa76d17ebadb0c2fe993a3
+      command_summary: 'small plan --add "Lint: remove redundant nil check in invariants"'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-19
+      timestamp: "2026-02-04T22:01:18.055449000Z"
+    - command: small progress add --task task-19 --status in_progress --evidence "Removing S1009 redundant nil check"
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220120.688341000Z.txt
+      command_sha256: 4564a8ef29f7f38552e356664ea8a6895bae3b0d378f7e4351ddd3352ad26e6b
+      command_summary: small progress add --task task-19 --status in_progress --evidence "Removing S1009 redundant nil check"
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-19
+      timestamp: "2026-02-04T22:01:20.688341000Z"
+    - evidence: Removing S1009 redundant nil check
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-19
+      timestamp: "2026-02-04T22:01:20.756552000Z"
+    - command: small progress add --task task-19 --status in_progress --evidence "Removing S1009 redundant nil check"
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220120.833853000Z.txt
+      command_sha256: 4564a8ef29f7f38552e356664ea8a6895bae3b0d378f7e4351ddd3352ad26e6b
+      command_summary: small progress add --task task-19 --status in_progress --evidence "Removing S1009 redundant nil check"
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-19
+      timestamp: "2026-02-04T22:01:20.833853000Z"
+    - command: small checkpoint --task task-19 --status completed --evidence "Removed redundant nil check in internal/small/invariants.go; go test ./..."
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220124.199984000Z.txt
+      command_sha256: 49fc09203c1126c957f371c8f194ebcaaee12a138654a310067aae6c4b686f83
+      command_summary: small checkpoint --task task-19 --status completed --evidence "Removed redundant nil check in internal/small/invariants.go; go test ./..."
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-19
+      timestamp: "2026-02-04T22:01:24.199984000Z"
+    - evidence: Removed redundant nil check in internal/small/invariants.go; go test ./...
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-19
+      timestamp: "2026-02-04T22:01:24.265128000Z"
+    - command: small checkpoint --task task-19 --status completed --evidence "Removed redundant nil check in internal/small/invariants.go; go test ./..."
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260204T220124.361281000Z.txt
+      command_sha256: 49fc09203c1126c957f371c8f194ebcaaee12a138654a310067aae6c4b686f83
+      command_summary: small checkpoint --task task-19 --status completed --evidence "Removed redundant nil check in internal/small/invariants.go; go test ./..."
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-19
+      timestamp: "2026-02-04T22:01:24.361281000Z"

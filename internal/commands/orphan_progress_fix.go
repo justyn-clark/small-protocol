@@ -27,7 +27,7 @@ func recordOrphanProgressReconcileEntry(artifactsDir string, result fixers.Orpha
 		hashes = append(hashes, fmt.Sprintf("%s:%s", rewrite.OriginalTaskID, rewrite.Hash))
 	}
 
-	entry := map[string]interface{}{
+	entry := map[string]any{
 		"task_id":  "meta/reconcile-plan",
 		"status":   "completed",
 		"evidence": fmt.Sprintf("Rewrote orphan progress task_ids for replayId scope %s (operational=%d historical=%d unknown=%d)", scopeLabel, result.Counts.Operational, result.Counts.Historical, result.Counts.Unknown),

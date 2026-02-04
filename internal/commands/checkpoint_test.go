@@ -37,7 +37,7 @@ func TestCheckpointAtomicity(t *testing.T) {
 	progress := ProgressData{
 		SmallVersion: small.ProtocolVersion,
 		Owner:        "agent",
-		Entries: []map[string]interface{}{
+		Entries: []map[string]any{
 			{
 				"task_id":   "seed",
 				"status":    "completed",

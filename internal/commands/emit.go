@@ -48,18 +48,18 @@ type emitStatusSummary struct {
 }
 
 type emitProgressSummary struct {
-	LastTimestamp string                   `json:"lastTimestamp,omitempty"`
-	Recent        []ProgressEntry          `json:"recent"`
-	Entries       []map[string]interface{} `json:"entries,omitempty"`
+	LastTimestamp string           `json:"lastTimestamp,omitempty"`
+	Recent        []ProgressEntry  `json:"recent"`
+	Entries       []map[string]any `json:"entries,omitempty"`
 }
 
 type emitIntentSummary struct {
-	SmallVersion         string                 `json:"smallVersion,omitempty"`
-	Owner                string                 `json:"owner,omitempty"`
-	Intent               string                 `json:"intent,omitempty"`
-	Scope                emitIntentScope        `json:"scope,omitempty"`
-	SuccessCriteriaCount int                    `json:"successCriteriaCount,omitempty"`
-	Artifact             map[string]interface{} `json:"artifact,omitempty"`
+	SmallVersion         string          `json:"smallVersion,omitempty"`
+	Owner                string          `json:"owner,omitempty"`
+	Intent               string          `json:"intent,omitempty"`
+	Scope                emitIntentScope `json:"scope,omitempty"`
+	SuccessCriteriaCount int             `json:"successCriteriaCount,omitempty"`
+	Artifact             map[string]any  `json:"artifact,omitempty"`
 }
 
 type emitIntentScope struct {
@@ -68,9 +68,9 @@ type emitIntentScope struct {
 }
 
 type emitConstraintsSummary struct {
-	Present       bool                   `json:"present"`
-	ConstraintIds []string               `json:"constraintIds,omitempty"`
-	Artifact      map[string]interface{} `json:"artifact,omitempty"`
+	Present       bool           `json:"present"`
+	ConstraintIds []string       `json:"constraintIds,omitempty"`
+	Artifact      map[string]any `json:"artifact,omitempty"`
 }
 
 type emitPlanDetails struct {
@@ -340,15 +340,15 @@ func buildIntentSummary(artifact *small.Artifact) emitIntentSummary {
 	summary.Owner = stringVal(artifact.Data["owner"])
 	summary.Intent = stringVal(artifact.Data["intent"])
 
-	if scope, ok := artifact.Data["scope"].(map[string]interface{}); ok {
-		if include, ok := scope["include"].([]interface{}); ok {
+	if scope, ok := artifact.Data["scope"].(map[string]any); ok {
+		if include, ok := scope["include"].([]any); ok {
 			summary.Scope.IncludeCount = len(include)
 		}
-		if exclude, ok := scope["exclude"].([]interface{}); ok {
+		if exclude, ok := scope["exclude"].([]any); ok {
 			summary.Scope.ExcludeCount = len(exclude)
 		}
 	}
-	if criteria, ok := artifact.Data["success_criteria"].([]interface{}); ok {
+	if criteria, ok := artifact.Data["success_criteria"].([]any); ok {
 		summary.SuccessCriteriaCount = len(criteria)
 	}
 
@@ -362,12 +362,12 @@ func buildConstraintsSummary(artifact *small.Artifact) emitConstraintsSummary {
 	}
 
 	summary.Present = true
-	constraints, ok := artifact.Data["constraints"].([]interface{})
+	constraints, ok := artifact.Data["constraints"].([]any)
 	if !ok {
 		return summary
 	}
 	for _, item := range constraints {
-		m, ok := item.(map[string]interface{})
+		m, ok := item.(map[string]any)
 		if !ok {
 			continue
 		}

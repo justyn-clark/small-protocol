@@ -101,13 +101,13 @@ func runArchive(artifactsDir, outDir string, include []string) error {
 		return fmt.Errorf("failed to read handoff.small.yml: %w (run 'small handoff' first)", err)
 	}
 
-	var handoff map[string]interface{}
+	var handoff map[string]any
 	if err := yaml.Unmarshal(handoffData, &handoff); err != nil {
 		return fmt.Errorf("failed to parse handoff.small.yml: %w", err)
 	}
 
 	// Extract replayId
-	replayIdMap, ok := handoff["replayId"].(map[string]interface{})
+	replayIdMap, ok := handoff["replayId"].(map[string]any)
 	if !ok {
 		return fmt.Errorf("handoff.small.yml missing replayId. Run 'small handoff' first")
 	}

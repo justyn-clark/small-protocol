@@ -15,25 +15,25 @@ import (
 )
 
 // ProgressData represents the progress.small.yml structure
-// Entries use map[string]interface{} to preserve flexible schema fields.
+// Entries use map[string]any to preserve flexible schema fields.
 type ProgressData struct {
-	SmallVersion string                   `yaml:"small_version"`
-	Owner        string                   `yaml:"owner"`
-	Entries      []map[string]interface{} `yaml:"entries"`
+	SmallVersion string           `yaml:"small_version"`
+	Owner        string           `yaml:"owner"`
+	Entries      []map[string]any `yaml:"entries"`
 }
 
 var progressTimestampNow = time.Now
 
 type progressAddResult struct {
-	Entry            map[string]interface{}
+	Entry            map[string]any
 	WorkspaceDir     string
 	TaskExistsInPlan bool
 }
 
 type progressAddOutput struct {
-	Workspace        string                 `json:"workspace"`
-	Entry            map[string]interface{} `json:"entry"`
-	TaskExistsInPlan bool                   `json:"task_exists_in_plan"`
+	Workspace        string         `json:"workspace"`
+	Entry            map[string]any `json:"entry"`
+	TaskExistsInPlan bool           `json:"task_exists_in_plan"`
 }
 
 func progressCmd() *cobra.Command {
@@ -97,7 +97,7 @@ func progressAddCmd() *cobra.Command {
 					progress = ProgressData{
 						SmallVersion: small.ProtocolVersion,
 						Owner:        "agent",
-						Entries:      []map[string]interface{}{},
+						Entries:      []map[string]any{},
 					}
 				} else {
 					return fmt.Errorf("failed to read progress.small.yml: %w", err)
@@ -117,7 +117,7 @@ func progressAddCmd() *cobra.Command {
 				timestamp = formatProgressTimestamp(progressTimestampNow().UTC())
 			}
 
-			entry := map[string]interface{}{
+			entry := map[string]any{
 				"task_id":   strings.TrimSpace(taskID),
 				"status":    status,
 				"timestamp": timestamp,
@@ -287,7 +287,7 @@ func migrateProgressFile(progressPath string) (int, error) {
 	return changed, nil
 }
 
-func normalizeProgressEntries(entries []map[string]interface{}) (int, error) {
+func normalizeProgressEntries(entries []map[string]any) (int, error) {
 	var last time.Time
 	changed := 0
 
@@ -319,7 +319,7 @@ func normalizeProgressEntries(entries []map[string]interface{}) (int, error) {
 	return changed, nil
 }
 
-func attachProgressReplayID(baseDir string, entry map[string]interface{}) {
+func attachProgressReplayID(baseDir string, entry map[string]any) {
 	if entry == nil {
 		return
 	}
@@ -337,7 +337,7 @@ func attachProgressReplayID(baseDir string, entry map[string]interface{}) {
 	entry["replayId"] = value
 }
 
-func appendProgressEntry(baseDir string, entry map[string]interface{}) error {
+func appendProgressEntry(baseDir string, entry map[string]any) error {
 	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
 
 	progress, err := loadProgressData(progressPath)
@@ -371,7 +371,7 @@ func appendProgressEntry(baseDir string, entry map[string]interface{}) error {
 	return nil
 }
 
-func appendProgressEntryWithData(baseDir string, entry map[string]interface{}, progress ProgressData) error {
+func appendProgressEntryWithData(baseDir string, entry map[string]any, progress ProgressData) error {
 	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
 
 	lastTimestamp, err := lastProgressTimestamp(progress.Entries)
@@ -400,7 +400,7 @@ func appendProgressEntryWithData(baseDir string, entry map[string]interface{}, p
 	return nil
 }
 
-func lastProgressTimestamp(entries []map[string]interface{}) (time.Time, error) {
+func lastProgressTimestamp(entries []map[string]any) (time.Time, error) {
 	if len(entries) == 0 {
 		return time.Time{}, nil
 	}
@@ -419,7 +419,7 @@ func lastProgressTimestamp(entries []map[string]interface{}) (time.Time, error) 
 	return parsed.UTC(), nil
 }
 
-func normalizeEntryTimestamp(entry map[string]interface{}, last time.Time) (time.Time, error) {
+func normalizeEntryTimestamp(entry map[string]any, last time.Time) (time.Time, error) {
 	sValue, _ := entry["timestamp"].(string)
 	sValue = strings.TrimSpace(sValue)
 	if sValue == "" {
@@ -533,7 +533,7 @@ func loadProgressData(progressPath string) (ProgressData, error) {
 		return ProgressData{}, err
 	}
 	if progress.Entries == nil {
-		progress.Entries = []map[string]interface{}{}
+		progress.Entries = []map[string]any{}
 	}
 	return progress, nil
 }
@@ -552,7 +552,7 @@ func outputProgressAddJSON(result progressAddResult) error {
 	return nil
 }
 
-func validateProgressEntry(entry map[string]interface{}) error {
+func validateProgressEntry(entry map[string]any) error {
 	if strings.TrimSpace(stringVal(entry["task_id"])) == "" {
 		return fmt.Errorf("task_id is required")
 	}

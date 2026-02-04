@@ -134,7 +134,7 @@ func formatRunDiffOutput(result runDiffOutput, jsonOutput bool) (string, error) 
 	}
 
 	var buffer bytes.Buffer
-	writeLine := func(format string, args ...interface{}) {
+	writeLine := func(format string, args ...any) {
 		_, _ = fmt.Fprintf(&buffer, format, args...)
 	}
 
@@ -218,11 +218,11 @@ func diffProgress(fromDir, toDir string, full bool) (runProgressDiff, error) {
 	return progressDiff, nil
 }
 
-func loadProgressEntries(path string) ([]map[string]interface{}, error) {
+func loadProgressEntries(path string) ([]map[string]any, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return []map[string]interface{}{}, nil
+			return []map[string]any{}, nil
 		}
 		return nil, fmt.Errorf("failed to read progress.small.yml: %w", err)
 	}
@@ -232,12 +232,12 @@ func loadProgressEntries(path string) ([]map[string]interface{}, error) {
 		return nil, fmt.Errorf("failed to parse progress.small.yml: %w", err)
 	}
 	if progress.Entries == nil {
-		return []map[string]interface{}{}, nil
+		return []map[string]any{}, nil
 	}
 	return progress.Entries, nil
 }
 
-func completedTaskDelta(before, after []map[string]interface{}) []string {
+func completedTaskDelta(before, after []map[string]any) []string {
 	beforeSet := make(map[string]struct{})
 	for _, entry := range before {
 		if status := strings.TrimSpace(stringVal(entry["status"])); status == "completed" {
@@ -268,7 +268,7 @@ func completedTaskDelta(before, after []map[string]interface{}) []string {
 	return sortStrings(delta)
 }
 
-func latestProgressTimestamp(entries []map[string]interface{}) string {
+func latestProgressTimestamp(entries []map[string]any) string {
 	var latest time.Time
 	var latestRaw string
 	for _, entry := range entries {

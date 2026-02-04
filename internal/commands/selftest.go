@@ -320,7 +320,7 @@ func runSelftestPlanDone(dir string) error {
 // runSelftestApplyDryRun runs apply in dry-run mode
 func runSelftestApplyDryRun(dir string) error {
 	// Record a dry-run progress entry
-	entry := map[string]interface{}{
+	entry := map[string]any{
 		"timestamp": formatProgressTimestamp(time.Now().UTC()),
 		"task_id":   "apply",
 		"status":    "pending",

@@ -47,7 +47,7 @@ func FixOrphanProgress(baseDir string) (OrphanProgressFixResult, error) {
 	}
 
 	planTaskIDs := extractPlanTaskIDs(plan)
-	entries, ok := progress.Data["entries"].([]interface{})
+	entries, ok := progress.Data["entries"].([]any)
 	if !ok {
 		return OrphanProgressFixResult{}, fmt.Errorf("progress.entries must be an array")
 	}
@@ -56,7 +56,7 @@ func FixOrphanProgress(baseDir string) (OrphanProgressFixResult, error) {
 	result := OrphanProgressFixResult{ReplayID: replayID}
 
 	for i, entry := range entries {
-		entryMap, ok := entry.(map[string]interface{})
+		entryMap, ok := entry.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -112,12 +112,12 @@ func extractPlanTaskIDs(plan *small.Artifact) map[string]struct{} {
 	if plan == nil || plan.Data == nil {
 		return ids
 	}
-	tasks, ok := plan.Data["tasks"].([]interface{})
+	tasks, ok := plan.Data["tasks"].([]any)
 	if !ok {
 		return ids
 	}
 	for _, raw := range tasks {
-		taskMap, ok := raw.(map[string]interface{})
+		taskMap, ok := raw.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -134,14 +134,14 @@ func extractReplayID(handoff *small.Artifact) string {
 	if handoff == nil || handoff.Data == nil {
 		return ""
 	}
-	metadata, ok := handoff.Data["replayId"].(map[string]interface{})
+	metadata, ok := handoff.Data["replayId"].(map[string]any)
 	if !ok {
 		return ""
 	}
 	return strings.TrimSpace(stringVal(metadata["value"]))
 }
 
-func isReplayIDInScope(entry map[string]interface{}, replayID string) bool {
+func isReplayIDInScope(entry map[string]any, replayID string) bool {
 	if replayID == "" {
 		return true
 	}
@@ -177,7 +177,7 @@ func sanitizeTaskID(taskID string) string {
 	return value
 }
 
-func hashProgressEntry(taskID string, entry map[string]interface{}) string {
+func hashProgressEntry(taskID string, entry map[string]any) string {
 	parts := []string{
 		taskID,
 		strings.TrimSpace(stringVal(entry["timestamp"])),
@@ -187,7 +187,7 @@ func hashProgressEntry(taskID string, entry map[string]interface{}) string {
 	return hex.EncodeToString(sum[:])
 }
 
-func stringVal(value interface{}) string {
+func stringVal(value any) string {
 	if value == nil {
 		return ""
 	}

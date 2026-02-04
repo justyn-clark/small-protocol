@@ -191,11 +191,11 @@ func analyzeRunState(artifacts map[string]*small.Artifact) []DiagnosticResult {
 
 	// Analyze plan tasks
 	if plan, ok := artifacts["plan"]; ok {
-		tasks, _ := plan.Data["tasks"].([]interface{})
+		tasks, _ := plan.Data["tasks"].([]any)
 
 		var pending, inProgress, completed, blocked int
 		for _, t := range tasks {
-			tm, _ := t.(map[string]interface{})
+			tm, _ := t.(map[string]any)
 			status, _ := tm["status"].(string)
 			switch status {
 			case "pending", "":
@@ -243,7 +243,7 @@ func analyzeRunState(artifacts map[string]*small.Artifact) []DiagnosticResult {
 
 	// Analyze progress entries
 	if progress, ok := artifacts["progress"]; ok {
-		entries, _ := progress.Data["entries"].([]interface{})
+		entries, _ := progress.Data["entries"].([]any)
 		entryCount := len(entries)
 
 		if entryCount == 0 {
@@ -264,8 +264,8 @@ func analyzeRunState(artifacts map[string]*small.Artifact) []DiagnosticResult {
 
 	// Analyze handoff
 	if handoff, ok := artifacts["handoff"]; ok {
-		resume, _ := handoff.Data["resume"].(map[string]interface{})
-		nextSteps, _ := resume["next_steps"].([]interface{})
+		resume, _ := handoff.Data["resume"].(map[string]any)
+		nextSteps, _ := resume["next_steps"].([]any)
 
 		if len(nextSteps) > 0 {
 			results = append(results, DiagnosticResult{

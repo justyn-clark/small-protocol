@@ -301,7 +301,7 @@ links: []
 func TestValidateReplayId(t *testing.T) {
 	tests := []struct {
 		name       string
-		replayId   map[string]interface{}
+		replayId   map[string]any
 		wantErrors int
 	}{
 		{
@@ -311,7 +311,7 @@ func TestValidateReplayId(t *testing.T) {
 		},
 		{
 			name: "valid replayId with auto source",
-			replayId: map[string]interface{}{
+			replayId: map[string]any{
 				"value":  "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
 				"source": "auto",
 			},
@@ -319,7 +319,7 @@ func TestValidateReplayId(t *testing.T) {
 		},
 		{
 			name: "valid replayId with manual source",
-			replayId: map[string]interface{}{
+			replayId: map[string]any{
 				"value":  "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
 				"source": "manual",
 			},
@@ -327,7 +327,7 @@ func TestValidateReplayId(t *testing.T) {
 		},
 		{
 			name: "invalid SHA256 format",
-			replayId: map[string]interface{}{
+			replayId: map[string]any{
 				"value":  "invalid",
 				"source": "auto",
 			},
@@ -335,7 +335,7 @@ func TestValidateReplayId(t *testing.T) {
 		},
 		{
 			name: "invalid source",
-			replayId: map[string]interface{}{
+			replayId: map[string]any{
 				"value":  "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
 				"source": "cli",
 			},
@@ -343,14 +343,14 @@ func TestValidateReplayId(t *testing.T) {
 		},
 		{
 			name: "missing value",
-			replayId: map[string]interface{}{
+			replayId: map[string]any{
 				"source": "auto",
 			},
 			wantErrors: 1,
 		},
 		{
 			name: "missing source",
-			replayId: map[string]interface{}{
+			replayId: map[string]any{
 				"value": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
 			},
 			wantErrors: 1,
@@ -362,7 +362,7 @@ func TestValidateReplayId(t *testing.T) {
 			artifact := &small.Artifact{
 				Type: "handoff",
 				Path: "test/handoff.small.yml",
-				Data: map[string]interface{}{
+				Data: map[string]any{
 					"small_version": "1.0.0",
 					"owner":         "agent",
 				},

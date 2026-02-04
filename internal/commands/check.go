@@ -187,7 +187,7 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, fo
 	return ExitValid, result, nil
 }
 
-func outputCheckJSON(payload interface{}) error {
+func outputCheckJSON(payload any) error {
 	data, err := json.MarshalIndent(payload, "", "  ")
 	if err != nil {
 		return err

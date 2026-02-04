@@ -172,7 +172,7 @@ func ValidateArtifactWithConfig(artifact *Artifact, config SchemaConfig) error {
 		return fmt.Errorf("failed to marshal YAML: %w", err)
 	}
 
-	var jsonData interface{}
+	var jsonData any
 	if err := yaml.Unmarshal(yamlData, &jsonData); err != nil {
 		return fmt.Errorf("failed to convert YAML to JSON: %w", err)
 	}
@@ -227,7 +227,7 @@ func ValidateAllArtifacts(artifacts map[string]*Artifact, baseDir string) []erro
 }
 
 func YAMLToJSON(yamlData []byte) ([]byte, error) {
-	var data interface{}
+	var data any
 	if err := yaml.Unmarshal(yamlData, &data); err != nil {
 		return nil, err
 	}

@@ -233,7 +233,7 @@ func validateReplayIdWithFixes(handoff *small.Artifact, dir string) []verifyErro
 		return errors
 	}
 
-	replayId, ok := root["replayId"].(map[string]interface{})
+	replayId, ok := root["replayId"].(map[string]any)
 	if !ok {
 		// replayId is REQUIRED - fail if missing
 		errors = append(errors, verifyError{
@@ -291,7 +291,7 @@ func validateReplayId(handoff *small.Artifact) []string {
 		return errors
 	}
 
-	replayId, ok := root["replayId"].(map[string]interface{})
+	replayId, ok := root["replayId"].(map[string]any)
 	if !ok {
 		// replayId is REQUIRED - fail if missing
 		errors = append(errors, "handoff.small.yml must include replayId (use 'small handoff' to generate)")

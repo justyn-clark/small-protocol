@@ -131,7 +131,7 @@ Preserved audit artifacts:
 				evidence = "Reset plan and handoff (intent preserved)"
 				notes = "small reset --keep-intent"
 			}
-			entry := map[string]interface{}{
+			entry := map[string]any{
 				"task_id":   "reset",
 				"status":    "completed",
 				"timestamp": formatProgressTimestamp(time.Now().UTC()),

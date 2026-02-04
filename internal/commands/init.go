@@ -76,7 +76,7 @@ regardless of append/prepend mode.`,
 
 				// Seed intent if provided
 				if filename == "intent.small.yml" && strings.TrimSpace(intentStr) != "" {
-					var data map[string]interface{}
+					var data map[string]any
 					if err := yaml.Unmarshal([]byte(template), &data); err == nil {
 						data["intent"] = intentStr
 						updated, err := small.MarshalYAMLWithQuotedVersion(data)
@@ -109,7 +109,7 @@ regardless of append/prepend mode.`,
 				return err
 			}
 
-			entry := map[string]interface{}{
+			entry := map[string]any{
 				"task_id":   "init",
 				"status":    "completed",
 				"timestamp": formatProgressTimestamp(time.Now().UTC()),

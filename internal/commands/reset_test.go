@@ -158,18 +158,18 @@ replayId:
 		if !strings.Contains(string(handoffContent), `small_version: "1.0.0"`) {
 			t.Fatalf("expected quoted small_version in reset handoff output")
 		}
-		var handoff map[string]interface{}
+		var handoff map[string]any
 		if err := yaml.Unmarshal(handoffContent, &handoff); err != nil {
 			t.Fatalf("failed to parse handoff: %v", err)
 		}
-		replayId, ok := handoff["replayId"].(map[string]interface{})
+		replayId, ok := handoff["replayId"].(map[string]any)
 		if !ok {
 			t.Fatalf("expected replayId in handoff after reset")
 		}
 		if stringVal(replayId["value"]) == "" {
 			t.Fatalf("expected replayId.value to be populated after reset")
 		}
-		runInfo, ok := handoff["run"].(map[string]interface{})
+		runInfo, ok := handoff["run"].(map[string]any)
 		if !ok {
 			t.Fatalf("expected run metadata in handoff after reset")
 		}

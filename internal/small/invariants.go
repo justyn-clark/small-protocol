@@ -182,7 +182,7 @@ func validateStrictPlanTaskEvidence(planArtifact, progressArtifact *Artifact) []
 
 	satisfied := map[string]struct{}{}
 	for _, entry := range entries {
-		entryMap, ok := entry.(map[string]interface{})
+		entryMap, ok := entry.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -228,21 +228,21 @@ func extractHandoffReplayID(handoffArtifact *Artifact) string {
 	if handoffArtifact == nil || handoffArtifact.Data == nil {
 		return ""
 	}
-	metadata, ok := handoffArtifact.Data["replayId"].(map[string]interface{})
+	metadata, ok := handoffArtifact.Data["replayId"].(map[string]any)
 	if !ok {
 		return ""
 	}
 	return strings.TrimSpace(stringVal(metadata["value"]))
 }
 
-func progressEntryReplayID(entry map[string]interface{}) string {
+func progressEntryReplayID(entry map[string]any) string {
 	if entry == nil {
 		return ""
 	}
 	return strings.TrimSpace(stringVal(entry["replayId"]))
 }
 
-func shouldValidateProgressEntry(entry map[string]interface{}, replayID string) bool {
+func shouldValidateProgressEntry(entry map[string]any, replayID string) bool {
 	if replayID == "" {
 		return true
 	}
@@ -283,7 +283,7 @@ func validateStrictProgressTaskIDs(planArtifact, progressArtifact, handoffArtifa
 
 	var offenders []string
 	for _, entry := range entries {
-		entryMap, ok := entry.(map[string]interface{})
+		entryMap, ok := entry.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -337,7 +337,7 @@ func validateStrictHandoffTasks(planArtifact, handoffArtifact *Artifact) []Invar
 	}
 
 	handoffRoot := handoffArtifact.Data
-	resume, _ := handoffRoot["resume"].(map[string]interface{})
+	resume, _ := handoffRoot["resume"].(map[string]any)
 	if resume == nil {
 		return nil
 	}
@@ -366,14 +366,14 @@ func validatePlanReconciliation(planArtifact, progressArtifact *Artifact) []Inva
 }
 
 func extractPlanTasks(planArtifact *Artifact) []planTask {
-	tasks, ok := planArtifact.Data["tasks"].([]interface{})
+	tasks, ok := planArtifact.Data["tasks"].([]any)
 	if !ok {
 		return nil
 	}
 
 	var result []planTask
 	for _, raw := range tasks {
-		taskMap, ok := raw.(map[string]interface{})
+		taskMap, ok := raw.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -387,17 +387,17 @@ func extractPlanTasks(planArtifact *Artifact) []planTask {
 	return result
 }
 
-func extractProgressEntries(progressArtifact *Artifact) []interface{} {
-	entries, ok := progressArtifact.Data["entries"].([]interface{})
+func extractProgressEntries(progressArtifact *Artifact) []any {
+	entries, ok := progressArtifact.Data["entries"].([]any)
 	if !ok {
 		return nil
 	}
 	return entries
 }
 
-func hasProgressEntriesForTask(entries []interface{}, taskID string) bool {
+func hasProgressEntriesForTask(entries []any, taskID string) bool {
 	for _, entry := range entries {
-		entryMap, ok := entry.(map[string]interface{})
+		entryMap, ok := entry.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -408,7 +408,7 @@ func hasProgressEntriesForTask(entries []interface{}, taskID string) bool {
 	return false
 }
 
-func ProgressEntryHasStrictEvidence(entry map[string]interface{}) bool {
+func ProgressEntryHasStrictEvidence(entry map[string]any) bool {
 	if entry == nil {
 		return false
 	}
@@ -421,7 +421,7 @@ func ProgressEntryHasStrictEvidence(entry map[string]interface{}) bool {
 	return false
 }
 
-func stringVal(value interface{}) string {
+func stringVal(value any) string {
 	if value == nil {
 		return ""
 	}
@@ -472,7 +472,7 @@ func closestTaskIDs(taskID string, tasks []planTask, limit int) []string {
 	return nil
 }
 
-func validateIntent(path string, root map[string]interface{}, owner string) []InvariantViolation {
+func validateIntent(path string, root map[string]any, owner string) []InvariantViolation {
 	var v []InvariantViolation
 	if owner != "human" {
 		v = append(v, InvariantViolation{File: path, Message: `intent must have owner: "human"`})
@@ -483,37 +483,37 @@ func validateIntent(path string, root map[string]interface{}, owner string) []In
 		v = append(v, InvariantViolation{File: path, Message: "intent.intent must be a non-empty string"})
 	}
 
-	scope, ok := root["scope"].(map[string]interface{})
+	scope, ok := root["scope"].(map[string]any)
 	if !ok || scope == nil {
 		v = append(v, InvariantViolation{File: path, Message: "intent.scope must be an object with include/exclude arrays"})
 		return v
 	}
-	if _, ok := scope["include"].([]interface{}); !ok {
+	if _, ok := scope["include"].([]any); !ok {
 		v = append(v, InvariantViolation{File: path, Message: "intent.scope.include must be an array"})
 	}
-	if _, ok := scope["exclude"].([]interface{}); !ok {
+	if _, ok := scope["exclude"].([]any); !ok {
 		v = append(v, InvariantViolation{File: path, Message: "intent.scope.exclude must be an array"})
 	}
-	if _, ok := root["success_criteria"].([]interface{}); !ok {
+	if _, ok := root["success_criteria"].([]any); !ok {
 		v = append(v, InvariantViolation{File: path, Message: "intent.success_criteria must be an array"})
 	}
 	return v
 }
 
-func validateConstraints(path string, root map[string]interface{}, owner string) []InvariantViolation {
+func validateConstraints(path string, root map[string]any, owner string) []InvariantViolation {
 	var v []InvariantViolation
 	if owner != "human" {
 		v = append(v, InvariantViolation{File: path, Message: `constraints must have owner: "human"`})
 	}
 
-	items, ok := root["constraints"].([]interface{})
+	items, ok := root["constraints"].([]any)
 	if !ok || len(items) == 0 {
 		v = append(v, InvariantViolation{File: path, Message: "constraints.constraints must be a non-empty array"})
 		return v
 	}
 
 	for i, it := range items {
-		m, ok := it.(map[string]interface{})
+		m, ok := it.(map[string]any)
 		if !ok {
 			v = append(v, InvariantViolation{File: path, Message: fmt.Sprintf("constraints[%d] must be an object", i)})
 			continue
@@ -532,20 +532,20 @@ func validateConstraints(path string, root map[string]interface{}, owner string)
 	return v
 }
 
-func validatePlan(path string, root map[string]interface{}, owner string) []InvariantViolation {
+func validatePlan(path string, root map[string]any, owner string) []InvariantViolation {
 	var v []InvariantViolation
 	if owner != "agent" {
 		v = append(v, InvariantViolation{File: path, Message: `plan must have owner: "agent"`})
 	}
 
-	tasks, ok := root["tasks"].([]interface{})
+	tasks, ok := root["tasks"].([]any)
 	if !ok || len(tasks) == 0 {
 		v = append(v, InvariantViolation{File: path, Message: "plan.tasks must be a non-empty array"})
 		return v
 	}
 
 	for i, t := range tasks {
-		m, ok := t.(map[string]interface{})
+		m, ok := t.(map[string]any)
 		if !ok {
 			v = append(v, InvariantViolation{File: path, Message: fmt.Sprintf("tasks[%d] must be an object", i)})
 			continue
@@ -560,13 +560,13 @@ func validatePlan(path string, root map[string]interface{}, owner string) []Inva
 	return v
 }
 
-func validateProgress(path string, root map[string]interface{}, owner string) []InvariantViolation {
+func validateProgress(path string, root map[string]any, owner string) []InvariantViolation {
 	var v []InvariantViolation
 	if owner != "agent" {
 		v = append(v, InvariantViolation{File: path, Message: `progress must have owner: "agent"`})
 	}
 
-	entries, ok := root["entries"].([]interface{})
+	entries, ok := root["entries"].([]any)
 	if !ok {
 		v = append(v, InvariantViolation{File: path, Message: "progress.entries must be an array"})
 		return v
@@ -576,7 +576,7 @@ func validateProgress(path string, root map[string]interface{}, owner string) []
 	evidenceFields := []string{"evidence", "verification", "command", "test", "link", "commit"}
 
 	for i, entry := range entries {
-		em, ok := entry.(map[string]interface{})
+		em, ok := entry.(map[string]any)
 		if !ok {
 			v = append(v, InvariantViolation{File: path, Message: fmt.Sprintf("entries[%d] must be an object", i)})
 			continue
@@ -674,14 +674,14 @@ func validateCompletedTaskProgress(planArtifact, progressArtifact *Artifact) []I
 		return violations
 	}
 
-	tasks, ok := planArtifact.Data["tasks"].([]interface{})
+	tasks, ok := planArtifact.Data["tasks"].([]any)
 	if !ok {
 		return violations
 	}
 
 	completed := map[string]struct{}{}
 	for _, t := range tasks {
-		taskMap, ok := t.(map[string]interface{})
+		taskMap, ok := t.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -700,14 +700,14 @@ func validateCompletedTaskProgress(planArtifact, progressArtifact *Artifact) []I
 		return violations
 	}
 
-	entries, ok := progressArtifact.Data["entries"].([]interface{})
+	entries, ok := progressArtifact.Data["entries"].([]any)
 	if !ok {
 		return violations
 	}
 
 	satisfied := map[string]struct{}{}
 	for _, entry := range entries {
-		entryMap, ok := entry.(map[string]interface{})
+		entryMap, ok := entry.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -738,7 +738,7 @@ func validateCompletedTaskProgress(planArtifact, progressArtifact *Artifact) []I
 	return violations
 }
 
-func ProgressEntryHasValidEvidence(entry map[string]interface{}) bool {
+func ProgressEntryHasValidEvidence(entry map[string]any) bool {
 	if entry == nil {
 		return false
 	}
@@ -755,7 +755,7 @@ func ProgressEntryHasValidEvidence(entry map[string]interface{}) bool {
 	return false
 }
 
-func hasNonEmptyStringField(entry map[string]interface{}, field string) bool {
+func hasNonEmptyStringField(entry map[string]any, field string) bool {
 	val, ok := entry[field]
 	if !ok {
 		return false
@@ -767,7 +767,7 @@ func hasNonEmptyStringField(entry map[string]interface{}, field string) bool {
 	return strings.TrimSpace(s) != ""
 }
 
-func validateHandoff(path string, root map[string]interface{}, owner string) []InvariantViolation {
+func validateHandoff(path string, root map[string]any, owner string) []InvariantViolation {
 	var v []InvariantViolation
 	if owner != "agent" {
 		v = append(v, InvariantViolation{File: path, Message: `handoff must have owner: "agent"`})
@@ -778,7 +778,7 @@ func validateHandoff(path string, root map[string]interface{}, owner string) []I
 		v = append(v, InvariantViolation{File: path, Message: "handoff.summary must be a non-empty string"})
 	}
 
-	resume, ok := root["resume"].(map[string]interface{})
+	resume, ok := root["resume"].(map[string]any)
 	if !ok || resume == nil {
 		v = append(v, InvariantViolation{File: path, Message: "handoff.resume must be an object"})
 		return v
@@ -786,11 +786,11 @@ func validateHandoff(path string, root map[string]interface{}, owner string) []I
 	if _, ok := resume["current_task_id"].(string); !ok {
 		v = append(v, InvariantViolation{File: path, Message: "handoff.resume.current_task_id must be a string"})
 	}
-	if _, ok := resume["next_steps"].([]interface{}); !ok {
+	if _, ok := resume["next_steps"].([]any); !ok {
 		v = append(v, InvariantViolation{File: path, Message: "handoff.resume.next_steps must be an array"})
 	}
 
-	if _, ok := root["links"].([]interface{}); !ok {
+	if _, ok := root["links"].([]any); !ok {
 		v = append(v, InvariantViolation{File: path, Message: "handoff.links must be an array"})
 	}
 
@@ -863,14 +863,14 @@ func checkInsecureLinks(artifact *Artifact) []InvariantViolation {
 	// Check if this is a progress artifact (allow localhost http)
 	isProgress := artifact.Type == "progress"
 
-	var visit func(value interface{})
-	visit = func(value interface{}) {
+	var visit func(value any)
+	visit = func(value any) {
 		switch vv := value.(type) {
-		case map[string]interface{}:
+		case map[string]any:
 			for _, x := range vv {
 				visit(x)
 			}
-		case []interface{}:
+		case []any:
 			for _, x := range vv {
 				visit(x)
 			}
@@ -913,12 +913,12 @@ func checkSecrets(artifact *Artifact) []InvariantViolation {
 
 	// Paths to exclude from secrets check (known safe fields)
 	excludedPaths := map[string]bool{
-		"replayId.value": true,
+		"replayId.value":         true,
 		"run.previous_replay_id": true,
-		"run.replay_id": true,
+		"run.replay_id":          true,
 	}
 
-	checkValue := func(key string, value interface{}, path string) bool {
+	checkValue := func(key string, value any, path string) bool {
 		// Skip excluded paths
 		if excludedPaths[path] || strings.HasSuffix(path, ".replayId") || path == "replayId" || strings.HasSuffix(path, ".command_sha256") {
 			return false
@@ -938,8 +938,8 @@ func checkSecrets(artifact *Artifact) []InvariantViolation {
 		return false
 	}
 
-	var checkMap func(map[string]interface{}, string)
-	checkMap = func(m map[string]interface{}, prefix string) {
+	var checkMap func(map[string]any, string)
+	checkMap = func(m map[string]any, prefix string) {
 		for k, val := range m {
 			path := prefix + "." + k
 			if prefix == "" {
@@ -953,11 +953,11 @@ func checkSecrets(artifact *Artifact) []InvariantViolation {
 				})
 			}
 
-			if nestedMap, ok := val.(map[string]interface{}); ok {
+			if nestedMap, ok := val.(map[string]any); ok {
 				checkMap(nestedMap, path)
-			} else if nestedSlice, ok := val.([]interface{}); ok {
+			} else if nestedSlice, ok := val.([]any); ok {
 				for i, item := range nestedSlice {
-					if itemMap, ok := item.(map[string]interface{}); ok {
+					if itemMap, ok := item.(map[string]any); ok {
 						checkMap(itemMap, fmt.Sprintf("%s[%d]", path, i))
 					}
 				}
@@ -983,14 +983,14 @@ func CheckDanglingTasks(planArtifact, progressArtifact *Artifact) []DanglingTask
 	}
 
 	entries := extractProgressEntries(progressArtifact)
-	if entries == nil || len(entries) == 0 {
+	if len(entries) == 0 {
 		return nil
 	}
 
 	// Build a set of task IDs that have progress entries
 	tasksWithProgress := make(map[string]struct{})
 	for _, entry := range entries {
-		entryMap, ok := entry.(map[string]interface{})
+		entryMap, ok := entry.(map[string]any)
 		if !ok {
 			continue
 		}

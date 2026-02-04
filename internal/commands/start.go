@@ -96,7 +96,7 @@ func startCmd() *cobra.Command {
 			}
 
 			if selfHeal {
-				entry := map[string]interface{}{
+				entry := map[string]any{
 					"task_id":   "meta/replayid-self-heal",
 					"status":    "completed",
 					"timestamp": formatProgressTimestamp(time.Now().UTC()),

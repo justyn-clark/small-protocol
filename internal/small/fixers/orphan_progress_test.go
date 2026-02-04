@@ -11,57 +11,57 @@ func TestFixOrphanProgress_RewritesInScope(t *testing.T) {
 	currentReplayID := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 	otherReplayID := "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 
-	plan := map[string]interface{}{
+	plan := map[string]any{
 		"small_version": small.ProtocolVersion,
 		"owner":         "agent",
-		"tasks": []interface{}{
-			map[string]interface{}{
+		"tasks": []any{
+			map[string]any{
 				"id":    "task-1",
 				"title": "Known task",
 			},
 		},
 	}
 
-	progress := map[string]interface{}{
+	progress := map[string]any{
 		"small_version": small.ProtocolVersion,
 		"owner":         "agent",
-		"entries": []interface{}{
-			map[string]interface{}{
+		"entries": []any{
+			map[string]any{
 				"task_id":   "task-1",
 				"status":    "completed",
 				"timestamp": "2025-01-01T00:00:00.000000001Z",
 				"evidence":  "ok",
 				"replayId":  currentReplayID,
 			},
-			map[string]interface{}{
+			map[string]any{
 				"task_id":   "reset",
 				"status":    "completed",
 				"timestamp": "2025-01-01T00:00:00.000000002Z",
 				"evidence":  "reset",
 				"replayId":  currentReplayID,
 			},
-			map[string]interface{}{
+			map[string]any{
 				"task_id":   "task-99",
 				"status":    "completed",
 				"timestamp": "2025-01-01T00:00:00.000000003Z",
 				"evidence":  "historical",
 				"replayId":  currentReplayID,
 			},
-			map[string]interface{}{
+			map[string]any{
 				"task_id":   "custom-task",
 				"status":    "completed",
 				"timestamp": "2025-01-01T00:00:00.000000004Z",
 				"evidence":  "unknown",
 				"replayId":  currentReplayID,
 			},
-			map[string]interface{}{
+			map[string]any{
 				"task_id":   "task-legacy",
 				"status":    "completed",
 				"timestamp": "2025-01-01T00:00:00.000000005Z",
 				"evidence":  "other run",
 				"replayId":  otherReplayID,
 			},
-			map[string]interface{}{
+			map[string]any{
 				"task_id":   "meta/keep",
 				"status":    "completed",
 				"timestamp": "2025-01-01T00:00:00.000000006Z",
@@ -71,16 +71,16 @@ func TestFixOrphanProgress_RewritesInScope(t *testing.T) {
 		},
 	}
 
-	handoff := map[string]interface{}{
+	handoff := map[string]any{
 		"small_version": small.ProtocolVersion,
 		"owner":         "agent",
 		"summary":       "Test handoff",
-		"resume": map[string]interface{}{
+		"resume": map[string]any{
 			"current_task_id": "",
-			"next_steps":      []interface{}{},
+			"next_steps":      []any{},
 		},
-		"links": []interface{}{},
-		"replayId": map[string]interface{}{
+		"links": []any{},
+		"replayId": map[string]any{
 			"value":  currentReplayID,
 			"source": "auto",
 		},
@@ -105,14 +105,14 @@ func TestFixOrphanProgress_RewritesInScope(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to reload progress: %v", err)
 	}
-	entries, ok := progressAfter.Data["entries"].([]interface{})
+	entries, ok := progressAfter.Data["entries"].([]any)
 	if !ok {
 		t.Fatal("progress entries missing after rewrite")
 	}
 
 	got := make([]string, 0, len(entries))
 	for _, entry := range entries {
-		entryMap, ok := entry.(map[string]interface{})
+		entryMap, ok := entry.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -146,7 +146,7 @@ func TestFixOrphanProgress_RewritesInScope(t *testing.T) {
 	}
 }
 
-func writeArtifact(t *testing.T, baseDir, filename string, data map[string]interface{}) {
+func writeArtifact(t *testing.T, baseDir, filename string, data map[string]any) {
 	t.Helper()
 	if err := small.SaveArtifact(baseDir, filename, data); err != nil {
 		t.Fatalf("failed to write %s: %v", filename, err)

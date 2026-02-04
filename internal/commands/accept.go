@@ -62,7 +62,7 @@ func acceptArtifactCmd(kind string) *cobra.Command {
 			}
 
 			evidence := fmt.Sprintf("Accepted draft %s from %s", kind, filepath.Join(small.SmallDir, "drafts", fmt.Sprintf("%s.small.yml", kind)))
-			entry := map[string]interface{}{
+			entry := map[string]any{
 				"task_id":  fmt.Sprintf("meta/accept-%s", kind),
 				"status":   "completed",
 				"evidence": evidence,
