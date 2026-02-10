@@ -40,3 +40,60 @@ func TestLoadInvalidKindIncludesValidKinds(t *testing.T) {
 		t.Fatalf("error should include %q, got %q", KindExamples, errMsg)
 	}
 }
+
+func TestTouchUpdatedAt(t *testing.T) {
+	tmpDir := t.TempDir()
+	if err := Save(tmpDir, KindRepoRoot); err != nil {
+		t.Fatalf("failed to save workspace: %v", err)
+	}
+
+	before, err := Load(tmpDir)
+	if err != nil {
+		t.Fatalf("failed to load workspace before: %v", err)
+	}
+	if before.UpdatedAt == "" {
+		t.Fatalf("expected updated_at to be set")
+	}
+
+	if _, err := TouchUpdatedAt(tmpDir); err != nil {
+		t.Fatalf("TouchUpdatedAt failed: %v", err)
+	}
+	after, err := Load(tmpDir)
+	if err != nil {
+		t.Fatalf("failed to load workspace after: %v", err)
+	}
+	if after.UpdatedAt == "" {
+		t.Fatalf("expected updated_at after touch")
+	}
+	if after.UpdatedAt < before.UpdatedAt {
+		t.Fatalf("expected updated_at to advance")
+	}
+}
+
+func TestSetAndGetRunReplayID(t *testing.T) {
+	tmpDir := t.TempDir()
+	if err := Save(tmpDir, KindRepoRoot); err != nil {
+		t.Fatalf("failed to save workspace: %v", err)
+	}
+
+	const replayID = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	if err := SetRunReplayID(tmpDir, replayID); err != nil {
+		t.Fatalf("SetRunReplayID failed: %v", err)
+	}
+
+	value, err := RunReplayID(tmpDir)
+	if err != nil {
+		t.Fatalf("RunReplayID failed: %v", err)
+	}
+	if value != replayID {
+		t.Fatalf("RunReplayID = %q, want %q", value, replayID)
+	}
+
+	info, err := Load(tmpDir)
+	if err != nil {
+		t.Fatalf("Load failed: %v", err)
+	}
+	if info.Run == nil || info.Run.ReplayID != replayID {
+		t.Fatalf("workspace run replay_id not persisted: %+v", info.Run)
+	}
+}

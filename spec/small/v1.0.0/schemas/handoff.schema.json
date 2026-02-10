@@ -30,10 +30,18 @@
     },
     "resume": {
       "type": "object",
-      "required": ["current_task_id", "next_steps"],
+      "required": ["next_steps"],
       "properties": {
         "current_task_id": {
-          "type": "string",
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
           "description": "ID of the current/active task"
         },
         "next_steps": {

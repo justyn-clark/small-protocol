@@ -41,7 +41,7 @@ func EnsureCommandLogDir(baseDir, replayId string) (string, error) {
 	if strings.TrimSpace(replayId) == "" {
 		return "", fmt.Errorf("replayId is required")
 	}
-	dir := filepath.Join(baseDir, SmallDir, "logs", replayId, "commands")
+	dir := CacheCommandLogsDir(baseDir, replayId)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return "", err
 	}
@@ -69,6 +69,6 @@ func WriteCommandLog(baseDir, replayId, timestamp, command string) (string, stri
 		return "", "", err
 	}
 	sha := sha256.Sum256([]byte(command))
-	refPath := filepath.ToSlash(filepath.Join(SmallDir, "logs", replayId, "commands", filename))
+	refPath := filepath.ToSlash(filepath.Join(CacheDirName, "logs", replayId, "commands", filename))
 	return refPath, hex.EncodeToString(sha[:]), nil
 }

@@ -40,7 +40,7 @@ type runOut struct {
 }
 
 type resumeOut struct {
-	CurrentTaskID string   `yaml:"current_task_id"`
+	CurrentTaskID *string  `yaml:"current_task_id,omitempty"`
 	NextSteps     []string `yaml:"next_steps"`
 }
 
@@ -129,6 +129,9 @@ func handoffCmd() *cobra.Command {
 
 			h, err := buildHandoff(artifactsDir, summary, replayId, nil, nil, nil, defaultNextStepsLimit)
 			if err != nil {
+				return err
+			}
+			if err := setWorkspaceRunReplayIDIfPresent(artifactsDir, h.ReplayId.Value); err != nil {
 				return err
 			}
 

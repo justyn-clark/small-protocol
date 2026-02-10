@@ -66,7 +66,7 @@ entries:
 owner: "agent"
 summary: "Test handoff"
 resume:
-  current_task_id: ""
+  current_task_id: null
   next_steps: []
 links: []
 `
@@ -106,5 +106,43 @@ func TestCheckMissingWorkspace(t *testing.T) {
 	_, _, err := runCheck(tmpDir, false, true, false, workspace.ScopeRoot, false)
 	if err == nil {
 		t.Fatal("expected runCheck to error on missing workspace")
+	}
+}
+
+func TestCheckStrictFailsOnUnknownSmallPaths(t *testing.T) {
+	tmpDir := t.TempDir()
+	writeArtifacts(t, tmpDir, defaultArtifacts())
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	if err := os.WriteFile(filepath.Join(tmpDir, ".small", "rogue.txt"), []byte("x"), 0o644); err != nil {
+		t.Fatalf("failed to write rogue file: %v", err)
+	}
+
+	code, _, err := runCheck(tmpDir, true, true, false, workspace.ScopeRoot, false)
+	if err != nil {
+		t.Fatalf("runCheck error: %v", err)
+	}
+	if code != ExitInvalid {
+		t.Fatalf("expected ExitInvalid, got %d", code)
+	}
+}
+
+func TestCheckStrictFailsOnLegacySmallDirs(t *testing.T) {
+	tmpDir := t.TempDir()
+	writeArtifacts(t, tmpDir, defaultArtifacts())
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	for _, dir := range []string{"drafts", "logs"} {
+		if err := os.MkdirAll(filepath.Join(tmpDir, ".small", dir), 0o755); err != nil {
+			t.Fatalf("failed to create %s: %v", dir, err)
+		}
+	}
+
+	code, _, err := runCheck(tmpDir, true, true, false, workspace.ScopeRoot, false)
+	if err != nil {
+		t.Fatalf("runCheck error: %v", err)
+	}
+	if code != ExitInvalid {
+		t.Fatalf("expected ExitInvalid, got %d", code)
 	}
 }

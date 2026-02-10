@@ -122,6 +122,10 @@ func checkpointCmd() *cobra.Command {
 				return err
 			}
 
+			if _, err := ensureWorkspaceRunReplayID(artifactsDir); err != nil {
+				return err
+			}
+
 			if err := appendProgressEntryWithData(artifactsDir, entry, progress); err != nil {
 				_ = os.WriteFile(planPath, originalPlanData, 0o644)
 				_ = os.WriteFile(progressPath, originalProgressData, 0o644)

@@ -326,11 +326,10 @@ func attachProgressReplayID(baseDir string, entry map[string]any) {
 	if _, ok := entry["replayId"]; ok {
 		return
 	}
-	existing, err := loadExistingHandoff(baseDir)
-	if err != nil || existing == nil || existing.ReplayId == nil {
+	value, err := currentWorkspaceRunReplayID(baseDir)
+	if err != nil {
 		return
 	}
-	value := strings.TrimSpace(existing.ReplayId.Value)
 	if value == "" {
 		return
 	}
@@ -367,6 +366,9 @@ func appendProgressEntry(baseDir string, entry map[string]any) error {
 	if err := os.WriteFile(progressPath, yamlData, 0o644); err != nil {
 		return fmt.Errorf("failed to write progress file: %w", err)
 	}
+	if err := touchWorkspaceUpdatedAt(baseDir); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -395,6 +397,9 @@ func appendProgressEntryWithData(baseDir string, entry map[string]any, progress 
 
 	if err := os.WriteFile(progressPath, yamlData, 0o644); err != nil {
 		return fmt.Errorf("failed to write progress file: %w", err)
+	}
+	if err := touchWorkspaceUpdatedAt(baseDir); err != nil {
+		return err
 	}
 
 	return nil

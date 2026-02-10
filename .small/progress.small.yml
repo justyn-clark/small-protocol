@@ -15354,3 +15354,2282 @@ entries:
       status: completed
       task_id: task-19
       timestamp: "2026-02-04T22:01:24.361281000Z"
+    - evidence: Added task task-20 via small plan --add
+      notes: Hard fence .small canonical artifacts, relocate scratch cache, canonical handoff state machine, workspace updated_at, and init hygiene
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: pending
+      task_id: task-20
+      timestamp: "2026-02-09T18:55:28.857299000Z"
+    - evidence: Implementing strict .small allowlist fence, cache relocation, handoff canonicalization, workspace timestamp updates, init hygiene, and tests.
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T18:55:35.114608000Z"
+    - command: cat > internal/small/paths.go <<"EOF" package small import "path/filepath" const ( CacheDirName = ".small-cache" ) func CacheDir(baseDir string) string { return filepath.Join(baseDir, CacheDirName)...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190125.694798000Z.txt
+      command_sha256: 617982c163a1da2b86f95eacbf44d5521ad194d6e25b02136d09828d434156d8
+      command_summary: cat > internal/small/paths.go <<"EOF" package small import "path/filepath" const ( CacheDirName = ".small-cache" ) func CacheDir(baseDir string) string { return filepath.Join(baseDir, CacheDirName)...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:01:25.694798000Z"
+    - command: cat > internal/small/paths.go <<"EOF" package small import "path/filepath" const ( CacheDirName = ".small-cache" ) func CacheDir(baseDir string) string { return filepath.Join(baseDir, CacheDirName)...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190125.857028000Z.txt
+      command_sha256: 617982c163a1da2b86f95eacbf44d5521ad194d6e25b02136d09828d434156d8
+      command_summary: cat > internal/small/paths.go <<"EOF" package small import "path/filepath" const ( CacheDirName = ".small-cache" ) func CacheDir(baseDir string) string { return filepath.Join(baseDir, CacheDirName)...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:01:25.857028000Z"
+    - command: 'cat > internal/small/strict_layout.go <<"EOF" package small import ( "fmt" "os" "path/filepath" "sort" "strings" ) var canonicalSmallRootFiles = map[string]struct{}{ "intent.small.yml": {}, "constr...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190144.838276000Z.txt
+      command_sha256: e59f1c32cd9d9c1a3c24fef77442d474cea5b0bfa4d767fbf475f4b12116e8c7
+      command_summary: 'cat > internal/small/strict_layout.go <<"EOF" package small import ( "fmt" "os" "path/filepath" "sort" "strings" ) var canonicalSmallRootFiles = map[string]struct{}{ "intent.small.yml": {}, "constr...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:01:44.838276000Z"
+    - command: 'cat > internal/small/strict_layout.go <<"EOF" package small import ( "fmt" "os" "path/filepath" "sort" "strings" ) var canonicalSmallRootFiles = map[string]struct{}{ "intent.small.yml": {}, "constr...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190144.897526000Z.txt
+      command_sha256: e59f1c32cd9d9c1a3c24fef77442d474cea5b0bfa4d767fbf475f4b12116e8c7
+      command_summary: 'cat > internal/small/strict_layout.go <<"EOF" package small import ( "fmt" "os" "path/filepath" "sort" "strings" ) var canonicalSmallRootFiles = map[string]struct{}{ "intent.small.yml": {}, "constr...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:01:44.897526000Z"
+    - command: cat > internal/commands/current_command_hint.go <<"EOF" package commands import ( "os" "strings" ) func currentCommandHint() string { if len(os.Args) == 0 { return "" } value := strings.TrimSpace(s...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190150.951320000Z.txt
+      command_sha256: 752a63d7e58e2c7b0d140036e49eca126dc3cc6b23beb205e980a330d652f2ec
+      command_summary: cat > internal/commands/current_command_hint.go <<"EOF" package commands import ( "os" "strings" ) func currentCommandHint() string { if len(os.Args) == 0 { return "" } value := strings.TrimSpace(s...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:01:50.951320000Z"
+    - command: cat > internal/commands/current_command_hint.go <<"EOF" package commands import ( "os" "strings" ) func currentCommandHint() string { if len(os.Args) == 0 { return "" } value := strings.TrimSpace(s...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190151.016299000Z.txt
+      command_sha256: 752a63d7e58e2c7b0d140036e49eca126dc3cc6b23beb205e980a330d652f2ec
+      command_summary: cat > internal/commands/current_command_hint.go <<"EOF" package commands import ( "os" "strings" ) func currentCommandHint() string { if len(os.Args) == 0 { return "" } value := strings.TrimSpace(s...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:01:51.016299000Z"
+    - command: perl -0pi -e "s|dir := filepath.Join\(baseDir, SmallDir, \"logs\", replayId, \"commands\"\)|dir := CacheCommandLogsDir(baseDir, replayId)|g; s|refPath := filepath.ToSlash\(filepath.Join\(SmallDir, ...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190157.696809000Z.txt
+      command_sha256: 1c738277fdd3f2a990b2b1048c3787b422289cdaf1c0cec42c3982d728575be5
+      command_summary: perl -0pi -e "s|dir := filepath.Join\(baseDir, SmallDir, \"logs\", replayId, \"commands\"\)|dir := CacheCommandLogsDir(baseDir, replayId)|g; s|refPath := filepath.ToSlash\(filepath.Join\(SmallDir, ...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:01:57.696809000Z"
+    - command: perl -0pi -e "s|dir := filepath.Join\(baseDir, SmallDir, \"logs\", replayId, \"commands\"\)|dir := CacheCommandLogsDir(baseDir, replayId)|g; s|refPath := filepath.ToSlash\(filepath.Join\(SmallDir, ...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190157.774816000Z.txt
+      command_sha256: 1c738277fdd3f2a990b2b1048c3787b422289cdaf1c0cec42c3982d728575be5
+      command_summary: perl -0pi -e "s|dir := filepath.Join\(baseDir, SmallDir, \"logs\", replayId, \"commands\"\)|dir := CacheCommandLogsDir(baseDir, replayId)|g; s|refPath := filepath.ToSlash\(filepath.Join\(SmallDir, ...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:01:57.774816000Z"
+    - command: perl -0pi -e "s|smallDir := filepath.Join\(artifactsDir, small.SmallDir\)\n\s*draftsDir := filepath.Join\(smallDir, \"drafts\"\)|draftsDir := small.CacheDraftsDir(artifactsDir)|g; s|relPath := file...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190206.916674000Z.txt
+      command_sha256: 8b0ead79f3818ec078addac39e91b4845d5b1ffdd87ad4ae1614727dc6c7291c
+      command_summary: perl -0pi -e "s|smallDir := filepath.Join\(artifactsDir, small.SmallDir\)\n\s*draftsDir := filepath.Join\(smallDir, \"drafts\"\)|draftsDir := small.CacheDraftsDir(artifactsDir)|g; s|relPath := file...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:02:06.916674000Z"
+    - command: perl -0pi -e "s|smallDir := filepath.Join\(artifactsDir, small.SmallDir\)\n\s*draftsDir := filepath.Join\(smallDir, \"drafts\"\)|draftsDir := small.CacheDraftsDir(artifactsDir)|g; s|relPath := file...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190206.978381000Z.txt
+      command_sha256: 8b0ead79f3818ec078addac39e91b4845d5b1ffdd87ad4ae1614727dc6c7291c
+      command_summary: perl -0pi -e "s|smallDir := filepath.Join\(artifactsDir, small.SmallDir\)\n\s*draftsDir := filepath.Join\(smallDir, \"drafts\"\)|draftsDir := small.CacheDraftsDir(artifactsDir)|g; s|relPath := file...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:02:06.978381000Z"
+    - command: perl -0pi -e "s|func runLintArtifacts\(baseDir string, strict bool\) \(\[\]small.InvariantViolation, error\) \{\n\tartifacts, err := small.LoadAllArtifacts\(baseDir\)\n\tif err != nil \{\n\t\tretur...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190215.810797000Z.txt
+      command_sha256: e9a85058f5528c377e9de6b908cbcd1a544caee93e10e44573c0969397a9b573
+      command_summary: perl -0pi -e "s|func runLintArtifacts\(baseDir string, strict bool\) \(\[\]small.InvariantViolation, error\) \{\n\tartifacts, err := small.LoadAllArtifacts\(baseDir\)\n\tif err != nil \{\n\t\tretur...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:02:15.810797000Z"
+    - command: perl -0pi -e "s|func runLintArtifacts\(baseDir string, strict bool\) \(\[\]small.InvariantViolation, error\) \{\n\tartifacts, err := small.LoadAllArtifacts\(baseDir\)\n\tif err != nil \{\n\t\tretur...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190215.883610000Z.txt
+      command_sha256: e9a85058f5528c377e9de6b908cbcd1a544caee93e10e44573c0969397a9b573
+      command_summary: perl -0pi -e "s|func runLintArtifacts\(baseDir string, strict bool\) \(\[\]small.InvariantViolation, error\) \{\n\tartifacts, err := small.LoadAllArtifacts\(baseDir\)\n\tif err != nil \{\n\t\tretur...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:02:15.883610000Z"
+    - command: 'perl -0pi -e "s|\t// Invariant validation\n\tviolations := small.CheckInvariants\(artifacts, strict\)\n\tfor _, v := range violations \{\n\t\tve := verifyError\{\n\t\t\tmessage: fmt.Sprintf\(\"Inva...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190240.736314000Z.txt
+      command_sha256: 1868ef7b18581846aaede1517406f5f63d0002aa0b92cf37b2e5e2e8ec500ad2
+      command_summary: 'perl -0pi -e "s|\t// Invariant validation\n\tviolations := small.CheckInvariants\(artifacts, strict\)\n\tfor _, v := range violations \{\n\t\tve := verifyError\{\n\t\t\tmessage: fmt.Sprintf\(\"Inva...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:02:40.736314000Z"
+    - command: 'perl -0pi -e "s|\t// Invariant validation\n\tviolations := small.CheckInvariants\(artifacts, strict\)\n\tfor _, v := range violations \{\n\t\tve := verifyError\{\n\t\t\tmessage: fmt.Sprintf\(\"Inva...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190240.802936000Z.txt
+      command_sha256: 1868ef7b18581846aaede1517406f5f63d0002aa0b92cf37b2e5e2e8ec500ad2
+      command_summary: 'perl -0pi -e "s|\t// Invariant validation\n\tviolations := small.CheckInvariants\(artifacts, strict\)\n\tfor _, v := range violations \{\n\t\tve := verifyError\{\n\t\t\tmessage: fmt.Sprintf\(\"Inva...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:02:40.802936000Z"
+    - command: cat >> internal/workspace/workspace.go <<"EOF" // TouchUpdatedAt updates workspace.small.yml updated_at and returns whether a write occurred. func TouchUpdatedAt(baseDir string) (bool, error) { pat...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190248.760145000Z.txt
+      command_sha256: 3f8dc344660333a05ee2473b2374b7dc495a94cf7cf9c67da250a8ebac1c4752
+      command_summary: cat >> internal/workspace/workspace.go <<"EOF" // TouchUpdatedAt updates workspace.small.yml updated_at and returns whether a write occurred. func TouchUpdatedAt(baseDir string) (bool, error) { pat...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:02:48.760145000Z"
+    - command: cat >> internal/workspace/workspace.go <<"EOF" // TouchUpdatedAt updates workspace.small.yml updated_at and returns whether a write occurred. func TouchUpdatedAt(baseDir string) (bool, error) { pat...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190248.812678000Z.txt
+      command_sha256: 3f8dc344660333a05ee2473b2374b7dc495a94cf7cf9c67da250a8ebac1c4752
+      command_summary: cat >> internal/workspace/workspace.go <<"EOF" // TouchUpdatedAt updates workspace.small.yml updated_at and returns whether a write occurred. func TouchUpdatedAt(baseDir string) (bool, error) { pat...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:02:48.812678000Z"
+    - command: cat > internal/commands/accept.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-proto...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190311.474043000Z.txt
+      command_sha256: 858ae1e8edb5bd29ab783ecf3ee55807653fa43a717e29031c8633da25f2e560
+      command_summary: cat > internal/commands/accept.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-proto...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:03:11.474043000Z"
+    - command: cat > internal/commands/accept.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-proto...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190311.522796000Z.txt
+      command_sha256: 858ae1e8edb5bd29ab783ecf3ee55807653fa43a717e29031c8633da25f2e560
+      command_summary: cat > internal/commands/accept.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-proto...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:03:11.522796000Z"
+    - command: 'perl -0pi -e "s|if err := os.WriteFile\(progressPath, yamlData, 0o644\); err != nil \{\n\t\treturn fmt.Errorf\(\"failed to write progress file: %w\", err\)\n\t\}\n\n\treturn nil|if err := os.WriteF...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190318.960978000Z.txt
+      command_sha256: f393026e842e8b680d958b8747a509929919b9d941c13bf0a92543f93731038d
+      command_summary: 'perl -0pi -e "s|if err := os.WriteFile\(progressPath, yamlData, 0o644\); err != nil \{\n\t\treturn fmt.Errorf\(\"failed to write progress file: %w\", err\)\n\t\}\n\n\treturn nil|if err := os.WriteF...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:03:18.960978000Z"
+    - command: 'perl -0pi -e "s|if err := os.WriteFile\(progressPath, yamlData, 0o644\); err != nil \{\n\t\treturn fmt.Errorf\(\"failed to write progress file: %w\", err\)\n\t\}\n\n\treturn nil|if err := os.WriteF...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190319.020651000Z.txt
+      command_sha256: f393026e842e8b680d958b8747a509929919b9d941c13bf0a92543f93731038d
+      command_summary: 'perl -0pi -e "s|if err := os.WriteFile\(progressPath, yamlData, 0o644\); err != nil \{\n\t\treturn fmt.Errorf\(\"failed to write progress file: %w\", err\)\n\t\}\n\n\treturn nil|if err := os.WriteF...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:03:19.020651000Z"
+    - command: perl -0pi -e "s|func savePlan\(path string, plan \*PlanData\) error \{\n\tdata, err := small.MarshalYAMLWithQuotedVersion\(plan\)\n\tif err != nil \{\n\t\treturn err\n\t\}\n\n\treturn os.WriteFile\...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190326.575156000Z.txt
+      command_sha256: 559866f6ff1ebe3ec38db7fdc95e5b634f0e9f6175a78f37fbd98a55928f879f
+      command_summary: perl -0pi -e "s|func savePlan\(path string, plan \*PlanData\) error \{\n\tdata, err := small.MarshalYAMLWithQuotedVersion\(plan\)\n\tif err != nil \{\n\t\treturn err\n\t\}\n\n\treturn os.WriteFile\...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:03:26.575156000Z"
+    - command: perl -0pi -e "s|func savePlan\(path string, plan \*PlanData\) error \{\n\tdata, err := small.MarshalYAMLWithQuotedVersion\(plan\)\n\tif err != nil \{\n\t\treturn err\n\t\}\n\n\treturn os.WriteFile\...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190326.621513000Z.txt
+      command_sha256: 559866f6ff1ebe3ec38db7fdc95e5b634f0e9f6175a78f37fbd98a55928f879f
+      command_summary: perl -0pi -e "s|func savePlan\(path string, plan \*PlanData\) error \{\n\tdata, err := small.MarshalYAMLWithQuotedVersion\(plan\)\n\tif err != nil \{\n\t\treturn err\n\t\}\n\n\treturn os.WriteFile\...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:03:26.621513000Z"
+    - command: 'perl -0pi -e "s|if err := os.WriteFile\(outPath, yml, 0644\); err != nil \{\n\t\treturn fmt.Errorf\(\"failed to write %s: %w\", outPath, err\)\n\t\}\n\treturn nil|if err := os.WriteFile(outPath, ym...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190331.692783000Z.txt
+      command_sha256: 11607ebdfd69618a7941f6425d5d588a16550ef88affe57ad9755b63c019392e
+      command_summary: 'perl -0pi -e "s|if err := os.WriteFile\(outPath, yml, 0644\); err != nil \{\n\t\treturn fmt.Errorf\(\"failed to write %s: %w\", outPath, err\)\n\t\}\n\treturn nil|if err := os.WriteFile(outPath, ym...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:03:31.692783000Z"
+    - command: 'perl -0pi -e "s|if err := os.WriteFile\(outPath, yml, 0644\); err != nil \{\n\t\treturn fmt.Errorf\(\"failed to write %s: %w\", outPath, err\)\n\t\}\n\treturn nil|if err := os.WriteFile(outPath, ym...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190331.746394000Z.txt
+      command_sha256: 11607ebdfd69618a7941f6425d5d588a16550ef88affe57ad9755b63c019392e
+      command_summary: 'perl -0pi -e "s|if err := os.WriteFile\(outPath, yml, 0644\); err != nil \{\n\t\treturn fmt.Errorf\(\"failed to write %s: %w\", outPath, err\)\n\t\}\n\treturn nil|if err := os.WriteFile(outPath, ym...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:03:31.746394000Z"
+    - command: cat > internal/commands/handoff_helpers.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "gopkg.in/yaml.v3" ) const ...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190419.385538000Z.txt
+      command_sha256: c1885016fc47ec4c23c7e8cf7efc7c38249ad3e96da9f710594229aeef91e93a
+      command_summary: cat > internal/commands/handoff_helpers.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "gopkg.in/yaml.v3" ) const ...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:04:19.385538000Z"
+    - command: cat > internal/commands/handoff_helpers.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "gopkg.in/yaml.v3" ) const ...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190419.438279000Z.txt
+      command_sha256: c1885016fc47ec4c23c7e8cf7efc7c38249ad3e96da9f710594229aeef91e93a
+      command_summary: cat > internal/commands/handoff_helpers.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "gopkg.in/yaml.v3" ) const ...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:04:19.438279000Z"
+    - command: perl -0pi -e "s|type resumeOut struct \{\n\tCurrentTaskID string `yaml:\"current_task_id\"`\n\tNextSteps \[\]string `yaml:\"next_steps\"`\n\}|type resumeOut struct {\n\tCurrentTaskID *string `yaml:...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190423.676276000Z.txt
+      command_sha256: 058606394fcc1e033d37cd7a308002f038eb67edb96518f0afd4a734bc236798
+      command_summary: perl -0pi -e "s|type resumeOut struct \{\n\tCurrentTaskID string `yaml:\"current_task_id\"`\n\tNextSteps \[\]string `yaml:\"next_steps\"`\n\}|type resumeOut struct {\n\tCurrentTaskID *string `yaml:...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:04:23.676276000Z"
+    - command: perl -0pi -e "s|type resumeOut struct \{\n\tCurrentTaskID string `yaml:\"current_task_id\"`\n\tNextSteps \[\]string `yaml:\"next_steps\"`\n\}|type resumeOut struct {\n\tCurrentTaskID *string `yaml:...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190423.753231000Z.txt
+      command_sha256: 058606394fcc1e033d37cd7a308002f038eb67edb96518f0afd4a734bc236798
+      command_summary: perl -0pi -e "s|type resumeOut struct \{\n\tCurrentTaskID string `yaml:\"current_task_id\"`\n\tNextSteps \[\]string `yaml:\"next_steps\"`\n\}|type resumeOut struct {\n\tCurrentTaskID *string `yaml:...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:04:23.753231000Z"
+    - command: perl -0pi -e 's/type resumeOut struct \{\n\tCurrentTaskID string `yaml:"current_task_id"`\n\tNextSteps \[\]string `yaml:"next_steps"`\n\}/type resumeOut struct {\n\tCurrentTaskID *string `yaml:"cur...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190435.166842000Z.txt
+      command_sha256: d95b3e1cdd9607130d60de387c9711a7d2c9d0a85487e9a9efaada6ec641dc47
+      command_summary: perl -0pi -e 's/type resumeOut struct \{\n\tCurrentTaskID string `yaml:"current_task_id"`\n\tNextSteps \[\]string `yaml:"next_steps"`\n\}/type resumeOut struct {\n\tCurrentTaskID *string `yaml:"cur...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:04:35.166842000Z"
+    - command: perl -0pi -e 's/type resumeOut struct \{\n\tCurrentTaskID string `yaml:"current_task_id"`\n\tNextSteps \[\]string `yaml:"next_steps"`\n\}/type resumeOut struct {\n\tCurrentTaskID *string `yaml:"cur...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190435.223165000Z.txt
+      command_sha256: d95b3e1cdd9607130d60de387c9711a7d2c9d0a85487e9a9efaada6ec641dc47
+      command_summary: perl -0pi -e 's/type resumeOut struct \{\n\tCurrentTaskID string `yaml:"current_task_id"`\n\tNextSteps \[\]string `yaml:"next_steps"`\n\}/type resumeOut struct {\n\tCurrentTaskID *string `yaml:"cur...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:04:35.223165000Z"
+    - command: perl -0pi -e 's/func validateStrictHandoffTasks\(planArtifact, handoffArtifact \*Artifact\) \[\]InvariantViolation \{[\s\S]*?return violations\n\}/func validateStrictHandoffTasks(planArtifact, hand...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190451.399581000Z.txt
+      command_sha256: 51d804c77453c4ff0d945d6d1232b077c6c9f78cdfb5fd50df4c1ecbcce585ec
+      command_summary: perl -0pi -e 's/func validateStrictHandoffTasks\(planArtifact, handoffArtifact \*Artifact\) \[\]InvariantViolation \{[\s\S]*?return violations\n\}/func validateStrictHandoffTasks(planArtifact, hand...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:04:51.399581000Z"
+    - command: perl -0pi -e 's/func validateStrictHandoffTasks\(planArtifact, handoffArtifact \*Artifact\) \[\]InvariantViolation \{[\s\S]*?return violations\n\}/func validateStrictHandoffTasks(planArtifact, hand...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190451.457676000Z.txt
+      command_sha256: 51d804c77453c4ff0d945d6d1232b077c6c9f78cdfb5fd50df4c1ecbcce585ec
+      command_summary: perl -0pi -e 's/func validateStrictHandoffTasks\(planArtifact, handoffArtifact \*Artifact\) \[\]InvariantViolation \{[\s\S]*?return violations\n\}/func validateStrictHandoffTasks(planArtifact, hand...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:04:51.457676000Z"
+    - command: perl -0pi -e 's/func validateHandoff\(path string, root map\[string\]any, owner string\) \[\]InvariantViolation \{[\s\S]*?\n\treturn v\n\}/func validateHandoff(path string, root map[string]any, own...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190504.556024000Z.txt
+      command_sha256: e0c0bde4e57e55a58ea82710c6dcb5bfbf2628054200715f411605c8cb6081a1
+      command_summary: perl -0pi -e 's/func validateHandoff\(path string, root map\[string\]any, owner string\) \[\]InvariantViolation \{[\s\S]*?\n\treturn v\n\}/func validateHandoff(path string, root map[string]any, own...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:04.556024000Z"
+    - command: perl -0pi -e 's/func validateHandoff\(path string, root map\[string\]any, owner string\) \[\]InvariantViolation \{[\s\S]*?\n\treturn v\n\}/func validateHandoff(path string, root map[string]any, own...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190504.611014000Z.txt
+      command_sha256: e0c0bde4e57e55a58ea82710c6dcb5bfbf2628054200715f411605c8cb6081a1
+      command_summary: perl -0pi -e 's/func validateHandoff\(path string, root map\[string\]any, owner string\) \[\]InvariantViolation \{[\s\S]*?\n\treturn v\n\}/func validateHandoff(path string, root map[string]any, own...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:04.611014000Z"
+    - command: 'perl -0pi -e "s/\"required\": \[\"current_task_id\", \"next_steps\"\]/\"required\": [\"next_steps\"]/g; s/\"current_task_id\": \{\n\s*\"type\": \"string\",\n\s*\"description\": \"ID of the current\...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190511.056512000Z.txt
+      command_sha256: b9a23ec340e22b7837e6c150cf1aaa8595313a821eaba316e410718f36bda9a4
+      command_summary: 'perl -0pi -e "s/\"required\": \[\"current_task_id\", \"next_steps\"\]/\"required\": [\"next_steps\"]/g; s/\"current_task_id\": \{\n\s*\"type\": \"string\",\n\s*\"description\": \"ID of the current\...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:11.056512000Z"
+    - command: 'perl -0pi -e "s/\"required\": \[\"current_task_id\", \"next_steps\"\]/\"required\": [\"next_steps\"]/g; s/\"current_task_id\": \{\n\s*\"type\": \"string\",\n\s*\"description\": \"ID of the current\...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190511.116581000Z.txt
+      command_sha256: b9a23ec340e22b7837e6c150cf1aaa8595313a821eaba316e410718f36bda9a4
+      command_summary: 'perl -0pi -e "s/\"required\": \[\"current_task_id\", \"next_steps\"\]/\"required\": [\"next_steps\"]/g; s/\"current_task_id\": \{\n\s*\"type\": \"string\",\n\s*\"description\": \"ID of the current\...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:11.116581000Z"
+    - command: perl -0pi -e 's/func strictReadyForComplete\(artifactsDir string\) \(bool, string, error\) \{[\s\S]*?\n\treturn true, "", nil\n\}/func strictReadyForComplete(artifactsDir string) (bool, string, err...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190534.250734000Z.txt
+      command_sha256: 40f37c34ecefc5ff46fa66ec2bb58c1fc62caf26e5a3fd9ab180c1cd93445db0
+      command_summary: perl -0pi -e 's/func strictReadyForComplete\(artifactsDir string\) \(bool, string, error\) \{[\s\S]*?\n\treturn true, "", nil\n\}/func strictReadyForComplete(artifactsDir string) (bool, string, err...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:34.250734000Z"
+    - command: perl -0pi -e 's/func strictReadyForComplete\(artifactsDir string\) \(bool, string, error\) \{[\s\S]*?\n\treturn true, "", nil\n\}/func strictReadyForComplete(artifactsDir string) (bool, string, err...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190534.304437000Z.txt
+      command_sha256: 40f37c34ecefc5ff46fa66ec2bb58c1fc62caf26e5a3fd9ab180c1cd93445db0
+      command_summary: perl -0pi -e 's/func strictReadyForComplete\(artifactsDir string\) \(bool, string, error\) \{[\s\S]*?\n\treturn true, "", nil\n\}/func strictReadyForComplete(artifactsDir string) (bool, string, err...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:34.304437000Z"
+    - command: perl -0pi -e "s|\t\thandoff, err := buildHandoff\(targetDir, \"Project initialized\", \"\", nil, nil, nil, defaultNextStepsLimit\)\n\t\tif err != nil \{\n\t\t\treturn err\n\t\t\}\n\t\tif err := wri...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190542.326679000Z.txt
+      command_sha256: 905df5382711671f292290e7b3ff352690f257a4e0f1e19b13ef71d812ef19ff
+      command_summary: perl -0pi -e "s|\t\thandoff, err := buildHandoff\(targetDir, \"Project initialized\", \"\", nil, nil, nil, defaultNextStepsLimit\)\n\t\tif err != nil \{\n\t\t\treturn err\n\t\t\}\n\t\tif err := wri...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:42.326679000Z"
+    - command: perl -0pi -e "s|\t\thandoff, err := buildHandoff\(targetDir, \"Project initialized\", \"\", nil, nil, nil, defaultNextStepsLimit\)\n\t\tif err != nil \{\n\t\t\treturn err\n\t\t\}\n\t\tif err := wri...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190542.384231000Z.txt
+      command_sha256: 905df5382711671f292290e7b3ff352690f257a4e0f1e19b13ef71d812ef19ff
+      command_summary: perl -0pi -e "s|\t\thandoff, err := buildHandoff\(targetDir, \"Project initialized\", \"\", nil, nil, nil, defaultNextStepsLimit\)\n\t\tif err != nil \{\n\t\t\treturn err\n\t\t\}\n\t\tif err := wri...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:42.384231000Z"
+    - command: cat >> internal/commands/init.go <<"EOF" const initCacheIgnoreLine = ".small-cache/" func ensureInitGitignore(targetDir string) error { path := filepath.Join(targetDir, ".gitignore") data, err := o...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190549.292558000Z.txt
+      command_sha256: ae449bac34e8b9772b4fb30bf89d436264705de15c2ade44df096fd123cb4396
+      command_summary: cat >> internal/commands/init.go <<"EOF" const initCacheIgnoreLine = ".small-cache/" func ensureInitGitignore(targetDir string) error { path := filepath.Join(targetDir, ".gitignore") data, err := o...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:49.292558000Z"
+    - command: cat >> internal/commands/init.go <<"EOF" const initCacheIgnoreLine = ".small-cache/" func ensureInitGitignore(targetDir string) error { path := filepath.Join(targetDir, ".gitignore") data, err := o...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190549.345731000Z.txt
+      command_sha256: ae449bac34e8b9772b4fb30bf89d436264705de15c2ade44df096fd123cb4396
+      command_summary: cat >> internal/commands/init.go <<"EOF" const initCacheIgnoreLine = ".small-cache/" func ensureInitGitignore(targetDir string) error { path := filepath.Join(targetDir, ".gitignore") data, err := o...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:49.345731000Z"
+    - command: 'perl -0pi -e "s|- S3: Handoff current_task_id must exist in plan\n|- S3: Handoff current_task_id must exist in plan\n- S4: No unknown files or subdirectories under .small/\n|g" internal/commands/te...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190553.079606000Z.txt
+      command_sha256: 94eca9544f60a6d7b928d40d2e78e16891992394fc536509b75e33bd4778e051
+      command_summary: 'perl -0pi -e "s|- S3: Handoff current_task_id must exist in plan\n|- S3: Handoff current_task_id must exist in plan\n- S4: No unknown files or subdirectories under .small/\n|g" internal/commands/te...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:53.079606000Z"
+    - command: 'perl -0pi -e "s|- S3: Handoff current_task_id must exist in plan\n|- S3: Handoff current_task_id must exist in plan\n- S4: No unknown files or subdirectories under .small/\n|g" internal/commands/te...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190553.138846000Z.txt
+      command_sha256: 94eca9544f60a6d7b928d40d2e78e16891992394fc536509b75e33bd4778e051
+      command_summary: 'perl -0pi -e "s|- S3: Handoff current_task_id must exist in plan\n|- S3: Handoff current_task_id must exist in plan\n- S4: No unknown files or subdirectories under .small/\n|g" internal/commands/te...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:05:53.138846000Z"
+    - command: perl -0pi -e 's/func TestComputeHandoffResumeDeterministic\(t \*testing.T\) \{[\s\S]*\z/func TestBuildHandoffCompleteState(t *testing.T) {\n\ttmpDir := t.TempDir()\n\tsmallDir := filepath.Join(tmpD...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190639.895618000Z.txt
+      command_sha256: be051c171c2e1a43cfaa9a69965650cbbf40e5279844780535e2f46a68e63248
+      command_summary: perl -0pi -e 's/func TestComputeHandoffResumeDeterministic\(t \*testing.T\) \{[\s\S]*\z/func TestBuildHandoffCompleteState(t *testing.T) {\n\ttmpDir := t.TempDir()\n\tsmallDir := filepath.Join(tmpD...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:06:39.895618000Z"
+    - command: perl -0pi -e 's/func TestComputeHandoffResumeDeterministic\(t \*testing.T\) \{[\s\S]*\z/func TestBuildHandoffCompleteState(t *testing.T) {\n\ttmpDir := t.TempDir()\n\tsmallDir := filepath.Join(tmpD...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190639.948116000Z.txt
+      command_sha256: be051c171c2e1a43cfaa9a69965650cbbf40e5279844780535e2f46a68e63248
+      command_summary: perl -0pi -e 's/func TestComputeHandoffResumeDeterministic\(t \*testing.T\) \{[\s\S]*\z/func TestBuildHandoffCompleteState(t *testing.T) {\n\ttmpDir := t.TempDir()\n\tsmallDir := filepath.Join(tmpD...
+      evidence: Command failed with exit code 255
+      notes: 'apply: failed with exit code 255'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: blocked
+      task_id: task-20
+      timestamp: "2026-02-09T19:06:39.948116000Z"
+    - command: head -n 405 internal/commands/handoff_test.go > /tmp/handoff_test.go && cat >> /tmp/handoff_test.go <<"EOF" func TestBuildHandoffCompleteState(t *testing.T) { tmpDir := t.TempDir() smallDir := file...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190715.625997000Z.txt
+      command_sha256: 547b9bda5006424db5ec7d85850e7a65b405acee44eaecd521972e577ec2995a
+      command_summary: head -n 405 internal/commands/handoff_test.go > /tmp/handoff_test.go && cat >> /tmp/handoff_test.go <<"EOF" func TestBuildHandoffCompleteState(t *testing.T) { tmpDir := t.TempDir() smallDir := file...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:15.625997000Z"
+    - command: head -n 405 internal/commands/handoff_test.go > /tmp/handoff_test.go && cat >> /tmp/handoff_test.go <<"EOF" func TestBuildHandoffCompleteState(t *testing.T) { tmpDir := t.TempDir() smallDir := file...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190715.689625000Z.txt
+      command_sha256: 547b9bda5006424db5ec7d85850e7a65b405acee44eaecd521972e577ec2995a
+      command_summary: head -n 405 internal/commands/handoff_test.go > /tmp/handoff_test.go && cat >> /tmp/handoff_test.go <<"EOF" func TestBuildHandoffCompleteState(t *testing.T) { tmpDir := t.TempDir() smallDir := file...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:15.689625000Z"
+    - command: for f in internal/commands/run_test.go internal/commands/reset_test.go internal/commands/doctor_test.go internal/commands/check_test.go internal/commands/archive_test.go internal/commands/verify_te...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190724.889944000Z.txt
+      command_sha256: ed2e62928ac3248f72aef19fc59034a8e37b23334ec58cfd2baa92c65ee2b562
+      command_summary: for f in internal/commands/run_test.go internal/commands/reset_test.go internal/commands/doctor_test.go internal/commands/check_test.go internal/commands/archive_test.go internal/commands/verify_te...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:24.889944000Z"
+    - command: for f in internal/commands/run_test.go internal/commands/reset_test.go internal/commands/doctor_test.go internal/commands/check_test.go internal/commands/archive_test.go internal/commands/verify_te...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190724.976852000Z.txt
+      command_sha256: ed2e62928ac3248f72aef19fc59034a8e37b23334ec58cfd2baa92c65ee2b562
+      command_summary: for f in internal/commands/run_test.go internal/commands/reset_test.go internal/commands/doctor_test.go internal/commands/check_test.go internal/commands/archive_test.go internal/commands/verify_te...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:24.976852000Z"
+    - command: 'perl -0pi -e "s/\"current_task_id\": \"\"/\"current_task_id\": nil/g" internal/small/invariants_test.go'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190739.189156000Z.txt
+      command_sha256: 2bcbf3468b8a187ae20427fd7fbcf6265a2d25afcd4e614fe25c26535bdd9beb
+      command_summary: 'perl -0pi -e "s/\"current_task_id\": \"\"/\"current_task_id\": nil/g" internal/small/invariants_test.go'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:39.189156000Z"
+    - command: 'perl -0pi -e "s/\"current_task_id\": \"\"/\"current_task_id\": nil/g" internal/small/invariants_test.go'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190739.245977000Z.txt
+      command_sha256: 2bcbf3468b8a187ae20427fd7fbcf6265a2d25afcd4e614fe25c26535bdd9beb
+      command_summary: 'perl -0pi -e "s/\"current_task_id\": \"\"/\"current_task_id\": nil/g" internal/small/invariants_test.go'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:39.245977000Z"
+    - command: cat >> internal/commands/verify_test.go <<"EOF" func TestVerifyRejectsEmptyHandoffCurrentTaskID(t *testing.T) { tmpDir := t.TempDir() artifacts := cloneArtifacts(defaultArtifacts()) artifacts["hand...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190746.903181000Z.txt
+      command_sha256: 28efa164fb7d141a327e14431d6debc341a7592a5a870b1914060d9b7a3c7b00
+      command_summary: cat >> internal/commands/verify_test.go <<"EOF" func TestVerifyRejectsEmptyHandoffCurrentTaskID(t *testing.T) { tmpDir := t.TempDir() artifacts := cloneArtifacts(defaultArtifacts()) artifacts["hand...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:46.903181000Z"
+    - command: cat >> internal/commands/verify_test.go <<"EOF" func TestVerifyRejectsEmptyHandoffCurrentTaskID(t *testing.T) { tmpDir := t.TempDir() artifacts := cloneArtifacts(defaultArtifacts()) artifacts["hand...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190746.988753000Z.txt
+      command_sha256: 28efa164fb7d141a327e14431d6debc341a7592a5a870b1914060d9b7a3c7b00
+      command_summary: cat >> internal/commands/verify_test.go <<"EOF" func TestVerifyRejectsEmptyHandoffCurrentTaskID(t *testing.T) { tmpDir := t.TempDir() artifacts := cloneArtifacts(defaultArtifacts()) artifacts["hand...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:46.988753000Z"
+    - command: cat >> internal/commands/check_test.go <<"EOF" func TestCheckStrictFailsOnUnknownSmallPaths(t *testing.T) { tmpDir := t.TempDir() writeArtifacts(t, tmpDir, defaultArtifacts()) mustSaveWorkspace(t, ...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190755.819477000Z.txt
+      command_sha256: 1bbdb963e2c9aae5a1c49abb4b5a23b9645398d70a5d10b4f3de3d1a7c28e03b
+      command_summary: cat >> internal/commands/check_test.go <<"EOF" func TestCheckStrictFailsOnUnknownSmallPaths(t *testing.T) { tmpDir := t.TempDir() writeArtifacts(t, tmpDir, defaultArtifacts()) mustSaveWorkspace(t, ...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:55.819477000Z"
+    - command: cat >> internal/commands/check_test.go <<"EOF" func TestCheckStrictFailsOnUnknownSmallPaths(t *testing.T) { tmpDir := t.TempDir() writeArtifacts(t, tmpDir, defaultArtifacts()) mustSaveWorkspace(t, ...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190755.874463000Z.txt
+      command_sha256: 1bbdb963e2c9aae5a1c49abb4b5a23b9645398d70a5d10b4f3de3d1a7c28e03b
+      command_summary: cat >> internal/commands/check_test.go <<"EOF" func TestCheckStrictFailsOnUnknownSmallPaths(t *testing.T) { tmpDir := t.TempDir() writeArtifacts(t, tmpDir, defaultArtifacts()) mustSaveWorkspace(t, ...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:07:55.874463000Z"
+    - command: cat >> internal/commands/init_test.go <<"EOF" func TestEnsureInitGitignoreIdempotent(t *testing.T) { tmpDir := t.TempDir() gitignorePath := filepath.Join(tmpDir, ".gitignore") if err := os.WriteFil...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190803.415486000Z.txt
+      command_sha256: c29d46b998496f5aa8a7adf37019def93c1b57661c4cd2017f5b52288012364d
+      command_summary: cat >> internal/commands/init_test.go <<"EOF" func TestEnsureInitGitignoreIdempotent(t *testing.T) { tmpDir := t.TempDir() gitignorePath := filepath.Join(tmpDir, ".gitignore") if err := os.WriteFil...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:03.415486000Z"
+    - command: cat >> internal/commands/init_test.go <<"EOF" func TestEnsureInitGitignoreIdempotent(t *testing.T) { tmpDir := t.TempDir() gitignorePath := filepath.Join(tmpDir, ".gitignore") if err := os.WriteFil...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190803.472050000Z.txt
+      command_sha256: c29d46b998496f5aa8a7adf37019def93c1b57661c4cd2017f5b52288012364d
+      command_summary: cat >> internal/commands/init_test.go <<"EOF" func TestEnsureInitGitignoreIdempotent(t *testing.T) { tmpDir := t.TempDir() gitignorePath := filepath.Join(tmpDir, ".gitignore") if err := os.WriteFil...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:03.472050000Z"
+    - command: perl -0pi -e "s/import \(\n\t\"os\"\n\t\"path\/filepath\"\n\t\"testing\"/import (\n\t\"os\"\n\t\"path\/filepath\"\n\t\"strings\"\n\t\"testing\"/" internal/commands/init_test.go
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190808.337455000Z.txt
+      command_sha256: a538e0a01446f551d8630d11e2f99e62a59c49b360c56e1f4a9a498f15a04487
+      command_summary: perl -0pi -e "s/import \(\n\t\"os\"\n\t\"path\/filepath\"\n\t\"testing\"/import (\n\t\"os\"\n\t\"path\/filepath\"\n\t\"strings\"\n\t\"testing\"/" internal/commands/init_test.go
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:08.337455000Z"
+    - command: perl -0pi -e "s/import \(\n\t\"os\"\n\t\"path\/filepath\"\n\t\"testing\"/import (\n\t\"os\"\n\t\"path\/filepath\"\n\t\"strings\"\n\t\"testing\"/" internal/commands/init_test.go
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190808.397618000Z.txt
+      command_sha256: a538e0a01446f551d8630d11e2f99e62a59c49b360c56e1f4a9a498f15a04487
+      command_summary: perl -0pi -e "s/import \(\n\t\"os\"\n\t\"path\/filepath\"\n\t\"testing\"/import (\n\t\"os\"\n\t\"path\/filepath\"\n\t\"strings\"\n\t\"testing\"/" internal/commands/init_test.go
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:08.397618000Z"
+    - command: cat >> internal/commands/progress_test.go <<"EOF" func TestAppendProgressUpdatesWorkspaceTimestamp(t *testing.T) { tmpDir := t.TempDir() smallDir := filepath.Join(tmpDir, ".small") if err := os.Mkd...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190818.781607000Z.txt
+      command_sha256: 8726f6f5eda6352d61b050182848e81007f0d70ee114fb97d60cb0e15e99d0aa
+      command_summary: cat >> internal/commands/progress_test.go <<"EOF" func TestAppendProgressUpdatesWorkspaceTimestamp(t *testing.T) { tmpDir := t.TempDir() smallDir := filepath.Join(tmpDir, ".small") if err := os.Mkd...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:18.781607000Z"
+    - command: cat >> internal/commands/progress_test.go <<"EOF" func TestAppendProgressUpdatesWorkspaceTimestamp(t *testing.T) { tmpDir := t.TempDir() smallDir := filepath.Join(tmpDir, ".small") if err := os.Mkd...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190818.841102000Z.txt
+      command_sha256: 8726f6f5eda6352d61b050182848e81007f0d70ee114fb97d60cb0e15e99d0aa
+      command_summary: cat >> internal/commands/progress_test.go <<"EOF" func TestAppendProgressUpdatesWorkspaceTimestamp(t *testing.T) { tmpDir := t.TempDir() smallDir := filepath.Join(tmpDir, ".small") if err := os.Mkd...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:18.841102000Z"
+    - command: perl -0pi -e "s|\t// Evidence missing\n\tif strings.Contains\(msg, \"must have at least one evidence field\"\) \{\n\t\treturn \"Add evidence, verification, command, test, link, or commit field to t...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190827.184756000Z.txt
+      command_sha256: 0a684392af19929c04af312302d72d4a3b8d4f5636fafa3a165124e7aecbaf38
+      command_summary: perl -0pi -e "s|\t// Evidence missing\n\tif strings.Contains\(msg, \"must have at least one evidence field\"\) \{\n\t\treturn \"Add evidence, verification, command, test, link, or commit field to t...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:27.184756000Z"
+    - command: perl -0pi -e "s|\t// Evidence missing\n\tif strings.Contains\(msg, \"must have at least one evidence field\"\) \{\n\t\treturn \"Add evidence, verification, command, test, link, or commit field to t...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190827.240384000Z.txt
+      command_sha256: 0a684392af19929c04af312302d72d4a3b8d4f5636fafa3a165124e7aecbaf38
+      command_summary: perl -0pi -e "s|\t// Evidence missing\n\tif strings.Contains\(msg, \"must have at least one evidence field\"\) \{\n\t\treturn \"Add evidence, verification, command, test, link, or commit field to t...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:27.240384000Z"
+    - command: perl -0pi -e "s/# Root workspace canonical artifacts are committed, so do NOT ignore \/\.small\/ entirely\.\n\.small\/logs\//# Root workspace canonical artifacts are committed, so do NOT ignore \/....
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190832.486347000Z.txt
+      command_sha256: 11010e88612f48ae1f9d545f32084b92b40e01710459e3f8992e2b1daaf887ea
+      command_summary: perl -0pi -e "s/# Root workspace canonical artifacts are committed, so do NOT ignore \/\.small\/ entirely\.\n\.small\/logs\//# Root workspace canonical artifacts are committed, so do NOT ignore \/....
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:32.486347000Z"
+    - command: perl -0pi -e "s/# Root workspace canonical artifacts are committed, so do NOT ignore \/\.small\/ entirely\.\n\.small\/logs\//# Root workspace canonical artifacts are committed, so do NOT ignore \/....
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190832.548163000Z.txt
+      command_sha256: 11010e88612f48ae1f9d545f32084b92b40e01710459e3f8992e2b1daaf887ea
+      command_summary: perl -0pi -e "s/# Root workspace canonical artifacts are committed, so do NOT ignore \/\.small\/ entirely\.\n\.small\/logs\//# Root workspace canonical artifacts are committed, so do NOT ignore \/....
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:32.548163000Z"
+    - command: perl -0pi -e "s/examples\/\*\*\/\.small\/logs\//examples\/\*\*\/\.small-cache\//g" .gitignore
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190837.525760000Z.txt
+      command_sha256: df644f61fa0c688dee3599a6892a0a909bf35d3500e83ab7aeedb88bc034aa18
+      command_summary: perl -0pi -e "s/examples\/\*\*\/\.small\/logs\//examples\/\*\*\/\.small-cache\//g" .gitignore
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:37.525760000Z"
+    - command: perl -0pi -e "s/examples\/\*\*\/\.small\/logs\//examples\/\*\*\/\.small-cache\//g" .gitignore
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190837.583444000Z.txt
+      command_sha256: df644f61fa0c688dee3599a6892a0a909bf35d3500e83ab7aeedb88bc034aa18
+      command_summary: perl -0pi -e "s/examples\/\*\*\/\.small\/logs\//examples\/\*\*\/\.small-cache\//g" .gitignore
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:37.583444000Z"
+    - command: cat >> internal/workspace/workspace_test.go <<"EOF" func TestTouchUpdatedAt(t *testing.T) { tmpDir := t.TempDir() if err := Save(tmpDir, KindRepoRoot); err != nil { t.Fatalf("failed to save workspa...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190857.933964000Z.txt
+      command_sha256: 91d7d03c2893df70da4eadbf7d9a6a3e0748ce4e8034c61f447bbcdf425ef5ba
+      command_summary: cat >> internal/workspace/workspace_test.go <<"EOF" func TestTouchUpdatedAt(t *testing.T) { tmpDir := t.TempDir() if err := Save(tmpDir, KindRepoRoot); err != nil { t.Fatalf("failed to save workspa...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:57.933964000Z"
+    - command: cat >> internal/workspace/workspace_test.go <<"EOF" func TestTouchUpdatedAt(t *testing.T) { tmpDir := t.TempDir() if err := Save(tmpDir, KindRepoRoot); err != nil { t.Fatalf("failed to save workspa...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190857.986030000Z.txt
+      command_sha256: 91d7d03c2893df70da4eadbf7d9a6a3e0748ce4e8034c61f447bbcdf425ef5ba
+      command_summary: cat >> internal/workspace/workspace_test.go <<"EOF" func TestTouchUpdatedAt(t *testing.T) { tmpDir := t.TempDir() if err := Save(tmpDir, KindRepoRoot); err != nil { t.Fatalf("failed to save workspa...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:08:57.986030000Z"
+    - command: gofmt -w internal/small/paths.go internal/small/strict_layout.go internal/small/strict_layout_test.go internal/small/command_logs.go internal/small/command_logs_test.go internal/small/invariants.go...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190904.458648000Z.txt
+      command_sha256: cbe303b4f094047e4b5e8d3b9076945c62846b2f08131b2c58b3b2684b90ab51
+      command_summary: gofmt -w internal/small/paths.go internal/small/strict_layout.go internal/small/strict_layout_test.go internal/small/command_logs.go internal/small/command_logs_test.go internal/small/invariants.go...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:09:04.458648000Z"
+    - command: gofmt -w internal/small/paths.go internal/small/strict_layout.go internal/small/strict_layout_test.go internal/small/command_logs.go internal/small/command_logs_test.go internal/small/invariants.go...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190904.584283000Z.txt
+      command_sha256: cbe303b4f094047e4b5e8d3b9076945c62846b2f08131b2c58b3b2684b90ab51
+      command_summary: gofmt -w internal/small/paths.go internal/small/strict_layout.go internal/small/strict_layout_test.go internal/small/command_logs.go internal/small/command_logs_test.go internal/small/invariants.go...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:09:04.584283000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190908.031889000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:09:08.031889000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190911.771924000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: blocked
+      task_id: task-20
+      timestamp: "2026-02-09T19:09:11.771924000Z"
+    - command: 'perl -0pi -e "s/if _, err := os.Stat\(path\); err != nil \{\n\t\tif os.IsNotExist\(err\) \{\n\t\t\treturn false, fmt.Errorf\(\"workspace metadata missing: %s\", path\)\n\t\t\}\n\t\treturn false, fm...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190930.197657000Z.txt
+      command_sha256: 220bfe506d9cc78c5df1a6d37996ff68854d60325cb3aaee879e3d6e0517adc2
+      command_summary: 'perl -0pi -e "s/if _, err := os.Stat\(path\); err != nil \{\n\t\tif os.IsNotExist\(err\) \{\n\t\t\treturn false, fmt.Errorf\(\"workspace metadata missing: %s\", path\)\n\t\t\}\n\t\treturn false, fm...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:09:30.197657000Z"
+    - command: 'perl -0pi -e "s/if _, err := os.Stat\(path\); err != nil \{\n\t\tif os.IsNotExist\(err\) \{\n\t\t\treturn false, fmt.Errorf\(\"workspace metadata missing: %s\", path\)\n\t\t\}\n\t\treturn false, fm...'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190930.267953000Z.txt
+      command_sha256: 220bfe506d9cc78c5df1a6d37996ff68854d60325cb3aaee879e3d6e0517adc2
+      command_summary: 'perl -0pi -e "s/if _, err := os.Stat\(path\); err != nil \{\n\t\tif os.IsNotExist\(err\) \{\n\t\t\treturn false, fmt.Errorf\(\"workspace metadata missing: %s\", path\)\n\t\t\}\n\t\treturn false, fm...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:09:30.267953000Z"
+    - command: perl -0pi -e "s|\thandoff, err := buildHandoff\(targetDir, \"Project initialized\", \"\", nil, nil, nil, defaultNextStepsLimit\)\n\tif err != nil \{\n\t\treturn err\n\t\}\n\tif err := writeHandoff\...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190937.644457000Z.txt
+      command_sha256: dad646d98381bd02a98105439e60cadf8299bfc30e1495480ce44fe200ea2c65
+      command_summary: perl -0pi -e "s|\thandoff, err := buildHandoff\(targetDir, \"Project initialized\", \"\", nil, nil, nil, defaultNextStepsLimit\)\n\tif err != nil \{\n\t\treturn err\n\t\}\n\tif err := writeHandoff\...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:09:37.644457000Z"
+    - command: perl -0pi -e "s|\thandoff, err := buildHandoff\(targetDir, \"Project initialized\", \"\", nil, nil, nil, defaultNextStepsLimit\)\n\tif err != nil \{\n\t\treturn err\n\t\}\n\tif err := writeHandoff\...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T190937.699886000Z.txt
+      command_sha256: dad646d98381bd02a98105439e60cadf8299bfc30e1495480ce44fe200ea2c65
+      command_summary: perl -0pi -e "s|\thandoff, err := buildHandoff\(targetDir, \"Project initialized\", \"\", nil, nil, nil, defaultNextStepsLimit\)\n\tif err != nil \{\n\t\treturn err\n\t\}\n\tif err := writeHandoff\...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:09:37.699886000Z"
+    - command: cat > internal/commands/init.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191022.048387000Z.txt
+      command_sha256: 5e8ba62f767cbce6a1d85fb3844b9b172c9f127cf6d1b99c38a0fcd28871ce92
+      command_summary: cat > internal/commands/init.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:22.048387000Z"
+    - command: cat > internal/commands/init.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191022.098707000Z.txt
+      command_sha256: 5e8ba62f767cbce6a1d85fb3844b9b172c9f127cf6d1b99c38a0fcd28871ce92
+      command_summary: cat > internal/commands/init.go <<"EOF" package commands import ( "fmt" "os" "path/filepath" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:22.098707000Z"
+    - command: gofmt -w internal/workspace/workspace.go internal/commands/init.go internal/commands/handoff_helpers.go internal/commands/verify.go internal/commands/accept.go internal/commands/progress.go interna...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191028.925042000Z.txt
+      command_sha256: 694cb523be7e4243a47db97e945a2142afb77a9295b791fb297e504539c75588
+      command_summary: gofmt -w internal/workspace/workspace.go internal/commands/init.go internal/commands/handoff_helpers.go internal/commands/verify.go internal/commands/accept.go internal/commands/progress.go interna...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:28.925042000Z"
+    - command: gofmt -w internal/workspace/workspace.go internal/commands/init.go internal/commands/handoff_helpers.go internal/commands/verify.go internal/commands/accept.go internal/commands/progress.go interna...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191028.991948000Z.txt
+      command_sha256: 694cb523be7e4243a47db97e945a2142afb77a9295b791fb297e504539c75588
+      command_summary: gofmt -w internal/workspace/workspace.go internal/commands/init.go internal/commands/handoff_helpers.go internal/commands/verify.go internal/commands/accept.go internal/commands/progress.go interna...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:28.991948000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191033.248586000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:33.248586000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191035.820137000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: blocked
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:35.820137000Z"
+    - command: 'perl -0pi -e "s/Selftest checkpoint/Run in progress. Next task: task-1./g" internal/commands/run_test.go'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191046.052070000Z.txt
+      command_sha256: 5070780dfd8f4d6e78fca0f51aa03104b17740b37ffebc2ec9fccba8fef4ab36
+      command_summary: 'perl -0pi -e "s/Selftest checkpoint/Run in progress. Next task: task-1./g" internal/commands/run_test.go'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:46.052070000Z"
+    - command: 'perl -0pi -e "s/Selftest checkpoint/Run in progress. Next task: task-1./g" internal/commands/run_test.go'
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191046.114629000Z.txt
+      command_sha256: 5070780dfd8f4d6e78fca0f51aa03104b17740b37ffebc2ec9fccba8fef4ab36
+      command_summary: 'perl -0pi -e "s/Selftest checkpoint/Run in progress. Next task: task-1./g" internal/commands/run_test.go'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:46.114629000Z"
+    - command: gofmt -w internal/commands/run_test.go
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191051.679599000Z.txt
+      command_sha256: 8276fc13b496d1cb6a64a93296b2305fbf0a38794a4ab8f5cd41f2a534add5df
+      command_summary: gofmt -w internal/commands/run_test.go
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:51.679599000Z"
+    - command: gofmt -w internal/commands/run_test.go
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191051.738906000Z.txt
+      command_sha256: 8276fc13b496d1cb6a64a93296b2305fbf0a38794a4ab8f5cd41f2a534add5df
+      command_summary: gofmt -w internal/commands/run_test.go
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:51.738906000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191055.203445000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:55.203445000Z"
+    - command: go test ./...
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191057.238586000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:10:57.238586000Z"
+    - evidence: Implemented strict .small root fencing, migrated scratch to .small-cache, canonicalized handoff state generation, hardened handoff current_task_id validation/schema, wired workspace updated_at touches, and added init/gitignore and test coverage; go test ./... passes.
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:11:14.736341000Z"
+    - command: rm -rf .small/logs
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191128.831138000Z.txt
+      command_sha256: aa13c5d6660ecf1f5e3d394e3be62f46c21599c42208335c52741b568cca8308
+      command_summary: rm -rf .small/logs
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T19:11:28.831138000Z"
+    - command: rm -rf .small/logs
+      command_ref: .small/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T191128.945097000Z.txt
+      command_sha256: aa13c5d6660ecf1f5e3d394e3be62f46c21599c42208335c52741b568cca8308
+      command_summary: rm -rf .small/logs
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:11:28.945097000Z"
+    - evidence: Finalized hard .small fence + cache relocation + canonical handoff/status/state schema + workspace/init hygiene; updated tests; go test ./... passes.
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T19:11:49.338208000Z"
+    - command: 'small handoff --summary ''Run in progress. Next task: task-17.'' && mkdir -p .small-runs/migrated && if [ -d .small/archive ]; then mv .small/archive .small-runs/migrated/archive; fi && if [ -d .smal...'
+      command_ref: .small-cache/logs/dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1/commands/20260209T204638.503628000Z.txt
+      command_sha256: 56d37184adbbb6d57ea7ea487a7bac2ac24a2e245d8d47453d6fd9bb1288a551
+      command_summary: 'small handoff --summary ''Run in progress. Next task: task-17.'' && mkdir -p .small-runs/migrated && if [ -d .small/archive ]; then mv .small/archive .small-runs/migrated/archive; fi && if [ -d .smal...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T20:46:38.503628000Z"
+    - command: 'small handoff --summary ''Run in progress. Next task: task-17.'' && mkdir -p .small-runs/migrated && if [ -d .small/archive ]; then mv .small/archive .small-runs/migrated/archive; fi && if [ -d .smal...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204638.667485000Z.txt
+      command_sha256: 56d37184adbbb6d57ea7ea487a7bac2ac24a2e245d8d47453d6fd9bb1288a551
+      command_summary: 'small handoff --summary ''Run in progress. Next task: task-17.'' && mkdir -p .small-runs/migrated && if [ -d .small/archive ]; then mv .small/archive .small-runs/migrated/archive; fi && if [ -d .smal...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T20:46:38.667485000Z"
+    - command: small plan --add 'Canonicalize handoff lifecycle semantics across init/in_progress/blocked/completed with conditional S3 validation and tests'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204702.020112000Z.txt
+      command_sha256: 64b2eaa1b7e437e7b57d507c6c4717dcd7e9128de0366ae395e0ded8f1cd12cf
+      command_summary: small plan --add 'Canonicalize handoff lifecycle semantics across init/in_progress/blocked/completed with conditional S3 validation and tests'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-20
+      timestamp: "2026-02-09T20:47:02.020112000Z"
+    - evidence: Added task task-21 via small plan --add
+      notes: Canonicalize handoff lifecycle semantics across init/in_progress/blocked/completed with conditional S3 validation and tests
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: pending
+      task_id: task-21
+      timestamp: "2026-02-09T20:47:02.085175000Z"
+    - command: small plan --add 'Canonicalize handoff lifecycle semantics across init/in_progress/blocked/completed with conditional S3 validation and tests'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204702.122864000Z.txt
+      command_sha256: 64b2eaa1b7e437e7b57d507c6c4717dcd7e9128de0366ae395e0ded8f1cd12cf
+      command_summary: small plan --add 'Canonicalize handoff lifecycle semantics across init/in_progress/blocked/completed with conditional S3 validation and tests'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-20
+      timestamp: "2026-02-09T20:47:02.122864000Z"
+    - command: small progress add --task task-21 --status in_progress --notes 'Implement canonical handoff lifecycle shaping and strict S3 conditional behavior'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204705.515757000Z.txt
+      command_sha256: 981f1e702b3d134441d63441c3ec95124c35cc38a68a050630c94cac64b77362
+      command_summary: small progress add --task task-21 --status in_progress --notes 'Implement canonical handoff lifecycle shaping and strict S3 conditional behavior'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:47:05.515757000Z"
+    - evidence: Recorded progress via small progress add
+      notes: Implement canonical handoff lifecycle shaping and strict S3 conditional behavior
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:47:05.593297000Z"
+    - command: small progress add --task task-21 --status in_progress --notes 'Implement canonical handoff lifecycle shaping and strict S3 conditional behavior'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204705.705008000Z.txt
+      command_sha256: 981f1e702b3d134441d63441c3ec95124c35cc38a68a050630c94cac64b77362
+      command_summary: small progress add --task task-21 --status in_progress --notes 'Implement canonical handoff lifecycle shaping and strict S3 conditional behavior'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:47:05.705008000Z"
+    - command: apply_patch < /tmp/patch_task21_1.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204933.954148000Z.txt
+      command_sha256: 129140f16e11c4c331157ccf1a8f3c421c0dcf37a4e0d3bb2e005a0ae25f4fc3
+      command_summary: apply_patch < /tmp/patch_task21_1.diff
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:49:33.954148000Z"
+    - command: apply_patch < /tmp/patch_task21_1.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204934.023175000Z.txt
+      command_sha256: 129140f16e11c4c331157ccf1a8f3c421c0dcf37a4e0d3bb2e005a0ae25f4fc3
+      command_summary: apply_patch < /tmp/patch_task21_1.diff
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:49:34.023175000Z"
+    - command: apply_patch < /tmp/patch_task21_2.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204940.341174000Z.txt
+      command_sha256: 20707281b4f30bec90524035ae4522ed9f6238e5858ad89a22c33018160942ac
+      command_summary: apply_patch < /tmp/patch_task21_2.diff
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:49:40.341174000Z"
+    - command: apply_patch < /tmp/patch_task21_2.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204940.401388000Z.txt
+      command_sha256: 20707281b4f30bec90524035ae4522ed9f6238e5858ad89a22c33018160942ac
+      command_summary: apply_patch < /tmp/patch_task21_2.diff
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:49:40.401388000Z"
+    - command: apply_patch < /tmp/patch_task21_3.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204951.032705000Z.txt
+      command_sha256: fecc812e234fd7366acf6b5453b9e41dc99d8614a93ec916664d8a7e2437d078
+      command_summary: apply_patch < /tmp/patch_task21_3.diff
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:49:51.032705000Z"
+    - command: apply_patch < /tmp/patch_task21_3.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204951.104052000Z.txt
+      command_sha256: fecc812e234fd7366acf6b5453b9e41dc99d8614a93ec916664d8a7e2437d078
+      command_summary: apply_patch < /tmp/patch_task21_3.diff
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:49:51.104052000Z"
+    - command: apply_patch < /tmp/patch_task21_4.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204957.417068000Z.txt
+      command_sha256: 8cb82402e76a51575886f8134a83d4cb5a9d7f02b56a1d414f96d0ff827f0294
+      command_summary: apply_patch < /tmp/patch_task21_4.diff
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:49:57.417068000Z"
+    - command: apply_patch < /tmp/patch_task21_4.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T204957.498702000Z.txt
+      command_sha256: 8cb82402e76a51575886f8134a83d4cb5a9d7f02b56a1d414f96d0ff827f0294
+      command_summary: apply_patch < /tmp/patch_task21_4.diff
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:49:57.498702000Z"
+    - command: apply_patch < /tmp/patch_task21_5.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205002.847617000Z.txt
+      command_sha256: 2cd41e4e759c092baf9a83eda085fe955ee7c7b15cc15b9f5749e2248650f4d9
+      command_summary: apply_patch < /tmp/patch_task21_5.diff
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:50:02.847617000Z"
+    - command: apply_patch < /tmp/patch_task21_5.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205002.908017000Z.txt
+      command_sha256: 2cd41e4e759c092baf9a83eda085fe955ee7c7b15cc15b9f5749e2248650f4d9
+      command_summary: apply_patch < /tmp/patch_task21_5.diff
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:50:02.908017000Z"
+    - command: apply_patch < /tmp/patch_task21_6.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205027.725423000Z.txt
+      command_sha256: d74a47d21566be02490637f6b33780d5f2728d18ff6e3a1452577e781f9986c6
+      command_summary: apply_patch < /tmp/patch_task21_6.diff
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:50:27.725423000Z"
+    - command: apply_patch < /tmp/patch_task21_6.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205027.799378000Z.txt
+      command_sha256: d74a47d21566be02490637f6b33780d5f2728d18ff6e3a1452577e781f9986c6
+      command_summary: apply_patch < /tmp/patch_task21_6.diff
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:50:27.799378000Z"
+    - command: apply_patch < /tmp/patch_task21_7.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205037.500214000Z.txt
+      command_sha256: 9964854730c295ebf58f716e36c904e5a9ce271295acb9b2259a728e005f3417
+      command_summary: apply_patch < /tmp/patch_task21_7.diff
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:50:37.500214000Z"
+    - command: apply_patch < /tmp/patch_task21_7.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205037.558376000Z.txt
+      command_sha256: 9964854730c295ebf58f716e36c904e5a9ce271295acb9b2259a728e005f3417
+      command_summary: apply_patch < /tmp/patch_task21_7.diff
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:50:37.558376000Z"
+    - command: apply_patch < /tmp/patch_task21_8.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205045.902328000Z.txt
+      command_sha256: 0c6a9a575ce471cf4d2934a7085d05cba0f24e421bb7a0fc8570a37a569d2186
+      command_summary: apply_patch < /tmp/patch_task21_8.diff
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:50:45.902328000Z"
+    - command: apply_patch < /tmp/patch_task21_8.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205045.960964000Z.txt
+      command_sha256: 0c6a9a575ce471cf4d2934a7085d05cba0f24e421bb7a0fc8570a37a569d2186
+      command_summary: apply_patch < /tmp/patch_task21_8.diff
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:50:45.960964000Z"
+    - command: apply_patch < /tmp/patch_task21_9.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205106.722744000Z.txt
+      command_sha256: b5129f4566592ef819c59278ab89f424032b32ffbc25c711082da3481b90ea27
+      command_summary: apply_patch < /tmp/patch_task21_9.diff
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:51:06.722744000Z"
+    - command: apply_patch < /tmp/patch_task21_9.diff
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205106.782043000Z.txt
+      command_sha256: b5129f4566592ef819c59278ab89f424032b32ffbc25c711082da3481b90ea27
+      command_summary: apply_patch < /tmp/patch_task21_9.diff
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:51:06.782043000Z"
+    - command: go test ./internal/commands ./internal/small
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205111.881760000Z.txt
+      command_sha256: 115aed8b9d429b77956b8fe98d557adcd72971e5093bf40a6bf4f3d1774aa9ce
+      command_summary: go test ./internal/commands ./internal/small
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:51:11.881760000Z"
+    - command: go test ./internal/commands ./internal/small
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205114.574081000Z.txt
+      command_sha256: 115aed8b9d429b77956b8fe98d557adcd72971e5093bf40a6bf4f3d1774aa9ce
+      command_summary: go test ./internal/commands ./internal/small
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:51:14.574081000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205119.300473000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:51:19.300473000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205121.182379000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:51:21.182379000Z"
+    - command: small checkpoint --task task-21 --status completed --evidence 'Canonicalized handoff lifecycle shaping (init bootstrap, in_progress, blocked real-task preference, completed omission), conditional s...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205132.146594000Z.txt
+      command_sha256: 3d24dd974c8bb2751ee04affc112fbbbc3a88894d80ad2f3af3d3f17657820c8
+      command_summary: small checkpoint --task task-21 --status completed --evidence 'Canonicalized handoff lifecycle shaping (init bootstrap, in_progress, blocked real-task preference, completed omission), conditional s...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-21
+      timestamp: "2026-02-09T20:51:32.146594000Z"
+    - evidence: Canonicalized handoff lifecycle shaping (init bootstrap, in_progress, blocked real-task preference, completed omission), conditional strict S3 semantics, and schema updates with tests.
+      notes: Updated handoff/helpers, init shaping, invariant S3 logic, handoff schema, and command/invariant tests; go test ./... + small check --strict pass.
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:51:32.227548000Z"
+    - command: small checkpoint --task task-21 --status completed --evidence 'Canonicalized handoff lifecycle shaping (init bootstrap, in_progress, blocked real-task preference, completed omission), conditional s...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T205132.394775000Z.txt
+      command_sha256: 3d24dd974c8bb2751ee04affc112fbbbc3a88894d80ad2f3af3d3f17657820c8
+      command_summary: small checkpoint --task task-21 --status completed --evidence 'Canonicalized handoff lifecycle shaping (init bootstrap, in_progress, blocked real-task preference, completed omission), conditional s...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-21
+      timestamp: "2026-02-09T20:51:32.394775000Z"
+    - command: small plan --add 'Fix init progress task_id to meta/init so fresh init is strict-clean (S2) and update tests'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231416.692957000Z.txt
+      command_sha256: 1e6de3c4f13ab1ce19c66040437f6526d29de5129b72502fe1807e22dee5fa10
+      command_summary: small plan --add 'Fix init progress task_id to meta/init so fresh init is strict-clean (S2) and update tests'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: meta/apply
+      timestamp: "2026-02-09T23:14:16.692957000Z"
+    - evidence: Added task task-22 via small plan --add
+      notes: Fix init progress task_id to meta/init so fresh init is strict-clean (S2) and update tests
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: pending
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:16.757417000Z"
+    - command: small plan --add 'Fix init progress task_id to meta/init so fresh init is strict-clean (S2) and update tests'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231416.795954000Z.txt
+      command_sha256: 1e6de3c4f13ab1ce19c66040437f6526d29de5129b72502fe1807e22dee5fa10
+      command_summary: small plan --add 'Fix init progress task_id to meta/init so fresh init is strict-clean (S2) and update tests'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: meta/apply
+      timestamp: "2026-02-09T23:14:16.795954000Z"
+    - command: 'perl -0pi -e ''s/"task_id":\s+"init"/"task_id": "meta\/init"/'' internal/commands/init.go && perl -0pi -e ''s/expected init task_id/expected meta\/init task_id/; s/entry\["task_id"\] != "init"/entry["...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231428.388599000Z.txt
+      command_sha256: e4c5190ec81a3b35ef343ad0544b8387b0caf1796f842f204e698d0eab531dc8
+      command_summary: 'perl -0pi -e ''s/"task_id":\s+"init"/"task_id": "meta\/init"/'' internal/commands/init.go && perl -0pi -e ''s/expected init task_id/expected meta\/init task_id/; s/entry\["task_id"\] != "init"/entry["...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:28.388599000Z"
+    - command: 'perl -0pi -e ''s/"task_id":\s+"init"/"task_id": "meta\/init"/'' internal/commands/init.go && perl -0pi -e ''s/expected init task_id/expected meta\/init task_id/; s/entry\["task_id"\] != "init"/entry["...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231428.468163000Z.txt
+      command_sha256: e4c5190ec81a3b35ef343ad0544b8387b0caf1796f842f204e698d0eab531dc8
+      command_summary: 'perl -0pi -e ''s/"task_id":\s+"init"/"task_id": "meta\/init"/'' internal/commands/init.go && perl -0pi -e ''s/expected init task_id/expected meta\/init task_id/; s/entry\["task_id"\] != "init"/entry["...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:28.468163000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231437.183274000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:37.183274000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231439.570645000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:39.570645000Z"
+    - command: tmpdir=/var/folders/93/_vxgpzjd6ks13t426qyxd03r0000gn/T/tmp.RgLaf2u0vb; echo TMPDIR:; go run ./cmd/small init --dir "" --no-agents; go run ./cmd/small check --strict --dir ""; rg -n 'task_id|meta/i...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231446.300666000Z.txt
+      command_sha256: 73b3464bb001dd84734fe9285b7e2e5e82d662a57154f0567f8647814d4de951
+      command_summary: tmpdir=/var/folders/93/_vxgpzjd6ks13t426qyxd03r0000gn/T/tmp.RgLaf2u0vb; echo TMPDIR:; go run ./cmd/small init --dir "" --no-agents; go run ./cmd/small check --strict --dir ""; rg -n 'task_id|meta/i...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:46.300666000Z"
+    - command: tmpdir=/var/folders/93/_vxgpzjd6ks13t426qyxd03r0000gn/T/tmp.RgLaf2u0vb; echo TMPDIR:; go run ./cmd/small init --dir "" --no-agents; go run ./cmd/small check --strict --dir ""; rg -n 'task_id|meta/i...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231447.579382000Z.txt
+      command_sha256: 73b3464bb001dd84734fe9285b7e2e5e82d662a57154f0567f8647814d4de951
+      command_summary: tmpdir=/var/folders/93/_vxgpzjd6ks13t426qyxd03r0000gn/T/tmp.RgLaf2u0vb; echo TMPDIR:; go run ./cmd/small init --dir "" --no-agents; go run ./cmd/small check --strict --dir ""; rg -n 'task_id|meta/i...
+      evidence: Command failed with exit code 2
+      notes: 'apply: failed with exit code 2'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: blocked
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:47.579382000Z"
+    - command: tmpdir=$(mktemp -d); echo TMPDIR:$tmpdir; go run ./cmd/small init --dir "$tmpdir" --no-agents; go run ./cmd/small check --strict --dir "$tmpdir"; rg -n "task_id|meta/init" "$tmpdir/.small/progress....
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231454.377513000Z.txt
+      command_sha256: 703525260e942fa5286e6d5cd9f277979b8d7465d6dd892de2386a3ba5885e01
+      command_summary: tmpdir=$(mktemp -d); echo TMPDIR:$tmpdir; go run ./cmd/small init --dir "$tmpdir" --no-agents; go run ./cmd/small check --strict --dir "$tmpdir"; rg -n "task_id|meta/init" "$tmpdir/.small/progress....
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:54.377513000Z"
+    - command: tmpdir=$(mktemp -d); echo TMPDIR:$tmpdir; go run ./cmd/small init --dir "$tmpdir" --no-agents; go run ./cmd/small check --strict --dir "$tmpdir"; rg -n "task_id|meta/init" "$tmpdir/.small/progress....
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231455.279470000Z.txt
+      command_sha256: 703525260e942fa5286e6d5cd9f277979b8d7465d6dd892de2386a3ba5885e01
+      command_summary: tmpdir=$(mktemp -d); echo TMPDIR:$tmpdir; go run ./cmd/small init --dir "$tmpdir" --no-agents; go run ./cmd/small check --strict --dir "$tmpdir"; rg -n "task_id|meta/init" "$tmpdir/.small/progress....
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:55.279470000Z"
+    - command: small check --strict
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231458.249465000Z.txt
+      command_sha256: cc12c4fb773b24831ff8d6b3e05e794f308311fdc2009d5d66434505ca026868
+      command_summary: small check --strict
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:58.249465000Z"
+    - command: small check --strict
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231458.407716000Z.txt
+      command_sha256: cc12c4fb773b24831ff8d6b3e05e794f308311fdc2009d5d66434505ca026868
+      command_summary: small check --strict
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: blocked
+      task_id: task-22
+      timestamp: "2026-02-09T23:14:58.407716000Z"
+    - command: small fix --orphan-progress && small check --strict
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231502.168622000Z.txt
+      command_sha256: cdce77f0c29f764366deea8ac3e8f48d058e8c21bdfb9888bfa0125aea461c9e
+      command_summary: small fix --orphan-progress && small check --strict
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-22
+      timestamp: "2026-02-09T23:15:02.168622000Z"
+    - evidence: Rewrote orphan progress task_ids for replayId scope 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13 (operational=2 historical=0 unknown=0)
+      notes: 'original hashes: apply:bba6f65186a090d37084453d41fa954e79ba7de515bd746116b7f612b32bb94f, apply:2998eb117fb5de7ed31b1bb4cec304fb30c5b7e252b6181536a6339f316bf9ad'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: meta/reconcile-plan
+      timestamp: "2026-02-09T23:15:02.299318000Z"
+    - command: small fix --orphan-progress && small check --strict
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231502.495200000Z.txt
+      command_sha256: cdce77f0c29f764366deea8ac3e8f48d058e8c21bdfb9888bfa0125aea461c9e
+      command_summary: small fix --orphan-progress && small check --strict
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-22
+      timestamp: "2026-02-09T23:15:02.495200000Z"
+    - command: small checkpoint --task task-22 --status completed --evidence 'Updated init progress task_id to meta/init, updated init test expectation, verified no remaining task_id init references under interna...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231506.359206000Z.txt
+      command_sha256: 8c2bd88525eb3bd7cdb2ab32872434c314abb009c9045cf2f6f36a57305e8ec0
+      command_summary: small checkpoint --task task-22 --status completed --evidence 'Updated init progress task_id to meta/init, updated init test expectation, verified no remaining task_id init references under interna...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-22
+      timestamp: "2026-02-09T23:15:06.359206000Z"
+    - evidence: Updated init progress task_id to meta/init, updated init test expectation, verified no remaining task_id init references under internal/commands/internal/small, and validated fresh init strict-check passes.
+      notes: Patched internal/commands/init.go and internal/commands/init_test.go; ran go test ./... and temp-dir smoke init+check.
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-22
+      timestamp: "2026-02-09T23:15:06.437482000Z"
+    - command: small checkpoint --task task-22 --status completed --evidence 'Updated init progress task_id to meta/init, updated init test expectation, verified no remaining task_id init references under interna...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T231506.559539000Z.txt
+      command_sha256: 8c2bd88525eb3bd7cdb2ab32872434c314abb009c9045cf2f6f36a57305e8ec0
+      command_summary: small checkpoint --task task-22 --status completed --evidence 'Updated init progress task_id to meta/init, updated init test expectation, verified no remaining task_id init references under interna...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-22
+      timestamp: "2026-02-09T23:15:06.559539000Z"
+    - evidence: Added task task-23 via small plan --add
+      notes: Normalize progress emission (signal-first default + audit mode) and add signal-oriented status summary with tests
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: pending
+      task_id: task-23
+      timestamp: "2026-02-09T23:46:24.168118000Z"
+    - evidence: Recorded progress via small progress add
+      notes: Implementing signal-first progress policy with audit-mode opt-in and status signal summary
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:46:31.529750000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode.go +package commands + +import ( + os + regexp + strings +) + +const progressModeEnvVar = SMALL_PROGRESS_MODE + +...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T234905.996456000Z.txt
+      command_sha256: ded656bb0164fbf87f169c776630f0337539dbac86d3643582b5c16b98ad7a0f
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode.go +package commands + +import ( + os + regexp + strings +) + +const progressModeEnvVar = SMALL_PROGRESS_MODE + +...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:49:05.996456000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode.go +package commands + +import ( + os + regexp + strings +) + +const progressModeEnvVar = SMALL_PROGRESS_MODE + +...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T234906.072303000Z.txt
+      command_sha256: ded656bb0164fbf87f169c776630f0337539dbac86d3643582b5c16b98ad7a0f
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode.go +package commands + +import ( + os + regexp + strings +) + +const progressModeEnvVar = SMALL_PROGRESS_MODE + +...'
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: blocked
+      task_id: task-23
+      timestamp: "2026-02-09T23:49:06.072303000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode.go +package commands + +import ( + "os" + "regexp" + "strings" +) + +const progressModeEnvVar = "SMALL_PROGRESS_M...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T234926.561143000Z.txt
+      command_sha256: 2fdd1c72fd75024d940cab417fc806a14480ee9ffce0e6707e9ddeff0bd3d979
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode.go +package commands + +import ( + "os" + "regexp" + "strings" +) + +const progressModeEnvVar = "SMALL_PROGRESS_M...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:49:26.561143000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode.go +package commands + +import ( + "os" + "regexp" + "strings" +) + +const progressModeEnvVar = "SMALL_PROGRESS_M...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T234926.623691000Z.txt
+      command_sha256: 2fdd1c72fd75024d940cab417fc806a14480ee9ffce0e6707e9ddeff0bd3d979
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode.go +package commands + +import ( + "os" + "regexp" + "strings" +) + +const progressModeEnvVar = "SMALL_PROGRESS_M...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:49:26.623691000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply.go @@ Long: `Executes a user-provided shell command (or runs as dry-run). -Appends progress entries before and after e...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T234952.952687000Z.txt
+      command_sha256: c0beb031b000f5892c8a5ec1707b2d55bad9b24907d284b490812397c1c71664
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply.go @@ Long: `Executes a user-provided shell command (or runs as dry-run). -Appends progress entries before and after e...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:49:52.952687000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply.go @@ Long: `Executes a user-provided shell command (or runs as dry-run). -Appends progress entries before and after e...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T234953.020493000Z.txt
+      command_sha256: c0beb031b000f5892c8a5ec1707b2d55bad9b24907d284b490812397c1c71664
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply.go @@ Long: `Executes a user-provided shell command (or runs as dry-run). -Appends progress entries before and after e...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:49:53.020493000Z"
+    - command: cat > internal/commands/status.go <<'EOF' package commands import ( "encoding/json" "fmt" "os" "path/filepath" "sort" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "githu...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235055.123607000Z.txt
+      command_sha256: 91a0951e5468245efca5fba6612634532860a729c147d914f4863951455f10b3
+      command_summary: cat > internal/commands/status.go <<'EOF' package commands import ( "encoding/json" "fmt" "os" "path/filepath" "sort" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "githu...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:50:55.123607000Z"
+    - command: cat > internal/commands/status.go <<'EOF' package commands import ( "encoding/json" "fmt" "os" "path/filepath" "sort" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "githu...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235055.215641000Z.txt
+      command_sha256: 91a0951e5468245efca5fba6612634532860a729c147d914f4863951455f10b3
+      command_summary: cat > internal/commands/status.go <<'EOF' package commands import ( "encoding/json" "fmt" "os" "path/filepath" "sort" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "githu...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:50:55.215641000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Delete File: internal/commands/status.go *** End Patch PATCH'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235107.164307000Z.txt
+      command_sha256: fdc5378b02e4af51b29e38dff2d635a59908a0063cbac6a80fff6887abeed959
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Delete File: internal/commands/status.go *** End Patch PATCH'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:51:07.164307000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Delete File: internal/commands/status.go *** End Patch PATCH'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235107.233017000Z.txt
+      command_sha256: fdc5378b02e4af51b29e38dff2d635a59908a0063cbac6a80fff6887abeed959
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Delete File: internal/commands/status.go *** End Patch PATCH'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:51:07.233017000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/status.go +package commands + +import ( + "encoding/json" + "fmt" + "os" + "path/filepath" + "sort" + "strings" + "time" + + "g...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235211.962136000Z.txt
+      command_sha256: 105a368777942d0864ae0078238137ee333db037e4168c935e1f9ae995c9f9e5
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/status.go +package commands + +import ( + "encoding/json" + "fmt" + "os" + "path/filepath" + "sort" + "strings" + "time" + + "g...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:52:11.962136000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/status.go +package commands + +import ( + "encoding/json" + "fmt" + "os" + "path/filepath" + "sort" + "strings" + "time" + + "g...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235212.027014000Z.txt
+      command_sha256: 105a368777942d0864ae0078238137ee333db037e4168c935e1f9ae995c9f9e5
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/status.go +package commands + +import ( + "encoding/json" + "fmt" + "os" + "path/filepath" + "sort" + "strings" + "time" + + "g...'
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: blocked
+      task_id: task-23
+      timestamp: "2026-02-09T23:52:12.027014000Z"
+    - command: cat > internal/commands/status.go <<'EOF' package commands import ( "encoding/json" "fmt" "os" "path/filepath" "sort" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "githu...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235325.935807000Z.txt
+      command_sha256: ee9a75f04b3d1247214a54599c1bfee013b3d5c3400fb54976911d67ae42cf18
+      command_summary: cat > internal/commands/status.go <<'EOF' package commands import ( "encoding/json" "fmt" "os" "path/filepath" "sort" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "githu...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:53:25.935807000Z"
+    - command: cat > internal/commands/status.go <<'EOF' package commands import ( "encoding/json" "fmt" "os" "path/filepath" "sort" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "githu...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235325.990706000Z.txt
+      command_sha256: ee9a75f04b3d1247214a54599c1bfee013b3d5c3400fb54976911d67ae42cf18
+      command_summary: cat > internal/commands/status.go <<'EOF' package commands import ( "encoding/json" "fmt" "os" "path/filepath" "sort" "strings" "time" "github.com/justyn-clark/small-protocol/internal/small" "githu...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:53:25.990706000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ import ( "fmt" "os" "path/filepath" "strings" "testing" "time" @@ "github.com/justyn-clark/small-protocol/i...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235349.727236000Z.txt
+      command_sha256: 3514f9c8dfe1817ab7515f6c2a19b9bbaceadb701f4b4a6dd1eac976c15ce8b9
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ import ( "fmt" "os" "path/filepath" "strings" "testing" "time" @@ "github.com/justyn-clark/small-protocol/i...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:53:49.727236000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ import ( "fmt" "os" "path/filepath" "strings" "testing" "time" @@ "github.com/justyn-clark/small-protocol/i...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235349.798050000Z.txt
+      command_sha256: 3514f9c8dfe1817ab7515f6c2a19b9bbaceadb701f4b4a6dd1eac976c15ce8b9
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ import ( "fmt" "os" "path/filepath" "strings" "testing" "time" @@ "github.com/justyn-clark/small-protocol/i...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:53:49.798050000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/status_test.go @@ import ( + "bytes" + "encoding/json" + "io" + "os" "testing" + + "github.com/justyn-clark/small-protocol/i...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235425.778152000Z.txt
+      command_sha256: 00db7270500799bb86aadc8d60845fd672b20205baebad07e39cdafd0e3609cf
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/status_test.go @@ import ( + "bytes" + "encoding/json" + "io" + "os" "testing" + + "github.com/justyn-clark/small-protocol/i...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:25.778152000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/status_test.go @@ import ( + "bytes" + "encoding/json" + "io" + "os" "testing" + + "github.com/justyn-clark/small-protocol/i...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235425.842767000Z.txt
+      command_sha256: 00db7270500799bb86aadc8d60845fd672b20205baebad07e39cdafd0e3609cf
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/status_test.go @@ import ( + "bytes" + "encoding/json" + "io" + "os" "testing" + + "github.com/justyn-clark/small-protocol/i...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:25.842767000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode_test.go +package commands + +import "testing" + +func TestResolveProgressMode(t *testing.T) { + t.Setenv(progress...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235436.256868000Z.txt
+      command_sha256: f4052d37eff06a42e5c2ac08f54a775ebeb285c06c58077bf99670e50c8fa069
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode_test.go +package commands + +import "testing" + +func TestResolveProgressMode(t *testing.T) { + t.Setenv(progress...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:36.256868000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode_test.go +package commands + +import "testing" + +func TestResolveProgressMode(t *testing.T) { + t.Setenv(progress...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235436.325915000Z.txt
+      command_sha256: f4052d37eff06a42e5c2ac08f54a775ebeb285c06c58077bf99670e50c8fa069
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/progress_mode_test.go +package commands + +import "testing" + +func TestResolveProgressMode(t *testing.T) { + t.Setenv(progress...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:36.325915000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/status_test.go @@ import ( "bytes" "encoding/json" "io" "os" + "strings" "testing" *** End Patch PATCH'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235439.888038000Z.txt
+      command_sha256: b51cd6f246b367b2858277c13fa3e5bee75a318979d3196d6e200623c3338035
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/status_test.go @@ import ( "bytes" "encoding/json" "io" "os" + "strings" "testing" *** End Patch PATCH'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:39.888038000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/status_test.go @@ import ( "bytes" "encoding/json" "io" "os" + "strings" "testing" *** End Patch PATCH'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235439.953237000Z.txt
+      command_sha256: b51cd6f246b367b2858277c13fa3e5bee75a318979d3196d6e200623c3338035
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/status_test.go @@ import ( "bytes" "encoding/json" "io" "os" + "strings" "testing" *** End Patch PATCH'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:39.953237000Z"
+    - command: gofmt -w internal/commands/apply.go internal/commands/status.go internal/commands/progress_mode.go internal/commands/apply_test.go internal/commands/status_test.go internal/commands/progress_mode_t...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235443.979242000Z.txt
+      command_sha256: c9c02a30d4d190e92be5a11441e8386b12007828eeb9a7ecfcf91d86bd4a27c4
+      command_summary: gofmt -w internal/commands/apply.go internal/commands/status.go internal/commands/progress_mode.go internal/commands/apply_test.go internal/commands/status_test.go internal/commands/progress_mode_t...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:43.979242000Z"
+    - command: gofmt -w internal/commands/apply.go internal/commands/status.go internal/commands/progress_mode.go internal/commands/apply_test.go internal/commands/status_test.go internal/commands/progress_mode_t...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235444.052132000Z.txt
+      command_sha256: c9c02a30d4d190e92be5a11441e8386b12007828eeb9a7ecfcf91d86bd4a27c4
+      command_summary: gofmt -w internal/commands/apply.go internal/commands/status.go internal/commands/progress_mode.go internal/commands/apply_test.go internal/commands/status_test.go internal/commands/progress_mode_t...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:44.052132000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235448.607022000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:48.607022000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235449.485554000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: blocked
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:49.485554000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/emit.go @@ - if small.ArtifactExists(artifactsDir, "progress.small.yml") { - recentEntries, err := getRecentProgress(artifac...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235456.469511000Z.txt
+      command_sha256: cbb64a3a077330bc53ec60d7beb2bc5a3763172f184580d5482a4e36cb91f256
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/emit.go @@ - if small.ArtifactExists(artifactsDir, "progress.small.yml") { - recentEntries, err := getRecentProgress(artifac...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:56.469511000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/emit.go @@ - if small.ArtifactExists(artifactsDir, "progress.small.yml") { - recentEntries, err := getRecentProgress(artifac...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235456.531731000Z.txt
+      command_sha256: cbb64a3a077330bc53ec60d7beb2bc5a3763172f184580d5482a4e36cb91f256
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/emit.go @@ - if small.ArtifactExists(artifactsDir, "progress.small.yml") { - recentEntries, err := getRecentProgress(artifac...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:54:56.531731000Z"
+    - command: gofmt -w internal/commands/emit.go
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235502.598635000Z.txt
+      command_sha256: d8e925d4827378186289ee1ccc4c56f8ae53755fd11bec6924789e56f4fc1c80
+      command_summary: gofmt -w internal/commands/emit.go
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:02.598635000Z"
+    - command: gofmt -w internal/commands/emit.go
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235502.658560000Z.txt
+      command_sha256: d8e925d4827378186289ee1ccc4c56f8ae53755fd11bec6924789e56f4fc1c80
+      command_summary: gofmt -w internal/commands/emit.go
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:02.658560000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235505.775666000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:05.775666000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235508.211000000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:08.211000000Z"
+    - command: small checkpoint --task task-23 --status completed --evidence 'Implemented signal-first progress mode default with SMALL_PROGRESS_MODE=audit opt-in; apply telemetry gating + status replay/next-task...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235520.542260000Z.txt
+      command_sha256: 97f6dcac40429cfbdcc4a4d9feddd6bc10181c0336cf1bb19853181c07da24db
+      command_summary: small checkpoint --task task-23 --status completed --evidence 'Implemented signal-first progress mode default with SMALL_PROGRESS_MODE=audit opt-in; apply telemetry gating + status replay/next-task...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:20.542260000Z"
+    - evidence: Implemented signal-first progress mode default with SMALL_PROGRESS_MODE=audit opt-in; apply telemetry gating + status replay/next-task/signal summary; added mode, apply, and status tests; go test ./... passes
+      notes: Updated internal/commands/{progress_mode.go,apply.go,status.go,emit.go} and associated tests
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:20.622084000Z"
+    - command: small checkpoint --task task-23 --status completed --evidence 'Implemented signal-first progress mode default with SMALL_PROGRESS_MODE=audit opt-in; apply telemetry gating + status replay/next-task...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235520.793003000Z.txt
+      command_sha256: 97f6dcac40429cfbdcc4a4d9feddd6bc10181c0336cf1bb19853181c07da24db
+      command_summary: small checkpoint --task task-23 --status completed --evidence 'Implemented signal-first progress mode default with SMALL_PROGRESS_MODE=audit opt-in; apply telemetry gating + status replay/next-task...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:20.793003000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ func TestApplyProgressSignalModeSkipsNonTaskEntries(t *testing.T) { @@ } + +func TestApplyProgressSignalMod...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235542.441781000Z.txt
+      command_sha256: 8136a7e18be8dd59e20696de8769f305fe3abc8c559733f916b4c5afc74d8d3c
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ func TestApplyProgressSignalModeSkipsNonTaskEntries(t *testing.T) { @@ } + +func TestApplyProgressSignalMod...'
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:42.441781000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ func TestApplyProgressSignalModeSkipsNonTaskEntries(t *testing.T) { @@ } + +func TestApplyProgressSignalMod...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235542.505712000Z.txt
+      command_sha256: 8136a7e18be8dd59e20696de8769f305fe3abc8c559733f916b4c5afc74d8d3c
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ func TestApplyProgressSignalModeSkipsNonTaskEntries(t *testing.T) { @@ } + +func TestApplyProgressSignalMod...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:42.505712000Z"
+    - command: gofmt -w internal/commands/apply_test.go internal/commands/status_test.go
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235545.855917000Z.txt
+      command_sha256: 1880d373a0fc07ad56a92bf69c600672451f993ddf04963960c54396b0c99fba
+      command_summary: gofmt -w internal/commands/apply_test.go internal/commands/status_test.go
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:45.855917000Z"
+    - command: gofmt -w internal/commands/apply_test.go internal/commands/status_test.go
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235545.921702000Z.txt
+      command_sha256: 1880d373a0fc07ad56a92bf69c600672451f993ddf04963960c54396b0c99fba
+      command_summary: gofmt -w internal/commands/apply_test.go internal/commands/status_test.go
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:45.921702000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235549.207986000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:49.207986000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235551.422106000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:51.422106000Z"
+    - command: small checkpoint --task task-23 --status completed --evidence 'Finalized signal-first progress policy + audit mode toggle, status signal summary with replayId/next-task, deterministic signal-shape ...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235559.660028000Z.txt
+      command_sha256: 03ca6929882e1b367ba35bc14f2f075dea636c1d1a77fa6d114ea8c27f17f032
+      command_summary: small checkpoint --task task-23 --status completed --evidence 'Finalized signal-first progress policy + audit mode toggle, status signal summary with replayId/next-task, deterministic signal-shape ...
+      evidence: Apply started
+      notes: 'apply: execution started'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:59.660028000Z"
+    - evidence: Finalized signal-first progress policy + audit mode toggle, status signal summary with replayId/next-task, deterministic signal-shape tests, and passing go test ./... + strict check
+      notes: Added internal/commands/progress_mode.go and tests; updated apply/status/emit and related tests
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:59.822456000Z"
+    - command: small checkpoint --task task-23 --status completed --evidence 'Finalized signal-first progress policy + audit mode toggle, status signal summary with replayId/next-task, deterministic signal-shape ...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260209T235559.974093000Z.txt
+      command_sha256: 03ca6929882e1b367ba35bc14f2f075dea636c1d1a77fa6d114ea8c27f17f032
+      command_summary: small checkpoint --task task-23 --status completed --evidence 'Finalized signal-first progress policy + audit mode toggle, status signal summary with replayId/next-task, deterministic signal-shape ...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-23
+      timestamp: "2026-02-09T23:55:59.974093000Z"
+    - evidence: Added task task-24 via small plan --add
+      notes: 'ReplayId semantics: bootstrap entries without replayId; run replayId begins once plan exists'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: pending
+      task_id: task-24
+      timestamp: "2026-02-10T06:33:10.138411000Z"
+    - evidence: Implementing bootstrap/run replayId authority split
+      notes: Start code+tests for init/accept/status/workspace semantics
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: in_progress
+      task_id: task-24
+      timestamp: "2026-02-10T06:33:28.471893000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/workspace/workspace.go @@ type Info struct { SmallVersion string Owner string Kind Kind CreatedAt string UpdatedAt string + Run *Run ...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063617.845831000Z.txt
+      command_sha256: 47facbbee18feac32825ee13fe4a53f3de489327488932cce0d8e25c9fcc3e4a
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/workspace/workspace.go @@ type Info struct { SmallVersion string Owner string Kind Kind CreatedAt string UpdatedAt string + Run *Run ...'
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: blocked
+      task_id: task-24
+      timestamp: "2026-02-10T06:36:17.845831000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/workspace/workspace.go @@ type Info struct { SmallVersion string `yaml:"small_version"` Owner string `yaml:"owner,omitempty"` Kind Ki...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063633.005613000Z.txt
+      command_sha256: 535d3a27cf7caff33124f6097cfa0063806d31c92b8e9012373325135e176138
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/workspace/workspace.go @@ type Info struct { SmallVersion string `yaml:"small_version"` Owner string `yaml:"owner,omitempty"` Kind Ki...'
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: blocked
+      task_id: task-24
+      timestamp: "2026-02-10T06:36:33.005613000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/workspace/workspace.go @@ type Info struct { SmallVersion string `yaml:"small_version"` Owner string `yaml:"owner,omitempty"` Kind Ki...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063650.086221000Z.txt
+      command_sha256: 13b52cb440e01710c2612a6e831404ab567198908db57c622158d366b8c605a0
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/workspace/workspace.go @@ type Info struct { SmallVersion string `yaml:"small_version"` Owner string `yaml:"owner,omitempty"` Kind Ki...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:36:50.086221000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/workspace/workspace.go @@ func TouchUpdatedAt(baseDir string) (bool, error) { @@ if err := os.WriteFile(path, data, 0o644); err != ni...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063701.784797000Z.txt
+      command_sha256: abab7c98d00df378ae7949b453d86eea5331bb6e61872f0dbd53e49b1f4c0571
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/workspace/workspace.go @@ func TouchUpdatedAt(baseDir string) (bool, error) { @@ if err := os.WriteFile(path, data, 0o644); err != ni...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:37:01.784797000Z"
+    - command: cat > internal/commands/replayid_workspace.go <<"EOF" package commands import ( "fmt" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/smal...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063709.620040000Z.txt
+      command_sha256: dd201f210ea9a0716e69bb4fa38136a14580a6e4f6ba12626c2c39f383a27a0d
+      command_summary: cat > internal/commands/replayid_workspace.go <<"EOF" package commands import ( "fmt" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/smal...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:37:09.620040000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/progress.go @@ func attachProgressReplayID(baseDir string, entry map[string]any) { if entry == nil { return } if _, ok := en...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063716.708046000Z.txt
+      command_sha256: 5a58c8fd548ad404d926d91185068e34324d1b36cf87b2092adae4594a5227d8
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/progress.go @@ func attachProgressReplayID(baseDir string, entry map[string]any) { if entry == nil { return } if _, ok := en...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:37:16.708046000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/plan.go @@ type PlanTask struct { @@ } + +type planProgressRecord struct { + TaskID string + Status string + Evidence string...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063746.116208000Z.txt
+      command_sha256: ba0da4a69d603fd5d39a56e8e6f8b4c97fe532ea42dd15c9242a91c707c829fe
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/plan.go @@ type PlanTask struct { @@ } + +type planProgressRecord struct { + TaskID string + Status string + Evidence string...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:37:46.116208000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/checkpoint.go @@ if err := validateProgressEntry(entry); err != nil { return err } + + if _, err := ensureWorkspaceRunReplay...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063751.400055000Z.txt
+      command_sha256: b524eb2eff7d0e29b293e718f737a27a554cc42271e9a7b40bfaa41ade94d267
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/checkpoint.go @@ if err := validateProgressEntry(entry); err != nil { return err } + + if _, err := ensureWorkspaceRunReplay...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:37:51.400055000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/apply.go @@ if err := validateProgressEntry(entry); err != nil { return err } + + if _, err := ensureWorkspaceRunReplayID(ba...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063755.521471000Z.txt
+      command_sha256: d3e406b44fe08a41d353b9ecc7de102caf307a0d4af5bd1252fd545c401c872f
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/apply.go @@ if err := validateProgressEntry(entry); err != nil { return err } + + if _, err := ensureWorkspaceRunReplayID(ba...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:37:55.521471000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/handoff_helpers.go @@ import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" ...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063810.289263000Z.txt
+      command_sha256: 565f82375920258755e26b60317e0fb6206c5a7e6f1b820168260741dd25f7cc
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/handoff_helpers.go @@ import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" ...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:38:10.289263000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/status.go @@ import ( @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/i...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063822.782559000Z.txt
+      command_sha256: 96337f7d09d4d86a0af19e49ebc02dd552b2bfc8b50c2983f42364c758890d75
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/status.go @@ import ( @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/i...'
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: blocked
+      task_id: task-24
+      timestamp: "2026-02-10T06:38:22.782559000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/status.go @@ import ( @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/i...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063837.072629000Z.txt
+      command_sha256: 060bcd455816c099a9ab2eb0afd7a9b640fe07134630c058b3f4ef1368ef37c9
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/status.go @@ import ( @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/i...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:38:37.072629000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/apply.go @@ func applyCommandMetadata(baseDir, timestamp, command string) (string, string, string, error) { summary := small...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063843.848034000Z.txt
+      command_sha256: 8fd16ba1e21f4c33c94e17bfe7228c18320615501ca28b2408dd8b54379ff21d
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/apply.go @@ func applyCommandMetadata(baseDir, timestamp, command string) (string, string, string, error) { summary := small...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:38:43.848034000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/workspace/workspace_test.go @@ func TestTouchUpdatedAt(t *testing.T) { @@ } + +func TestSetAndGetRunReplayID(t *testing.T) { + tmpDir...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063857.600003000Z.txt
+      command_sha256: 503c87330c0d0b1b4ffb7278b6fbaaebb5c289d3dbef5e26ea3324125907f3d6
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/workspace/workspace_test.go @@ func TestTouchUpdatedAt(t *testing.T) { @@ } + +func TestSetAndGetRunReplayID(t *testing.T) { + tmpDir...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:38:57.600003000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/init_test.go @@ if entry["task_id"] != "meta/init" { t.Fatalf("expected meta/init task_id, got %v", entry["task_id"]) } + if...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063906.274752000Z.txt
+      command_sha256: fb212c48f245ebe377ed57787694fceceb1f0008cc7c199b227fbc96f2f22df1
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/init_test.go @@ if entry["task_id"] != "meta/init" { t.Fatalf("expected meta/init task_id, got %v", entry["task_id"]) } + if...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:39:06.274752000Z"
+    - command: cat > internal/commands/accept_test.go <<"EOF" package commands import ( "os" "path/filepath" "testing" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-protoc...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063916.408306000Z.txt
+      command_sha256: de8041ca2b206c64d11d9552cf23f45d6398af58593eee537e11f366d1cd8646
+      command_summary: cat > internal/commands/accept_test.go <<"EOF" package commands import ( "os" "path/filepath" "testing" "github.com/justyn-clark/small-protocol/internal/small" "github.com/justyn-clark/small-protoc...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:39:16.408306000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/status_test.go @@ writeArtifacts(t, tmpDir, artifacts) mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot) + if err := work...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T063930.305846000Z.txt
+      command_sha256: bde27b8c6cb3e645c7009dad4972d9188b6e3b14a9a9876b06365cb4c1e5c6cb
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/status_test.go @@ writeArtifacts(t, tmpDir, artifacts) mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot) + if err := work...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:39:30.305846000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/handoff_helpers.go @@ import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" ...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064002.215889000Z.txt
+      command_sha256: fa1acf825f36606e96c4473617ccec53a462300ab674c51ddec048b5a7e88378
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/handoff_helpers.go @@ import ( "fmt" "os" "path/filepath" "strings" "github.com/justyn-clark/small-protocol/internal/small" ...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:40:02.215889000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/handoff.go @@ h, err := buildHandoff(artifactsDir, summary, replayId, nil, nil, nil, defaultNextStepsLimit) if err != nil { ...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064008.352261000Z.txt
+      command_sha256: ab37abb663218e3ed2401f0bfa000808fa33c85906662e150c822ea8b9c1f30c
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/handoff.go @@ h, err := buildHandoff(artifactsDir, summary, replayId, nil, nil, nil, defaultNextStepsLimit) if err != nil { ...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:40:08.352261000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/start.go @@ handoff, err := buildHandoff(artifactsDir, handoffSummary, "", existingLinks(existing), replayId, handoffRun, de...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064013.561983000Z.txt
+      command_sha256: b0ef24172e36b9ae1d83b9293009cec11b39f3a7400eb23b8668da40b6beef5a
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/start.go @@ handoff, err := buildHandoff(artifactsDir, handoffSummary, "", existingLinks(existing), replayId, handoffRun, de...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:40:13.561983000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/apply.go @@ func generateHandoffFromApply(baseDir string) error { handoff, err := buildHandoff(baseDir, "Auto-generated hand...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064028.937613000Z.txt
+      command_sha256: ce9e1f93fd67263ec3befdd14f0f2e1049fcd2d5d855a53022ea76940950a7f4
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/apply.go @@ func generateHandoffFromApply(baseDir string) error { handoff, err := buildHandoff(baseDir, "Auto-generated hand...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:40:28.937613000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/reset.go @@ handoff, err := buildHandoff(baseDir, "", "", nil, nil, handoffRun, defaultNextStepsLimit) if err != nil { retur...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064033.632143000Z.txt
+      command_sha256: d60fea6346e7e1a65c139b9adbbfb515d96479e8186b5ab6585c4e8383ebcb57
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/reset.go @@ handoff, err := buildHandoff(baseDir, "", "", nil, nil, handoffRun, defaultNextStepsLimit) if err != nil { retur...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:40:33.632143000Z"
+    - command: cat > internal/commands/replayid_semantics_test.go <<"EOF" package commands import ( "bytes" "encoding/json" "io" "os" "testing" "github.com/justyn-clark/small-protocol/internal/small" "github.com/...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064057.533307000Z.txt
+      command_sha256: b2ce5fded276f382312b9d2cb7d11fbeddabaa6dd03c2d8e2f8bb8a64bcda8f5
+      command_summary: cat > internal/commands/replayid_semantics_test.go <<"EOF" package commands import ( "bytes" "encoding/json" "io" "os" "testing" "github.com/justyn-clark/small-protocol/internal/small" "github.com/...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:40:57.533307000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/small/invariants_test.go @@ func TestCheckInvariants_StrictModeProgressTaskIDsIgnoresOtherReplayID(t *testing.T) { @@ } + +func TestC...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064114.594117000Z.txt
+      command_sha256: 5539e44b4e82c9f6926e8e475d18a15c056493678fce77c8497f28a8ebc3c75d
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/small/invariants_test.go @@ func TestCheckInvariants_StrictModeProgressTaskIDsIgnoresOtherReplayID(t *testing.T) { @@ } + +func TestC...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:41:14.594117000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/progress_test.go @@ func TestAppendProgressUpdatesWorkspaceTimestamp(t *testing.T) { @@ } + +func TestAppendProgressReplayID...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064129.392718000Z.txt
+      command_sha256: 2102016bc3a40d3daa0814ebb51d98480b9607b31f4be52a80f378e2594d01ba
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/progress_test.go @@ func TestAppendProgressUpdatesWorkspaceTimestamp(t *testing.T) { @@ } + +func TestAppendProgressReplayID...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:41:29.392718000Z"
+    - command: gofmt -w internal/workspace/workspace.go internal/workspace/workspace_test.go internal/commands/replayid_workspace.go internal/commands/progress.go internal/commands/plan.go internal/commands/check...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064134.163099000Z.txt
+      command_sha256: 369fbcf06b4ea7cfb2a697ae1980ee3cddce36e00a756420c9aec12e81560f5d
+      command_summary: gofmt -w internal/workspace/workspace.go internal/workspace/workspace_test.go internal/commands/replayid_workspace.go internal/commands/progress.go internal/commands/plan.go internal/commands/check...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:41:34.163099000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064140.144907000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: blocked
+      task_id: task-24
+      timestamp: "2026-02-10T06:41:40.144907000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/replayid_workspace.go @@ import ( "fmt" "path/filepath" "strings" @@ func currentWorkspaceRunReplayID(artifactsDir string) (...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064216.556243000Z.txt
+      command_sha256: 0a273f11072781498bcb3fc1094a9e82bd8f55eeb29234b881466a3ab8f86436
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/replayid_workspace.go @@ import ( "fmt" "path/filepath" "strings" @@ func currentWorkspaceRunReplayID(artifactsDir string) (...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:42:16.556243000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/start.go @@ - if err := workspace.SetRunReplayID(artifactsDir, handoff.ReplayId.Value); err != nil { + if err := setWorkspac...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064227.402012000Z.txt
+      command_sha256: 79bcfde87a573c338d873ef275a398835fdf83ba5362869045c42762257d4fc4
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/start.go @@ - if err := workspace.SetRunReplayID(artifactsDir, handoff.ReplayId.Value); err != nil { + if err := setWorkspac...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:42:27.402012000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/apply.go @@ func applyCommandMetadata(baseDir, timestamp, command string) (string, string, string, error) { summary := small...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064237.448633000Z.txt
+      command_sha256: 09ed31358d35f03ca34aa284812a1fc91dc4c8f8d5166fbe54d679a255b7f9b2
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/apply.go @@ func applyCommandMetadata(baseDir, timestamp, command string) (string, string, string, error) { summary := small...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:42:37.448633000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/replayid_semantics_test.go @@ if got := stringVal(last["replayId"]); got != replayID { t.Fatalf("task progress replayId = %q...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064242.735108000Z.txt
+      command_sha256: ec6daa027c0b38345051057055c9b2629fec539555bd40cf8cf90928ac323e5a
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/replayid_semantics_test.go @@ if got := stringVal(last["replayId"]); got != replayID { t.Fatalf("task progress replayId = %q...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:42:42.735108000Z"
+    - command: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/status_test.go @@ writeArtifacts(t, tmpDir, artifacts) mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot) + if err := work...'
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064251.454974000Z.txt
+      command_sha256: 9b3739825e44abbe72f6ea2e318365a6f28f9d5f90c6997a6cf8a5e57295993e
+      command_summary: 'apply_patch <<"PATCH" *** Begin Patch *** Update File: internal/commands/status_test.go @@ writeArtifacts(t, tmpDir, artifacts) mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot) + if err := work...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:42:51.454974000Z"
+    - command: gofmt -w internal/commands/replayid_workspace.go internal/commands/handoff.go internal/commands/start.go internal/commands/reset.go internal/commands/apply.go internal/commands/replayid_semantics_t...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064255.648942000Z.txt
+      command_sha256: a3c97a03c9d4f95c850c00840b44357e83e6ed507f36f7d9ef219b964d416fb2
+      command_summary: gofmt -w internal/commands/replayid_workspace.go internal/commands/handoff.go internal/commands/start.go internal/commands/reset.go internal/commands/apply.go internal/commands/replayid_semantics_t...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:42:55.648942000Z"
+    - command: go test ./internal/commands ./internal/workspace ./internal/small
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064301.841011000Z.txt
+      command_sha256: 0a7fc1042330161fffccb79c90fec5d038e50c84556a3b5cc83ac81797296df4
+      command_summary: go test ./internal/commands ./internal/workspace ./internal/small
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:43:01.841011000Z"
+    - command: go test ./...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064307.848808000Z.txt
+      command_sha256: 1bb497e3e13a1105cf24e3359fa3ef75de08b66ff8a2839cd7f9ea97824d9eb3
+      command_summary: go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:43:07.848808000Z"
+    - command: tmpdir=$(mktemp -d) echo "TMPDIR=$tmpdir" go run ./cmd/small init --dir "$tmpdir" --no-agents >/tmp/replay-smoke-init.txt mkdir -p "$tmpdir/.small-cache/drafts" cat > "$tmpdir/.small-cache/drafts/i...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064338.374094000Z.txt
+      command_sha256: c0f31888c466229cd1d983fb4c5c40b7d6b2e4b3a89ab44289ddbb74f65576de
+      command_summary: tmpdir=$(mktemp -d) echo "TMPDIR=$tmpdir" go run ./cmd/small init --dir "$tmpdir" --no-agents >/tmp/replay-smoke-init.txt mkdir -p "$tmpdir/.small-cache/drafts" cat > "$tmpdir/.small-cache/drafts/i...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:43:38.374094000Z"
+    - command: set -e TMPDIR=$(mktemp -d) echo "TMPDIR=$TMPDIR" go run ./cmd/small init --dir "$TMPDIR" --no-agents >/tmp/replay-smoke-init.txt mkdir -p "$TMPDIR/.small-cache/drafts" cp "$TMPDIR/.small/intent.sma...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064410.949579000Z.txt
+      command_sha256: f90ccc95ee753e9e28b91d00d281249e95c5d9bb01ae323041baca1687417770
+      command_summary: set -e TMPDIR=$(mktemp -d) echo "TMPDIR=$TMPDIR" go run ./cmd/small init --dir "$TMPDIR" --no-agents >/tmp/replay-smoke-init.txt mkdir -p "$TMPDIR/.small-cache/drafts" cp "$TMPDIR/.small/intent.sma...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:44:10.949579000Z"
+    - evidence: Implemented bootstrap/run replayId boundary with workspace authority, updated status/handoff/progress semantics, and added coverage + smoke validation
+      notes: Updated workspace replay_id storage and command replay scoping behavior across init/accept/plan/checkpoint/handoff/status
+      replayId: ad201daa862b33829dd26fe71f5a4e05c8a7a2d92bd60868b37173de39538f3e
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:44:21.444786000Z"
+    - command: go run ./cmd/small checkpoint --task task-24 --status completed --evidence "Implemented bootstrap/run replayId boundary with workspace authority, updated status/handoff/progress semantics, and adde...
+      command_ref: .small-cache/logs/563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13/commands/20260210T064421.566591000Z.txt
+      command_sha256: aec4b3719a8f36b27eead106bdbaaf6b13e6519031dcb3d72359e92c41d307bb
+      command_summary: go run ./cmd/small checkpoint --task task-24 --status completed --evidence "Implemented bootstrap/run replayId boundary with workspace authority, updated status/handoff/progress semantics, and adde...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+      status: completed
+      task_id: task-24
+      timestamp: "2026-02-10T06:44:21.566591000Z"

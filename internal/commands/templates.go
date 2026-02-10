@@ -75,6 +75,7 @@ Files in ` + "`.small/`" + ` have explicit ownership:
 - S1: Completed/blocked tasks must have progress entries with evidence
 - S2: All progress task_ids must reference valid plan tasks (or use meta/ prefix)
 - S3: Handoff current_task_id must exist in plan
+- S4: No unknown files or subdirectories under .small/
 
 ## Localhost HTTP Allowlist (Strict Mode)
 

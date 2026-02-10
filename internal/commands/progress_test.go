@@ -309,3 +309,104 @@ func TestResolveProgressTimestampAfterGeneratesMonotonic(t *testing.T) {
 		t.Fatalf("expected resolved timestamp after last entry")
 	}
 }
+
+func TestAppendProgressUpdatesWorkspaceTimestamp(t *testing.T) {
+	tmpDir := t.TempDir()
+	smallDir := filepath.Join(tmpDir, ".small")
+	if err := os.MkdirAll(smallDir, 0o755); err != nil {
+		t.Fatalf("failed to create .small dir: %v", err)
+	}
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	progress := ProgressData{SmallVersion: small.ProtocolVersion, Owner: "agent", Entries: []map[string]any{}}
+	data, err := yaml.Marshal(&progress)
+	if err != nil {
+		t.Fatalf("failed to marshal progress: %v", err)
+	}
+	progressPath := filepath.Join(smallDir, "progress.small.yml")
+	if err := os.WriteFile(progressPath, data, 0o644); err != nil {
+		t.Fatalf("failed to write progress: %v", err)
+	}
+
+	before, err := workspace.Load(tmpDir)
+	if err != nil {
+		t.Fatalf("failed to load workspace before: %v", err)
+	}
+	time.Sleep(time.Nanosecond)
+
+	entry := map[string]any{
+		"task_id":   "task-1",
+		"status":    "in_progress",
+		"timestamp": "2026-01-01T00:00:00.000000000Z",
+		"evidence":  "started",
+	}
+	if err := appendProgressEntry(tmpDir, entry); err != nil {
+		t.Fatalf("appendProgressEntry failed: %v", err)
+	}
+
+	after, err := workspace.Load(tmpDir)
+	if err != nil {
+		t.Fatalf("failed to load workspace after: %v", err)
+	}
+	if after.UpdatedAt == before.UpdatedAt {
+		t.Fatalf("expected workspace updated_at to change after progress write")
+	}
+}
+
+func TestAppendProgressReplayIDUsesWorkspaceAuthority(t *testing.T) {
+	tmpDir := t.TempDir()
+	smallDir := filepath.Join(tmpDir, ".small")
+	if err := os.MkdirAll(smallDir, 0o755); err != nil {
+		t.Fatalf("failed to create .small dir: %v", err)
+	}
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	progress := ProgressData{SmallVersion: small.ProtocolVersion, Owner: "agent", Entries: []map[string]any{}}
+	data, err := yaml.Marshal(&progress)
+	if err != nil {
+		t.Fatalf("failed to marshal progress: %v", err)
+	}
+	progressPath := filepath.Join(smallDir, "progress.small.yml")
+	if err := os.WriteFile(progressPath, data, 0o644); err != nil {
+		t.Fatalf("failed to write progress: %v", err)
+	}
+
+	bootstrap := map[string]any{
+		"task_id":   "meta/init",
+		"status":    "completed",
+		"timestamp": "2026-01-01T00:00:00.000000000Z",
+		"evidence":  "bootstrap",
+	}
+	if err := appendProgressEntry(tmpDir, bootstrap); err != nil {
+		t.Fatalf("append bootstrap entry failed: %v", err)
+	}
+
+	const replayID = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	if err := workspace.SetRunReplayID(tmpDir, replayID); err != nil {
+		t.Fatalf("failed to set workspace replay id: %v", err)
+	}
+
+	taskEntry := map[string]any{
+		"task_id":   "task-1",
+		"status":    "completed",
+		"timestamp": "2026-01-01T00:00:01.000000000Z",
+		"evidence":  "run work",
+	}
+	if err := appendProgressEntry(tmpDir, taskEntry); err != nil {
+		t.Fatalf("append task entry failed: %v", err)
+	}
+
+	updated, err := loadProgressData(progressPath)
+	if err != nil {
+		t.Fatalf("failed to load updated progress: %v", err)
+	}
+	if len(updated.Entries) != 2 {
+		t.Fatalf("expected 2 entries, got %d", len(updated.Entries))
+	}
+	if _, ok := updated.Entries[0]["replayId"]; ok {
+		t.Fatalf("bootstrap entry should not include replayId: %+v", updated.Entries[0])
+	}
+	if got := stringVal(updated.Entries[1]["replayId"]); got != replayID {
+		t.Fatalf("task entry replayId = %q, want %q", got, replayID)
+	}
+}

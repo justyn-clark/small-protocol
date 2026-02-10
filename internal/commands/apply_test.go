@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"gopkg.in/yaml.v3"
 )
 
@@ -261,5 +262,116 @@ replayId:
 
 	if len(summary) > small.DefaultCommandSummaryCap {
 		t.Fatalf("expected command summary to be truncated")
+	}
+}
+
+func TestApplyProgressSignalModeDefault(t *testing.T) {
+	t.Setenv(progressModeEnvVar, "")
+
+	tmpDir := t.TempDir()
+	writeArtifacts(t, tmpDir, defaultArtifacts())
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	cmd := applyCmd()
+	cmd.SetArgs([]string{"--dir", tmpDir, "--workspace", "any", "--task", "task-1", "--cmd", "true"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("apply execute failed: %v", err)
+	}
+
+	progress, err := loadProgressData(filepath.Join(tmpDir, ".small", "progress.small.yml"))
+	if err != nil {
+		t.Fatalf("failed to load progress: %v", err)
+	}
+	if len(progress.Entries) != 1 {
+		t.Fatalf("expected 1 signal progress entry, got %d", len(progress.Entries))
+	}
+	entry := progress.Entries[0]
+	if stringVal(entry["status"]) != "completed" {
+		t.Fatalf("status = %q, want completed", stringVal(entry["status"]))
+	}
+	if stringVal(entry["notes"]) == "apply: execution started" {
+		t.Fatal("did not expect start telemetry in signal mode")
+	}
+}
+
+func TestApplyProgressAuditModeEmitsVerboseEntries(t *testing.T) {
+	t.Setenv(progressModeEnvVar, string(progressModeAudit))
+
+	tmpDir := t.TempDir()
+	writeArtifacts(t, tmpDir, defaultArtifacts())
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	cmd := applyCmd()
+	cmd.SetArgs([]string{"--dir", tmpDir, "--workspace", "any", "--task", "task-1", "--cmd", "true"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("apply execute failed: %v", err)
+	}
+
+	progress, err := loadProgressData(filepath.Join(tmpDir, ".small", "progress.small.yml"))
+	if err != nil {
+		t.Fatalf("failed to load progress: %v", err)
+	}
+	if len(progress.Entries) != 2 {
+		t.Fatalf("expected 2 audit progress entries, got %d", len(progress.Entries))
+	}
+	if stringVal(progress.Entries[0]["status"]) != "in_progress" {
+		t.Fatalf("first status = %q, want in_progress", stringVal(progress.Entries[0]["status"]))
+	}
+	if stringVal(progress.Entries[1]["status"]) != "completed" {
+		t.Fatalf("second status = %q, want completed", stringVal(progress.Entries[1]["status"]))
+	}
+}
+
+func TestApplyProgressSignalModeSkipsNonTaskEntries(t *testing.T) {
+	t.Setenv(progressModeEnvVar, string(progressModeSignal))
+
+	tmpDir := t.TempDir()
+	writeArtifacts(t, tmpDir, defaultArtifacts())
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	cmd := applyCmd()
+	cmd.SetArgs([]string{"--dir", tmpDir, "--workspace", "any", "--cmd", "true"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("apply execute failed: %v", err)
+	}
+
+	progress, err := loadProgressData(filepath.Join(tmpDir, ".small", "progress.small.yml"))
+	if err != nil {
+		t.Fatalf("failed to load progress: %v", err)
+	}
+	if len(progress.Entries) != 0 {
+		t.Fatalf("expected no progress entries for non-task apply in signal mode, got %d", len(progress.Entries))
+	}
+}
+
+func TestApplyProgressSignalModeDeterministicShape(t *testing.T) {
+	t.Setenv(progressModeEnvVar, string(progressModeSignal))
+
+	tmpDir := t.TempDir()
+	writeArtifacts(t, tmpDir, defaultArtifacts())
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	for i := 0; i < 2; i++ {
+		cmd := applyCmd()
+		cmd.SetArgs([]string{"--dir", tmpDir, "--workspace", "any", "--task", "task-1", "--cmd", "true"})
+		if err := cmd.Execute(); err != nil {
+			t.Fatalf("apply execute failed on run %d: %v", i+1, err)
+		}
+	}
+
+	progress, err := loadProgressData(filepath.Join(tmpDir, ".small", "progress.small.yml"))
+	if err != nil {
+		t.Fatalf("failed to load progress: %v", err)
+	}
+	if len(progress.Entries) != 2 {
+		t.Fatalf("expected 2 completion entries, got %d", len(progress.Entries))
+	}
+	for i, entry := range progress.Entries {
+		if stringVal(entry["status"]) != "completed" {
+			t.Fatalf("entry %d status = %q, want completed", i, stringVal(entry["status"]))
+		}
+		if stringVal(entry["notes"]) == "apply: execution started" {
+			t.Fatalf("entry %d unexpectedly includes start telemetry", i)
+		}
 	}
 }

@@ -57,8 +57,7 @@ func draftArtifactCmd(kind string) *cobra.Command {
 				return err
 			}
 
-			smallDir := filepath.Join(artifactsDir, small.SmallDir)
-			draftsDir := filepath.Join(smallDir, "drafts")
+			draftsDir := small.CacheDraftsDir(artifactsDir)
 			if err := os.MkdirAll(draftsDir, 0755); err != nil {
 				return fmt.Errorf("failed to create drafts directory: %w", err)
 			}
@@ -69,7 +68,7 @@ func draftArtifactCmd(kind string) *cobra.Command {
 				return fmt.Errorf("failed to write draft %s: %w", outPath, err)
 			}
 
-			relPath := filepath.Join(small.SmallDir, "drafts", filename)
+			relPath := filepath.Join(small.CacheDirName, "drafts", filename)
 			fmt.Printf("Draft saved: %s\n", relPath)
 			fmt.Printf("Next: small accept %s\n", kind)
 			return nil

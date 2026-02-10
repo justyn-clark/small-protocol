@@ -1,7 +1,14 @@
 package commands
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
+	"os"
+	"strings"
 	"testing"
+
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 )
 
 func TestDependencySatisfaction(t *testing.T) {
@@ -147,5 +154,203 @@ func TestFormatTimestamp(t *testing.T) {
 				t.Errorf("formatTimestamp(%s) = %s, want %s", tt.input, result, tt.expected)
 			}
 		})
+	}
+}
+
+func TestResolveNextTask(t *testing.T) {
+	plan := &PlanStatus{
+		TotalTasks:      2,
+		TasksByStatus:   map[string]int{"completed": 1, "pending": 1},
+		FirstIncomplete: "task-2",
+	}
+	if got := resolveNextTask(plan, "task-9"); got != "task-9" {
+		t.Fatalf("resolveNextTask() with handoff = %q, want task-9", got)
+	}
+	if got := resolveNextTask(plan, ""); got != "task-2" {
+		t.Fatalf("resolveNextTask() fallback = %q, want task-2", got)
+	}
+
+	complete := &PlanStatus{
+		TotalTasks:      2,
+		TasksByStatus:   map[string]int{"completed": 2},
+		FirstIncomplete: "",
+	}
+	if got := resolveNextTask(complete, ""); got != "No active task (run complete)" {
+		t.Fatalf("resolveNextTask() complete = %q, want run complete message", got)
+	}
+}
+
+func TestGetRecentProgressFiltersTelemetryInSignalMode(t *testing.T) {
+	tmpDir := t.TempDir()
+	artifacts := cloneArtifacts(defaultArtifacts())
+	artifacts["progress.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+entries:
+  - task_id: "task-1"
+    status: "in_progress"
+    timestamp: "2026-01-01T00:00:00.000000000Z"
+    evidence: "Apply started"
+    notes: "apply: execution started"
+  - task_id: "task-1"
+    status: "completed"
+    timestamp: "2026-01-01T00:00:01.000000000Z"
+    evidence: "Command completed successfully"
+    notes: "apply: exit code 0"
+  - task_id: "meta/reconcile-plan"
+    status: "completed"
+    timestamp: "2026-01-01T00:00:02.000000000Z"
+    evidence: "Reconciled"
+`
+	writeArtifacts(t, tmpDir, artifacts)
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+	if err := workspace.SetRunReplayID(tmpDir, strings.Repeat("b", 64)); err != nil {
+		t.Fatalf("failed to set workspace replay id: %v", err)
+	}
+
+	entries, err := getRecentProgress(tmpDir, 5, true)
+	if err != nil {
+		t.Fatalf("getRecentProgress error: %v", err)
+	}
+	if len(entries) != 2 {
+		t.Fatalf("expected 2 signal entries, got %d", len(entries))
+	}
+	if entries[0].TaskID != "meta/reconcile-plan" {
+		t.Fatalf("entries[0].task_id = %q, want meta/reconcile-plan", entries[0].TaskID)
+	}
+	if entries[1].TaskID != "task-1" || entries[1].Status != "completed" {
+		t.Fatalf("expected task-1 completed entry, got %+v", entries[1])
+	}
+}
+
+func TestStatusJSONIncludesSignalSummary(t *testing.T) {
+	tmpDir := t.TempDir()
+	t.Setenv(progressModeEnvVar, string(progressModeSignal))
+
+	artifacts := cloneArtifacts(defaultArtifacts())
+	artifacts["plan.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+tasks:
+  - id: "task-1"
+    title: "Done"
+    status: "completed"
+  - id: "task-2"
+    title: "Next"
+    status: "pending"
+`
+	artifacts["progress.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+entries:
+  - task_id: "task-2"
+    status: "in_progress"
+    timestamp: "2026-01-01T00:00:00.000000000Z"
+    evidence: "Apply started"
+    notes: "apply: execution started"
+  - task_id: "task-2"
+    status: "completed"
+    timestamp: "2026-01-01T00:00:01.000000000Z"
+    evidence: "Command completed successfully"
+    notes: "apply: exit code 0"
+`
+	artifacts["handoff.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+summary: "Run in progress. Next task: task-2."
+generated_at: "2026-01-01T00:00:02.000000000Z"
+resume:
+  current_task_id: "task-2"
+  next_steps: []
+links: []
+replayId:
+  value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  source: "auto"
+`
+	writeArtifacts(t, tmpDir, artifacts)
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+	if err := workspace.SetRunReplayID(tmpDir, strings.Repeat("b", 64)); err != nil {
+		t.Fatalf("failed to set workspace replay id: %v", err)
+	}
+
+	oldStdout := os.Stdout
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("pipe error: %v", err)
+	}
+	os.Stdout = w
+	defer func() { os.Stdout = oldStdout }()
+
+	var buf bytes.Buffer
+	done := make(chan struct{})
+	go func() {
+		_, _ = io.Copy(&buf, r)
+		_ = r.Close()
+		close(done)
+	}()
+
+	cmd := statusCmd()
+	cmd.SetArgs([]string{"--dir", tmpDir, "--json"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("status execute failed: %v", err)
+	}
+	_ = w.Close()
+	<-done
+
+	var out StatusOutput
+	if err := json.Unmarshal(buf.Bytes(), &out); err != nil {
+		t.Fatalf("failed to parse status JSON: %v\noutput=%s", err, buf.String())
+	}
+
+	if out.ReplayID != strings.Repeat("b", 64) {
+		t.Fatalf("replay_id = %q, want workspace replay id", out.ReplayID)
+	}
+	if out.NextTask != "task-2" {
+		t.Fatalf("next_task = %q, want task-2", out.NextTask)
+	}
+	if out.Plan == nil {
+		t.Fatal("expected plan summary")
+	}
+	if out.Plan.TasksByStatus["completed"] != 1 || out.Plan.TasksByStatus["pending"] != 1 {
+		t.Fatalf("unexpected plan counts: %+v", out.Plan.TasksByStatus)
+	}
+	if len(out.RecentProgress) != 1 || out.RecentProgress[0].TaskID != "task-2" {
+		t.Fatalf("unexpected recent signal progress: %+v", out.RecentProgress)
+	}
+}
+
+func TestStatusJSONOmitsReplayIDWhenPlanMissing(t *testing.T) {
+	tmpDir := t.TempDir()
+	artifacts := cloneArtifacts(defaultArtifacts())
+	delete(artifacts, "plan.small.yml")
+	writeArtifacts(t, tmpDir, artifacts)
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	oldStdout := os.Stdout
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("pipe error: %v", err)
+	}
+	os.Stdout = w
+	defer func() { os.Stdout = oldStdout }()
+
+	var buf bytes.Buffer
+	done := make(chan struct{})
+	go func() {
+		_, _ = io.Copy(&buf, r)
+		_ = r.Close()
+		close(done)
+	}()
+
+	cmd := statusCmd()
+	cmd.SetArgs([]string{"--dir", tmpDir, "--json"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("status execute failed: %v", err)
+	}
+	_ = w.Close()
+	<-done
+
+	var raw map[string]any
+	if err := json.Unmarshal(buf.Bytes(), &raw); err != nil {
+		t.Fatalf("failed to parse status JSON: %v\noutput=%s", err, buf.String())
+	}
+	if _, exists := raw["replay_id"]; exists {
+		t.Fatalf("expected replay_id to be omitted when plan is missing, got %v", raw["replay_id"])
 	}
 }

@@ -120,6 +120,9 @@ Preserved audit artifacts:
 			if err != nil {
 				return err
 			}
+			if err := setWorkspaceRunReplayIDIfPresent(baseDir, handoff.ReplayId.Value); err != nil {
+				return err
+			}
 			if err := writeHandoff(baseDir, handoff); err != nil {
 				return err
 			}

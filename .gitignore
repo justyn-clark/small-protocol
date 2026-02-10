@@ -69,7 +69,7 @@ dist/
 # ================================
 
 # Root workspace canonical artifacts are committed, so do NOT ignore /.small/ entirely.
-.small/logs/
+.small-cache/
 .small/runs/
 
 # Always ignore runtime run snapshots at repo root
@@ -87,7 +87,7 @@ dist/
 # Examples are fixtures, not runtime noise
 !/examples/**/.small/
 !/examples/**/.small/**
-examples/**/.small/logs/
+examples/**/.small-cache/
 examples/**/.small/runs/
 examples/**/.small/archive/
 examples/**/.small-runs/

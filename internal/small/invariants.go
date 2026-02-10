@@ -325,10 +325,6 @@ func validateStrictHandoffTasks(planArtifact, handoffArtifact *Artifact) []Invar
 	}
 
 	tasks := extractPlanTasks(planArtifact)
-	if len(tasks) == 0 {
-		return nil
-	}
-
 	knownTasks := map[string]planTask{}
 	for _, task := range tasks {
 		if task.ID != "" {
@@ -342,8 +338,16 @@ func validateStrictHandoffTasks(planArtifact, handoffArtifact *Artifact) []Invar
 		return nil
 	}
 
-	currentTaskID := strings.TrimSpace(stringVal(resume["current_task_id"]))
+	rawCurrentTaskID, hasCurrentTaskID := resume["current_task_id"]
+	if !hasCurrentTaskID || rawCurrentTaskID == nil {
+		return nil
+	}
+
+	currentTaskID := strings.TrimSpace(stringVal(rawCurrentTaskID))
 	if currentTaskID == "" {
+		return nil
+	}
+	if strings.HasPrefix(currentTaskID, "meta/") {
 		return nil
 	}
 
@@ -783,8 +787,14 @@ func validateHandoff(path string, root map[string]any, owner string) []Invariant
 		v = append(v, InvariantViolation{File: path, Message: "handoff.resume must be an object"})
 		return v
 	}
-	if _, ok := resume["current_task_id"].(string); !ok {
-		v = append(v, InvariantViolation{File: path, Message: "handoff.resume.current_task_id must be a string"})
+	rawCurrentTaskID, hasCurrentTaskID := resume["current_task_id"]
+	if hasCurrentTaskID && rawCurrentTaskID != nil {
+		currentTaskID, ok := rawCurrentTaskID.(string)
+		if !ok {
+			v = append(v, InvariantViolation{File: path, Message: "handoff.resume.current_task_id must be a string or null"})
+		} else if strings.TrimSpace(currentTaskID) == "" {
+			v = append(v, InvariantViolation{File: path, Message: "handoff.resume.current_task_id must not be an empty string"})
+		}
 	}
 	if _, ok := resume["next_steps"].([]any); !ok {
 		v = append(v, InvariantViolation{File: path, Message: "handoff.resume.next_steps must be an array"})

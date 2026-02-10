@@ -102,7 +102,7 @@ func TestArchiveCommand(t *testing.T) {
 owner: "agent"
 summary: "Missing replayId"
 resume:
-  current_task_id: ""
+  current_task_id: null
   next_steps: []
 links: []
 `

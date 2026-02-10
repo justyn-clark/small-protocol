@@ -26,12 +26,12 @@ func TestWriteCommandLog(t *testing.T) {
 		t.Fatalf("SanitizeTimestampForFilename error: %v", err)
 	}
 
-	expectedRel := filepath.ToSlash(filepath.Join(SmallDir, "logs", replayId, "commands", sanitized+".txt"))
+	expectedRel := filepath.ToSlash(filepath.Join(CacheDirName, "logs", replayId, "commands", sanitized+".txt"))
 	if ref != expectedRel {
 		t.Fatalf("expected ref %q, got %q", expectedRel, ref)
 	}
 
-	expectedPath := filepath.Join(baseDir, SmallDir, "logs", replayId, "commands", sanitized+".txt")
+	expectedPath := filepath.Join(baseDir, CacheDirName, "logs", replayId, "commands", sanitized+".txt")
 	content, err := os.ReadFile(expectedPath)
 	if err != nil {
 		t.Fatalf("expected log file read error: %v", err)

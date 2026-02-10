@@ -31,7 +31,8 @@ func applyCmd() *cobra.Command {
 		Use:   "apply",
 		Short: "Execute a command bounded by intent and constraints",
 		Long: `Executes a user-provided shell command (or runs as dry-run).
-Appends progress entries before and after execution.
+Writes progress entries using signal-first mode by default.
+Set SMALL_PROGRESS_MODE=audit to retain verbose apply telemetry.
 Optionally generates a handoff at the end.
 
 If no command is provided, defaults to dry-run mode.`,
@@ -84,6 +85,8 @@ If no command is provided, defaults to dry-run mode.`,
 				dryRun = true
 			}
 
+			mode := resolveProgressMode()
+			normalizedTaskID := normalizeTaskID(taskID)
 			timestamp := formatProgressTimestamp(time.Now().UTC())
 
 			if dryRun {
@@ -107,13 +110,14 @@ If no command is provided, defaults to dry-run mode.`,
 				// Record dry-run in progress
 				entry := map[string]any{
 					"timestamp": timestamp,
-					"task_id":   normalizeTaskID(taskID),
+					"task_id":   normalizedTaskID,
 					"status":    "pending",
 					"evidence":  "Dry-run: no command executed",
 					"notes":     "apply --dry-run",
 				}
 
-				if cmdArg != "" {
+				emitDryRunProgress := shouldEmitProgress(progressEventApplyDryRun, normalizedTaskID, mode)
+				if emitDryRunProgress && cmdArg != "" {
 					summary, ref, sha, err := applyCommandMetadata(artifactsDir, timestamp, cmdArg)
 					if err != nil {
 						return err
@@ -125,37 +129,41 @@ If no command is provided, defaults to dry-run mode.`,
 					entry["notes"] = fmt.Sprintf("apply --dry-run (cmd: %q)", summary)
 				}
 
-				if err := appendProgressEntry(artifactsDir, entry); err != nil {
-					return fmt.Errorf("failed to record progress: %w", err)
-				}
+				if emitDryRunProgress {
+					if err := appendProgressEntry(artifactsDir, entry); err != nil {
+						return fmt.Errorf("failed to record progress: %w", err)
+					}
 
-				fmt.Println()
-				fmt.Println("Recorded dry-run in progress.small.yml")
+					fmt.Println()
+					fmt.Println("Recorded dry-run in progress.small.yml")
+				}
 				return nil
 			}
 
-			// Record start entry
-			startEntry := map[string]any{
-				"timestamp": timestamp,
-				"task_id":   normalizeTaskID(taskID),
-				"status":    "in_progress",
-				"evidence":  "Apply started",
-				"notes":     "apply: execution started",
-			}
-
-			if cmdArg != "" {
-				summary, ref, sha, err := applyCommandMetadata(artifactsDir, timestamp, cmdArg)
-				if err != nil {
-					return err
+			emitStartProgress := shouldEmitProgress(progressEventApplyStart, normalizedTaskID, mode)
+			if emitStartProgress {
+				startEntry := map[string]any{
+					"timestamp": timestamp,
+					"task_id":   normalizedTaskID,
+					"status":    "in_progress",
+					"evidence":  "Apply started",
+					"notes":     "apply: execution started",
 				}
-				startEntry["command"] = summary
-				startEntry["command_summary"] = summary
-				startEntry["command_ref"] = ref
-				startEntry["command_sha256"] = sha
-			}
 
-			if err := appendProgressEntry(artifactsDir, startEntry); err != nil {
-				return fmt.Errorf("failed to record start: %w", err)
+				if cmdArg != "" {
+					summary, ref, sha, err := applyCommandMetadata(artifactsDir, timestamp, cmdArg)
+					if err != nil {
+						return err
+					}
+					startEntry["command"] = summary
+					startEntry["command_summary"] = summary
+					startEntry["command_ref"] = ref
+					startEntry["command_sha256"] = sha
+				}
+
+				if err := appendProgressEntry(artifactsDir, startEntry); err != nil {
+					return fmt.Errorf("failed to record start: %w", err)
+				}
 			}
 
 			fmt.Printf("Executing: %s\n", cmdArg)
@@ -187,15 +195,17 @@ If no command is provided, defaults to dry-run mode.`,
 				status = "blocked"
 			}
 
+			emitEndProgress := shouldEmitProgress(progressEventApplyComplete, normalizedTaskID, mode)
+
 			// Record completion entry
 			endTimestamp := formatProgressTimestamp(time.Now().UTC())
 			endEntry := map[string]any{
 				"timestamp": endTimestamp,
-				"task_id":   normalizeTaskID(taskID),
+				"task_id":   normalizedTaskID,
 				"status":    status,
 			}
 
-			if cmdArg != "" {
+			if emitEndProgress && cmdArg != "" {
 				summary, ref, sha, err := applyCommandMetadata(artifactsDir, endTimestamp, cmdArg)
 				if err != nil {
 					return err
@@ -217,8 +227,10 @@ If no command is provided, defaults to dry-run mode.`,
 				endEntry["notes"] = fmt.Sprintf("apply: failed with exit code %d", exitCode)
 			}
 
-			if err := appendProgressEntry(artifactsDir, endEntry); err != nil {
-				fmt.Fprintf(os.Stderr, "Warning: failed to record completion: %v\n", err)
+			if emitEndProgress {
+				if err := appendProgressEntry(artifactsDir, endEntry); err != nil {
+					fmt.Fprintf(os.Stderr, "Warning: failed to record completion: %v\n", err)
+				}
 			}
 
 			if autoCheckpoint {
@@ -288,17 +300,28 @@ func generateHandoffFromApply(baseDir string) error {
 	if err != nil {
 		return err
 	}
+	if err := setWorkspaceRunReplayIDIfPresent(baseDir, handoff.ReplayId.Value); err != nil {
+		return err
+	}
 
 	return writeHandoff(baseDir, handoff)
 }
 
 func applyCommandMetadata(baseDir, timestamp, command string) (string, string, string, error) {
 	summary := small.SummarizeCommand(command, small.DefaultCommandSummaryCap)
-	existing, err := loadExistingHandoff(baseDir)
-	if err != nil || existing == nil || existing.ReplayId == nil || strings.TrimSpace(existing.ReplayId.Value) == "" {
-		return "", "", "", fmt.Errorf("cannot record command log: replayId missing (run small start)")
+	replayId, err := currentWorkspaceRunReplayID(baseDir)
+	if err != nil {
+		return "", "", "", err
 	}
-	replayId := strings.TrimSpace(existing.ReplayId.Value)
+	if replayId == "" {
+		existing, loadErr := loadExistingHandoff(baseDir)
+		if loadErr == nil && existing != nil && existing.ReplayId != nil {
+			replayId = strings.TrimSpace(existing.ReplayId.Value)
+		}
+	}
+	if replayId == "" {
+		return "", "", "", fmt.Errorf("cannot record command log: replayId missing (run small plan --add or small checkpoint)")
+	}
 	ref, sha, err := small.WriteCommandLog(baseDir, replayId, timestamp, command)
 	if err != nil {
 		return "", "", "", fmt.Errorf("failed to write command log: %w", err)
@@ -372,6 +395,10 @@ func runCheckpointApply(baseDir, taskID, status string, evidence string) error {
 		entry["evidence"] = evidence
 	}
 	if err := validateProgressEntry(entry); err != nil {
+		return err
+	}
+
+	if _, err := ensureWorkspaceRunReplayID(baseDir); err != nil {
 		return err
 	}
 

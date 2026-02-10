@@ -41,6 +41,12 @@ type Info struct {
 	Kind         Kind   `yaml:"kind"`
 	CreatedAt    string `yaml:"created_at,omitempty"`
 	UpdatedAt    string `yaml:"updated_at,omitempty"`
+	Run          *Run   `yaml:"run,omitempty"`
+}
+
+// Run describes current run metadata persisted in workspace.small.yml.
+type Run struct {
+	ReplayID string `yaml:"replay_id,omitempty"`
 }
 
 // ParseScope converts a CLI value into a Scope value.
@@ -271,4 +277,93 @@ func isValidRFC3339(ts string) bool {
 		_, err = time.Parse(time.RFC3339, ts)
 	}
 	return err == nil
+}
+
+// TouchUpdatedAt updates workspace.small.yml updated_at and returns whether a write occurred.
+func TouchUpdatedAt(baseDir string) (bool, error) {
+	path := filepath.Join(baseDir, small.SmallDir, "workspace.small.yml")
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, fmt.Errorf("failed to stat workspace metadata: %w", err)
+	}
+
+	info, err := Load(baseDir)
+	if err != nil {
+		return false, err
+	}
+	now := time.Now().UTC().Format(time.RFC3339Nano)
+	if info.UpdatedAt == now {
+		return false, nil
+	}
+	info.UpdatedAt = now
+	if info.SmallVersion == "" {
+		info.SmallVersion = small.ProtocolVersion
+	}
+	if info.Owner == "" {
+		info.Owner = "agent"
+	}
+
+	data, err := small.MarshalYAMLWithQuotedVersion(info)
+	if err != nil {
+		return false, fmt.Errorf("failed to marshal workspace metadata: %w", err)
+	}
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		return false, fmt.Errorf("failed to write workspace metadata: %w", err)
+	}
+	return true, nil
+}
+
+// RunReplayID returns the current run replay ID from workspace metadata.
+func RunReplayID(baseDir string) (string, error) {
+	info, err := Load(baseDir)
+	if err != nil {
+		return "", err
+	}
+	if info.Run == nil {
+		return "", nil
+	}
+	return strings.TrimSpace(info.Run.ReplayID), nil
+}
+
+// SetRunReplayID persists run.replay_id in workspace metadata.
+func SetRunReplayID(baseDir, replayID string) error {
+	value := strings.TrimSpace(replayID)
+	if value == "" {
+		return fmt.Errorf("replay_id must be non-empty")
+	}
+
+	info, err := Load(baseDir)
+	if err != nil {
+		return err
+	}
+
+	if info.Run == nil {
+		info.Run = &Run{}
+	}
+	if strings.TrimSpace(info.Run.ReplayID) == value {
+		return nil
+	}
+	info.Run.ReplayID = value
+
+	if info.SmallVersion == "" {
+		info.SmallVersion = small.ProtocolVersion
+	}
+	if info.Owner == "" {
+		info.Owner = "agent"
+	}
+	if info.UpdatedAt == "" || !isValidRFC3339(info.UpdatedAt) {
+		info.UpdatedAt = time.Now().UTC().Format(time.RFC3339Nano)
+	}
+
+	data, err := small.MarshalYAMLWithQuotedVersion(info)
+	if err != nil {
+		return fmt.Errorf("failed to marshal workspace metadata: %w", err)
+	}
+	path := filepath.Join(baseDir, small.SmallDir, "workspace.small.yml")
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		return fmt.Errorf("failed to write workspace metadata: %w", err)
+	}
+	return nil
 }

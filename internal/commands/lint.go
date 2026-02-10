@@ -82,5 +82,12 @@ func runLintArtifacts(baseDir string, strict bool) ([]small.InvariantViolation, 
 		return nil, err
 	}
 	violations := small.CheckInvariants(artifacts, strict)
+	if strict {
+		layoutViolations, err := small.StrictSmallLayoutViolations(baseDir, currentCommandHint())
+		if err != nil {
+			return nil, err
+		}
+		violations = append(violations, layoutViolations...)
+	}
 	return violations, nil
 }

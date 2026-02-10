@@ -227,7 +227,7 @@ entries: []
 owner: "agent"
 summary: "Test handoff"
 resume:
-  current_task_id: ""
+  current_task_id: null
   next_steps: []
 links: []
 replayId:
@@ -282,7 +282,7 @@ entries: []
 owner: "agent"
 summary: "Test handoff WITHOUT replayId"
 resume:
-  current_task_id: ""
+  current_task_id: null
   next_steps: []
 links: []
 `,
@@ -459,7 +459,7 @@ entries: []
 owner: "agent"
 summary: "Test handoff"
 resume:
-  current_task_id: ""
+  current_task_id: null
   next_steps: []
 links: []
 replayId:
@@ -503,7 +503,7 @@ func TestVerifyActionableFixes(t *testing.T) {
 owner: "agent"
 summary: "Test handoff WITHOUT replayId"
 resume:
-  current_task_id: ""
+  current_task_id: null
   next_steps: []
 links: []
 `
@@ -623,4 +623,49 @@ entries:
 			t.Errorf("expected fix message to mention 'small init', got: %s", output)
 		}
 	})
+}
+
+func TestVerifyRejectsEmptyHandoffCurrentTaskID(t *testing.T) {
+	tmpDir := t.TempDir()
+	artifacts := cloneArtifacts(defaultArtifacts())
+	artifacts["handoff.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+summary: "Test handoff"
+resume:
+  current_task_id: ""
+  next_steps: []
+links: []
+replayId:
+  value: "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
+  source: "auto"
+`
+	writeArtifacts(t, tmpDir, artifacts)
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	code := runVerify(tmpDir, false, true, workspace.ScopeRoot)
+	if code != ExitInvalid {
+		t.Fatalf("expected ExitInvalid for empty current_task_id, got %d", code)
+	}
+}
+
+func TestVerifyAcceptsHandoffWithoutCurrentTaskID(t *testing.T) {
+	tmpDir := t.TempDir()
+	artifacts := cloneArtifacts(defaultArtifacts())
+	artifacts["handoff.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+summary: "Run complete. strict check passed. All plan tasks completed."
+resume:
+  next_steps: []
+links: []
+replayId:
+  value: "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
+  source: "auto"
+`
+	writeArtifacts(t, tmpDir, artifacts)
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+
+	code := runVerify(tmpDir, true, true, workspace.ScopeRoot)
+	if code != ExitValid {
+		t.Fatalf("expected ExitValid when current_task_id is omitted, got %d", code)
+	}
 }

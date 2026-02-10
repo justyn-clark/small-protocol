@@ -1,11 +1,13 @@
 small_version: "1.0.0"
 owner: agent
-summary: 'CLI: printer-wired cobra output + update notice + command logging/truncation. Cancelled commit/push step (task-17) to perform manually outside SMALL after git commit exit 128. Strict check passes.'
+summary: Run blocked. strict check failed.
 resume:
-    current_task_id: ""
+    current_task_id: task-17
     next_steps:
-        - No actionable tasks. Add plan tasks via small plan --add.
+        - Unblock task-17
+        - 'Resolve strict check failures: handoff.resume.current_task_id must not be an empty string'
+        - 'Run: small check --strict'
 links: []
 replayId:
-    value: dc18c2d9b97d8a01caa7d3b01d1dd48315cecc6c28d11153294d1f23b5a835b1
+    value: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
     source: auto

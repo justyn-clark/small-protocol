@@ -90,6 +90,9 @@ func startCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			if err := setWorkspaceRunReplayIDIfPresent(artifactsDir, handoff.ReplayId.Value); err != nil {
+				return err
+			}
 
 			if err := writeHandoff(artifactsDir, handoff); err != nil {
 				return err

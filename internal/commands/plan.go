@@ -33,6 +33,13 @@ type PlanTask struct {
 	Dependencies []string `yaml:"dependencies,omitempty"`
 }
 
+type planProgressRecord struct {
+	TaskID   string
+	Status   string
+	Evidence string
+	Notes    string
+}
+
 const planDoneProgressNote = "completed via CLI"
 
 func planCmd() *cobra.Command {
@@ -110,6 +117,7 @@ func planCmd() *cobra.Command {
 			}
 
 			modified := false
+			progressRecords := make([]planProgressRecord, 0)
 
 			// Handle --add flag
 			if addTask != "" {
@@ -120,9 +128,12 @@ func planCmd() *cobra.Command {
 					Status: "pending",
 				}
 				plan.Tasks = append(plan.Tasks, newTask)
-				if err := appendPlanProgress(artifactsDir, newID, "pending", fmt.Sprintf("Added task %s via small plan --add", newID), addTask); err != nil {
-					return err
-				}
+				progressRecords = append(progressRecords, planProgressRecord{
+					TaskID:   newID,
+					Status:   "pending",
+					Evidence: fmt.Sprintf("Added task %s via small plan --add", newID),
+					Notes:    addTask,
+				})
 				modified = true
 				fmt.Printf("Added task %s: %s\n", newID, addTask)
 			}
@@ -131,9 +142,6 @@ func planCmd() *cobra.Command {
 			if doneID != "" {
 				if err := setTaskStatus(&plan, doneID, "completed"); err != nil {
 					return err
-				}
-				if err := ensureProgressEvidence(artifactsDir, doneID); err != nil {
-					return fmt.Errorf("failed to record progress for task %s: %w", doneID, err)
 				}
 				modified = true
 				fmt.Printf("Marked task %s as completed\n", doneID)
@@ -144,9 +152,12 @@ func planCmd() *cobra.Command {
 				if err := setTaskStatus(&plan, pendingID, "pending"); err != nil {
 					return err
 				}
-				if err := appendPlanProgress(artifactsDir, pendingID, "pending", fmt.Sprintf("Updated task %s to pending", pendingID), "small plan --pending"); err != nil {
-					return err
-				}
+				progressRecords = append(progressRecords, planProgressRecord{
+					TaskID:   pendingID,
+					Status:   "pending",
+					Evidence: fmt.Sprintf("Updated task %s to pending", pendingID),
+					Notes:    "small plan --pending",
+				})
 				modified = true
 				fmt.Printf("Marked task %s as pending\n", pendingID)
 			}
@@ -156,9 +167,12 @@ func planCmd() *cobra.Command {
 				if err := setTaskStatus(&plan, blockedID, "blocked"); err != nil {
 					return err
 				}
-				if err := appendPlanProgress(artifactsDir, blockedID, "blocked", fmt.Sprintf("Updated task %s to blocked", blockedID), "small plan --blocked"); err != nil {
-					return err
-				}
+				progressRecords = append(progressRecords, planProgressRecord{
+					TaskID:   blockedID,
+					Status:   "blocked",
+					Evidence: fmt.Sprintf("Updated task %s to blocked", blockedID),
+					Notes:    "small plan --blocked",
+				})
 				modified = true
 				fmt.Printf("Marked task %s as blocked\n", blockedID)
 			}
@@ -178,9 +192,12 @@ func planCmd() *cobra.Command {
 				if task, _ := findTask(&plan, taskID); task != nil {
 					status = task.Status
 				}
-				if err := appendPlanProgress(artifactsDir, taskID, status, fmt.Sprintf("Added dependency %s to %s", depID, taskID), "small plan --depends"); err != nil {
-					return err
-				}
+				progressRecords = append(progressRecords, planProgressRecord{
+					TaskID:   taskID,
+					Status:   status,
+					Evidence: fmt.Sprintf("Added dependency %s to %s", depID, taskID),
+					Notes:    "small plan --depends",
+				})
 				modified = true
 				fmt.Printf("Added dependency: %s depends on %s\n", taskID, depID)
 			}
@@ -189,6 +206,19 @@ func planCmd() *cobra.Command {
 			if modified || !planExists {
 				if err := savePlan(planPath, &plan); err != nil {
 					return fmt.Errorf("failed to save plan: %w", err)
+				}
+				if _, err := ensureWorkspaceRunReplayID(artifactsDir); err != nil {
+					return err
+				}
+				for _, record := range progressRecords {
+					if err := appendPlanProgress(artifactsDir, record.TaskID, record.Status, record.Evidence, record.Notes); err != nil {
+						return err
+					}
+				}
+				if doneID != "" {
+					if err := ensureProgressEvidence(artifactsDir, doneID); err != nil {
+						return fmt.Errorf("failed to record progress for task %s: %w", doneID, err)
+					}
 				}
 				if !modified && !planExists {
 					fmt.Printf("Created %s\n", planPath)
@@ -252,7 +282,14 @@ func savePlan(path string, plan *PlanData) error {
 		return err
 	}
 
-	return os.WriteFile(path, data, 0644)
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		return err
+	}
+	artifactsDir := filepath.Dir(filepath.Dir(path))
+	if err := touchWorkspaceUpdatedAt(artifactsDir); err != nil {
+		return err
+	}
+	return nil
 }
 
 func generateNextTaskID(tasks []PlanTask) string {

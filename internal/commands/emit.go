@@ -267,7 +267,7 @@ func buildEmitOutput(rootDir, artifactsDir string, include emitInclude, scope wo
 	if include.Has("progress") || len(include) == 0 {
 		output.Progress = emitProgressSummary{Recent: []ProgressEntry{}}
 		if small.ArtifactExists(artifactsDir, "progress.small.yml") {
-			recentEntries, err := getRecentProgress(artifactsDir, recent)
+			recentEntries, err := getRecentProgress(artifactsDir, recent, false)
 			if err != nil {
 				return emitOutput{}, ExitSystemError, err
 			}

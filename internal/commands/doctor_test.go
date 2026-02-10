@@ -84,7 +84,7 @@ entries: []
 owner: "agent"
 summary: "Test handoff"
 resume:
-  current_task_id: ""
+  current_task_id: null
   next_steps: []
 links: []
 replayId:

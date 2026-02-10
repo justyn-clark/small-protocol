@@ -43,7 +43,6 @@ regardless of append/prepend mode.`,
 			}
 			targetDir = resolveArtifactsDir(targetDir)
 
-			// Parse and validate agents mode flags
 			agentsMode, err := ParseAgentsMode(agentsModeStr)
 			if err != nil {
 				return err
@@ -53,14 +52,12 @@ regardless of append/prepend mode.`,
 			}
 
 			smallDir := filepath.Join(targetDir, small.SmallDir)
-
 			if !force {
 				if _, err := os.Stat(smallDir); err == nil {
 					return fmt.Errorf(".small/ directory already exists. Use --force to overwrite")
 				}
 			}
-
-			if err := os.MkdirAll(smallDir, 0755); err != nil {
+			if err := os.MkdirAll(smallDir, 0o755); err != nil {
 				return fmt.Errorf("failed to create .small directory: %w", err)
 			}
 
@@ -70,11 +67,8 @@ regardless of append/prepend mode.`,
 				"plan.small.yml":        planTemplate,
 				"progress.small.yml":    progressTemplate,
 			}
-
 			for filename, template := range templates {
 				content := template
-
-				// Seed intent if provided
 				if filename == "intent.small.yml" && strings.TrimSpace(intentStr) != "" {
 					var data map[string]any
 					if err := yaml.Unmarshal([]byte(template), &data); err == nil {
@@ -85,32 +79,41 @@ regardless of append/prepend mode.`,
 						}
 					}
 				}
-
 				path := filepath.Join(smallDir, filename)
-				if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+				if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 					return fmt.Errorf("failed to write %s: %w", path, err)
 				}
-			}
-
-			handoff, err := buildHandoff(targetDir, "Project initialized", "", nil, nil, nil, defaultNextStepsLimit)
-			if err != nil {
-				return err
-			}
-			if err := writeHandoff(targetDir, handoff); err != nil {
-				return err
 			}
 
 			if err := workspace.Save(targetDir, workspace.KindRepoRoot); err != nil {
 				return err
 			}
 
-			// Handle AGENTS.md
+			handoff, err := buildHandoff(targetDir, "", "", nil, nil, nil, defaultNextStepsLimit)
+			if err != nil {
+				return err
+			}
+			handoff.Summary = "Project initialized."
+			handoff.Resume.CurrentTaskID = nil
+			handoff.Resume.NextSteps = []string{
+				"Fill intent.small.yml",
+				"Fill constraints.small.yml",
+				"Generate plan.small.yml",
+			}
+			if err := writeHandoff(targetDir, handoff); err != nil {
+				return err
+			}
+
+			if err := ensureInitGitignore(targetDir); err != nil {
+				return err
+			}
+
 			if err := handleAgentsFile(targetDir, noAgents, overwriteAgents, agentsMode); err != nil {
 				return err
 			}
 
 			entry := map[string]any{
-				"task_id":   "init",
+				"task_id":   "meta/init",
 				"status":    "completed",
 				"timestamp": formatProgressTimestamp(time.Now().UTC()),
 				"evidence":  "Initialized .small workspace and seeded canonical artifacts",
@@ -153,41 +156,35 @@ func handleAgentsFile(targetDir string, noAgents, overwriteAgents bool, agentsMo
 		return fmt.Errorf("failed to read AGENTS.md: %w", err)
 	}
 
-	// Case 1: File does not exist - create with SMALL block only
 	if !fileExists {
-		if err := os.WriteFile(agentsPath, []byte(GenerateAgentsBlock()), 0644); err != nil {
+		if err := os.WriteFile(agentsPath, []byte(GenerateAgentsBlock()), 0o644); err != nil {
 			return fmt.Errorf("failed to write AGENTS.md: %w", err)
 		}
 		fmt.Println("Created AGENTS.md")
 		return nil
 	}
 
-	// Case 2: File exists, no flags - error with guidance
 	if agentsMode == AgentsModeNone && !overwriteAgents {
 		fmt.Println(AgentsFileExistsMessage())
 		return fmt.Errorf("AGENTS.md already exists")
 	}
 
-	// Case 3: --overwrite-agents - replace entire file
 	if overwriteAgents {
-		if err := os.WriteFile(agentsPath, []byte(GenerateAgentsBlock()), 0644); err != nil {
+		if err := os.WriteFile(agentsPath, []byte(GenerateAgentsBlock()), 0o644); err != nil {
 			return fmt.Errorf("failed to write AGENTS.md: %w", err)
 		}
 		fmt.Println("Overwrote AGENTS.md")
 		return nil
 	}
 
-	// Case 4: --agents-mode=append or prepend
 	newContent, err := ComposeAgentsFile(existingContent, agentsMode)
 	if err != nil {
 		return fmt.Errorf("failed to compose AGENTS.md: %w", err)
 	}
-
-	if err := os.WriteFile(agentsPath, []byte(newContent), 0644); err != nil {
+	if err := os.WriteFile(agentsPath, []byte(newContent), 0o644); err != nil {
 		return fmt.Errorf("failed to write AGENTS.md: %w", err)
 	}
 
-	// Check if we replaced an existing block or added new
 	info, _ := FindAgentsBlock(existingContent)
 	if info.Found {
 		fmt.Println("Updated SMALL harness block in AGENTS.md")
@@ -200,5 +197,35 @@ func handleAgentsFile(targetDir string, noAgents, overwriteAgents bool, agentsMo
 		}
 	}
 
+	return nil
+}
+
+const initCacheIgnoreLine = ".small-cache/"
+
+func ensureInitGitignore(targetDir string) error {
+	path := filepath.Join(targetDir, ".gitignore")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return os.WriteFile(path, []byte(initCacheIgnoreLine+"\n"), 0o644)
+		}
+		return fmt.Errorf("failed to read .gitignore: %w", err)
+	}
+
+	content := string(data)
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		if strings.TrimSpace(line) == initCacheIgnoreLine {
+			return nil
+		}
+	}
+
+	if len(content) > 0 && !strings.HasSuffix(content, "\n") {
+		content += "\n"
+	}
+	content += initCacheIgnoreLine + "\n"
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+		return fmt.Errorf("failed to write .gitignore: %w", err)
+	}
 	return nil
 }

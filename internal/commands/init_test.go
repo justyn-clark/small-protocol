@@ -3,6 +3,7 @@ package commands
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
@@ -48,8 +49,11 @@ func TestInitCommandWritesWorkspaceMetadata(t *testing.T) {
 	}
 
 	entry := progress.Entries[len(progress.Entries)-1]
-	if entry["task_id"] != "init" {
-		t.Fatalf("expected init task_id, got %v", entry["task_id"])
+	if entry["task_id"] != "meta/init" {
+		t.Fatalf("expected meta/init task_id, got %v", entry["task_id"])
+	}
+	if replayID, ok := entry["replayId"]; ok && replayID != nil && replayID != "" {
+		t.Fatalf("expected init replayId to be absent or empty, got %v", replayID)
 	}
 	timestamp, _ := entry["timestamp"].(string)
 	if _, err := small.ParseProgressTimestamp(timestamp); err != nil {
@@ -83,6 +87,43 @@ func TestInitCommandWithDirFlag(t *testing.T) {
 
 	if info.Kind != workspace.KindRepoRoot {
 		t.Fatalf("expected workspace kind %q, got %q", workspace.KindRepoRoot, info.Kind)
+	}
+}
+
+func TestInitCommandWritesBootstrapHandoff(t *testing.T) {
+	tmpDir := t.TempDir()
+	oldBaseDir := baseDir
+	baseDir = tmpDir
+	defer func() {
+		baseDir = oldBaseDir
+	}()
+
+	cmd := initCmd()
+	cmd.SetArgs([]string{"--no-agents"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("init command failed: %v", err)
+	}
+
+	handoffPath := filepath.Join(tmpDir, ".small", "handoff.small.yml")
+	handoffData, err := os.ReadFile(handoffPath)
+	if err != nil {
+		t.Fatalf("failed to read handoff: %v", err)
+	}
+
+	content := string(handoffData)
+	if !strings.Contains(content, "summary: Project initialized.") {
+		t.Fatalf("expected canonical bootstrap summary, got:\n%s", content)
+	}
+	if strings.Contains(content, "current_task_id") {
+		t.Fatalf("expected bootstrap handoff to omit current_task_id, got:\n%s", content)
+	}
+	for _, step := range []string{"Fill intent.small.yml", "Fill constraints.small.yml", "Generate plan.small.yml"} {
+		if !strings.Contains(content, step) {
+			t.Fatalf("expected bootstrap step %q in handoff, got:\n%s", step, content)
+		}
+	}
+	if !strings.Contains(content, "replayId:") {
+		t.Fatalf("expected replayId in bootstrap handoff, got:\n%s", content)
 	}
 }
 
@@ -430,4 +471,31 @@ func countOccurrences(s, substr string) int {
 		}
 	}
 	return count
+}
+
+func TestEnsureInitGitignoreIdempotent(t *testing.T) {
+	tmpDir := t.TempDir()
+	gitignorePath := filepath.Join(tmpDir, ".gitignore")
+	if err := os.WriteFile(gitignorePath, []byte("node_modules/\n"), 0o644); err != nil {
+		t.Fatalf("failed to seed .gitignore: %v", err)
+	}
+
+	if err := ensureInitGitignore(tmpDir); err != nil {
+		t.Fatalf("ensureInitGitignore failed: %v", err)
+	}
+	if err := ensureInitGitignore(tmpDir); err != nil {
+		t.Fatalf("ensureInitGitignore second call failed: %v", err)
+	}
+
+	data, err := os.ReadFile(gitignorePath)
+	if err != nil {
+		t.Fatalf("failed to read .gitignore: %v", err)
+	}
+	content := string(data)
+	if strings.Count(content, initCacheIgnoreLine) != 1 {
+		t.Fatalf("expected one cache ignore line, got: %q", content)
+	}
+	if strings.Contains(content, ".small/*.yml") {
+		t.Fatalf("did not expect canonical .small artifacts to be ignored")
+	}
 }

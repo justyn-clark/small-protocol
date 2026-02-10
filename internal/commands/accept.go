@@ -46,8 +46,7 @@ func acceptArtifactCmd(kind string) *cobra.Command {
 				}
 			}
 
-			smallDir := filepath.Join(artifactsDir, small.SmallDir)
-			draftPath := filepath.Join(smallDir, "drafts", fmt.Sprintf("%s.small.yml", kind))
+			draftPath := filepath.Join(small.CacheDraftsDir(artifactsDir), fmt.Sprintf("%s.small.yml", kind))
 			data, err := os.ReadFile(draftPath)
 			if err != nil {
 				if os.IsNotExist(err) {
@@ -56,12 +55,15 @@ func acceptArtifactCmd(kind string) *cobra.Command {
 				return fmt.Errorf("failed to read draft %s: %w", draftPath, err)
 			}
 
-			outPath := filepath.Join(smallDir, fmt.Sprintf("%s.small.yml", kind))
-			if err := os.WriteFile(outPath, data, 0644); err != nil {
+			outPath := filepath.Join(artifactsDir, small.SmallDir, fmt.Sprintf("%s.small.yml", kind))
+			if err := os.WriteFile(outPath, data, 0o644); err != nil {
 				return fmt.Errorf("failed to write %s: %w", outPath, err)
 			}
+			if err := touchWorkspaceUpdatedAt(artifactsDir); err != nil {
+				return err
+			}
 
-			evidence := fmt.Sprintf("Accepted draft %s from %s", kind, filepath.Join(small.SmallDir, "drafts", fmt.Sprintf("%s.small.yml", kind)))
+			evidence := fmt.Sprintf("Accepted draft %s from %s", kind, filepath.Join(small.CacheDirName, "drafts", fmt.Sprintf("%s.small.yml", kind)))
 			entry := map[string]any{
 				"task_id":  fmt.Sprintf("meta/accept-%s", kind),
 				"status":   "completed",
@@ -72,7 +74,7 @@ func acceptArtifactCmd(kind string) *cobra.Command {
 				return fmt.Errorf("failed to record accept progress: %w", err)
 			}
 
-			fmt.Printf("Accepted draft: %s -> %s\n", filepath.Join(small.SmallDir, "drafts", fmt.Sprintf("%s.small.yml", kind)), filepath.Join(small.SmallDir, fmt.Sprintf("%s.small.yml", kind)))
+			fmt.Printf("Accepted draft: %s -> %s\n", filepath.Join(small.CacheDirName, "drafts", fmt.Sprintf("%s.small.yml", kind)), filepath.Join(small.SmallDir, fmt.Sprintf("%s.small.yml", kind)))
 			fmt.Printf("Recorded progress entry: meta/accept-%s\n", kind)
 			return nil
 		},

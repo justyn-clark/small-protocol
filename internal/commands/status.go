@@ -6,20 +6,27 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/version"
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
 
+var knownPlanStatuses = []string{"pending", "in_progress", "blocked", "completed"}
+
 // StatusOutput represents the structured status output
 type StatusOutput struct {
 	Version        string           `json:"version"`
+	ProgressMode   string           `json:"progress_mode"`
 	SmallDirExists bool             `json:"small_dir_exists"`
 	Artifacts      ArtifactPresence `json:"artifacts"`
 	Plan           *PlanStatus      `json:"plan,omitempty"`
+	NextTask       string           `json:"next_task,omitempty"`
+	ReplayID       string           `json:"replay_id,omitempty"`
 	RecentProgress []ProgressEntry  `json:"recent_progress,omitempty"`
 	LastHandoff    string           `json:"last_handoff,omitempty"`
 }
@@ -35,9 +42,10 @@ type ArtifactPresence struct {
 
 // PlanStatus summarizes plan state
 type PlanStatus struct {
-	TotalTasks     int            `json:"total_tasks"`
-	TasksByStatus  map[string]int `json:"tasks_by_status"`
-	NextActionable []string       `json:"next_actionable"`
+	TotalTasks      int            `json:"total_tasks"`
+	TasksByStatus   map[string]int `json:"tasks_by_status"`
+	NextActionable  []string       `json:"next_actionable"`
+	FirstIncomplete string         `json:"first_incomplete,omitempty"`
 }
 
 // ProgressEntry represents a progress entry for status output
@@ -45,10 +53,16 @@ type ProgressEntry struct {
 	Timestamp      string `json:"timestamp"`
 	TaskID         string `json:"task_id"`
 	Status         string `json:"status"`
+	Evidence       string `json:"evidence,omitempty"`
 	Notes          string `json:"notes,omitempty"`
 	CommandSummary string `json:"command_summary,omitempty"`
 	CommandRef     string `json:"command_ref,omitempty"`
 	CommandSha256  string `json:"command_sha256,omitempty"`
+}
+
+type handoffStatusSnapshot struct {
+	Timestamp     string
+	CurrentTaskID string
 }
 
 func statusCmd() *cobra.Command {
@@ -62,7 +76,7 @@ func statusCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "status",
 		Short: "Show SMALL project status summary",
-		Long:  "Displays a compact summary of the current SMALL project state.",
+		Long:  "Displays a compact signal-first summary of the current SMALL project state.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			p := currentPrinter()
 			if dir == "" {
@@ -70,9 +84,11 @@ func statusCmd() *cobra.Command {
 			}
 			artifactsDir := resolveArtifactsDir(dir)
 			smallDir := filepath.Join(artifactsDir, small.SmallDir)
+			mode := resolveProgressMode()
 
 			status := StatusOutput{
-				Version: version.GetVersion(),
+				Version:      version.GetVersion(),
+				ProgressMode: string(mode),
 			}
 
 			// Check if .small directory exists
@@ -84,7 +100,7 @@ func statusCmd() *cobra.Command {
 				p.PrintInfo(fmt.Sprintf("small %s", version.GetVersion()))
 				p.PrintInfo("")
 				p.PrintInfo(".small/ directory does not exist")
-				p.PrintInfo("Run 'small init' to create a SMALL project")
+				p.PrintInfo("Run small init to create a SMALL project")
 				return nil
 			}
 			status.SmallDirExists = true
@@ -104,22 +120,29 @@ func statusCmd() *cobra.Command {
 				if err == nil {
 					status.Plan = planStatus
 				}
+				replayID, err := workspace.RunReplayID(artifactsDir)
+				if err == nil {
+					status.ReplayID = strings.TrimSpace(replayID)
+				}
 			}
 
-			// Load recent progress entries
+			// Load recent signal progress entries
 			if status.Artifacts.Progress {
-				entries, err := getRecentProgress(artifactsDir, recent)
+				entries, err := getRecentProgress(artifactsDir, recent, true)
 				if err == nil {
 					status.RecentProgress = entries
 				}
 			}
 
-			// Get last handoff timestamp
 			if status.Artifacts.Handoff {
-				timestamp, err := getHandoffTimestamp(artifactsDir)
-				if err == nil && timestamp != "" {
-					status.LastHandoff = timestamp
+				handoff, err := getHandoffStatusSnapshot(artifactsDir)
+				if err == nil {
+					status.LastHandoff = handoff.Timestamp
+					status.NextTask = resolveNextTask(status.Plan, handoff.CurrentTaskID)
 				}
+			}
+			if status.NextTask == "" {
+				status.NextTask = resolveNextTask(status.Plan, "")
 			}
 
 			if jsonOutput {
@@ -154,21 +177,29 @@ func analyzePlan(baseDir string, maxActionable int) (*PlanStatus, error) {
 	}
 
 	status := &PlanStatus{
-		TotalTasks:     len(plan.Tasks),
-		TasksByStatus:  make(map[string]int),
-		NextActionable: []string{},
+		TotalTasks:      len(plan.Tasks),
+		TasksByStatus:   make(map[string]int),
+		NextActionable:  []string{},
+		FirstIncomplete: "",
+	}
+	for _, name := range knownPlanStatuses {
+		status.TasksByStatus[name] = 0
 	}
 
 	// Build a map of task statuses for dependency checking
 	taskStatuses := make(map[string]string)
 	for _, task := range plan.Tasks {
-		taskStatuses[task.ID] = task.Status
-		status.TasksByStatus[task.Status]++
+		normalizedStatus := normalizePlanStatus(task.Status)
+		taskStatuses[task.ID] = normalizedStatus
+		status.TasksByStatus[normalizedStatus]++
+		if normalizedStatus != "completed" && status.FirstIncomplete == "" {
+			status.FirstIncomplete = task.ID
+		}
 	}
 
 	// Find actionable tasks (pending with all deps satisfied)
 	for _, task := range plan.Tasks {
-		if task.Status != "pending" {
+		if normalizePlanStatus(task.Status) != "pending" {
 			continue
 		}
 
@@ -189,7 +220,7 @@ func analyzePlan(baseDir string, maxActionable int) (*PlanStatus, error) {
 	return status, nil
 }
 
-func getRecentProgress(baseDir string, n int) ([]ProgressEntry, error) {
+func getRecentProgress(baseDir string, n int, signalOnly bool) ([]ProgressEntry, error) {
 	artifact, err := small.LoadArtifact(baseDir, "progress.small.yml")
 	if err != nil {
 		return nil, err
@@ -212,6 +243,9 @@ func getRecentProgress(baseDir string, n int) ([]ProgressEntry, error) {
 			TaskID:    stringVal(m["task_id"]),
 			Status:    stringVal(m["status"]),
 		}
+		if evidence, ok := m["evidence"].(string); ok {
+			entry.Evidence = evidence
+		}
 		if notes, ok := m["notes"].(string); ok {
 			entry.Notes = notes
 		}
@@ -225,6 +259,9 @@ func getRecentProgress(baseDir string, n int) ([]ProgressEntry, error) {
 		}
 		if sha, ok := m["command_sha256"].(string); ok {
 			entry.CommandSha256 = sha
+		}
+		if signalOnly && !isSignalProgressEntry(entry) {
+			continue
 		}
 		progressEntries = append(progressEntries, entry)
 	}
@@ -242,17 +279,37 @@ func getRecentProgress(baseDir string, n int) ([]ProgressEntry, error) {
 	return progressEntries, nil
 }
 
-func getHandoffTimestamp(baseDir string) (string, error) {
+func getHandoffStatusSnapshot(baseDir string) (handoffStatusSnapshot, error) {
 	artifact, err := small.LoadArtifact(baseDir, "handoff.small.yml")
 	if err != nil {
-		return "", err
+		return handoffStatusSnapshot{}, err
 	}
 
+	snapshot := handoffStatusSnapshot{}
 	if timestamp, ok := artifact.Data["generated_at"].(string); ok {
-		return timestamp, nil
+		snapshot.Timestamp = timestamp
+	}
+	if resume, ok := artifact.Data["resume"].(map[string]any); ok {
+		snapshot.CurrentTaskID = strings.TrimSpace(stringVal(resume["current_task_id"]))
 	}
 
-	return "", nil
+	return snapshot, nil
+}
+
+func resolveNextTask(plan *PlanStatus, handoffCurrentTaskID string) string {
+	if current := strings.TrimSpace(handoffCurrentTaskID); current != "" {
+		return current
+	}
+	if plan == nil {
+		return ""
+	}
+	if plan.FirstIncomplete != "" {
+		return plan.FirstIncomplete
+	}
+	if plan.TotalTasks > 0 && plan.TasksByStatus["completed"] == plan.TotalTasks {
+		return "No active task (run complete)"
+	}
+	return ""
 }
 
 func outputJSON(status StatusOutput) error {
@@ -270,6 +327,9 @@ func outputText(status StatusOutput) error {
 		return nil
 	}
 	p.PrintInfo(fmt.Sprintf("small v%s", status.Version))
+	if status.ProgressMode == string(progressModeAudit) {
+		p.PrintInfo("progress mode: audit")
+	}
 	p.PrintInfo("")
 
 	// Artifact checklist
@@ -281,33 +341,38 @@ func outputText(status StatusOutput) error {
 	printArtifactStatus(p, "  handoff.small.yml", status.Artifacts.Handoff)
 	p.PrintInfo("")
 
+	if status.ReplayID != "" {
+		p.PrintInfo(fmt.Sprintf("ReplayId: %s", status.ReplayID))
+	}
+
 	// Plan summary
 	if status.Plan != nil {
 		p.PrintInfo(fmt.Sprintf("Plan: %d tasks", status.Plan.TotalTasks))
-		for statusName, count := range status.Plan.TasksByStatus {
-			p.PrintInfo(fmt.Sprintf("  %s: %d", statusName, count))
+		for _, statusName := range knownPlanStatuses {
+			p.PrintInfo(fmt.Sprintf("  %s: %d", statusName, status.Plan.TasksByStatus[statusName]))
 		}
 		if len(status.Plan.NextActionable) > 0 {
 			p.PrintInfo(fmt.Sprintf("Next actionable: %v", status.Plan.NextActionable))
 		} else {
 			p.PrintInfo("Next actionable: none")
 		}
-		p.PrintInfo("")
 	}
+	if status.NextTask != "" {
+		p.PrintInfo(fmt.Sprintf("Next task: %s", status.NextTask))
+	}
+	p.PrintInfo("")
 
 	// Recent progress
 	if len(status.RecentProgress) > 0 {
-		p.PrintInfo(fmt.Sprintf("Recent progress (%d entries):", len(status.RecentProgress)))
+		p.PrintInfo(fmt.Sprintf("Recent signal progress (%d entries):", len(status.RecentProgress)))
 		for _, entry := range status.RecentProgress {
 			ts := formatTimestamp(entry.Timestamp)
-			cmdInfo := ""
-			if entry.CommandSummary != "" {
-				cmdInfo = fmt.Sprintf(" cmd=%s", entry.CommandSummary)
-				if entry.CommandRef != "" {
-					cmdInfo = fmt.Sprintf("%s ref=%s", cmdInfo, entry.CommandRef)
-				}
+			evidence := summarizeStatusEvidence(entry)
+			if evidence != "" {
+				p.PrintInfo(fmt.Sprintf("  [%s] %s: %s - %s", ts, entry.TaskID, entry.Status, evidence))
+				continue
 			}
-			p.PrintInfo(fmt.Sprintf("  [%s] %s: %s%s", ts, entry.TaskID, entry.Status, cmdInfo))
+			p.PrintInfo(fmt.Sprintf("  [%s] %s: %s", ts, entry.TaskID, entry.Status))
 		}
 		p.PrintInfo("")
 	}
@@ -319,6 +384,21 @@ func outputText(status StatusOutput) error {
 	}
 
 	return nil
+}
+
+func summarizeStatusEvidence(entry ProgressEntry) string {
+	candidate := strings.TrimSpace(entry.Evidence)
+	if candidate == "" {
+		candidate = strings.TrimSpace(entry.Notes)
+	}
+	if candidate == "" {
+		return ""
+	}
+	const maxLen = 120
+	if len(candidate) <= maxLen {
+		return candidate
+	}
+	return candidate[:maxLen] + "..."
 }
 
 func printArtifactStatus(p *Printer, name string, exists bool) {

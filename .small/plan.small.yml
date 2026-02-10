@@ -58,3 +58,18 @@ tasks:
     - id: task-19
       title: 'Lint: remove redundant nil check in invariants'
       status: completed
+    - id: task-20
+      title: Hard fence .small canonical artifacts, relocate scratch cache, canonical handoff state machine, workspace updated_at, and init hygiene
+      status: completed
+    - id: task-21
+      title: Canonicalize handoff lifecycle semantics across init/in_progress/blocked/completed with conditional S3 validation and tests
+      status: completed
+    - id: task-22
+      title: Fix init progress task_id to meta/init so fresh init is strict-clean (S2) and update tests
+      status: completed
+    - id: task-23
+      title: Normalize progress emission (signal-first default + audit mode) and add signal-oriented status summary with tests
+      status: completed
+    - id: task-24
+      title: 'ReplayId semantics: bootstrap entries without replayId; run replayId begins once plan exists'
+      status: completed

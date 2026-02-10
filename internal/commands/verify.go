@@ -144,6 +144,14 @@ func runVerify(dir string, strict, ci bool, scope workspace.Scope) int {
 
 	// Invariant validation
 	violations := small.CheckInvariants(artifacts, strict)
+	if strict {
+		layoutViolations, err := small.StrictSmallLayoutViolations(artifactsDir, currentCommandHint())
+		if err != nil {
+			p.PrintError(fmt.Sprintf("Error validating strict .small layout: %v", err))
+			return ExitSystemError
+		}
+		violations = append(violations, layoutViolations...)
+	}
 	for _, v := range violations {
 		ve := verifyError{
 			message: fmt.Sprintf("Invariant [%s]: %s", filepath.Base(v.File), v.Message),
@@ -157,6 +165,10 @@ func runVerify(dir string, strict, ci bool, scope workspace.Scope) int {
 	if handoff, ok := artifacts["handoff"]; ok {
 		replayIdErrors := validateReplayIdWithFixes(handoff, dir)
 		allErrors = append(allErrors, replayIdErrors...)
+		if plan, hasPlan := artifacts["plan"]; hasPlan {
+			handoffTaskErrors := validateHandoffCurrentTaskIDWithFixes(plan, handoff, dir)
+			allErrors = append(allErrors, handoffTaskErrors...)
+		}
 	}
 
 	// Report results
@@ -219,6 +231,10 @@ func suggestFixForInvariant(v small.InvariantViolation, dir string) string {
 	// Evidence missing
 	if strings.Contains(msg, "must have at least one evidence field") {
 		return "Add evidence, verification, command, test, link, or commit field to the progress entry"
+	}
+
+	if strings.Contains(msg, "strict invariant S4 failed") {
+		return "Delete or move unexpected paths outside .small/ and rerun: small check --strict"
 	}
 
 	return ""
@@ -322,4 +338,56 @@ func validateReplayId(handoff *small.Artifact) []string {
 	}
 
 	return errors
+}
+
+func validateHandoffCurrentTaskIDWithFixes(plan, handoff *small.Artifact, dir string) []verifyError {
+	if plan == nil || handoff == nil || plan.Data == nil || handoff.Data == nil {
+		return nil
+	}
+	resume, _ := handoff.Data["resume"].(map[string]any)
+	if resume == nil {
+		return nil
+	}
+
+	raw, exists := resume["current_task_id"]
+	if !exists || raw == nil {
+		return nil
+	}
+
+	taskID, ok := raw.(string)
+	if !ok {
+		return nil
+	}
+	taskID = strings.TrimSpace(taskID)
+	if taskID == "" {
+		return []verifyError{{
+			message: "handoff.resume.current_task_id must not be an empty string",
+			fix:     fmt.Sprintf("rerun handoff generation: small handoff --dir %q OR align plan/progress then rerun handoff", dir),
+		}}
+	}
+	if strings.HasPrefix(taskID, "meta/") {
+		return nil
+	}
+
+	tasksRaw, _ := plan.Data["tasks"].([]any)
+	known := map[string]struct{}{}
+	for _, item := range tasksRaw {
+		taskMap, ok := item.(map[string]any)
+		if !ok {
+			continue
+		}
+		id, _ := taskMap["id"].(string)
+		id = strings.TrimSpace(id)
+		if id != "" {
+			known[id] = struct{}{}
+		}
+	}
+	if _, ok := known[taskID]; ok {
+		return nil
+	}
+
+	return []verifyError{{
+		message: fmt.Sprintf("handoff.resume.current_task_id %q is not in plan.small.yml and does not use meta/", taskID),
+		fix:     fmt.Sprintf("rerun handoff generation: small handoff --dir %q OR update plan/progress to align", dir),
+	}}
 }

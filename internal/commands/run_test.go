@@ -20,7 +20,7 @@ func TestRunSnapshotMissingReplayId(t *testing.T) {
 owner: "agent"
 summary: "Missing replayId"
 resume:
-  current_task_id: ""
+  current_task_id: null
   next_steps: []
 links: []
 `
@@ -94,7 +94,7 @@ func TestRunListOutputBasic(t *testing.T) {
 	if !strings.Contains(output, "created_at") {
 		t.Fatalf("expected output to contain header, got: %s", output)
 	}
-	if !strings.Contains(output, "Selftest checkpoint") {
+	if !strings.Contains(output, "Run in progress. Next task: task-1.") {
 		t.Fatalf("expected output to include summary, got: %s", output)
 	}
 }

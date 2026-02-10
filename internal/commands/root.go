@@ -89,7 +89,6 @@ func configureRootOutput(rootCmd *cobra.Command) {
 		usage, _ := captureCommandOutput(cmd, defaultUsage)
 		lines := []string{err.Error()}
 		if usage != "" {
-			lines = append(lines, "Usage:")
 			lines = append(lines, strings.Split(usage, "\n")...)
 		}
 		if p != nil {

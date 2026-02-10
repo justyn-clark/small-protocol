@@ -657,7 +657,7 @@ func TestCheckInvariants_StrictModeProgressTaskIDs(t *testing.T) {
 				"owner":         "agent",
 				"summary":       "Test handoff",
 				"resume": map[string]any{
-					"current_task_id": "",
+					"current_task_id": nil,
 					"next_steps":      []any{},
 				},
 				"links": []any{},
@@ -726,7 +726,7 @@ func TestCheckInvariants_StrictModeProgressTaskIDsIgnoresOtherReplayID(t *testin
 				"owner":         "agent",
 				"summary":       "Test handoff",
 				"resume": map[string]any{
-					"current_task_id": "",
+					"current_task_id": nil,
 					"next_steps":      []any{},
 				},
 				"links": []any{},
@@ -742,6 +742,67 @@ func TestCheckInvariants_StrictModeProgressTaskIDsIgnoresOtherReplayID(t *testin
 	for _, v := range violations {
 		if contains(v.Message, "strict invariant S2 failed") {
 			t.Fatalf("unexpected strict mode S2 violation: %s", v.Message)
+		}
+	}
+}
+
+func TestCheckInvariants_StrictModeProgressTaskIDsIgnoresBootstrapWithoutReplayID(t *testing.T) {
+	currentReplayID := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]any{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []any{
+					map[string]any{
+						"id":    "task-1",
+						"title": "Known task",
+					},
+				},
+			},
+		},
+		"progress": {
+			Path: "test/progress.small.yml",
+			Type: "progress",
+			Data: map[string]any{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"entries": []any{
+					map[string]any{
+						"task_id":   "task-unknown",
+						"status":    "completed",
+						"timestamp": "2025-01-01T00:00:00.000000001Z",
+						"evidence":  "bootstrap",
+					},
+				},
+			},
+		},
+		"handoff": {
+			Path: "test/handoff.small.yml",
+			Type: "handoff",
+			Data: map[string]any{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"summary":       "Test handoff",
+				"resume": map[string]any{
+					"current_task_id": nil,
+					"next_steps":      []any{},
+				},
+				"links": []any{},
+				"replayId": map[string]any{
+					"value":  currentReplayID,
+					"source": "auto",
+				},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	for _, v := range violations {
+		if contains(v.Message, "strict invariant S2 failed") {
+			t.Fatalf("unexpected strict mode S2 violation for bootstrap entry without replayId: %s", v.Message)
 		}
 	}
 }
@@ -789,6 +850,85 @@ func TestCheckInvariants_StrictModeHandoffTaskReference(t *testing.T) {
 	}
 	if !hasS3 {
 		t.Error("expected strict mode S3 violation for missing current task")
+	}
+}
+
+func TestCheckInvariants_StrictModeHandoffTaskReferenceAllowsMetaCurrentTask(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]any{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []any{
+					map[string]any{
+						"id":    "task-1",
+						"title": "Known task",
+					},
+				},
+			},
+		},
+		"handoff": {
+			Path: "test/handoff.small.yml",
+			Type: "handoff",
+			Data: map[string]any{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"summary":       "Test handoff",
+				"resume": map[string]any{
+					"current_task_id": "meta/blocker",
+					"next_steps":      []any{},
+				},
+				"links": []any{},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	for _, v := range violations {
+		if contains(v.Message, "strict invariant S3 failed") {
+			t.Fatalf("expected meta current_task_id to bypass S3, got violation: %s", v.Message)
+		}
+	}
+}
+
+func TestCheckInvariants_StrictModeHandoffTaskReferenceAllowsOmittedCurrentTask(t *testing.T) {
+	artifacts := map[string]*Artifact{
+		"plan": {
+			Path: "test/plan.small.yml",
+			Type: "plan",
+			Data: map[string]any{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"tasks": []any{
+					map[string]any{
+						"id":    "task-1",
+						"title": "Known task",
+					},
+				},
+			},
+		},
+		"handoff": {
+			Path: "test/handoff.small.yml",
+			Type: "handoff",
+			Data: map[string]any{
+				"small_version": ProtocolVersion,
+				"owner":         "agent",
+				"summary":       "Test handoff",
+				"resume": map[string]any{
+					"next_steps": []any{},
+				},
+				"links": []any{},
+			},
+		},
+	}
+
+	violations := CheckInvariants(artifacts, true)
+	for _, v := range violations {
+		if contains(v.Message, "strict invariant S3 failed") {
+			t.Fatalf("expected omitted current_task_id to bypass S3, got violation: %s", v.Message)
+		}
 	}
 }
 
@@ -844,7 +984,7 @@ func TestCheckInvariants_StrictModeInsecureLinks(t *testing.T) {
 				"owner":         "agent",
 				"summary":       "Test handoff",
 				"resume": map[string]any{
-					"current_task_id": "",
+					"current_task_id": nil,
 					"next_steps":      []any{},
 				},
 				"links": []any{
@@ -936,7 +1076,7 @@ func makeValidArtifact(artifactType string) map[string]any {
 		base["owner"] = "agent"
 		base["summary"] = "Test summary"
 		base["resume"] = map[string]any{
-			"current_task_id": "",
+			"current_task_id": nil,
 			"next_steps":      []any{},
 		}
 		base["links"] = []any{}
@@ -1234,7 +1374,7 @@ func TestCheckInvariants_StrictModeLocalhostHTTPBlockedInHandoff(t *testing.T) {
 				"owner":         "agent",
 				"summary":       "Test handoff with http://localhost:3001",
 				"resume": map[string]any{
-					"current_task_id": "",
+					"current_task_id": nil,
 					"next_steps":      []any{},
 				},
 				"links": []any{},
@@ -1337,7 +1477,7 @@ func TestCheckInvariants_StrictModeRunPreviousReplayIDNotSecret(t *testing.T) {
 				"owner":         "agent",
 				"summary":       "Test handoff",
 				"resume": map[string]any{
-					"current_task_id": "",
+					"current_task_id": nil,
 					"next_steps":      []any{},
 				},
 				"links": []any{},
@@ -1367,7 +1507,7 @@ func TestCheckInvariants_StrictModeRunAPIKeyIsSecret(t *testing.T) {
 				"owner":         "agent",
 				"summary":       "Test handoff",
 				"resume": map[string]any{
-					"current_task_id": "",
+					"current_task_id": nil,
 					"next_steps":      []any{},
 				},
 				"links": []any{},
