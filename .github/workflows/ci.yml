@@ -19,5 +19,20 @@ jobs:
         with:
           go-version: '1.22.x'
 
+      - name: Check forbidden files
+        run: |
+          set -euo pipefail
+          if find . -path ./.git -prune -o \( -name ".DS_Store" -o -name "__MACOSX" \) -print | grep -q .; then
+            echo "Forbidden files found (.DS_Store or __MACOSX)."
+            find . -path ./.git -prune -o \( -name ".DS_Store" -o -name "__MACOSX" \) -print
+            exit 1
+          fi
+
+      - name: Run Go tests
+        run: go test ./...
+
+      - name: Run selftest
+        run: go run ./cmd/small selftest
+
       - name: Run full verification
         run: make verify

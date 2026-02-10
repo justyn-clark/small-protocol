@@ -2,6 +2,7 @@
 # OS / Editor
 # ================================
 .DS_Store
+__MACOSX/
 Thumbs.db
 
 .idea/

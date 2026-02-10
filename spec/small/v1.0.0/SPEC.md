@@ -86,6 +86,31 @@ The following invariants are non-negotiable and MUST be enforced by all SMALL v1
 - Version mismatches MUST cause validation to fail
 - Future protocol versions will use different version strings
 
+### 6. Replay Semantics and Bootstrap Entries
+
+- Bootstrap progress entries such as `meta/init` and `meta/accept-*` are allowed without `replayId`
+- Once a plan exists, execution state is bound to a run replay id
+- Current run identity is stored in `.small/workspace.small.yml` at `run.replay_id`
+- ReplayId-scoped strict checks apply to run-bound entries; bootstrap entries remain valid historical setup records
+
+### 7. Progress Mode Semantics
+
+- Signal mode is the default progress behavior
+- Audit mode is opt-in via `SMALL_PROGRESS_MODE=audit`
+- Implementations MUST NOT require audit mode for baseline compliance
+
+### 8. Strict Layout Boundary (S4)
+
+- Under `.small/`, only canonical root files are allowed:
+  - `intent.small.yml`
+  - `constraints.small.yml`
+  - `plan.small.yml`
+  - `progress.small.yml`
+  - `handoff.small.yml`
+  - `workspace.small.yml`
+- Strict mode MUST reject unexpected files or subdirectories under `.small/`
+- Ephemeral operational data belongs in `.small-cache/` (outside `.small/`)
+
 ## Backwards Compatibility
 
 - **v1.0.0 is the first stable release**

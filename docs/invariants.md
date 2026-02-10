@@ -92,17 +92,29 @@ When `plan.small.yml` marks a task as `completed` or `blocked`, there must be at
 
 Failure messages include the task id, task title, and whether evidence is missing or empty.
 
-### Strict Invariant S2: Progress Task IDs Must Be Known (or Meta)
+### Strict Invariant S2: Progress Task IDs Must Be Known in Replay Scope
 
-Each progress entry must reference a task id that exists in `plan.small.yml`, unless the id starts with `meta/`.
+Each replay-bound progress entry must reference a task id that exists in `plan.small.yml`, unless the id starts with `meta/`.
+
+Bootstrap entries (for example `meta/init` and `meta/accept-*`) are valid without replay binding.
 
 ### Strict Invariant S3: Handoff References Must Match Plan
 
 If `handoff.small.yml` sets `resume.current_task_id`, the referenced task id must exist in the plan.
 
-### Strict Invariant S4: Reconciliation Marker (Optional)
+### Strict Invariant S4: Canonical Layout Under `.small/`
 
-When enabled, strict mode can require a `meta/reconcile-plan` progress entry if the plan was retroactively edited after progress entries were logged. This guard is optional and disabled by default until reliable plan-change detection is available.
+Strict mode allows only canonical root files under `.small/`:
+
+- `intent.small.yml`
+- `constraints.small.yml`
+- `plan.small.yml`
+- `progress.small.yml`
+- `handoff.small.yml`
+- `workspace.small.yml`
+
+Unexpected files or directories under `.small/` fail strict checks.
+Operational cache and generated telemetry belong under `.small-cache/` instead.
 
 **Example failure:**
 
