@@ -1,5 +1,10 @@
 package version
 
+import (
+	"runtime/debug"
+	"strings"
+)
+
 // Build-time variables injected via ldflags.
 // These are set by GoReleaser during tagged builds.
 var (
@@ -11,14 +16,37 @@ var (
 	Date = "unknown"
 )
 
-// GetVersion returns the version string with "v" prefix for display.
-func GetVersion() string {
-	if Version == "dev" {
+func resolvedVersion() string {
+	v := strings.TrimSpace(Version)
+	if v != "" && v != "dev" {
+		return normalizeVersion(v)
+	}
+
+	info, ok := debug.ReadBuildInfo()
+	if !ok || info == nil {
 		return "dev"
 	}
-	// GoReleaser provides version without "v" prefix, add it for display
-	if len(Version) > 0 && Version[0] != 'v' {
-		return "v" + Version
+
+	moduleVersion := strings.TrimSpace(info.Main.Version)
+	switch moduleVersion {
+	case "", "(devel)", "devel", "dev":
+		return "dev"
+	default:
+		return normalizeVersion(moduleVersion)
 	}
-	return Version
+}
+
+func normalizeVersion(v string) string {
+	if v == "" {
+		return "dev"
+	}
+	if v[0] == 'v' || v[0] == 'V' {
+		return "v" + v[1:]
+	}
+	return "v" + v
+}
+
+// GetVersion returns the version string with "v" prefix for display.
+func GetVersion() string {
+	return resolvedVersion()
 }

@@ -20,7 +20,7 @@ build_target() {
 
   GOOS="$goos" GOARCH="$goarch" CGO_ENABLED=0 \
     go build \
-      -ldflags="-s -w -X github.com/justyn-clark/small-protocol/internal/version.Version=${VERSION}" \
+      -ldflags="-s -w -X github.com/justyn-clark/small-protocol/internal/version.Version=${VERSION} -X github.com/justyn-clark/small-protocol/internal/version.Commit=$(git rev-parse --short=12 HEAD) -X github.com/justyn-clark/small-protocol/internal/version.Date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
       -o "$tmp_dir/small" \
       "$BUILD_PKG"
 
