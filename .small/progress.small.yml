@@ -17633,3 +17633,25 @@ entries:
       status: completed
       task_id: task-24
       timestamp: "2026-02-10T06:44:21.566591000Z"
+    - evidence: Updated task task-17 to pending
+      notes: small plan --pending
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-17
+      timestamp: "2026-02-12T08:14:08.297643000Z"
+    - evidence: Started v1.0.1 retag and release rebuild verification run per handoff
+      notes: Executing retag/release workflow and install-path verification
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-17
+      timestamp: "2026-02-12T08:14:08.363110000Z"
+    - command: git tag -f v1.0.1 aa52d74689050af38a760c49ae7c6d5ca0988ee7 && git push --force origin v1.0.1
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260212T081425.998820000Z.txt
+      command_sha256: 570e9eb32c832adb7895b4b23b1ac6a147eca0ceca79fe4a38d1d7db0f538cc0
+      command_summary: git tag -f v1.0.1 aa52d74689050af38a760c49ae7c6d5ca0988ee7 && git push --force origin v1.0.1
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-17
+      timestamp: "2026-02-12T08:14:25.998820000Z"

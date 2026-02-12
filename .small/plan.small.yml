@@ -51,7 +51,7 @@ tasks:
       status: completed
     - id: task-17
       title: 'Release: commit and push staged changes'
-      status: blocked
+      status: pending
     - id: task-18
       title: 'Refactor: replace interface{} with any across codebase'
       status: completed
