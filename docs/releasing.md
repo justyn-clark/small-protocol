@@ -2,6 +2,12 @@
 
 This document describes how SMALL Protocol releases are created and verified.
 
+## Tag Policy
+
+- Keep `v1.0.0` forever. It is the first stable contract tag and main reference point.
+- Keep `v1.0.1` forever. It is the patch that fixes `go install` resolution and packaging consistency.
+- Going forward: use SemVer and never move public tags. If a correction is needed, publish `v1.0.2` (or next patch), do not retag.
+
 ## Release Process
 
 Releases are automated via GitHub Actions when a version tag is pushed.
@@ -9,8 +15,8 @@ Releases are automated via GitHub Actions when a version tag is pushed.
 ### Creating a Release
 
 ```bash
-git tag -a v1.0.0 -m "SMALL v1.0.0"
-git push origin v1.0.0
+git tag -a vX.Y.Z -m "SMALL vX.Y.Z"
+git push origin vX.Y.Z
 ```
 
 The release workflow:
@@ -33,9 +39,9 @@ The release workflow:
 Each release includes `checksums.txt` with SHA256 hashes.
 
 ```bash
-# Download binary and checksums
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.0/small-protocol_1.0.0_Darwin_arm64.tar.gz
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.0/checksums.txt
+# Download binary and checksums (example: v1.0.1)
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.1/small-protocol_1.0.1_Darwin_arm64.tar.gz
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.1/checksums.txt
 
 # Verify
 sha256sum -c checksums.txt --ignore-missing
@@ -103,3 +109,29 @@ Before tagging a release:
 2. Ensure working tree is clean (`git status`)
 3. Review CHANGELOG or commit history since last release
 4. Confirm schema files are current in `internal/specembed/schemas/`
+
+## Release Body Policy
+
+- Keep the `v1.0.0` release body as the long-form launch narrative.
+- Keep `v1.0.1` as a short patch note and link back to `v1.0.0` for full launch context.
+- For later patch releases, keep notes concise and link to the relevant foundational release context when needed.
+
+## Post-Release Package Verification
+
+Run these after publishing package index updates:
+
+### Homebrew
+
+```bash
+brew tap justyn-clark/tap
+brew install small
+small version
+```
+
+### Scoop
+
+```bash
+scoop bucket add justyn-clark https://github.com/justyn-clark/scoop-bucket
+scoop install small
+small.exe --help
+```
