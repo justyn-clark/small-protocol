@@ -24,7 +24,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Upgrade npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@11.10.1
 
       - name: Show Node and npm versions
         run: |
@@ -41,25 +41,6 @@ jobs:
             exit 1
           fi
 
-      - name: Select publish auth mode
-        id: auth_mode
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ -n "${NPM_TOKEN}" ]; then
-            echo "mode=token" >> "$GITHUB_OUTPUT"
-          else
-            echo "mode=oidc" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Publish @small-protocol/small via npm Trusted Publishing (OIDC)
-        if: ${{ steps.auth_mode.outputs.mode == 'oidc' }}
         working-directory: packages/npm
         run: npm publish --provenance --access public
-
-      - name: Publish @small-protocol/small via token fallback
-        if: ${{ steps.auth_mode.outputs.mode == 'token' }}
-        working-directory: packages/npm
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
