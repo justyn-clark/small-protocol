@@ -41,9 +41,10 @@ small --version
 
 1. Set `packages/npm/package.json` version to `X.Y.Z`.
 2. Ensure tag is `vX.Y.Z`.
-3. Publish package (or rely on tag workflow):
+3. Configure npm Trusted Publishing (OIDC) for `@small-protocol/small` with this GitHub repo/workflow as trusted publisher.
+4. Publish package (tag workflow is OIDC-first, with `NPM_TOKEN` fallback only when explicitly configured):
 
 ```bash
 cd packages/npm
-npm publish --access public
+npm publish --provenance --access public
 ```

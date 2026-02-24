@@ -33,7 +33,13 @@ jobs:
             exit 1
           fi
 
-      - name: Publish @small-protocol/small
+      - name: Publish @small-protocol/small via npm Trusted Publishing (OIDC)
+        if: ${{ secrets.NPM_TOKEN == '' }}
+        working-directory: packages/npm
+        run: npm publish --provenance --access public
+
+      - name: Publish @small-protocol/small via token fallback
+        if: ${{ secrets.NPM_TOKEN != '' }}
         working-directory: packages/npm
         run: npm publish --provenance --access public
         env:

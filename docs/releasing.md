@@ -54,9 +54,12 @@ Both install paths verify SHA256 using `checksums.txt` before install.
 
 The npm package version must match the Git tag without the `v` prefix.
 
+Preferred publish path is npm Trusted Publishing (OIDC) with provenance.
+Token-based publish (`NPM_TOKEN`) is fallback-only for break-glass scenarios.
+
 Examples:
 
-- Git tag: `v1.0.2`
-- npm version: `1.0.2`
+- Git tag: `v1.0.3`
+- npm version: `1.0.3`
 
 See [release checklist](./release-checklist.md) for the full sequence.
