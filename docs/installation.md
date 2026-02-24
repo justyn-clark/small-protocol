@@ -1,92 +1,90 @@
 # Installation
 
-## Version Guidance
+## Supported platforms
 
-- Recommended install: `v1.0.1` (patch release).
-- `v1.0.0` is the initial stable protocol release; see the [v1.0.0 release notes](https://github.com/justyn-clark/small-protocol/releases/tag/v1.0.0) for the full launch changelog.
+- macOS: amd64, arm64
+- Linux: amd64, arm64
 
-## Requirements
+Release asset names are stable:
 
-- Go 1.22 or later (for Go-based install or source development)
-- Or: download pre-built binaries (no Go required)
+- `small-vX.Y.Z-darwin-amd64.tar.gz`
+- `small-vX.Y.Z-darwin-arm64.tar.gz`
+- `small-vX.Y.Z-linux-amd64.tar.gz`
+- `small-vX.Y.Z-linux-arm64.tar.gz`
+- `checksums.txt`
 
-## Option 1: Download Pre-built Binaries (No Go Required)
+## Option 1: curl installer (recommended)
 
-Download artifacts from [GitHub Releases](https://github.com/justyn-clark/small-protocol/releases).
-
-```bash
-# Example for macOS ARM64 (v1.0.1)
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.1/small-protocol_1.0.1_Darwin_arm64.tar.gz
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.1/checksums.txt
-
-# Verify checksum
-shasum -a 256 -c checksums.txt --ignore-missing
-
-# Extract and install
-tar -xzf small-protocol_1.0.1_Darwin_arm64.tar.gz
-sudo mv small /usr/local/bin/
-
-# Verify
-small version
-```
-
-## Option 2 (Recommended for Go Users): Install via Go
-
-Install the `small` binary directly using Go:
+Install latest:
 
 ```bash
-go install github.com/justyn-clark/small-protocol/cmd/small@v1.0.1
+curl -fsSL https://smallprotocol.dev/install.sh | bash
 ```
 
-This installs `small` into your Go bin directory (usually `~/go/bin`).
-
-Verify installation:
+Pin to a version:
 
 ```bash
-command -v small
-small version
+curl -fsSL https://smallprotocol.dev/install.sh | bash -s -- --version v1.0.2
 ```
 
-If `small` is not found, your Go bin directory is not on `PATH`.
+Install behavior:
 
-zsh (macOS default):
+- Downloads release metadata from GitHub API
+- Downloads the platform archive and `checksums.txt`
+- No compilation required. Pre-built binaries are downloaded and checksum verified.
+- Verifies SHA256 before extraction and install
+- Installs to `~/.local/bin/small` by default (no sudo)
+
+Optional flags:
+
+- `--system`: install to `/usr/local/bin/small` (uses sudo if needed)
+- `--dir PATH`: custom install directory
+- `--release-json PATH`: use local release metadata (testing only)
+- `--dry-run`: print resolved release/install details only
+
+## Option 2: npm global install
 
 ```bash
-echo 'export PATH="$(go env GOPATH)/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
+npm i -g @small-protocol/small
+small --version
 ```
 
-bash:
+npm install behavior:
+
+- Maps npm version `X.Y.Z` to release tag `vX.Y.Z`
+- Fetches tagged release metadata from GitHub API
+- Downloads platform archive and `checksums.txt`
+- Verifies SHA256 before extracting `small` into the package `vendor/` directory
+
+If the binary is missing after install:
 
 ```bash
-echo 'export PATH="$(go env GOPATH)/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+npm rebuild @small-protocol/small
 ```
 
-Then retry:
+## Option 3: Go install
 
 ```bash
-command -v small
-small version
+go install github.com/justyn-clark/small-protocol/cmd/small@latest
+small --version
 ```
 
-## Option 3: Build from Source (Development Only)
+## Uninstall
 
-For contributors working on SMALL itself:
+curl default install:
 
 ```bash
-git clone https://github.com/justyn-clark/small-protocol.git
-cd small-protocol
-
-# Install the local development build into your Go bin
-go install ./cmd/small
-
-# Verify
-command -v small
-small version
+rm -f ~/.local/bin/small
 ```
 
-Notes:
+curl system install:
 
-- This installs the development build into `$(go env GOPATH)/bin`.
-- Avoid copying dev binaries into `/usr/local/bin` to prevent stale installs.
+```bash
+sudo rm -f /usr/local/bin/small
+```
+
+npm global install:
+
+```bash
+npm uninstall -g @small-protocol/small
+```

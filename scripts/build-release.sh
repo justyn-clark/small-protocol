@@ -4,16 +4,17 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST_DIR="$ROOT_DIR/dist"
 VERSION="${RELEASE_VERSION:-1.0.0}"
+TAG="v${VERSION}"
 BUILD_PKG="./cmd/small"
 
 mkdir -p "$DIST_DIR"
-rm -f "$DIST_DIR"/small_"$VERSION"_*.tar.gz
-rm -f "$DIST_DIR"/sha256sums.txt
+rm -f "$DIST_DIR"/small-"$TAG"-*.tar.gz
+rm -f "$DIST_DIR"/checksums.txt
 
 build_target() {
   local goos="$1"
   local goarch="$2"
-  local out_name="small_${VERSION}_${goos}_${goarch}.tar.gz"
+  local out_name="small-${TAG}-${goos}-${goarch}.tar.gz"
   local tmp_dir
   tmp_dir="$(mktemp -d)"
   trap 'rm -rf "$tmp_dir"' RETURN
@@ -37,8 +38,8 @@ build_target linux arm64
 
 (
   cd "$DIST_DIR"
-  shasum -a 256 small_"$VERSION"_*.tar.gz > sha256sums.txt
+  shasum -a 256 small-"$TAG"-*.tar.gz > checksums.txt
 )
 
 echo "Release artifacts:"
-ls -1 "$DIST_DIR"/small_"$VERSION"_*.tar.gz "$DIST_DIR"/sha256sums.txt
+ls -1 "$DIST_DIR"/small-"$TAG"-*.tar.gz "$DIST_DIR"/checksums.txt

@@ -1,0 +1,29 @@
+{
+  "name": "@small-protocol/small",
+  "version": "1.0.3",
+  "description": "npm wrapper for SMALL CLI",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justyn-clark/small-protocol.git",
+    "directory": "packages/npm"
+  },
+  "bin": {
+    "small": "bin/small.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "files": [
+    "bin",
+    "scripts",
+    "vendor",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

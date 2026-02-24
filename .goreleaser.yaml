@@ -29,13 +29,7 @@ archives:
     formats:
       - tar.gz
     name_template: >-
-      {{ .ProjectName }}_
-      {{- .Version }}_
-      {{- title .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
+      small-{{ .Tag }}-{{ .Os }}-{{ .Arch }}
     format_overrides:
       - goos: windows
         formats:
@@ -64,10 +58,10 @@ changelog:
       - Merge branch
   groups:
     - title: Features
-      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      regexp: "^.*?feat(\\([[:word:]]+\\))??!?:.+$"
       order: 0
     - title: "Bug fixes"
-      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      regexp: "^.*?fix(\\([[:word:]]+\\))??!?:.+$"
       order: 1
     - title: Others
       order: 999

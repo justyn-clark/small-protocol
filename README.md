@@ -84,7 +84,7 @@ Run all commands from your repository root.
 
 ```bash
 # Install
-go install github.com/justyn-clark/small-protocol/cmd/small@v1.0.2
+go install github.com/justyn-clark/small-protocol/cmd/small@latest
 
 # Initialize
 small init --intent "My project description"
@@ -93,7 +93,7 @@ small init --intent "My project description"
 small validate
 ```
 
-Recommended: `v1.0.2` (current stable CLI release).
+Recommended: use @latest for the current stable CLI release.
 
 The SMALL protocol contract is `v1.0.0` and remains compatible across all v1.x releases.
 See the [v1.0.0 release notes](https://github.com/justyn-clark/small-protocol/releases/tag/v1.0.0) for the original launch details.

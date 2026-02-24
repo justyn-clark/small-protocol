@@ -2,17 +2,15 @@
 
 This document describes how SMALL Protocol releases are created and verified.
 
-## Tag Policy
+## Tag policy
 
 - Keep `v1.0.0` forever. It is the first stable contract tag and main reference point.
 - Keep `v1.0.1` forever. It is the patch that fixes `go install` resolution and packaging consistency.
-- Going forward: use SemVer and never move public tags. If a correction is needed, publish `v1.0.2` (or next patch), do not retag.
+- Use SemVer and never move public tags.
 
-## Release Process
+## Release process
 
 Releases are automated via GitHub Actions when a version tag is pushed.
-
-### Creating a Release
 
 ```bash
 git tag -a vX.Y.Z -m "SMALL vX.Y.Z"
@@ -20,118 +18,45 @@ git push origin vX.Y.Z
 ```
 
 The release workflow:
+
 1. Runs `go mod tidy`
 2. Syncs embedded schemas
-3. Builds binaries for all platforms
-4. Creates archives and checksums
-5. Publishes to GitHub Releases
+3. Builds binaries for supported platforms
+4. Publishes archives plus `checksums.txt` to GitHub Releases
 
-### Supported Platforms
+## Release assets (stable naming)
 
-| OS      | Architecture |
-|---------|--------------|
-| macOS   | amd64, arm64 |
-| Linux   | amd64, arm64 |
-| Windows | amd64, arm64 |
+- `small-vX.Y.Z-darwin-amd64.tar.gz`
+- `small-vX.Y.Z-darwin-arm64.tar.gz`
+- `small-vX.Y.Z-linux-amd64.tar.gz`
+- `small-vX.Y.Z-linux-arm64.tar.gz`
+- `small-vX.Y.Z-windows-amd64.zip`
+- `small-vX.Y.Z-windows-arm64.zip`
+- `checksums.txt`
 
-## Verifying Downloads
-
-Each release includes `checksums.txt` with SHA256 hashes.
-
-```bash
-# Download binary and checksums (example: v1.0.1)
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.1/small-protocol_1.0.1_Darwin_arm64.tar.gz
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.1/checksums.txt
-
-# Verify
-sha256sum -c checksums.txt --ignore-missing
-```
-
-On macOS without `sha256sum`:
+## Verifying downloads
 
 ```bash
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.2/small-v1.0.2-darwin-arm64.tar.gz
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.2/checksums.txt
+
 shasum -a 256 -c checksums.txt --ignore-missing
 ```
 
-## Version Injection
+## Installer paths
 
-Release binaries embed version information via ldflags:
+- curl installer endpoint: `https://smallprotocol.dev/install.sh`
+- npm package: `@small-protocol/small`
 
-| Variable | Source |
-|----------|--------|
-| Version  | Git tag (e.g., `1.0.0`) |
-| Commit   | Git commit SHA |
-| Date     | Build timestamp (RFC3339) |
+Both install paths verify SHA256 using `checksums.txt` before install.
 
-Verify with:
+## npm publish alignment
 
-```bash
-small version
-```
+The npm package version must match the Git tag without the `v` prefix.
 
-Expected output:
+Examples:
 
-```text
-small v1.0.0
-Supported spec versions: ["1.0.0"]
-```
+- Git tag: `v1.0.2`
+- npm version: `1.0.2`
 
-## Snapshot Builds
-
-Development builds use the snapshot template:
-
-```
-{{ .Version }}-dev+{{ .ShortCommit }}
-```
-
-Example: `v0.0.0-dev+abc1234`
-
-To create a snapshot:
-
-```bash
-goreleaser release --snapshot --clean
-```
-
-## GoReleaser Configuration
-
-The release is configured in `.goreleaser.yaml`. Key settings:
-
-- **version**: GoReleaser v2 format
-- **ldflags**: Inject version into `internal/version` package
-- **archives**: tar.gz for Unix, zip for Windows
-- **checksums**: SHA256 in `checksums.txt`
-
-## Pre-release Checklist
-
-Before tagging a release:
-
-1. Ensure `make verify` passes
-2. Ensure working tree is clean (`git status`)
-3. Review CHANGELOG or commit history since last release
-4. Confirm schema files are current in `internal/specembed/schemas/`
-
-## Release Body Policy
-
-- Keep the `v1.0.0` release body as the long-form launch narrative.
-- Keep `v1.0.1` as a short patch note and link back to `v1.0.0` for full launch context.
-- For later patch releases, keep notes concise and link to the relevant foundational release context when needed.
-
-## Post-Release Package Verification
-
-Run these after publishing package index updates:
-
-### Homebrew
-
-```bash
-brew tap justyn-clark/tap
-brew install small
-small version
-```
-
-### Scoop
-
-```bash
-scoop bucket add justyn-clark https://github.com/justyn-clark/scoop-bucket
-scoop install small
-small.exe --help
-```
+See [release checklist](./release-checklist.md) for the full sequence.
