@@ -67,7 +67,7 @@ spec/small/v1.0.0/
 | [Getting Started](docs/getting-started.md) | First-time user guide with examples |
 | [Agent Operating Contract](docs/agent-operating-contract.md) | Behavioral rules for AI agents |
 | [CLI Guide](docs/cli-guide.md) | Detailed command reference with error handling |
-| [Installation](docs/installation.md) | Install via Go, binaries, or source |
+| [Installation](docs/installation.md) | Install via npm global package or curl installer |
 | [Quick Start](docs/quickstart.md) | Initialize and validate a SMALL workspace |
 | [CLI Reference](docs/cli.md) | Command summary table |
 | [Invariants](docs/invariants.md) | Non-negotiable protocol rules |
@@ -76,7 +76,8 @@ spec/small/v1.0.0/
 | [FAQ](docs/FAQ.md) | Frequently asked questions |
 | [Execution Model](docs/EXECUTION_MODEL.md) | Single-writer design and concurrency |
 | [Development](docs/DEVELOPMENT.md) | Building, testing, and schema updates during development |
-| [Releasing](docs/releasing.md) | How releases are built and verified |
+| [Releasing](docs/maintainers/releasing.md) | Maintainer release process and npm publish policy |
+| [Docs Sync](docs/maintainers/docs-sync.md) | Canonical docs sync model, mapping, and verification gates |
 
 ## Quick Start
 
@@ -84,7 +85,8 @@ Run all commands from your repository root.
 
 ```bash
 # Install
-go install github.com/justyn-clark/small-protocol/cmd/small@latest
+npm i -g @small-protocol/small
+small version
 
 # Initialize
 small init --intent "My project description"
@@ -93,7 +95,7 @@ small init --intent "My project description"
 small validate
 ```
 
-Recommended: use @latest for the current stable CLI release.
+Install alternatives (including curl installer) are documented in [Installation](docs/installation.md).
 
 The SMALL protocol contract is `v1.0.0` and remains compatible across all v1.x releases.
 See the [v1.0.0 release notes](https://github.com/justyn-clark/small-protocol/releases/tag/v1.0.0) for the original launch details.

@@ -4,6 +4,7 @@
 
 - macOS: amd64, arm64
 - Linux: amd64, arm64
+- Windows: amd64, arm64
 
 Release asset names are stable:
 
@@ -21,7 +22,7 @@ Install latest:
 curl -fsSL https://smallprotocol.dev/install.sh | bash
 ```
 
-Pin to a version:
+Install a specific version:
 
 ```bash
 curl -fsSL https://smallprotocol.dev/install.sh | bash -s -- --version v1.0.2
@@ -46,7 +47,7 @@ Optional flags:
 
 ```bash
 npm i -g @small-protocol/small
-small --version
+small version
 ```
 
 npm install behavior:
@@ -54,7 +55,9 @@ npm install behavior:
 - Maps npm version `X.Y.Z` to release tag `vX.Y.Z`
 - Fetches tagged release metadata from GitHub API
 - Downloads platform archive and `checksums.txt`
+- No compilation required. Pre-built binaries are downloaded and checksum verified.
 - Verifies SHA256 before extracting `small` into the package `vendor/` directory
+- Exposes `small` on your shell PATH via your npm global bin directory
 
 If the binary is missing after install:
 
@@ -62,12 +65,11 @@ If the binary is missing after install:
 npm rebuild @small-protocol/small
 ```
 
-## Option 3: Go install
+## PATH notes
 
-```bash
-go install github.com/justyn-clark/small-protocol/cmd/small@latest
-small --version
-```
+- curl default path: `~/.local/bin/small`
+- curl system path (`--system`): `/usr/local/bin/small`
+- npm global path: `$(npm bin -g)` (or platform-equivalent npm global bin directory)
 
 ## Uninstall
 

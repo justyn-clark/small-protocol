@@ -17655,3 +17655,493 @@ entries:
       status: blocked
       task_id: task-17
       timestamp: "2026-02-12T08:14:25.998820000Z"
+    - evidence: Added task task-25 via small plan --add
+      notes: 'Install paths: checksum-verified curl installer, npm wrapper package, docs, and CI smoke tests'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-25
+      timestamp: "2026-02-24T19:58:07.799700000Z"
+    - evidence: Starting implementation for curl installer and npm wrapper install paths
+      notes: Will implement scripts/install.sh, npm package wrapper, docs, and CI smoke tests
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-25
+      timestamp: "2026-02-24T19:58:16.053170000Z"
+    - command: 'cat > scripts/install.sh <<''EOF'' #!/usr/bin/env bash set -euo pipefail REPO="justyn-clark/small-protocol" DEFAULT_INSTALL_DIR="/Users/justin/.local/bin" SYSTEM_INSTALL_DIR="/usr/local/bin" VERSION=...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T200236.526490000Z.txt
+      command_sha256: 5a5698c392ca3a749716f26f4978e3f04e24d24950d3ac3e9c6ef4779b7b84cc
+      command_summary: 'cat > scripts/install.sh <<''EOF'' #!/usr/bin/env bash set -euo pipefail REPO="justyn-clark/small-protocol" DEFAULT_INSTALL_DIR="/Users/justin/.local/bin" SYSTEM_INSTALL_DIR="/usr/local/bin" VERSION=...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-25
+      timestamp: "2026-02-24T20:02:36.526490000Z"
+    - command: mkdir -p scripts packages/npm/bin packages/npm/scripts packages/npm/vendor docs .github/workflows && cp /tmp/task25/scripts/install.sh scripts/install.sh && cp /tmp/task25/scripts/test-install.sh s...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T200459.932419000Z.txt
+      command_sha256: a3906a76d0f165093431d0a4584a39b4d1c96903ee657d433d93bedf9dc2a03a
+      command_summary: mkdir -p scripts packages/npm/bin packages/npm/scripts packages/npm/vendor docs .github/workflows && cp /tmp/task25/scripts/install.sh scripts/install.sh && cp /tmp/task25/scripts/test-install.sh s...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-25
+      timestamp: "2026-02-24T20:04:59.932419000Z"
+    - evidence: Implemented checksum-verified curl installer, npm wrapper package, docs, release naming updates, and CI installer smoke test; validated with scripts/test-install.sh, node --check, npm pack, and small check --strict
+      notes: npm pack required temporary cache override due local ~/.npm permissions
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-25
+      timestamp: "2026-02-24T20:06:35.203434000Z"
+    - evidence: Starting final hardening and ship readiness work
+      notes: Applying blocker/should-fix installer patches, validating CI and npm packaging
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-17
+      timestamp: "2026-02-24T21:21:31.327414000Z"
+    - evidence: Added task task-26 via small plan --add
+      notes: Installer hardening + validation + release readiness for curl/npm distribution
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-26
+      timestamp: "2026-02-24T21:21:40.245009000Z"
+    - evidence: Started installer hardening and release-readiness validations
+      notes: BLOCKER-1 tar validation, should-fix updates, CI negative test, npm final checks
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-26
+      timestamp: "2026-02-24T21:21:40.308517000Z"
+    - command: bash /tmp/task26_patch.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212419.969142000Z.txt
+      command_sha256: e6ebd1fe0fd57545bf4806279e40c978bb289759a81a03606ff57cd0d2d7baf5
+      command_summary: bash /tmp/task26_patch.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:24:19.969142000Z"
+    - command: 'perl -0pi -e ''s#go install github\.com/justyn-clark/small-protocol/cmd/small\n#go install github.com/justyn-clark/small-protocol/cmd/small@latest\n#; s#Recommended: use for the current stable CLI r...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212436.335533000Z.txt
+      command_sha256: 1625c8a910ab4391ece3ed35d98da99ca02f98d391971b210c76d447e4bd40ac
+      command_summary: 'perl -0pi -e ''s#go install github\.com/justyn-clark/small-protocol/cmd/small\n#go install github.com/justyn-clark/small-protocol/cmd/small@latest\n#; s#Recommended: use for the current stable CLI r...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:24:36.335533000Z"
+    - command: 'perl -0pi -e "s#go install github\\.com/justyn-clark/small-protocol/cmd/small\n#go install github.com/justyn-clark/small-protocol/cmd/small@latest\n#g; s#Recommended: use\s+for the current stable C...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212441.649406000Z.txt
+      command_sha256: 971c5ab318b92779626d68abc16937d9933fd46d74d0845b1586acc9d1254085
+      command_summary: 'perl -0pi -e "s#go install github\\.com/justyn-clark/small-protocol/cmd/small\n#go install github.com/justyn-clark/small-protocol/cmd/small@latest\n#g; s#Recommended: use\s+for the current stable C...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:24:41.649406000Z"
+    - command: 'perl -0pi -e "s#go install github.com/justyn-clark/small-protocol/cmd/small\n#go install github.com/justyn-clark/small-protocol/cmd/small@latest\n#g; s#Recommended: use `` for the current stable CL...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212452.861057000Z.txt
+      command_sha256: 56815233d53a6d8bee71bb61e4fcf769d13b61d4eb3b9268af273c1ce0cf4ea8
+      command_summary: 'perl -0pi -e "s#go install github.com/justyn-clark/small-protocol/cmd/small\n#go install github.com/justyn-clark/small-protocol/cmd/small@latest\n#g; s#Recommended: use `` for the current stable CL...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:24:52.861057000Z"
+    - command: 'perl -0pi -e ''s#go install github.com/justyn-clark/small-protocol/cmd/small\n#go install github.com/justyn-clark/small-protocol/cmd/small\@latest\n#g; s#Recommended: use for the current stable CLI ...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212505.480555000Z.txt
+      command_sha256: 6d8be2f30159df832b10f376cd77a7adcb1177d9788c718f682b681facedc333
+      command_summary: 'perl -0pi -e ''s#go install github.com/justyn-clark/small-protocol/cmd/small\n#go install github.com/justyn-clark/small-protocol/cmd/small\@latest\n#g; s#Recommended: use for the current stable CLI ...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:25:05.480555000Z"
+    - command: 'awk "NR==96{print \"Recommended: use @latest for the current stable CLI release.\"; next} {print}" README.md > /tmp/README.md && mv /tmp/README.md README.md'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212515.747659000Z.txt
+      command_sha256: 572bee85814e56efbab7ae6963c11727ae8506ecbcee339a9df99cfed083f370
+      command_summary: 'awk "NR==96{print \"Recommended: use @latest for the current stable CLI release.\"; next} {print}" README.md > /tmp/README.md && mv /tmp/README.md README.md'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:25:15.747659000Z"
+    - command: bash scripts/test-install.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212528.490859000Z.txt
+      command_sha256: 4c67e55854064fc20015cb01b0deadb5dbb1dfe3e03842abcfeed3ff5bf23144
+      command_summary: bash scripts/test-install.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:25:28.490859000Z"
+    - command: cd packages/npm && npm pack
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212703.399355000Z.txt
+      command_sha256: 5723e3c7bc3f98c0dbf7010465facf6ca04fad4da9b4fdb4cebab78a86e3d411
+      command_summary: cd packages/npm && npm pack
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:27:03.399355000Z"
+    - command: 'perl -0pi -e ''s/"version": "1\.0\.2"/"version": "1.0.3"/'' packages/npm/package.json'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212828.938889000Z.txt
+      command_sha256: 17785be304ab5ea74203830f12ee269ed8fd3fca88bbce551334766472be6447
+      command_summary: 'perl -0pi -e ''s/"version": "1\.0\.2"/"version": "1.0.3"/'' packages/npm/package.json'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:28:28.938889000Z"
+    - command: cd packages/npm && rm -f small-protocol-small-1.0.2.tgz small-protocol-small-1.0.3.tgz && npm pack
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212833.695318000Z.txt
+      command_sha256: eeace737e24813895c2b3ccc660727bede5964b7ad52bc02b3487fec9323ddfe
+      command_summary: cd packages/npm && rm -f small-protocol-small-1.0.2.tgz small-protocol-small-1.0.3.tgz && npm pack
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:28:33.695318000Z"
+    - command: bash scripts/test-install.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212844.466706000Z.txt
+      command_sha256: 4c67e55854064fc20015cb01b0deadb5dbb1dfe3e03842abcfeed3ff5bf23144
+      command_summary: bash scripts/test-install.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:28:44.466706000Z"
+    - command: rm -f packages/npm/small-protocol-small-1.0.3.tgz
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T212912.267286000Z.txt
+      command_sha256: f558a9b8e990ccc3e7831bb06d79f08f981fa10fef9324ffd894f98520cabc48
+      command_summary: rm -f packages/npm/small-protocol-small-1.0.3.tgz
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:29:12.267286000Z"
+    - command: cd packages/npm && npm pack >/tmp/npm-pack-v103.out
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T213306.417171000Z.txt
+      command_sha256: b84839605f686b498a9516a2ed309b185767d9cdc51b1975f83a673f4a781078
+      command_summary: cd packages/npm && npm pack >/tmp/npm-pack-v103.out
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:33:06.417171000Z"
+    - command: rm -f packages/npm/small-protocol-small-1.0.3.tgz
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T213332.345122000Z.txt
+      command_sha256: f558a9b8e990ccc3e7831bb06d79f08f981fa10fef9324ffd894f98520cabc48
+      command_summary: rm -f packages/npm/small-protocol-small-1.0.3.tgz
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:33:32.345122000Z"
+    - evidence: Applied installer hardening patches, added CI negative checksum test, validated legacy fallback behavior, and executed npm local pack/install checks for v1.0.3
+      notes: Verified tar path validation + --no-same-owner in curl/npm installers; auth header stripped on cross-origin redirects; npm publish workflow now includes --provenance
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-26
+      timestamp: "2026-02-24T21:33:49.241638000Z"
+    - evidence: Committed release changes, created tag v1.0.3, pushed main and v1.0.3
+      notes: Release workflow succeeded; npm publish workflow failed due missing NPM auth token secret
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-17
+      timestamp: "2026-02-24T21:33:49.435080000Z"
+    - evidence: Added task task-27 via small plan --add
+      notes: Adopt OIDC-first npm Trusted Publishing workflow with guarded token fallback
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-27
+      timestamp: "2026-02-24T21:40:44.523591000Z"
+    - evidence: Starting OIDC-first npm publish hardening
+      notes: Update GitHub workflow and release docs to prefer Trusted Publishing, fallback to token when configured
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-27
+      timestamp: "2026-02-24T21:40:44.616636000Z"
+    - command: bash /tmp/task27_patch.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T214108.591073000Z.txt
+      command_sha256: ee937edf2626ba8f95478767738cc61906186f5daa09511234099aba79b81861
+      command_summary: bash /tmp/task27_patch.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-27
+      timestamp: "2026-02-24T21:41:08.591073000Z"
+    - command: perl -0pi -e "s/`-protocol\/small`/`\@small-protocol\/small`/g" docs/release-checklist.md
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T214119.440550000Z.txt
+      command_sha256: 3aa144b8988a62e0d6f47d54e945a2d60290f732ca9b4a4b181cdf198841e239
+      command_summary: perl -0pi -e "s/`-protocol\/small`/`\@small-protocol\/small`/g" docs/release-checklist.md
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-27
+      timestamp: "2026-02-24T21:41:19.440550000Z"
+    - command: perl -0pi -e 's/`-protocol\/small`/`\@small-protocol\/small`/g' docs/release-checklist.md
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T214123.214624000Z.txt
+      command_sha256: 0eb6826d2cfbbf914d6c77fea05b3922975da35710dc35c869c4cad338ed6fd8
+      command_summary: perl -0pi -e 's/`-protocol\/small`/`\@small-protocol\/small`/g' docs/release-checklist.md
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-27
+      timestamp: "2026-02-24T21:41:23.214624000Z"
+    - evidence: Switched npm publish workflow to OIDC-first Trusted Publishing with conditional NPM_TOKEN fallback and updated release docs
+      notes: Prevents blank-token ENEEDAUTH path and documents professional default operating method
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-27
+      timestamp: "2026-02-24T21:41:35.905553000Z"
+    - evidence: Added task task-28 via small plan --add
+      notes: Fix npm publish workflow validation by avoiding direct secrets use in if conditions
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-28
+      timestamp: "2026-02-24T21:42:14.561348000Z"
+    - evidence: Fixing invalid workflow conditional expression
+      notes: Use setup step output for auth mode, then condition publish steps on output
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-28
+      timestamp: "2026-02-24T21:42:14.652983000Z"
+    - command: bash /tmp/task28_patch.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T214227.056941000Z.txt
+      command_sha256: 12519704f8a9f0ddcefa6f6ce81c7ebeaca5055868c6421a4f62bf5c324e41c0
+      command_summary: bash /tmp/task28_patch.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-28
+      timestamp: "2026-02-24T21:42:27.056941000Z"
+    - evidence: Reworked npm publish workflow conditions to use step output mode selection instead of direct secrets context in if expressions
+      notes: Fixes workflow file validation failure on push while preserving OIDC-first + token fallback behavior
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-28
+      timestamp: "2026-02-24T21:42:38.647478000Z"
+    - evidence: Added task task-29 via small plan --add
+      notes: Release v1.0.4 and verify npm OIDC publish path
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-29
+      timestamp: "2026-02-24T21:47:41.343806000Z"
+    - evidence: Starting v1.0.4 release sequence
+      notes: Attempting Trusted Publisher setup check, then tag/push and post-release verification
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-29
+      timestamp: "2026-02-24T21:47:41.436276000Z"
+    - command: 'perl -0pi -e ''s/"version": "1\.0\.3"/"version": "1.0.4"/'' packages/npm/package.json'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T214748.402706000Z.txt
+      command_sha256: 7dc13880469f0c111fbabd570968b07138e08d00b9426a89291e56c8ff54b283
+      command_summary: 'perl -0pi -e ''s/"version": "1\.0\.3"/"version": "1.0.4"/'' packages/npm/package.json'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-29
+      timestamp: "2026-02-24T21:47:48.402706000Z"
+    - evidence: Cut v1.0.4 (commit/tag/push), workflow ran with OIDC path + provenance, but npm publish failed with registry 404 for @small-protocol/small and post-release npm view/install checks returned E404 not found
+      notes: Trusted Publisher/package scope binding must be configured in npm UI for @small-protocol/small; cannot be done via npm CLI in this environment
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-29
+      timestamp: "2026-02-24T21:49:35.372832000Z"
+    - evidence: Added task task-30 via small plan --add
+      notes: Rerun v1.0.4 npm publish after NPM_TOKEN secret setup and verify installs
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-30
+      timestamp: "2026-02-24T22:18:53.899032000Z"
+    - evidence: Starting post-secret publish rerun and verification
+      notes: Rerun failed publish workflow, confirm registry version, run install checks
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-30
+      timestamp: "2026-02-24T22:18:53.991010000Z"
+    - evidence: Reran v1.0.4 publish workflow after adding NPM_TOKEN; publish still failed and exact npm error is E403 requiring two-factor authentication or granular access token with bypass 2FA enabled
+      notes: Current token is recognized but lacks required publish auth capability for org policy; npm view/install for @small-protocol/small remain E404 because package not yet published
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-30
+      timestamp: "2026-02-24T22:20:32.205462000Z"
+    - evidence: Rerun of Publish npm package run 22371501187 succeeded for @small-protocol/small@1.0.4; npm registry now serves version 1.0.4
+      notes: Publish path used token fallback mode and still emitted signed provenance + transparency log entry
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-30
+      timestamp: "2026-02-24T22:56:56.482078000Z"
+    - evidence: Added task task-31 via small plan --add
+      notes: Release v1.0.5 and prove OIDC-only npm publish path
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-31
+      timestamp: "2026-02-24T23:01:40.154425000Z"
+    - evidence: Starting v1.0.5 OIDC-only release run
+      notes: NPM_TOKEN absent in repo secrets; publish workflow should select auth_mode=oidc
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-31
+      timestamp: "2026-02-24T23:01:40.246573000Z"
+    - command: 'perl -0pi -e ''s/"version": "1\.0\.4"/"version": "1.0.5"/'' packages/npm/package.json'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T230148.641432000Z.txt
+      command_sha256: fc70d8682c36d05036b36af0c2aaca13377a86a3d0a4435dc483f5ee22ec5bcd
+      command_summary: 'perl -0pi -e ''s/"version": "1\.0\.4"/"version": "1.0.5"/'' packages/npm/package.json'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-31
+      timestamp: "2026-02-24T23:01:48.641432000Z"
+    - evidence: Released v1.0.5 (commit/tag/push) with CI+GoReleaser success; npm publish run 22373850852 selected OIDC path (NPM_TOKEN empty), ran provenance publish step, and failed with npm E404 on PUT @small-protocol/small@1.0.5
+      notes: 'Auth-mode evidence: NPM_TOKEN env empty and OIDC step executed while token fallback skipped; indicates npm Trusted Publisher binding mismatch on package/repo/workflow/environment. Per instruction, token was not re-added.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-31
+      timestamp: "2026-02-24T23:04:24.168860000Z"
+    - evidence: Post-config rerun of v1.0.5 publish still fails in OIDC step with E404 PUT @small-protocol/small not found; not a version-exists error
+      notes: No workflow environment is set; token fallback remains skipped because NPM_TOKEN is absent
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-31
+      timestamp: "2026-02-24T23:11:00.368516000Z"
+    - evidence: Manual rerun after npm Trusted Publisher update still fails in OIDC publish step with E404 PUT @small-protocol/small@1.0.5 not found; did not transition to version-exists error
+      notes: Indicates npm-side trust binding still not matching expected tuple despite workflow path/environment checks
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-31
+      timestamp: "2026-02-24T23:13:26.812498000Z"
+    - evidence: Added task task-32 via small plan --add
+      notes: Release v1.0.6 for OIDC-only npm publish verification
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-32
+      timestamp: "2026-02-24T23:23:43.039523000Z"
+    - evidence: Starting v1.0.6 release cut
+      notes: Bump npm package version, run checks, tag/push, verify OIDC publish outcome
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-32
+      timestamp: "2026-02-24T23:23:43.132012000Z"
+    - command: 'perl -0pi -e ''s/"version": "1\.0\.5"/"version": "1.0.6"/'' packages/npm/package.json'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T232348.131982000Z.txt
+      command_sha256: 399fe382cd18294e1eab81f33b6b2f19eb12df639638fd43d9e620eaba36a789
+      command_summary: 'perl -0pi -e ''s/"version": "1\.0\.5"/"version": "1.0.6"/'' packages/npm/package.json'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-32
+      timestamp: "2026-02-24T23:23:48.131982000Z"
+    - evidence: Released v1.0.6 (commit/tag/push) with CI+GoReleaser success; npm publish run 22374515847 executed OIDC step and failed with same npm E404 PUT @small-protocol/small@1.0.6 not found
+      notes: NPM_TOKEN absent and token fallback not used; repeated OIDC failures after trusted publisher edits indicate npm-side trust tuple/package policy still mismatched. Registry remains at 1.0.4.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-32
+      timestamp: "2026-02-24T23:25:57.934675000Z"
+    - evidence: Added task task-33 via small plan --add
+      notes: Upgrade npm publish workflow runtime (Node/npm) and validate on new release tag
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-33
+      timestamp: "2026-02-24T23:36:33.702947000Z"
+    - evidence: Starting npm runtime modernization for trusted publishing
+      notes: Update npm-publish workflow to Node 24 + npm latest and verify on next tag
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-33
+      timestamp: "2026-02-24T23:36:33.796394000Z"
+    - command: bash /tmp/task33_patch.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T233651.387593000Z.txt
+      command_sha256: 6a1788905b9f82704f09aab506f20037f082efc521c976f9dfaa08f092627574
+      command_summary: bash /tmp/task33_patch.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-33
+      timestamp: "2026-02-24T23:36:51.387593000Z"
+    - command: 'perl -0pi -e ''s/"version": "1\.0\.6"/"version": "1.0.7"/'' packages/npm/package.json'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T233702.327845000Z.txt
+      command_sha256: 3f4302548b8297229f25ed8953444e43eb04212bad42b025124e83700e1c0df3
+      command_summary: 'perl -0pi -e ''s/"version": "1\.0\.6"/"version": "1.0.7"/'' packages/npm/package.json'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-33
+      timestamp: "2026-02-24T23:37:02.327845000Z"
+    - evidence: Upgraded npm publish workflow runtime (Node 24 + npm 11.10.1), released v1.0.7, and verified npm publish succeeded via OIDC path with NPM_TOKEN absent
+      notes: Run 22374896668 shows auth_mode selected oidc, OIDC publish step executed, token fallback skipped, and package published as @small-protocol/small@1.0.7; clean-shell npm view/install confirmed small v1.0.7
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-33
+      timestamp: "2026-02-24T23:40:06.831207000Z"
+    - evidence: Added task task-34 via small plan --add
+      notes: Harden npm publish workflow to OIDC-only and pin npm toolchain
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-34
+      timestamp: "2026-02-24T23:42:32.742700000Z"
+    - evidence: Starting OIDC anti-regression cleanup
+      notes: Remove token fallback path, pin npm version, and document Node24/npm11+ requirement
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-34
+      timestamp: "2026-02-24T23:42:32.834716000Z"
+    - command: bash /tmp/task34_patch.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T234250.172912000Z.txt
+      command_sha256: 279a57550d4a0ec25323f1faef0f80bc364068f9e302a2dd7e0fe6a0a00f68a3
+      command_summary: bash /tmp/task34_patch.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-34
+      timestamp: "2026-02-24T23:42:50.172912000Z"
+    - command: perl -0pi -e 's/5\. Publish package \(tag workflow is OIDC-first, with fallback only when explicitly configured\):/5. Publish package \(tag workflow is OIDC-only\):/' docs/release-checklist.md
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T234300.558964000Z.txt
+      command_sha256: 2202a80b7f6385ab7e2e913d100e6063206e25b8b045e86372a88826395c3472
+      command_summary: perl -0pi -e 's/5\. Publish package \(tag workflow is OIDC-first, with fallback only when explicitly configured\):/5. Publish package \(tag workflow is OIDC-only\):/' docs/release-checklist.md
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-34
+      timestamp: "2026-02-24T23:43:00.558964000Z"
+    - command: python3 - <<'PY' from pathlib import Path p = Path("docs/release-checklist.md") s = p.read_text(encoding="utf-8") s = s.replace("5. Publish package (tag workflow is OIDC-first, with `NPM_TOKEN` fal...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260224T234309.398198000Z.txt
+      command_sha256: 2ddc869160739c2d041b6a9f1ae26f10457a7bb5b38c19fb14d2ca45699afc1d
+      command_summary: python3 - <<'PY' from pathlib import Path p = Path("docs/release-checklist.md") s = p.read_text(encoding="utf-8") s = s.replace("5. Publish package (tag workflow is OIDC-first, with `NPM_TOKEN` fal...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-34
+      timestamp: "2026-02-24T23:43:09.398198000Z"
+    - evidence: Removed npm token fallback from publish workflow, pinned npm to 11.10.1 on Node 24, and updated release checklist with OIDC runtime requirement
+      notes: Prevents silent drift back to token publishing and locks known-good trusted publishing client versions
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-34
+      timestamp: "2026-02-24T23:43:25.556195000Z"

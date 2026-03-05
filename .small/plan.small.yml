@@ -51,7 +51,7 @@ tasks:
       status: completed
     - id: task-17
       title: 'Release: commit and push staged changes'
-      status: pending
+      status: completed
     - id: task-18
       title: 'Refactor: replace interface{} with any across codebase'
       status: completed
@@ -72,4 +72,34 @@ tasks:
       status: completed
     - id: task-24
       title: 'ReplayId semantics: bootstrap entries without replayId; run replayId begins once plan exists'
+      status: completed
+    - id: task-25
+      title: 'Install paths: checksum-verified curl installer, npm wrapper package, docs, and CI smoke tests'
+      status: completed
+    - id: task-26
+      title: Installer hardening + validation + release readiness for curl/npm distribution
+      status: completed
+    - id: task-27
+      title: Adopt OIDC-first npm Trusted Publishing workflow with guarded token fallback
+      status: completed
+    - id: task-28
+      title: Fix npm publish workflow validation by avoiding direct secrets use in if conditions
+      status: completed
+    - id: task-29
+      title: Release v1.0.4 and verify npm OIDC publish path
+      status: blocked
+    - id: task-30
+      title: Rerun v1.0.4 npm publish after NPM_TOKEN secret setup and verify installs
+      status: completed
+    - id: task-31
+      title: Release v1.0.5 and prove OIDC-only npm publish path
+      status: blocked
+    - id: task-32
+      title: Release v1.0.6 for OIDC-only npm publish verification
+      status: blocked
+    - id: task-33
+      title: Upgrade npm publish workflow runtime (Node/npm) and validate on new release tag
+      status: completed
+    - id: task-34
+      title: Harden npm publish workflow to OIDC-only and pin npm toolchain
       status: completed
