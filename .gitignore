@@ -92,3 +92,13 @@ examples/**/.small-cache/
 examples/**/.small/runs/
 examples/**/.small/archive/
 examples/**/.small-runs/
+
+# JCN universal secrets policy
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+!.env.*.example
+!.env.*.sample
+!.env.*.template
