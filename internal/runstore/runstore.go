@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	DefaultStoreDirName = ".small-runs"
+	DefaultStoreDirName = small.RunStoreDirName
 	MetaFileName        = "meta.json"
 )
 
@@ -64,7 +64,7 @@ type HandoffInfo struct {
 
 func ResolveStoreDir(baseDir, storeDir string) string {
 	if storeDir == "" {
-		return filepath.Join(baseDir, DefaultStoreDirName)
+		return small.RunStoreDir(baseDir)
 	}
 	if filepath.IsAbs(storeDir) {
 		return storeDir

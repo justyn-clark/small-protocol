@@ -3,6 +3,7 @@ package commands
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -113,6 +114,27 @@ replayId:
 
 		if hasError {
 			t.Error("expected no errors for valid workspace")
+		}
+	})
+
+	t.Run("warns on legacy runtime layout", func(t *testing.T) {
+		legacyRuns := filepath.Join(smallDir, "runs")
+		if err := os.MkdirAll(legacyRuns, 0755); err != nil {
+			t.Fatalf("failed to create legacy runs dir: %v", err)
+		}
+		results := runDoctor(tmpDir)
+		found := false
+		for _, r := range results {
+			if r.Category == "Runtime Layout" && r.Status == "warning" && strings.Contains(r.Suggestion, "small fix --runtime-layout") {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Fatalf("expected runtime layout warning, got %+v", results)
+		}
+		if err := os.RemoveAll(legacyRuns); err != nil {
+			t.Fatalf("failed to remove legacy runs dir: %v", err)
 		}
 	})
 

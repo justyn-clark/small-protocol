@@ -225,3 +225,55 @@ func TestFixWorkspaceSubcommand(t *testing.T) {
 		t.Error("expected workspace to have small_version")
 	}
 }
+
+func TestFixRuntimeLayoutMigratesLegacyPaths(t *testing.T) {
+	tmpDir := t.TempDir()
+	smallDir := filepath.Join(tmpDir, small.SmallDir)
+	if err := os.MkdirAll(filepath.Join(smallDir, "archive", "run-1"), 0o755); err != nil {
+		t.Fatalf("failed to create legacy archive: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(smallDir, "runs"), 0o755); err != nil {
+		t.Fatalf("failed to create legacy runs: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(smallDir, "archive", "run-1", "archive.small.yml"), []byte("archive"), 0o644); err != nil {
+		t.Fatalf("failed to seed legacy archive: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(smallDir, "runs", small.RunIndexFileName), []byte("index"), 0o644); err != nil {
+		t.Fatalf("failed to seed legacy run index: %v", err)
+	}
+	writeFixArtifact(t, tmpDir, "progress.small.yml", map[string]any{
+		"small_version": small.ProtocolVersion,
+		"owner":         "agent",
+		"entries":       []any{},
+	})
+	if err := workspace.Save(tmpDir, workspace.KindRepoRoot); err != nil {
+		t.Fatalf("failed to save workspace: %v", err)
+	}
+
+	cmd := fixCmd()
+	cmd.SetArgs([]string{"--runtime-layout", "--dir", tmpDir, "--workspace", "any"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatalf("fix runtime layout failed: %v", err)
+	}
+
+	if _, err := os.Stat(filepath.Join(tmpDir, small.ArchiveStoreDirName, "run-1", "archive.small.yml")); err != nil {
+		t.Fatalf("expected migrated archive: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(tmpDir, small.RunStoreDirName, small.RunIndexFileName)); err != nil {
+		t.Fatalf("expected migrated run index: %v", err)
+	}
+	progressData, err := os.ReadFile(filepath.Join(smallDir, "progress.small.yml"))
+	if err != nil {
+		t.Fatalf("failed to read progress: %v", err)
+	}
+	if !strings.Contains(string(progressData), "meta/reconcile-runtime-layout") {
+		t.Fatalf("expected runtime layout reconcile progress entry, got %q", string(progressData))
+	}
+}
+
+func writeFixArtifact(t *testing.T, baseDir, filename string, data map[string]any) {
+	t.Helper()
+	if err := small.SaveArtifact(baseDir, filename, data); err != nil {
+		t.Fatalf("failed to write %s: %v", filename, err)
+	}
+}

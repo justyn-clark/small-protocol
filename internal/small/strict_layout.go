@@ -25,11 +25,16 @@ func StrictSmallLayoutViolations(baseDir, commandHint string) ([]InvariantViolat
 	}
 
 	var unexpected []string
+	var legacy []string
 	for _, entry := range entries {
 		name := entry.Name()
 		relPath := filepath.ToSlash(filepath.Join(SmallDir, name))
 		if entry.IsDir() {
-			unexpected = append(unexpected, relPath+"/")
+			relPath += "/"
+			unexpected = append(unexpected, relPath)
+			if name == "archive" || name == "runs" {
+				legacy = append(legacy, relPath)
+			}
 			continue
 		}
 		if _, ok := canonicalSmallRootFiles[name]; !ok {
@@ -42,10 +47,14 @@ func StrictSmallLayoutViolations(baseDir, commandHint string) ([]InvariantViolat
 	}
 
 	sort.Strings(unexpected)
-	message := fmt.Sprintf(
-		"strict invariant S4 failed: unexpected paths under .small/: %s. Delete or move these paths outside .small/.",
-		strings.Join(unexpected, ", "),
-	)
+	message := fmt.Sprintf("strict invariant S4 failed: unexpected paths under .small/: %s.", strings.Join(unexpected, ", "))
+	if len(legacy) > 0 {
+		sort.Strings(legacy)
+		message += fmt.Sprintf(" Legacy runtime layout detected: %s. Run small fix --runtime-layout to migrate them to .small-archive/ and .small-runs/.", strings.Join(legacy, ", "))
+	}
+	if len(unexpected) > len(legacy) {
+		message += " Delete or move remaining unexpected paths outside .small/."
+	}
 	if strings.TrimSpace(commandHint) != "" {
 		message = message + fmt.Sprintf(" Command: %s", strings.TrimSpace(commandHint))
 	}

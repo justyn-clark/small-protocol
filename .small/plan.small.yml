@@ -103,3 +103,39 @@ tasks:
     - id: task-34
       title: Harden npm publish workflow to OIDC-only and pin npm toolchain
       status: completed
+    - id: task-35
+      title: 'Version-bump phase: make archive/run-store defaults strict-consistent, document ignore policy, and add migration path for legacy .small runtime layouts'
+      status: completed
+    - id: task-36
+      title: Design strict-consistent archive and run-store defaults across init, archive, run snapshot, and strict lint behavior
+      status: completed
+    - id: task-37
+      title: Implement migration path or fixer for legacy .small/archive and .small/runs layouts without ad hoc manual cleanup
+      status: completed
+      dependencies:
+        - task-36
+    - id: task-38
+      title: Document canonical git tracking and ignore policy for .small artifacts versus runtime lineage stores
+      status: completed
+      dependencies:
+        - task-37
+    - id: task-39
+      title: Fold Codex and external operator notes into the version-bump task set before release-scoping the SMALL update
+      status: completed
+      dependencies:
+        - task-42
+    - id: task-40
+      title: Implement actionable next-task selection so status reflects the real actionable queue
+      status: completed
+      dependencies:
+        - task-38
+    - id: task-41
+      title: Improve reconciliation and meta/* recovery UX so drift repair is treated as a normal supported path
+      status: completed
+      dependencies:
+        - task-40
+    - id: task-42
+      title: Evaluate narrow structured command evidence support and implement only if it fits cleanly
+      status: completed
+      dependencies:
+        - task-41

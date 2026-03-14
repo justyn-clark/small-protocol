@@ -3,7 +3,6 @@ package small
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"gopkg.in/yaml.v3"
@@ -25,7 +24,7 @@ type RunIndex struct {
 	Entries      []RunIndexEntry `yaml:"entries"`
 }
 
-// AppendRunIndexEntry appends an entry to .small/runs/index.small.yml.
+// AppendRunIndexEntry appends an entry to .small-runs/index.small.yml.
 func AppendRunIndexEntry(baseDir string, entry RunIndexEntry) error {
 	if strings.TrimSpace(entry.ReplayID) == "" {
 		return fmt.Errorf("run index entry requires replayId")
@@ -37,9 +36,8 @@ func AppendRunIndexEntry(baseDir string, entry RunIndexEntry) error {
 		return fmt.Errorf("run index entry requires reason")
 	}
 
-	smallDir := filepath.Join(baseDir, SmallDir)
-	runsDir := filepath.Join(smallDir, "runs")
-	path := filepath.Join(runsDir, "index.small.yml")
+	runsDir := RunStoreDir(baseDir)
+	path := RunIndexPath(baseDir)
 
 	index := RunIndex{
 		SmallVersion: ProtocolVersion,

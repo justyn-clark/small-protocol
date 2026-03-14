@@ -59,7 +59,7 @@ The archive includes:
   - A manifest with SHA256 hashes for integrity verification
   - The replayId for session identification
 
-Archives are stored in .small/archive/<replayId>/ by default.
+Archives are stored in .small-archive/<replayId>/ by default.
 Archives are local by default (ignored in .gitignore), but you may
 commit them in product repos if you want persistent lineage.
 
@@ -80,7 +80,7 @@ Requirements:
 	}
 
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
-	cmd.Flags().StringVar(&out, "out", "", "Output directory (default: .small/archive/<replayId>/)")
+	cmd.Flags().StringVar(&out, "out", "", "Output directory (default: .small-archive/<replayId>/)")
 	cmd.Flags().StringSliceVar(&include, "include", nil, "Files to include (default: all canonical artifacts)")
 
 	return cmd
@@ -119,7 +119,7 @@ func runArchive(artifactsDir, outDir string, include []string) error {
 
 	// Determine output directory
 	if outDir == "" {
-		outDir = filepath.Join(smallDir, "archive", replayId)
+		outDir = filepath.Join(small.ArchiveStoreDir(artifactsDir), replayId)
 	}
 
 	// Create output directory

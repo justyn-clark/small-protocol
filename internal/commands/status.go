@@ -186,36 +186,13 @@ func analyzePlan(baseDir string, maxActionable int) (*PlanStatus, error) {
 		status.TasksByStatus[name] = 0
 	}
 
-	// Build a map of task statuses for dependency checking
-	taskStatuses := make(map[string]string)
 	for _, task := range plan.Tasks {
 		normalizedStatus := normalizePlanStatus(task.Status)
-		taskStatuses[task.ID] = normalizedStatus
 		status.TasksByStatus[normalizedStatus]++
-		if normalizedStatus != "completed" && status.FirstIncomplete == "" {
-			status.FirstIncomplete = task.ID
-		}
 	}
+	status.FirstIncomplete = preferredPlanTaskID(&plan)
 
-	// Find actionable tasks (pending with all deps satisfied)
-	for _, task := range plan.Tasks {
-		if normalizePlanStatus(task.Status) != "pending" {
-			continue
-		}
-
-		depsSatisfied := true
-		for _, depID := range task.Dependencies {
-			depStatus, exists := taskStatuses[depID]
-			if !exists || depStatus != "completed" {
-				depsSatisfied = false
-				break
-			}
-		}
-
-		if depsSatisfied && len(status.NextActionable) < maxActionable {
-			status.NextActionable = append(status.NextActionable, task.ID)
-		}
-	}
+	status.NextActionable = nextActionableTaskIDs(plan.Tasks, maxActionable)
 
 	return status, nil
 }
@@ -297,14 +274,17 @@ func getHandoffStatusSnapshot(baseDir string) (handoffStatusSnapshot, error) {
 }
 
 func resolveNextTask(plan *PlanStatus, handoffCurrentTaskID string) string {
-	if current := strings.TrimSpace(handoffCurrentTaskID); current != "" {
-		return current
-	}
 	if plan == nil {
-		return ""
+		return strings.TrimSpace(handoffCurrentTaskID)
+	}
+	if len(plan.NextActionable) > 0 {
+		return plan.NextActionable[0]
 	}
 	if plan.FirstIncomplete != "" {
 		return plan.FirstIncomplete
+	}
+	if current := strings.TrimSpace(handoffCurrentTaskID); current != "" {
+		return current
 	}
 	if plan.TotalTasks > 0 && plan.TasksByStatus["completed"] == plan.TotalTasks {
 		return "No active task (run complete)"

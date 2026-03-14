@@ -492,8 +492,10 @@ func TestEnsureInitGitignoreIdempotent(t *testing.T) {
 		t.Fatalf("failed to read .gitignore: %v", err)
 	}
 	content := string(data)
-	if strings.Count(content, initCacheIgnoreLine) != 1 {
-		t.Fatalf("expected one cache ignore line, got: %q", content)
+	for _, line := range initGitignoreLines {
+		if strings.Count(content, line) != 1 {
+			t.Fatalf("expected one %q ignore line, got: %q", line, content)
+		}
 	}
 	if strings.Contains(content, ".small/*.yml") {
 		t.Fatalf("did not expect canonical .small artifacts to be ignored")

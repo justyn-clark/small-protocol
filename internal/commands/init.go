@@ -200,30 +200,46 @@ func handleAgentsFile(targetDir string, noAgents, overwriteAgents bool, agentsMo
 	return nil
 }
 
-const initCacheIgnoreLine = ".small-cache/"
+var initGitignoreLines = []string{
+	".small-cache/",
+	".small-runs/",
+	".small-archive/",
+}
 
 func ensureInitGitignore(targetDir string) error {
 	path := filepath.Join(targetDir, ".gitignore")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return os.WriteFile(path, []byte(initCacheIgnoreLine+"\n"), 0o644)
+			return os.WriteFile(path, []byte(strings.Join(initGitignoreLines, "\n")+"\n"), 0o644)
 		}
 		return fmt.Errorf("failed to read .gitignore: %w", err)
 	}
 
 	content := string(data)
 	lines := strings.Split(content, "\n")
+	existing := map[string]bool{}
 	for _, line := range lines {
-		if strings.TrimSpace(line) == initCacheIgnoreLine {
-			return nil
+		trimmed := strings.TrimSpace(line)
+		if trimmed != "" {
+			existing[trimmed] = true
 		}
+	}
+
+	var missing []string
+	for _, line := range initGitignoreLines {
+		if !existing[line] {
+			missing = append(missing, line)
+		}
+	}
+	if len(missing) == 0 {
+		return nil
 	}
 
 	if len(content) > 0 && !strings.HasSuffix(content, "\n") {
 		content += "\n"
 	}
-	content += initCacheIgnoreLine + "\n"
+	content += strings.Join(missing, "\n") + "\n"
 	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 		return fmt.Errorf("failed to write .gitignore: %w", err)
 	}

@@ -115,6 +115,7 @@ Strict mode allows only canonical root files under `.small/`:
 
 Unexpected files or directories under `.small/` fail strict checks.
 Operational cache and generated telemetry belong under `.small-cache/` instead.
+Runtime lineage stores belong under `.small-runs/` and `.small-archive/`; migrate legacy `.small/runs/` and `.small/archive/` with `small fix --runtime-layout`.
 
 **Example failure:**
 

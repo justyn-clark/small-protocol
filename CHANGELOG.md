@@ -8,6 +8,22 @@ This project follows a protocol-first versioning model:
 
 ---
 
+## [v1.0.8] - 2026-03-14
+
+### Status
+Stable patch release
+
+### Changed
+- Canonical runtime lineage locations are now `.small-runs/` and `.small-archive/`.
+- Legacy `.small/archive/` and `.small/runs/` layouts can be repaired with `small fix --runtime-layout`.
+- Strict mode now aligns with the canonical runtime layout defaults.
+
+### Notes
+- This is behavioral hardening and migration support, not a protocol contract change.
+- Existing repos with legacy runtime lineage stores should run `small fix --runtime-layout` before relying on strict layout validation.
+
+---
+
 ## [v1.0.0] — 2026-01-04
 
 ### Status

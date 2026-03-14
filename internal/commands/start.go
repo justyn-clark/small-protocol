@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
@@ -118,16 +117,28 @@ func startCmd() *cobra.Command {
 				return err
 			}
 			if code != ExitValid {
-				if isOrphanProgressOnly(output) {
+				issues := detectRecoverableStrictIssues(output)
+				if issues.Any() {
 					if fixOrphanProgress {
-						result, err := fixers.FixOrphanProgress(artifactsDir)
-						if err != nil {
-							return err
+						if issues.LegacyRuntimeLayout {
+							result, err := fixers.FixRuntimeLayout(artifactsDir)
+							if err != nil {
+								return err
+							}
+							if err := recordRuntimeLayoutReconcileEntry(artifactsDir, result); err != nil {
+								return err
+							}
 						}
-						if err := recordOrphanProgressReconcileEntry(artifactsDir, result); err != nil {
-							return err
+						if issues.OrphanProgress {
+							result, err := fixers.FixOrphanProgress(artifactsDir)
+							if err != nil {
+								return err
+							}
+							if err := recordOrphanProgressReconcileEntry(artifactsDir, result); err != nil {
+								return err
+							}
 						}
-						p.PrintInfo("Applied orphan progress fix. Re-running strict check...")
+						p.PrintInfo("Applied recoverable drift fixes. Re-running strict check...")
 						code, output, err = runCheck(artifactsDir, strictCheck, false, false, scope, false)
 						if err != nil {
 							return err
@@ -138,14 +149,20 @@ func startCmd() *cobra.Command {
 						p.PrintInfo("Strict check passed. Start complete. Handoff ready.")
 						return nil
 					}
+
 					lines := []string{
-						"Why: orphan progress entries exist in the current replayId scope.",
+						"Why: recoverable drift exists in the current SMALL state.",
 						"Fix:",
-						"small fix --orphan-progress",
-						"small start --fix",
 					}
-					p.PrintError(p.FormatBlock("Strict check failed (orphan progress)", lines))
-					return fmt.Errorf("check failed (orphan progress)")
+					if issues.LegacyRuntimeLayout {
+						lines = append(lines, "small fix --runtime-layout")
+					}
+					if issues.OrphanProgress {
+						lines = append(lines, "small fix --orphan-progress")
+					}
+					lines = append(lines, "small start --fix")
+					p.PrintError(p.FormatBlock("Strict check failed (recoverable drift)", lines))
+					return fmt.Errorf("check failed (recoverable drift)")
 				}
 				return fmt.Errorf("check failed (validate=%s lint=%s verify=%s)", output.Validate.Status, output.Lint.Status, output.Verify.Status)
 			}
@@ -213,27 +230,6 @@ func validateIntentAndPlan(artifactsDir string) bool {
 	}
 	if err := small.ValidateArtifactWithConfig(plan, config); err != nil {
 		return false
-	}
-	return true
-}
-
-func isOrphanProgressOnly(output checkOutput) bool {
-	if output.Validate.Status != "ok" {
-		return false
-	}
-	if output.Verify.Status != "ok" {
-		return false
-	}
-	if output.Lint.Status != "failed" {
-		return false
-	}
-	if len(output.Lint.Errors) == 0 {
-		return false
-	}
-	for _, message := range output.Lint.Errors {
-		if !strings.Contains(message, "strict invariant S2 failed") {
-			return false
-		}
 	}
 	return true
 }

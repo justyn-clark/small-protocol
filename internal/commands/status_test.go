@@ -161,10 +161,11 @@ func TestResolveNextTask(t *testing.T) {
 	plan := &PlanStatus{
 		TotalTasks:      2,
 		TasksByStatus:   map[string]int{"completed": 1, "pending": 1},
+		NextActionable:  []string{"task-2"},
 		FirstIncomplete: "task-2",
 	}
-	if got := resolveNextTask(plan, "task-9"); got != "task-9" {
-		t.Fatalf("resolveNextTask() with handoff = %q, want task-9", got)
+	if got := resolveNextTask(plan, "task-9"); got != "task-2" {
+		t.Fatalf("resolveNextTask() with actionable queue = %q, want task-2", got)
 	}
 	if got := resolveNextTask(plan, ""); got != "task-2" {
 		t.Fatalf("resolveNextTask() fallback = %q, want task-2", got)
@@ -177,6 +178,33 @@ func TestResolveNextTask(t *testing.T) {
 	}
 	if got := resolveNextTask(complete, ""); got != "No active task (run complete)" {
 		t.Fatalf("resolveNextTask() complete = %q, want run complete message", got)
+	}
+}
+
+func TestAnalyzePlanPrefersActionableTaskOverBlockedTask(t *testing.T) {
+	tmpDir := t.TempDir()
+	artifacts := cloneArtifacts(defaultArtifacts())
+	artifacts["plan.small.yml"] = `small_version: "1.0.0"
+owner: "agent"
+tasks:
+  - id: "task-29"
+    title: "Old blocked release"
+    status: "blocked"
+  - id: "task-37"
+    title: "New actionable work"
+    status: "pending"
+`
+	writeArtifacts(t, tmpDir, artifacts)
+
+	status, err := analyzePlan(tmpDir, 3)
+	if err != nil {
+		t.Fatalf("analyzePlan error: %v", err)
+	}
+	if len(status.NextActionable) != 1 || status.NextActionable[0] != "task-37" {
+		t.Fatalf("unexpected next actionable queue: %+v", status.NextActionable)
+	}
+	if status.FirstIncomplete != "task-37" {
+		t.Fatalf("first_incomplete = %q, want task-37", status.FirstIncomplete)
 	}
 }
 

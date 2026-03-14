@@ -1,13 +1,11 @@
 small_version: "1.0.0"
 owner: agent
-summary: Run blocked. strict check failed.
+summary: Run blocked on task-29.
 resume:
-    current_task_id: task-17
+    current_task_id: task-29
     next_steps:
-        - Unblock task-17
-        - 'Resolve strict check failures: handoff.resume.current_task_id must not be an empty string'
-        - 'Run: small check --strict'
+        - Unblock task-29
 links: []
 replayId:
-    value: 563af272234d15cf1c5ea10730467f9e1c34dda81e82fd3a535f1e82f5e5ef13
+    value: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
     source: auto

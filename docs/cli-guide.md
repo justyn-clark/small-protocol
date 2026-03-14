@@ -24,23 +24,23 @@ small status  # Still works
 small status --dir /path/to/other/project
 ```
 
-### Git contract: what to commit
+### Git contract: tracked vs ignored SMALL surfaces
 
-SMALL uses `.small/` in two different ways:
+SMALL uses three surface classes in this repo:
 
-1) Runtime workspace (repo root)
-   - Path: `./.small/`
-   - Purpose: active project state for the current run
-   - Policy: do NOT commit
-   - Reason: it churns every run and becomes noise
+1. Canonical SMALL state (tracked)
+   - Paths: `./.small/*.small.yml`, `examples/**/.small/*.small.yml`
+   - Purpose: authoritative protocol state and committed fixtures
 
-2) Published examples (committed)
-   - Path: `examples/**/.small/` (and `spec/**/examples/.small/`)
-   - Purpose: stable, reviewable examples of correct SMALL runs
-   - Policy: DO commit
-   - Reason: examples are part of the specification and documentation
+2. Runtime lineage stores (ignored)
+   - Paths: `./.small-runs/`, `./.small-archive/`
+   - Purpose: local run snapshots and local archives
 
-In this repo, root `./.small/` is ignored, but example `.small/` folders are tracked.
+3. Runtime cache (ignored)
+   - Path: `./.small-cache/`
+   - Purpose: command logs, drafts, and ephemeral telemetry
+
+Legacy layouts under `./.small/archive/` and `./.small/runs/` are no longer canonical. Migrate them with `small fix --runtime-layout`.
 
 ### Temp directories
 
@@ -49,8 +49,9 @@ The following directories are ephemeral and should never be committed:
 | Directory | Purpose |
 |-----------|---------|
 | `.tmp/` | Local scratch space for debugging (ignored) |
-| `.small/archive/` | Run archives (local by default, see `small archive`) |
+| `.small-archive/` | Run archives (local by default, see `small archive`) |
 | `.small-runs/` | Run history snapshots (local by default, see `small run`) |
+| `.small-cache/` | Command logs, drafts, and ephemeral telemetry |
 | OS temp (`/tmp/`, `$TMPDIR`) | Selftest and CI workspaces |
 
 The `small selftest` command uses OS temp by default so it never touches repo state.
@@ -63,7 +64,9 @@ Use `small archive` to preserve run state without committing `.small/`:
 small archive
 ```
 
-Archives are stored in `.small/archive/<replayId>/` with a manifest containing SHA256 hashes. Archives are local by default (ignored in .gitignore), but you may commit them in product repos if you want persistent lineage. See `small archive --help` for details.
+Archives are stored in `.small-archive/<replayId>/` with a manifest containing SHA256 hashes. Archives are local by default (ignored in .gitignore), but you may copy or explicitly curate them elsewhere if you want persistent lineage. See `small archive --help` for details.
+
+If strict mode reports legacy `.small/archive/` or `.small/runs/` paths, run `small fix --runtime-layout` before archiving.
 
 ### Run history (Git-like UX)
 
@@ -262,6 +265,7 @@ Normalize known SMALL formatting issues in-place.
 
 ```bash
 small fix --versions
+small fix --runtime-layout
 small fix --all
 small fix workspace
 ```
@@ -271,9 +275,12 @@ small fix workspace
 | Flag | Description |
 |------|-------------|
 | `--versions` | Normalize `small_version` to a quoted string |
-| `--all` | Run all available fixes (versions + workspace) |
+| `--runtime-layout` | Migrate legacy `.small/archive` and `.small/runs` paths to canonical runtime stores |
+| `--all` | Run low-risk fixes (`--versions`, `--runtime-layout`, and workspace repair) |
 | `--dir <path>` | Directory containing .small/ |
 | `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`; default `root`) |
+
+`small fix --runtime-layout` is the canonical recovery path when older SMALL runs left archives or run indexes under `.small/` and strict mode rejects them.
 
 **Subcommands:**
 
@@ -493,6 +500,8 @@ Recent progress (2 entries):
 Last handoff: 2025-01-04T10:05:00Z
 ```
 
+`Next actionable` is the dependency-aware runnable queue. `Next task` is the single task the operator should do now; it prefers an in-progress or actionable task over stale blocked handoff state.
+
 **JSON output:**
 
 ```bash
@@ -532,6 +541,8 @@ small apply --cmd "npm test" --task task-1
 3. Records completion entry with exit code
 4. If exit code 0: status completed
 5. If exit code != 0: status blocked
+
+`small apply` already records narrow structured command evidence alongside human-readable evidence using `command_summary`, `command_ref`, and `command_sha256`. Additional nested command objects are intentionally deferred to keep `progress.small.yml` flat, auditable, and machine-legible without introducing another command schema.
 
 **Dry-run mode:**
 
@@ -969,7 +980,7 @@ small archive
 | Flag | Description |
 |------|-------------|
 | `--dir <path>` | Directory containing .small/ |
-| `--out <path>` | Output directory (default: .small/archive/<replayId>/) |
+| `--out <path>` | Output directory (default: .small-archive/<replayId>/) |
 | `--include <files>` | Files to include (default: all canonical artifacts) |
 
 **What gets archived:**
@@ -1012,10 +1023,10 @@ files:
 
 **Storage policy:**
 
-Archives are stored in `.small/archive/<replayId>/` by default and are ignored in `.gitignore`. You may:
+Archives are stored in `.small-archive/<replayId>/` by default and are ignored in `.gitignore`. You may:
 
 1. Keep archives local (default) for debugging/reference
-2. Commit archives in product repos for persistent lineage
+2. Copy archives to a tracked location if you need persistent lineage
 3. Copy archives to external storage for compliance
 
 ### small doctor
@@ -1198,6 +1209,6 @@ small run diff <from> <to>
 small run checkout <replayId>
 
 # Archiving
-small archive               # Archive current run to .small/archive/
+small archive               # Archive current run to .small-archive/
 small archive --out ./backup  # Archive to custom directory
 ```

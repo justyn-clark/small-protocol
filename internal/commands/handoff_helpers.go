@@ -128,14 +128,17 @@ func computeHandoffState(artifactsDir string, plan *PlanData) (handoffState, err
 	}
 
 	explicitBlockedTaskID := firstTaskIDByStatus(plan, "blocked")
-	preferredTaskID := explicitBlockedTaskID
-	if preferredTaskID == "" {
-		preferredTaskID = nextIncompleteTaskID(plan)
-	}
+	runnableTaskID := nextRunnableTaskID(plan)
 
-	if !strictOK || explicitBlockedTaskID != "" {
+	if !strictOK || (explicitBlockedTaskID != "" && runnableTaskID == "") {
 		state := handoffState{Status: handoffStatusBlocked}
-		currentTaskID := preferredTaskID
+		currentTaskID := explicitBlockedTaskID
+		if currentTaskID == "" && !strictOK {
+			currentTaskID = "meta/blocker"
+		}
+		if currentTaskID == "" {
+			currentTaskID = firstTaskIDByStatus(plan, "pending")
+		}
 		if currentTaskID == "" {
 			currentTaskID = "meta/blocker"
 		}
@@ -174,10 +177,7 @@ func computeHandoffState(artifactsDir string, plan *PlanData) (handoffState, err
 		}, nil
 	}
 
-	nextTaskID := firstTaskIDByStatus(plan, "in_progress")
-	if nextTaskID == "" {
-		nextTaskID = nextIncompleteTaskID(plan)
-	}
+	nextTaskID := runnableTaskID
 
 	state := handoffState{
 		Status:  handoffStatusInProgress,

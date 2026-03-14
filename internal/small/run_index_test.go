@@ -63,7 +63,7 @@ func TestAppendRunIndexEntryAppends(t *testing.T) {
 
 func readRunIndex(t *testing.T, baseDir string) RunIndex {
 	t.Helper()
-	path := filepath.Join(baseDir, SmallDir, "runs", "index.small.yml")
+	path := RunIndexPath(baseDir)
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("failed to read run index: %v", err)

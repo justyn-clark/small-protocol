@@ -1,6 +1,6 @@
 {
   "name": "@small-protocol/small",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "npm wrapper for SMALL CLI",
   "license": "MIT",
   "repository": {

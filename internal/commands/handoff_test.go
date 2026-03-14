@@ -520,11 +520,11 @@ entries: []
 	if err != nil {
 		t.Fatalf("buildHandoff failed: %v", err)
 	}
-	if h.Summary != "Run blocked on task-1." {
+	if h.Summary != "Run blocked. strict check failed." {
 		t.Fatalf("unexpected summary: %q", h.Summary)
 	}
-	if h.Resume.CurrentTaskID == nil || *h.Resume.CurrentTaskID != "task-1" {
-		t.Fatalf("expected current_task_id task-1, got %v", h.Resume.CurrentTaskID)
+	if h.Resume.CurrentTaskID == nil || *h.Resume.CurrentTaskID != "meta/blocker" {
+		t.Fatalf("expected current_task_id meta/blocker, got %v", h.Resume.CurrentTaskID)
 	}
 	if len(h.Resume.NextSteps) == 0 || !strings.Contains(strings.Join(h.Resume.NextSteps, " "), "small check --strict") {
 		t.Fatalf("expected unblock steps to mention strict check, got %v", h.Resume.NextSteps)
@@ -624,6 +624,13 @@ entries: []
 			t.Fatalf("failed to write %s: %v", name, err)
 		}
 	}
+	strictOK, strictSummary, err := strictReadyForComplete(tmpDir)
+	if err != nil {
+		t.Fatalf("strictReadyForComplete error: %v", err)
+	}
+	if !strictOK {
+		t.Fatalf("expected strictReadyForComplete to pass, got summary %q", strictSummary)
+	}
 
 	h, err := buildHandoff(tmpDir, "", "", nil, nil, nil, defaultNextStepsLimit)
 	if err != nil {
@@ -637,5 +644,79 @@ entries: []
 	}
 	if len(h.Resume.NextSteps) != 1 || h.Resume.NextSteps[0] != "Continue with task-9" {
 		t.Fatalf("unexpected next steps: %v", h.Resume.NextSteps)
+	}
+}
+
+func TestComputeHandoffStatePrefersActionableTaskOverBlockedTask(t *testing.T) {
+	tmpDir := t.TempDir()
+	smallDir := filepath.Join(tmpDir, ".small")
+	if err := os.MkdirAll(smallDir, 0o755); err != nil {
+		t.Fatalf("failed to create .small dir: %v", err)
+	}
+
+	artifacts := map[string]string{
+		"intent.small.yml": `small_version: "1.0.0"
+owner: "human"
+intent: "Test"
+scope:
+  include: []
+  exclude: []
+success_criteria: []
+`,
+		"constraints.small.yml": `small_version: "1.0.0"
+owner: "human"
+constraints:
+  - id: "no-secrets"
+    rule: "No secrets"
+    severity: "error"
+`,
+		"plan.small.yml": `small_version: "1.0.0"
+owner: "agent"
+tasks:
+  - id: "task-29"
+    title: "Old blocked release"
+    status: "blocked"
+  - id: "task-37"
+    title: "Actionable work"
+    status: "pending"
+`,
+		"progress.small.yml": `small_version: "1.0.0"
+owner: "agent"
+entries:
+  - task_id: "task-29"
+    status: "blocked"
+    timestamp: "2026-01-01T00:00:00.000000000Z"
+    evidence: "Blocked task preserved for historical release work"
+`,
+	}
+	for name, content := range artifacts {
+		if err := os.WriteFile(filepath.Join(smallDir, name), []byte(content), 0o644); err != nil {
+			t.Fatalf("failed to write %s: %v", name, err)
+		}
+	}
+	strictOK, strictSummary, err := strictReadyForComplete(tmpDir)
+	if err != nil {
+		t.Fatalf("strictReadyForComplete error: %v", err)
+	}
+	if !strictOK {
+		t.Fatalf("expected strictReadyForComplete to pass, got summary %q", strictSummary)
+	}
+	plan, err := loadPlan(filepath.Join(smallDir, "plan.small.yml"))
+	if err != nil {
+		t.Fatalf("loadPlan error: %v", err)
+	}
+	if taskID := nextRunnableTaskID(plan); taskID != "task-37" {
+		t.Fatalf("nextRunnableTaskID = %q, want task-37", taskID)
+	}
+	state, err := computeHandoffState(tmpDir, plan)
+	if err != nil {
+		t.Fatalf("computeHandoffState error: %v", err)
+	}
+	if state.Summary != "Run in progress. Next task: task-37." {
+		t.Fatalf("computeHandoffState summary = %q", state.Summary)
+	}
+
+	if state.CurrentTaskID == nil || *state.CurrentTaskID != "task-37" {
+		t.Fatalf("expected current_task_id task-37, got %v", state.CurrentTaskID)
 	}
 }

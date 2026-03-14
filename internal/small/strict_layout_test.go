@@ -64,3 +64,38 @@ func TestStrictSmallLayoutViolations(t *testing.T) {
 		}
 	}
 }
+
+func TestStrictSmallLayoutViolationsLegacyRuntimeLayout(t *testing.T) {
+	baseDir := t.TempDir()
+	smallDir := filepath.Join(baseDir, SmallDir)
+	if err := os.MkdirAll(filepath.Join(smallDir, "archive"), 0o755); err != nil {
+		t.Fatalf("failed to create legacy archive dir: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(smallDir, "runs"), 0o755); err != nil {
+		t.Fatalf("failed to create legacy runs dir: %v", err)
+	}
+
+	violations, err := StrictSmallLayoutViolations(baseDir, "small check --strict")
+	if err != nil {
+		t.Fatalf("StrictSmallLayoutViolations error: %v", err)
+	}
+	if len(violations) != 1 {
+		t.Fatalf("expected 1 violation, got %d", len(violations))
+	}
+
+	message := violations[0].Message
+	for _, expected := range []string{
+		".small/archive/",
+		".small/runs/",
+		"small fix --runtime-layout",
+		".small-archive/",
+		".small-runs/",
+	} {
+		if !strings.Contains(message, expected) {
+			t.Fatalf("expected message to contain %q, got %q", expected, message)
+		}
+	}
+	if strings.Contains(message, "Delete or move remaining") {
+		t.Fatalf("did not expect generic delete guidance when only legacy runtime paths exist: %q", message)
+	}
+}

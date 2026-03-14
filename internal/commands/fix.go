@@ -16,6 +16,7 @@ func fixCmd() *cobra.Command {
 	var (
 		fixVersions       bool
 		fixOrphanProgress bool
+		fixRuntimeLayout  bool
 		dir               string
 		workspaceFlag     string
 		fixAll            bool
@@ -25,13 +26,14 @@ func fixCmd() *cobra.Command {
 		Use:   "fix",
 		Short: "Normalize SMALL artifacts in-place",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if !fixVersions && !fixOrphanProgress && !fixAll {
-				return fmt.Errorf("no fix selected (use --versions, --orphan-progress, or --all)")
+			if !fixVersions && !fixOrphanProgress && !fixRuntimeLayout && !fixAll {
+				return fmt.Errorf("no fix selected (use --versions, --runtime-layout, --orphan-progress, or --all)")
 			}
 
-			// --all includes workspace fix
+			// --all includes low-risk workspace/runtime fixers
 			if fixAll {
 				fixVersions = true
+				fixRuntimeLayout = true
 			}
 			if dir == "" {
 				dir = baseDir
@@ -116,6 +118,34 @@ func fixCmd() *cobra.Command {
 				}
 			}
 
+			if fixRuntimeLayout {
+				result, err := fixers.FixRuntimeLayout(artifactsDir)
+				if err != nil {
+					return err
+				}
+
+				if len(result.Migrations) == 0 && len(result.Deduped) == 0 {
+					p.PrintInfo(p.FormatBlock("Runtime layout", []string{
+						"No legacy .small/archive/ or .small/runs/ paths found.",
+					}))
+				} else {
+					lines := []string{
+						fmt.Sprintf("Migrated %d legacy runtime path group(s).", len(result.Migrations)),
+					}
+					for _, migration := range result.Migrations {
+						lines = append(lines, fmt.Sprintf("- %s -> %s (%d item(s))", migration.SourceRoot, migration.TargetRoot, len(migration.Moved)))
+					}
+					if len(result.Deduped) > 0 {
+						lines = append(lines, fmt.Sprintf("Deduped %d already-migrated file(s).", len(result.Deduped)))
+					}
+					if err := recordRuntimeLayoutReconcileEntry(artifactsDir, result); err != nil {
+						return err
+					}
+					lines = append(lines, "", "Recorded progress entry: meta/reconcile-runtime-layout")
+					p.PrintInfo(p.FormatBlock("Runtime layout migrated", lines))
+				}
+			}
+
 			// --all includes workspace fix
 			if fixAll {
 				wsResult, err := workspace.Fix(artifactsDir, workspace.KindRepoRoot, false)
@@ -160,7 +190,8 @@ func fixCmd() *cobra.Command {
 
 	cmd.Flags().BoolVar(&fixVersions, "versions", false, "Normalize small_version formatting (quoted string)")
 	cmd.Flags().BoolVar(&fixOrphanProgress, "orphan-progress", false, "Rewrite orphan progress task_ids to meta names")
-	cmd.Flags().BoolVar(&fixAll, "all", false, "Run all fixers (includes workspace)")
+	cmd.Flags().BoolVar(&fixRuntimeLayout, "runtime-layout", false, "Migrate legacy .small/archive and .small/runs paths to canonical runtime stores")
+	cmd.Flags().BoolVar(&fixAll, "all", false, "Run all low-risk fixers (versions, runtime layout, workspace)")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root, examples, or any)")
 

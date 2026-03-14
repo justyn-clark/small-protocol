@@ -114,6 +114,27 @@ func runDoctor(dir string) []DiagnosticResult {
 		return results
 	}
 
+	legacyPaths := []string{}
+	for _, path := range []struct {
+		abs string
+		rel string
+	}{
+		{abs: small.LegacyArchiveDir(dir), rel: ".small/archive/"},
+		{abs: small.LegacyRunsDir(dir), rel: ".small/runs/"},
+	} {
+		if info, err := os.Stat(path.abs); err == nil && info.IsDir() {
+			legacyPaths = append(legacyPaths, path.rel)
+		}
+	}
+	if len(legacyPaths) > 0 {
+		results = append(results, DiagnosticResult{
+			Category:   "Runtime Layout",
+			Status:     "warning",
+			Message:    fmt.Sprintf("Legacy runtime layout detected: %s", strings.Join(legacyPaths, ", ")),
+			Suggestion: "Run: small fix --runtime-layout",
+		})
+	}
+
 	// Load and validate artifacts
 	artifactsDir := resolveArtifactsDir(dir)
 	artifacts, err := small.LoadAllArtifacts(artifactsDir)

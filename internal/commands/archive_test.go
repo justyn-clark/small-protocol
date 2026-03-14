@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"gopkg.in/yaml.v3"
 )
@@ -42,7 +43,7 @@ func TestArchiveCommand(t *testing.T) {
 		}
 
 		// Verify archive directory exists
-		archiveDir := filepath.Join(tmpDir, ".small", "archive")
+		archiveDir := filepath.Join(tmpDir, small.ArchiveStoreDirName)
 		entries, err := os.ReadDir(archiveDir)
 		if err != nil {
 			t.Fatalf("failed to read archive dir: %v", err)
