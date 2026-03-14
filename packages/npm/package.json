@@ -1,12 +1,30 @@
 {
   "name": "@small-protocol/small",
   "version": "1.0.8",
-  "description": "npm wrapper for SMALL CLI",
-  "license": "MIT",
+  "description": "CLI for the SMALL Protocol - deterministic execution state for auditable, resumable AI-assisted engineering workflows.",
+  "keywords": [
+    "small",
+    "small-protocol",
+    "ai",
+    "agents",
+    "workflow",
+    "protocol",
+    "cli",
+    "execution-state",
+    "audit",
+    "deterministic",
+    "resumable",
+    "engineering"
+  ],
+  "homepage": "https://smallprotocol.dev",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/justyn-clark/small-protocol.git",
     "directory": "packages/npm"
+  },
+  "bugs": {
+    "url": "https://github.com/justyn-clark/small-protocol/issues"
   },
   "bin": {
     "small": "bin/small.js"
@@ -18,7 +36,8 @@
     "bin",
     "scripts",
     "vendor",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public"

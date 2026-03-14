@@ -37,8 +37,8 @@ The release workflow:
 ## Verifying downloads
 
 ```bash
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.2/small-v1.0.2-darwin-arm64.tar.gz
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.2/checksums.txt
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.8/small-v1.0.8-darwin-arm64.tar.gz
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.8/checksums.txt
 
 shasum -a 256 -c checksums.txt --ignore-missing
 ```
