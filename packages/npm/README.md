@@ -15,7 +15,7 @@ curl -fsSL https://smallprotocol.dev/install.sh | bash
 Pinned version:
 
 ```bash
-curl -fsSL https://smallprotocol.dev/install.sh | bash -s -- --version v1.0.8
+curl -fsSL https://smallprotocol.dev/install.sh | bash -s -- --version v1.0.9
 ```
 
 npm:

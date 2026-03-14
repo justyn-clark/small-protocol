@@ -8,6 +8,21 @@ This project follows a protocol-first versioning model:
 
 ---
 
+## [v1.0.9] - 2026-03-14
+
+### Status
+Stable patch release
+
+### Changed
+- Published npm package surface now includes the package-specific README, corrected Apache-2.0 license metadata, and stronger discovery metadata.
+- Installation docs and maintainer release examples now point at `v1.0.9` where a pinned version example is shown.
+
+### Notes
+- This is a docs-and-distribution hygiene release. No protocol contract or runtime behavior changed from `v1.0.8`.
+- The purpose of this cut is to update the public npm package page, which cannot be changed in-place for an already-published version.
+
+---
+
 ## [v1.0.8] - 2026-03-14
 
 ### Status
