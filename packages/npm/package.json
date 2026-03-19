@@ -1,6 +1,6 @@
 {
   "name": "@small-protocol/small",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "CLI for the SMALL Protocol - deterministic execution state for auditable, resumable AI-assisted engineering workflows.",
   "keywords": [
     "small",
