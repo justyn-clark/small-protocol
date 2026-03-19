@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/justyn-clark/small-protocol/internal/small"
+	"github.com/justyn-clark/small-protocol/internal/version"
 	"github.com/spf13/cobra"
 )
 
@@ -25,9 +27,7 @@ func init() {
 	baseDir = wd
 }
 
-func Execute() error {
-	printBannerIfEligible(os.Args)
-
+func newRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "small",
 		Short: "SMALL protocol CLI tool",
@@ -36,6 +36,10 @@ func Execute() error {
 
 	rootCmd.SilenceUsage = true
 	rootCmd.SilenceErrors = true
+
+	// --version / -v flag: same output as `small version`
+	rootCmd.Version = version.GetVersion()
+	rootCmd.SetVersionTemplate("small {{.Version}}\nSupported spec versions: [\"" + small.ProtocolVersion + "\"]\n")
 
 	configureRootOutput(rootCmd)
 
@@ -70,7 +74,13 @@ func Execute() error {
 	rootCmd.AddCommand(runCmd())
 	rootCmd.AddCommand(agentsCmd())
 
-	err := rootCmd.Execute()
+	return rootCmd
+}
+
+func Execute() error {
+	printBannerIfEligible(os.Args)
+
+	err := newRootCmd().Execute()
 	if errors.Is(err, errFlagError) {
 		return nil
 	}

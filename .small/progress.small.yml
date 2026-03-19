@@ -18977,3 +18977,14 @@ entries:
       status: completed
       task_id: task-39
       timestamp: "2026-03-14T04:17:30.051042000Z"
+    - evidence: Added task task-43 via small plan --add
+      notes: 'Reflection patch: --version flag, post-init guidance, selftest/doctor docs, apply walkthrough'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-43
+      timestamp: "2026-03-19T06:19:40.891453000Z"
+    - evidence: Implemented --version/-v on root cmd (root.go refactor + version_flag_test.go), improved post-init output (init.go), added selftest/doctor section to getting-started.md, added apply walkthrough to getting-started.md, added selftest/doctor to README quickstart. All tests pass, gofmt clean, go vet clean.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-43
+      timestamp: "2026-03-19T06:19:46.400938000Z"

@@ -139,3 +139,6 @@ tasks:
       status: completed
       dependencies:
         - task-41
+    - id: task-43
+      title: 'Reflection patch: --version flag, post-init guidance, selftest/doctor docs, apply walkthrough'
+      status: completed

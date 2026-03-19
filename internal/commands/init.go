@@ -124,7 +124,28 @@ regardless of append/prepend mode.`,
 				return fmt.Errorf("failed to record init progress: %w", err)
 			}
 
-			fmt.Printf("Initialized SMALL v%s project in %s\n", small.ProtocolVersion, smallDir)
+			fmt.Printf("Initialized SMALL v%s in %s\n", small.ProtocolVersion, smallDir)
+			fmt.Println()
+			fmt.Println("Created:")
+			for _, f := range []string{
+				"intent.small.yml",
+				"constraints.small.yml",
+				"plan.small.yml",
+				"progress.small.yml",
+				"handoff.small.yml",
+				"workspace.small.yml",
+			} {
+				fmt.Printf("  .small/%s\n", f)
+			}
+			fmt.Println()
+			fmt.Println("Human authoring required (agent must not touch these):")
+			fmt.Println("  .small/intent.small.yml      — declare what the work is")
+			fmt.Println("  .small/constraints.small.yml — declare what must not change")
+			fmt.Println()
+			fmt.Println("Agent next steps (after human fills the above):")
+			fmt.Println("  small validate            — confirm schema compliance")
+			fmt.Println("  small doctor              — diagnose workspace health")
+			fmt.Println("  small plan --add \"...\"    — create the first task")
 			return nil
 		},
 	}

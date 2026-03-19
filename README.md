@@ -88,8 +88,14 @@ Run all commands from your repository root.
 npm i -g @small-protocol/small
 small version
 
+# Verify the install works end-to-end
+small selftest
+
 # Initialize
 small init --intent "My project description"
+
+# Diagnose workspace health (read-only)
+small doctor
 
 # Validate
 small validate

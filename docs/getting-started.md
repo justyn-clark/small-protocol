@@ -205,6 +205,28 @@ For machine-readable output:
 small status --json
 ```
 
+## Verifying Trust Before Work Begins
+
+Before an agent starts executing, two commands establish that the workspace is healthy and the CLI is working correctly.
+
+### selftest
+
+```bash
+small selftest
+```
+
+`selftest` runs a built-in verification that the CLI binary, runtime layout, and schema access are all functional. Run it after install or upgrade to confirm the tool is ready. If `selftest` fails, nothing else should be trusted.
+
+### doctor
+
+```bash
+small doctor
+```
+
+`doctor` is a read-only diagnostic that inspects your `.small/` directory and reports on artifact health: missing files, schema violations, ownership inconsistencies, and version mismatches. It does not modify anything. Run it when something feels off or as a pre-flight check before starting a session.
+
+Both commands are designed to be the first thing an agent runs in a new workspace. They answer the question "can I trust this environment?" before any work begins.
+
 ## Common First-Time Mistakes
 
 **Editing agent-owned files manually**: Don't edit `plan.small.yml`, `progress.small.yml`, or `handoff.small.yml` by hand. Use CLI commands or let the agent manage them.
@@ -214,6 +236,83 @@ small status --json
 **Missing evidence in progress**: Every progress entry needs at least one evidence field (`evidence`, `command`, `commit`, `link`, `test`, or `verification`).
 
 **Wrong version string**: The version must be the string `"1.0.0"`, not the number `1.0.0`. YAML treats unquoted numbers differently.
+
+## Apply Walkthrough: Constraint Respected, Evidence Recorded
+
+This walkthrough shows a constraint defined by the human, an agent executing work via `small apply`, and the resulting evidence in `progress.small.yml`.
+
+### 1. Human defines a constraint
+
+```yaml
+# .small/constraints.small.yml
+small_version: "1.0.0"
+owner: "human"
+constraints:
+  - id: "no-direct-db-writes"
+    rule: "All database mutations must go through the repository layer, never raw SQL in handlers"
+    severity: "error"
+```
+
+### 2. Agent reads constraints and plans accordingly
+
+Before starting, the agent runs:
+
+```bash
+small status --json   # read current state
+small check --strict  # confirm workspace is clean
+```
+
+The agent sees `no-direct-db-writes` and generates a task that respects it:
+
+```bash
+small plan --add "Implement user creation via UserRepository, no raw SQL"
+# → adds task-2 to plan.small.yml
+```
+
+### 3. Agent executes under `small apply`
+
+```bash
+small apply --cmd "go test ./internal/repository/... -run TestUserRepository" --task task-2
+```
+
+`small apply` records two entries automatically:
+
+**start entry** (appended when command begins):
+```yaml
+- task_id: task-2
+  timestamp: "2026-03-18T10:00:00.123456789Z"
+  status: in_progress
+  evidence: "Executing: go test ./internal/repository/... -run TestUserRepository"
+  command: "go test ./internal/repository/... -run TestUserRepository"
+```
+
+**completion entry** (appended after exit code 0):
+```yaml
+- task_id: task-2
+  timestamp: "2026-03-18T10:00:04.987654321Z"
+  status: completed
+  evidence: "Command succeeded (exit 0): go test ./internal/repository/... -run TestUserRepository"
+  command: "go test ./internal/repository/... -run TestUserRepository"
+```
+
+### 4. Verify constraints and evidence are both satisfied
+
+```bash
+small check --strict
+```
+
+Output:
+```
+[validate] OK
+[lint]     OK
+[verify]   OK
+```
+
+The constraint `no-direct-db-writes` was respected because the agent only touched the repository layer. The evidence is in `progress.small.yml` — auditable, diffable, and resumable.
+
+### Key principle
+
+`small apply` is the only way an agent writes to the workspace. Every execution is attributed, timestamped, and linked to a task. If the command fails, `status: blocked` is recorded instead — the constraint violation is visible and the run is stopped cleanly.
 
 ## Next Steps
 
