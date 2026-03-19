@@ -20,6 +20,15 @@ This creates a `.small/` directory with the five canonical artifacts:
 └── handoff.small.yml
 ```
 
+## Verify the Environment
+
+```bash
+small selftest       # Confirm CLI binary and runtime are functional
+small doctor         # Diagnose workspace health (read-only)
+```
+
+Run these before starting work. If either fails, fix the issue before proceeding.
+
 ## Validate Artifacts
 
 ```bash
