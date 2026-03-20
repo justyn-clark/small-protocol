@@ -37,8 +37,8 @@ The release workflow:
 ## Verifying downloads
 
 ```bash
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.10/small-v1.0.10-darwin-arm64.tar.gz
-curl -LO https://github.com/justyn-clark/small-protocol/releases/download/v1.0.10/checksums.txt
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/vX.Y.Z/small-vX.Y.Z-darwin-arm64.tar.gz
+curl -LO https://github.com/justyn-clark/small-protocol/releases/download/vX.Y.Z/checksums.txt
 
 shasum -a 256 -c checksums.txt --ignore-missing
 ```
@@ -63,7 +63,7 @@ Token-based publish (`NPM_TOKEN`) is not part of the standard release path.
 
 Examples:
 
-- Git tag: `v1.0.3`
-- npm version: `1.0.3`
+- Git tag: `vX.Y.Z`
+- npm version: `X.Y.Z`
 
 See [release checklist](./release-checklist.md) for the full sequence.

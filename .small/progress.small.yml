@@ -18988,3 +18988,58 @@ entries:
       status: completed
       task_id: task-43
       timestamp: "2026-03-19T06:19:46.400938000Z"
+    - evidence: Added task task-44 via small plan --add
+      notes: Fast-forward local small-protocol checkout to origin/main for docs sync source
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-44
+      timestamp: "2026-03-20T21:24:45.394843000Z"
+    - evidence: Starting SMALL repo docs drift repair
+      notes: Refresh CLI reference/guide and package docs against current help output and release guidance
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-44
+      timestamp: "2026-03-20T21:24:48.871158000Z"
+    - evidence: Starting local fast-forward of small-protocol checkout
+      notes: Update working tree to origin/main so smallprotocol.dev sync scripts read current canonical docs/spec
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-44
+      timestamp: "2026-03-20T21:24:53.801741000Z"
+    - command: git merge --ff-only origin/main
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260320T212503.865264000Z.txt
+      command_sha256: 4aed0d4c25c58873bccfde8d8e5c7db9f056f1c5708928d058d1f53b2fac43ed
+      command_summary: git merge --ff-only origin/main
+      evidence: exit_code=0 output="Already up to date."
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-44
+      timestamp: "2026-03-20T21:25:03.865264000Z"
+    - evidence: exit_code=0 output="Already up to date."
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-44
+      timestamp: "2026-03-20T21:25:03.959026000Z"
+    - evidence: Starting current-head repo docs fixes
+      notes: Use current help output and code behavior to correct CLI guide/reference and package install docs
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-45
+      timestamp: "2026-03-20T21:25:13.884916000Z"
+    - command: 'python3 - <<''PY'' from pathlib import Path def replace_once(path_str: str, old: str, new: str) -> None: path = Path(path_str) text = path.read_text(encoding="utf-8") if old not in text: raise System...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260320T212937.638646000Z.txt
+      command_sha256: cf5addc7be4b33b318d48a8bf674bb0c84fb74ee8e9e42c1ce716caf14c57c22
+      command_summary: 'python3 - <<''PY'' from pathlib import Path def replace_once(path_str: str, old: str, new: str) -> None: path = Path(path_str) text = path.read_text(encoding="utf-8") if old not in text: raise System...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-45
+      timestamp: "2026-03-20T21:29:37.638646000Z"
+    - evidence: 'Updated repo docs to match current CLI/help surface: docs/cli-guide.md now reflects version output, status output, harness markers, fix/apply/plan/handoff/reset/run flags; docs/cli.md now covers the shipped command set; install/release/package docs use vX.Y.Z placeholders to avoid version churn'
+      notes: Verified with small check --strict and current go run ./cmd/small help output
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-45
+      timestamp: "2026-03-20T21:35:22.341189000Z"

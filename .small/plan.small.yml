@@ -142,3 +142,9 @@ tasks:
     - id: task-43
       title: 'Reflection patch: --version flag, post-init guidance, selftest/doctor docs, apply walkthrough'
       status: completed
+    - id: task-44
+      title: Fast-forward local small-protocol checkout to origin/main for docs sync source
+      status: completed
+    - id: task-45
+      title: Update repo docs to match current SMALL CLI surface and release/install guidance
+      status: completed

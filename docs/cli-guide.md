@@ -117,12 +117,13 @@ Print CLI version and supported protocol version.
 small version
 ```
 
-Output:
+Output (example):
 ```
-small v1.6.0 (SMALL Protocol v1.0.0)
+small vX.Y.Z
+Supported spec versions: ["1.0.0"]
 ```
 
-No flags.
+The root command also supports `small --version` and `small -v`.
 
 ### small init
 
@@ -154,7 +155,7 @@ By default, `small init` creates an `AGENTS.md` file with the SMALL execution ha
 - **`--agents-mode=append`**: Preserves existing content, adds harness block at end
 - **`--agents-mode=prepend`**: Adds harness block at start, preserves existing content
 
-The harness block uses `<!-- BEGIN SMALL HARNESS -->` and `<!-- END SMALL HARNESS -->` markers. When using `--agents-mode`, if an existing block is found, it is replaced in-place (preserving content before and after).
+The harness block uses `<!-- BEGIN SMALL HARNESS v1.0.0 -->` and `<!-- END SMALL HARNESS v1.0.0 -->` markers. When using `--agents-mode`, if an existing block is found, it is replaced in-place (preserving content before and after).
 
 **What gets created:**
 
@@ -276,6 +277,7 @@ small fix workspace
 |------|-------------|
 | `--versions` | Normalize `small_version` to a quoted string |
 | `--runtime-layout` | Migrate legacy `.small/archive` and `.small/runs` paths to canonical runtime stores |
+| `--orphan-progress` | Rewrite orphan progress task ids to canonical `meta/*` names |
 | `--all` | Run low-risk fixes (`--versions`, `--runtime-layout`, and workspace repair) |
 | `--dir <path>` | Directory containing .small/ |
 | `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`; default `root`) |
@@ -427,6 +429,7 @@ small plan --add "Implement user registration"
 | `--reset` | Reset plan to template (destructive) |
 | `--yes` | Confirm destructive operations |
 | `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root` or `any`; default `root`) |
 
 **Task IDs:**
 
@@ -476,10 +479,10 @@ small status
 | `--tasks <n>` | Number of next actionable tasks (default: 3) |
 | `--dir <path>` | Directory containing .small/ |
 
-**Text output:**
+**Text output (example):**
 
 ```
-small v1.6.0
+small vX.Y.Z
 
 Artifacts:
   intent.small.yml [x]
@@ -488,16 +491,17 @@ Artifacts:
   progress.small.yml [x]
   handoff.small.yml [x]
 
+ReplayId: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 Plan: 3 tasks
   pending: 2
-  completed: 1
+  in_progress: 1
+  completed: 0
 Next actionable: [task-2, task-3]
+Next task: task-2
 
-Recent progress (2 entries):
-  [2025-01-04 10:00:00] task-1: completed
-  [2025-01-04 09:30:00] task-1: in_progress
-
-Last handoff: 2025-01-04T10:05:00Z
+Recent signal progress (2 entries):
+  [2026-03-20 21:25:13] task-2: in_progress - Running validation
+  [2026-03-20 21:24:48] task-1: completed - Initialized workspace
 ```
 
 `Next actionable` is the dependency-aware runnable queue. `Next task` is the single task the operator should do now; it prefers an in-progress or actionable task over stale blocked handoff state.
@@ -531,8 +535,11 @@ small apply --cmd "npm test" --task task-1
 | `--cmd <string>` | Shell command to execute |
 | `--task <task-id>` | Associate with specific task |
 | `--dry-run` | Record intent without executing |
+| `--auto-progress` | Capture command output in progress evidence |
+| `--auto-checkpoint` | Checkpoint the task based on command result |
 | `--handoff` | Generate handoff after success |
 | `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root` or `any`; default `root`) |
 
 **Execution flow:**
 
@@ -582,6 +589,7 @@ small handoff --summary "Completed authentication module"
 | `--summary <string>` | Custom summary text |
 | `--replay-id <string>` | Manual replayId override (64 hex chars, normalized to lowercase) |
 | `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root` or `any`; default `root`) |
 
 **What gets generated:**
 
@@ -648,7 +656,7 @@ small reset --yes
 |------|-------------|
 | `--yes`, `-y` | Non-interactive mode (skip confirmation) |
 | `--keep-intent` | Preserve intent.small.yml |
-| `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root` or `any`; default `root`) |
 
 **What gets reset (ephemeral files):**
 
@@ -937,13 +945,23 @@ small run diff <from> <to>
 small run checkout <replayId>
 ```
 
-**Flags (snapshot/list/show/diff/checkout):**
+**Shared flags (all run subcommands):**
 
 | Flag | Description |
 |------|-------------|
 | `--dir <path>` | Directory containing .small/ |
 | `--workspace <scope>` | Workspace scope (`root`, `examples`, or `any`) |
 | `--store <path>` | Run store directory (default: `<workspace>/.small-runs/`) |
+
+**Subcommand-specific flags:**
+
+| Command | Flags |
+|---------|-------|
+| `small run snapshot` | `--force` |
+| `small run list` | `--limit <n>`, `--json` |
+| `small run show <replayId>` | `--json` |
+| `small run diff <from> <to>` | `--full`, `--json` |
+| `small run checkout <replayId>` | `--force` |
 
 **Snapshot**
 

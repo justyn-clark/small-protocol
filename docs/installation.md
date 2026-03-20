@@ -25,7 +25,7 @@ curl -fsSL https://smallprotocol.dev/install.sh | bash
 Optionally install a specific version:
 
 ```bash
-curl -fsSL https://smallprotocol.dev/install.sh | bash -s -- --version v1.0.10
+curl -fsSL https://smallprotocol.dev/install.sh | bash -s -- --version vX.Y.Z
 ```
 
 Install behavior:

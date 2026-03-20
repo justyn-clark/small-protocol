@@ -1,42 +1,56 @@
 # CLI Reference
 
-## Core Commands
+Use `small --help` and `small <command> --help` for the exact current surface. This page is the high-level map of the shipped CLI.
 
-| Command          | Description                           |
-|------------------|---------------------------------------|
-| `small version`  | Print CLI and supported spec versions |
-| `small init`     | Initialize `.small/` artifacts        |
-| `small validate` | Schema validation                     |
-| `small lint`     | Invariant enforcement                 |
-| `small check`    | Run validate, lint, and verify        |
-| `small handoff`  | Generate resume checkpoint            |
-| `small reset`    | Reset workspace for new run           |
-| `small verify`   | CI/local enforcement gate             |
-| `small doctor`   | Diagnose workspace issues             |
-| `small selftest` | Built-in CLI self-test                |
-| `small archive`  | Archive run state for lineage         |
-| `small run`      | Run history snapshots and diff        |
+## Workspace Setup And Authoring
 
-## Execution Commands
+| Command | Description |
+|---------|-------------|
+| `small init` | Initialize `.small/` artifacts |
+| `small draft` | Create draft intent or constraints artifacts for human review |
+| `small accept` | Accept draft intent or constraints into canonical files |
+| `small agents` | Manage the SMALL harness block in `AGENTS.md` |
+| `small plan` | Manage plan tasks and dependencies |
+| `small progress` | Append or migrate progress entries |
+| `small checkpoint` | Update plan status and progress atomically |
+| `small apply` | Execute one bounded command and record the outcome |
+| `small handoff` | Generate or update `handoff.small.yml` |
+| `small start` | Initialize or repair run handoff state |
 
-| Command            | Description                         |
-|--------------------|-------------------------------------|
-| `small plan`       | Manage plan tasks                   |
-| `small status`     | Project state summary               |
-| `small emit`       | Emit structured JSON state          |
-| `small apply`      | Execute and record bounded commands |
-| `small progress`   | Progress utilities (add, migrate)   |
-| `small checkpoint` | Update plan and progress atomically |
+## Validation And Inspection
+
+| Command | Description |
+|---------|-------------|
+| `small validate` | Validate canonical artifacts against schemas |
+| `small lint` | Enforce invariant rules beyond schema validation |
+| `small check` | Run validate, lint, and verify |
+| `small verify` | CI/local enforcement gate |
+| `small doctor` | Diagnose workspace issues and suggest fixes |
+| `small status` | Show compact signal-first project state |
+| `small emit` | Emit structured SMALL state in JSON |
+| `small selftest` | Verify the installed CLI and runtime basics |
+
+## Maintenance And History
+
+| Command | Description |
+|---------|-------------|
+| `small fix` | Normalize or repair known SMALL artifact issues |
+| `small reset` | Start a new run without losing audit history |
+| `small run` | Snapshot, list, diff, show, and restore run history |
+| `small archive` | Archive the current run state for lineage retention |
+| `small version` | Print CLI and supported spec versions |
+| `small completion` | Generate shell completion scripts |
 
 ## Common Flags
 
-| Flag          | Description                              |
-|---------------|------------------------------------------|
-| `--dir`       | Target directory containing .small/      |
-| `--workspace` | Workspace scope (root, examples, or any) |
-| `--strict`    | Enable strict mode (lint, verify, check) |
-| `--json`      | Output in JSON format (status, check)    |
-| `--help`      | Show help for any command                |
+| Flag | Description |
+|------|-------------|
+| `--dir` | Target directory containing `.small/` when supported by the command |
+| `--workspace` | Workspace scope (`root`, `examples`, or `any`) when supported by the command |
+| `--strict` | Enable strict mode for lint, verify, or check |
+| `--json` | Emit machine-readable output when supported |
+| `--help` | Show command help |
+| `-v`, `--version` | Print version from the root command |
 
 ## Examples
 
@@ -46,64 +60,24 @@ Initialize a new workspace:
 small init --intent "Build authentication service"
 ```
 
-Validate all artifacts:
-
-```bash
-small validate
-```
-
 Check project status:
 
 ```bash
 small status
+small check --strict
 ```
 
-Emit JSON for integrations:
-
-```bash
-small emit --check --workspace root
-```
-
-Generate a handoff checkpoint:
-
-```bash
-small handoff
-```
-
-Snapshot and list run history:
+Inspect run history:
 
 ```bash
 small run snapshot
-small run list
+small run list --limit 10
+small run diff <fromReplayId> <toReplayId> --full
 ```
 
-Reset workspace for a new run:
+Repair common state drift:
 
 ```bash
-small reset --yes
-small reset --keep-intent  # Preserve intent.small.yml
-```
-
-Verify artifacts for CI:
-
-```bash
-small verify        # Exit 0 if valid, 1 if invalid, 2 if system error
-small verify --ci   # Minimal output for CI pipelines
-small verify --strict  # Enable strict checks (invariants, secrets, insecure links)
-```
-
-The `verify` command enforces:
-
-- All completed tasks must have progress entries with evidence
-- `handoff.small.yml` must include a valid `replayId`
-- Schema validation for all artifacts
-- Ownership rules (human/agent) for each artifact type
-- Strict mode adds S1-S3 invariants for evidence, task ids, and handoff alignment
-
-If you forget to update SMALL files after completing work, `verify` will fail.
-
-Diagnose workspace issues:
-
-```bash
-small doctor  # Read-only, never mutates state
+small fix --runtime-layout
+small doctor
 ```
