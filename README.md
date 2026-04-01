@@ -2,7 +2,10 @@
 
 [![CI](https://github.com/justyn-clark/small-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/justyn-clark/small-protocol/actions/workflows/ci.yml)
 [![Release](https://github.com/justyn-clark/small-protocol/actions/workflows/release.yml/badge.svg)](https://github.com/justyn-clark/small-protocol/actions/workflows/release.yml)
-[![Go Version](https://img.shields.io/badge/go-1.22%2B-blue)](https://go.dev)
+[![npm publish](https://github.com/justyn-clark/small-protocol/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/justyn-clark/small-protocol/actions/workflows/npm-publish.yml)
+[![GitHub release](https://img.shields.io/github/v/release/justyn-clark/small-protocol)](https://github.com/justyn-clark/small-protocol/releases)
+[![npm version](https://img.shields.io/npm/v/@small-protocol/small)](https://www.npmjs.com/package/@small-protocol/small)
+[![Go](https://img.shields.io/badge/go-1.24%2B-blue)](https://go.dev)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
 **SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle)** is a formal state protocol that makes AI-assisted work legible, auditable, and resumable by separating durable state from ephemeral execution.
@@ -44,9 +47,9 @@ The authoritative specification is located at:
 
 ```
 spec/small/v1.0.0/
-├── SPEC.md
-├── schemas/
-└── examples/
+|- SPEC.md
+|- schemas/
+`- examples/
 ```
 
 ## Getting Started
