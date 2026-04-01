@@ -148,3 +148,6 @@ tasks:
     - id: task-45
       title: Update repo docs to match current SMALL CLI surface and release/install guidance
       status: completed
+    - id: task-46
+      title: Push rebased main after reconciling origin/main updates
+      status: completed
