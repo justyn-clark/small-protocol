@@ -266,7 +266,7 @@ The agent sees `no-direct-db-writes` and generates a task that respects it:
 
 ```bash
 small plan --add "Implement user creation via UserRepository, no raw SQL"
-# → adds task-2 to plan.small.yml
+# -> adds task-2 to plan.small.yml
 ```
 
 ### 3. Agent executes under `small apply`
@@ -308,11 +308,11 @@ Output:
 [verify]   OK
 ```
 
-The constraint `no-direct-db-writes` was respected because the agent only touched the repository layer. The evidence is in `progress.small.yml` — auditable, diffable, and resumable.
+The constraint `no-direct-db-writes` was respected because the agent only touched the repository layer. The evidence is in `progress.small.yml` -- auditable, diffable, and resumable.
 
 ### Key principle
 
-`small apply` is the only way an agent writes to the workspace. Every execution is attributed, timestamped, and linked to a task. If the command fails, `status: blocked` is recorded instead — the constraint violation is visible and the run is stopped cleanly.
+`small apply` is the only way an agent writes to the workspace. Every execution is attributed, timestamped, and linked to a task. If the command fails, `status: blocked` is recorded instead -- the constraint violation is visible and the run is stopped cleanly.
 
 ## Next Steps
 

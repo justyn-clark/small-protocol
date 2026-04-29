@@ -13,11 +13,11 @@ This creates a `.small/` directory with the five canonical artifacts:
 
 ```text
 .small/
-├── intent.small.yml
-├── constraints.small.yml
-├── plan.small.yml
-├── progress.small.yml
-└── handoff.small.yml
+|-- intent.small.yml
+|-- constraints.small.yml
+|-- plan.small.yml
+|-- progress.small.yml
+`-- handoff.small.yml
 ```
 
 ## Verify the Environment
@@ -48,12 +48,12 @@ The set is fixed; growth happens inside the artifacts.
 
 ```text
 .small/
-├── intent.small.yml        # Stable: what the work is
-├── constraints.small.yml   # Stable: what must not change
-├── plan.small.yml          # Grows: tasks added and updated
-├── progress.small.yml      # Append-only execution log
-├── handoff.small.yml       # Regenerated resume checkpoint
-└── workspace.small.yml     # Workspace metadata (kind, version)
+|-- intent.small.yml        # Stable: what the work is
+|-- constraints.small.yml   # Stable: what must not change
+|-- plan.small.yml          # Grows: tasks added and updated
+|-- progress.small.yml      # Append-only execution log
+|-- handoff.small.yml       # Regenerated resume checkpoint
+`-- workspace.small.yml     # Workspace metadata (kind, version)
 ```
 
 ### Artifact Evolution
