@@ -21448,3 +21448,23 @@ entries:
       status: in_progress
       task_id: task-59
       timestamp: "2026-09-16T11:44:14.122118000Z"
+    - command: rm -rf .playwright-cli
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T115254.028179000Z.txt
+      command_sha256: 2dea61951655697e8b64a0a2c09d95d9c0dd953f43c0f00d3066548f0613f580
+      command_summary: rm -rf .playwright-cli
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:52:54.028179000Z"
+    - evidence: Published v1.1.0 from commit 2ef7d2c3479c59023fa18cf1106587e89845a0ce. GitHub CI run 35091972536 passed verify plus Ubuntu/macOS installer smoke. Release run 35092062460 passed and published six platform archives plus checksums.txt; all six downloaded checksums verified OK. npm run 35092062456 passed Trusted Publishing; registry reports @small-protocol/small@1.1.0 as latest with SLSA provenance. Fresh curl install and fresh npm install both report small v1.1.0 with supported specs [1.0.0,2.0.0]. Playwright with installed Brave verified the live homepage, Session Profile v2, and installation docs; console reported 0 errors and 0 warnings.
+      notes: 'Release URL: https://github.com/justyn-clark/small-protocol/releases/tag/v1.1.0. v1 remains the default artifact profile; v2 session mode is opt-in and migration remains explicit. No execution orchestration moved into SMALL.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-59
+      timestamp: "2026-09-16T11:54:12.184665000Z"

@@ -201,4 +201,4 @@ tasks:
       status: completed
     - id: task-59
       title: Prepare and publish CLI and npm release v1.1.0
-      status: pending
+      status: completed
