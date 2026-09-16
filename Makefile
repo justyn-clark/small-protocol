@@ -11,7 +11,9 @@ sync-schemas:
 	@echo "Syncing embedded schemas..."
 	@mkdir -p internal/specembed/schemas
 	@cp spec/small/v1.0.0/schemas/*.schema.json internal/specembed/schemas/
-	@echo "✓ Schemas synced to internal/specembed/schemas/"
+	@mkdir -p internal/specembed/schemas/v2
+	@cp spec/small/v2.0.0/schemas/*.schema.json internal/specembed/schemas/v2/
+	@echo "✓ v1 and v2 schemas synced to internal/specembed/schemas/"
 
 small-build: sync-schemas
 	@echo "Building SMALL CLI..."
@@ -52,4 +54,3 @@ small-format-check:
 
 verify:
 	@bash scripts/verify.sh
-

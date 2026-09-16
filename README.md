@@ -10,7 +10,7 @@
 
 **SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle)** is a formal state protocol that makes AI-assisted work legible, auditable, and resumable by separating durable state from ephemeral execution.
 
-It defines a minimal, fixed set of machine-readable artifacts that replace ephemeral chat history with durable project state.
+It defines versioned machine-readable artifacts that replace ephemeral chat history with durable project state.
 
 ## What SMALL Is Not
 
@@ -21,7 +21,7 @@ It defines a minimal, fixed set of machine-readable artifacts that replace ephem
 
 SMALL is a **governance and continuity layer**.
 
-## The Five Canonical Artifacts
+## The v1 Canonical Artifacts
 
 | Artifact                | Owner  | Purpose                       |
 |-------------------------|--------|-------------------------------|
@@ -31,15 +31,18 @@ SMALL is a **governance and continuity layer**.
 | `progress.small.yml`    | Agent  | Verified execution evidence   |
 | `handoff.small.yml`     | System | Serialized resume checkpoint  |
 
-All artifacts must declare `small_version: "1.0.0"` and validate against the authoritative schemas.
+Every v1 artifact declares `small_version: "1.0.0"` and validates against the
+v1 schemas. V2 uses a separate JSON session/event layout and its own schemas;
+it does not add fields to these v1 YAML files.
 
 ## Version
 
-This repository implements **SMALL Protocol v1.0.0**.
+This repository implements **SMALL Protocol v1.0.0 and the separately versioned v2.0.0 session profile**.
 
 - v1.0.0 is stable
-- Invariants are locked
-- Schemas are authoritative
+- v1 workspaces remain single-writer and are never automatically migrated
+- v2 defaults to solo sessions and enables collaboration only through an explicit mode transition
+- Both versions have separate authoritative schemas and invariants
 
 ## Specification
 
@@ -51,6 +54,9 @@ spec/small/v1.0.0/
 |- schemas/
 `- examples/
 ```
+
+The session-capable contract is in `spec/small/v2.0.0/`. See
+[SMALL 2.0.0 session profile](docs/session-profile-v2.md) for migration and use.
 
 ## Getting Started
 
@@ -78,6 +84,7 @@ spec/small/v1.0.0/
 | [Philosophy](docs/philosophy.md) | Design rationale and non-goals |
 | [FAQ](docs/FAQ.md) | Frequently asked questions |
 | [Execution Model](docs/EXECUTION_MODEL.md) | Single-writer design and concurrency |
+| [Session Profile v2](docs/session-profile-v2.md) | Solo/collaborative sessions, reconciliation, evidence, and migration |
 | [Development](docs/DEVELOPMENT.md) | Building, testing, and schema updates during development |
 | [Releasing](docs/maintainers/releasing.md) | Maintainer release process and npm publish policy |
 | [Docs Sync](docs/maintainers/docs-sync.md) | Canonical docs sync model, mapping, and verification gates |
@@ -99,6 +106,10 @@ small init --intent "My project description"
 
 # Diagnose workspace health (read-only)
 small doctor
+small health
+
+# Reconstruct task evidence from durable SMALL state
+small reconstruct --task task-1
 
 # Validate
 small validate
@@ -106,7 +117,7 @@ small validate
 
 Install alternatives (including curl installer) are documented in [Installation](docs/installation.md).
 
-The SMALL protocol contract is `v1.0.0` and remains compatible across all v1.x releases.
+The CLI supports unmigrated `v1.0.0` workspaces and explicit `v2.0.0` session-profile workspaces.
 See the [v1.0.0 release notes](https://github.com/justyn-clark/small-protocol/releases/tag/v1.0.0) for the original launch details.
 
 Pre-built binaries are available on the [GitHub Releases](https://github.com/justyn-clark/small-protocol/releases) page.

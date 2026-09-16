@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
@@ -78,7 +79,8 @@ func checkCmd() *cobra.Command {
 func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, formatStrict bool) (int, checkOutput, error) {
 	artifactsDir := resolveArtifactsDir(dir)
 	p := currentPrinter()
-	if scope != workspace.ScopeAny {
+	isV2 := sessionv2.IsWorkspace(artifactsDir)
+	if scope != workspace.ScopeAny && !isV2 {
 		if err := enforceWorkspaceScope(artifactsDir, scope); err != nil {
 			return ExitInvalid, checkOutput{}, err
 		}
@@ -89,6 +91,32 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, fo
 		Lint:     checkStageResult{Status: "ok"},
 		Verify:   checkStageResult{Status: "ok"},
 		ExitCode: ExitValid,
+	}
+	if isV2 {
+		store, err := sessionv2.Load(artifactsDir)
+		if err != nil {
+			result.Validate = checkStageResult{Status: "failed", Errors: []string{err.Error()}}
+			result.ExitCode = ExitInvalid
+			return ExitInvalid, result, nil
+		}
+		state, err := sessionv2.Reduce(store)
+		if err != nil {
+			result.Verify = checkStageResult{Status: "failed", Errors: []string{err.Error()}}
+			result.ExitCode = ExitInvalid
+			return ExitInvalid, result, nil
+		}
+		if strict && len(state.Conflicts) > 0 {
+			result.Verify.Status = "failed"
+			for _, conflict := range state.Conflicts {
+				result.Verify.Errors = append(result.Verify.Errors, fmt.Sprintf("%s: %s", conflict.ID, conflict.Message))
+			}
+			if !ci && !jsonOutput {
+				p.PrintError(p.FormatBlock(fmt.Sprintf("Reconcile failed (%d semantic conflict(s))", len(state.Conflicts)), result.Verify.Errors))
+			}
+			result.ExitCode = ExitInvalid
+			return ExitInvalid, result, nil
+		}
+		return ExitValid, result, nil
 	}
 
 	validationErrors, err := runValidateArtifacts(artifactsDir, small.SchemaConfig{BaseDir: artifactsDir})

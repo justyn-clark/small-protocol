@@ -16,6 +16,18 @@ Use `small --help` and `small <command> --help` for the exact current surface. T
 | `small apply` | Execute one bounded command and record the outcome |
 | `small handoff` | Generate or update `handoff.small.yml` |
 | `small start` | Initialize or repair run handoff state |
+| `small mode` | Show or explicitly change v2 solo/collaborative policy |
+| `small policy` | Show or atomically revise v2 human-owned policy material |
+| `small session` | Start, list, close, resume, or take over v2 sessions |
+| `small migrate` | Preview/apply/recover explicit v1-to-v2 migration |
+| `small reconcile` | Preview and apply explicit semantic resolutions |
+| `small evidence` | Save and verify typed portable evidence receipts |
+
+For a v2 policy revision, run `small policy show --json`, review the proposed
+intent/constraint files, then use `small policy revise --intent <file>
+--constraints <file> --expect-state <frontier> --reason <text>`. Either file
+flag may be omitted to retain its current material. The policy event and changed
+files publish in one recoverable transaction.
 
 ## Validation And Inspection
 
@@ -27,6 +39,8 @@ Use `small --help` and `small <command> --help` for the exact current surface. T
 | `small verify` | CI/local enforcement gate |
 | `small doctor` | Diagnose workspace issues and suggest fixes |
 | `small status` | Show compact signal-first project state |
+| `small health` | Report strict status, replay id, artifact digest, and snapshot freshness across workspaces |
+| `small reconstruct` | Reconstruct task or run evidence from plan, progress, and handoff state |
 | `small emit` | Emit structured SMALL state in JSON |
 | `small selftest` | Verify the installed CLI and runtime basics |
 
@@ -73,6 +87,17 @@ Inspect run history:
 small run snapshot
 small run list --limit 10
 small run diff <fromReplayId> <toReplayId> --full
+small run verify <replayId>
+```
+
+Inspect health and reconstruct durable evidence:
+
+```bash
+small health
+small health ../other-repo --json
+small reconstruct --task task-12
+small reconstruct --resume --session <id> --limit 50 --max-bytes 65536 --json
+small reconstruct --since 2026-01-01T00:00:00.000000000Z --json
 ```
 
 Repair common state drift:

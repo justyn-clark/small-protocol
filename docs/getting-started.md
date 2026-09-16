@@ -2,9 +2,14 @@
 
 This guide answers the most common beginner questions and walks you through your first SMALL-managed project.
 
+This guide covers the stable v1 workspace created by `small init`. SMALL 2.0.0
+is a separate session profile with immutable JSON events, solo-default writer
+policy, and opt-in collaboration. Review the
+[session profile guide](https://smallprotocol.dev/docs/session-profile-v2) before explicitly migrating.
+
 ## Do I Manually Type These Files?
 
-No. The `small init` command creates all five canonical artifacts for you with valid starter content.
+No. The `small init` command creates all five canonical v1 artifacts for you with valid starter content.
 
 ```bash
 small init --intent "Build a REST API for user management"
@@ -115,7 +120,7 @@ Follow this loop for any SMALL-managed project:
 small init --intent "Your project description"
 ```
 
-This creates `.small/` with all five artifacts populated with starter content.
+This creates a v1 `.small/` with all five artifacts populated with starter content.
 
 ### Step 2: Human Fills Intent and Constraints
 
@@ -138,7 +143,8 @@ Fix any schema errors before proceeding.
 
 ### Step 4: Agent Generates Plan
 
-The agent reads `.small/` and creates tasks in `plan.small.yml`. As a human, you can also add tasks manually:
+The agent reads `.small/` and creates tasks through the CLI. A human can use the
+same command:
 
 ```bash
 small plan --add "Implement authentication middleware"
@@ -153,12 +159,19 @@ small apply --cmd "npm test" --task task-1
 ```
 
 Each execution appends entries to `progress.small.yml` with evidence.
+Command success does not accept the task. After reviewing the result, record the
+acceptance decision separately:
+
+```bash
+small checkpoint --task task-1 --status completed --evidence "Tests passed and output reviewed"
+```
 
 ### Step 6: Agent Hands Off
 
 When stopping work (end of session, context limit, or task completion):
 
 ```bash
+small check --strict
 small handoff --summary "Completed auth middleware, tests passing"
 ```
 
@@ -166,7 +179,8 @@ This generates `handoff.small.yml` for the next session to resume from.
 
 ### Step 7: Resume
 
-A new session (same agent or different) reads `handoff.small.yml` first to understand current state and next steps.
+A new v1 session reads `.small/handoff.small.yml` first, then confirms state with
+`small status --json` and `small check --strict`.
 
 ## Validating the Workspace
 
@@ -275,27 +289,25 @@ small plan --add "Implement user creation via UserRepository, no raw SQL"
 small apply --cmd "go test ./internal/repository/... -run TestUserRepository" --task task-2
 ```
 
-`small apply` records two entries automatically:
+`small apply` durably records the command outcome while leaving task acceptance
+unchanged. In signal-first mode, the outcome entry remains `in_progress`:
 
-**start entry** (appended when command begins):
-```yaml
-- task_id: task-2
-  timestamp: "2026-03-18T10:00:00.123456789Z"
-  status: in_progress
-  evidence: "Executing: go test ./internal/repository/... -run TestUserRepository"
-  command: "go test ./internal/repository/... -run TestUserRepository"
-```
-
-**completion entry** (appended after exit code 0):
 ```yaml
 - task_id: task-2
   timestamp: "2026-03-18T10:00:04.987654321Z"
-  status: completed
+  status: in_progress
   evidence: "Command succeeded (exit 0): go test ./internal/repository/... -run TestUserRepository"
   command: "go test ./internal/repository/... -run TestUserRepository"
+  notes: "apply: command outcome succeeded; task acceptance unchanged"
 ```
 
-### 4. Verify constraints and evidence are both satisfied
+After reviewing the output, accept the task explicitly:
+
+```bash
+small checkpoint --task task-2 --status completed --evidence "Repository test passed and output reviewed"
+```
+
+### 4. Verify constraints, evidence, and acceptance are satisfied
 
 ```bash
 small check --strict
@@ -312,7 +324,10 @@ The constraint `no-direct-db-writes` was respected because the agent only touche
 
 ### Key principle
 
-`small apply` is the only way an agent writes to the workspace. Every execution is attributed, timestamped, and linked to a task. If the command fails, `status: blocked` is recorded instead -- the constraint violation is visible and the run is stopped cleanly.
+`small apply` is the boundary for repository mutations and durable command
+capture. A failed child command exits nonzero and records the failure without
+silently deciding task status. Use `small checkpoint` for the separate,
+reviewed `completed` or `blocked` acceptance decision.
 
 ## Next Steps
 

@@ -1,4 +1,7 @@
-# Invariants (v1.0.0)
+# Invariants
+
+The following section is the frozen v1.0.0 contract. A v2 workspace is detected
+by `.small/profile.json` and validated against the separate rules below.
 
 The following are non-negotiable:
 
@@ -193,3 +196,19 @@ Common CI failure scenarios:
 2. **Missing replayId** - handoff.small.yml lacks session tracking
 3. **Schema violations** - Invalid artifact structure
 4. **Owner mismatch** - Wrong owner for artifact type
+
+## v2.0.0 session-profile invariants
+
+- Profile/project/lineage identity matches every session and event.
+- Session, event, receipt, and imported-original records are immutable.
+- Event paths match embedded IDs; the same ID with changed payload is corruption.
+- Every parent exists; graphs are acyclic; a session sequence cannot fork or gap.
+- Causality comes from previous/parent references, never wall-clock order.
+- Task aliases do not merge opaque task identities.
+- Stale task/policy evidence and unavailable referenced receipts are conflicts.
+- Incompatible concurrent outcomes, definitions, ownership, modes, and
+  resolutions remain conflicts until explicitly resolved.
+- Resolution records name every competing head and the exact input frontier.
+- Strict validation, authoritative handoff, and snapshots fail while semantic
+  conflicts remain.
+- Solo is the default writer policy; collaborative mode is explicit.

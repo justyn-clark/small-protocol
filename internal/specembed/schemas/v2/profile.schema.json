@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smallprotocol.dev/schemas/small/v2.0.0/profile.schema.json",
+  "type": "object",
+  "required": ["small_version", "project_id", "lineage_id", "mode", "policy_revision"],
+  "properties": {
+    "small_version": {"const": "2.0.0"},
+    "project_id": {"type": "string", "minLength": 16},
+    "lineage_id": {"type": "string", "minLength": 16},
+    "mode": {"enum": ["solo", "collaborative"]},
+    "policy_revision": {"type": "string", "minLength": 1},
+    "intent_digest": {"type": "string", "minLength": 1},
+    "constraints_digest": {"type": "string", "minLength": 1},
+    "import_id": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
@@ -27,12 +28,13 @@ type runListOutput struct {
 }
 
 type runShowOutput struct {
-	ReplayID  string        `json:"replayId"`
-	Meta      runstore.Meta `json:"meta"`
-	Artifacts []string      `json:"artifacts"`
-	Summary   string        `json:"summary,omitempty"`
-	NextSteps []string      `json:"next_steps,omitempty"`
-	Dir       string        `json:"dir"`
+	ReplayID       string        `json:"replayId"`
+	ArtifactDigest string        `json:"artifact_digest,omitempty"`
+	Meta           runstore.Meta `json:"meta"`
+	Artifacts      []string      `json:"artifacts"`
+	Summary        string        `json:"summary,omitempty"`
+	NextSteps      []string      `json:"next_steps,omitempty"`
+	Dir            string        `json:"dir"`
 }
 
 func runCmd() *cobra.Command {
@@ -56,6 +58,7 @@ func runCmd() *cobra.Command {
 	cmd.AddCommand(runShowCmd(&dir, &storeFlag, &workspaceFlag))
 	cmd.AddCommand(runDiffCmd(&dir, &storeFlag, &workspaceFlag))
 	cmd.AddCommand(runCheckoutCmd(&dir, &storeFlag, &workspaceFlag))
+	cmd.AddCommand(runVerifyCmd(&dir, &storeFlag, &workspaceFlag))
 
 	return cmd
 }
@@ -183,6 +186,82 @@ func runCheckoutCmd(dir, storeFlag, workspaceFlag *string) *cobra.Command {
 	return cmd
 }
 
+func runVerifyCmd(dir, storeFlag, workspaceFlag *string) *cobra.Command {
+	var jsonOutput bool
+
+	cmd := &cobra.Command{
+		Use:   "verify <replayId>",
+		Short: "Verify a snapshot's artifacts against its recorded digests",
+		Long: `Recompute the artifact digests for a stored run snapshot and compare them
+to the values recorded in meta.json when the snapshot was written.
+
+This detects tampering or corruption of a snapshot's own copied artifacts.
+Exit code is 0 when the snapshot matches its recorded digest, non-zero on a
+mismatch. Snapshots written before digest recording cannot be verified and
+exit 0 with a warning.`,
+		Args: cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			p := currentPrinter()
+			_, storeDir, err := resolveRunContext(*dir, *storeFlag, *workspaceFlag)
+			if err != nil {
+				p.PrintError(fmt.Sprintf("Error: %v", err))
+				os.Exit(ExitSystemError)
+			}
+
+			result, err := runstore.VerifySnapshot(storeDir, args[0])
+			if err != nil {
+				p.PrintError(fmt.Sprintf("Error: %v", err))
+				os.Exit(ExitSystemError)
+			}
+
+			if jsonOutput {
+				data, err := json.MarshalIndent(result, "", "  ")
+				if err != nil {
+					p.PrintError(fmt.Sprintf("Error: %v", err))
+					os.Exit(ExitSystemError)
+				}
+				fmt.Println(string(data))
+			} else {
+				fmt.Print(formatRunVerifyOutput(result))
+			}
+
+			if !result.DigestRecorded {
+				// Unverifiable, not a failure.
+				os.Exit(ExitValid)
+			}
+			if !result.Match {
+				os.Exit(ExitInvalid)
+			}
+			os.Exit(ExitValid)
+		},
+	}
+
+	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
+	return cmd
+}
+
+func formatRunVerifyOutput(result *runstore.SnapshotVerification) string {
+	var buffer bytes.Buffer
+	_, _ = fmt.Fprintf(&buffer, "ReplayId: %s\n", result.ReplayID)
+	if !result.DigestRecorded {
+		_, _ = fmt.Fprintf(&buffer, "Status: unverifiable (snapshot predates digest recording)\n")
+		_, _ = fmt.Fprintf(&buffer, "Computed digest: %s\n", result.ComputedDigest)
+		return buffer.String()
+	}
+
+	if result.Match {
+		_, _ = fmt.Fprintf(&buffer, "Status: ok (artifacts match recorded digest)\n")
+	} else {
+		_, _ = fmt.Fprintf(&buffer, "Status: MISMATCH (snapshot artifacts differ from recorded digest)\n")
+	}
+	_, _ = fmt.Fprintf(&buffer, "Recorded digest: %s\n", result.RecordedDigest)
+	_, _ = fmt.Fprintf(&buffer, "Computed digest: %s\n", result.ComputedDigest)
+	for _, mismatch := range result.Mismatches {
+		_, _ = fmt.Fprintf(&buffer, "  - %s: %s\n", mismatch.Filename, mismatch.Reason)
+	}
+	return buffer.String()
+}
+
 func resolveRunContext(dirFlag, storeFlag, workspaceFlag string) (string, string, error) {
 	if dirFlag == "" {
 		dirFlag = baseDir
@@ -255,12 +334,13 @@ func formatRunListOutput(snapshots []runstore.Snapshot, jsonOutput bool) (string
 func formatRunShowOutput(snapshot *runstore.Snapshot, jsonOutput bool) (string, error) {
 	if jsonOutput {
 		payload := runShowOutput{
-			ReplayID:  snapshot.ReplayID,
-			Meta:      snapshot.Meta,
-			Artifacts: snapshot.Artifacts,
-			Summary:   snapshot.HandoffSummary,
-			NextSteps: snapshot.HandoffNextSteps,
-			Dir:       snapshot.Dir,
+			ReplayID:       snapshot.ReplayID,
+			ArtifactDigest: snapshot.Meta.ArtifactDigest,
+			Meta:           snapshot.Meta,
+			Artifacts:      snapshot.Artifacts,
+			Summary:        snapshot.HandoffSummary,
+			NextSteps:      snapshot.HandoffNextSteps,
+			Dir:            snapshot.Dir,
 		}
 		data, err := json.MarshalIndent(payload, "", "  ")
 		if err != nil {
@@ -275,6 +355,9 @@ func formatRunShowOutput(snapshot *runstore.Snapshot, jsonOutput bool) (string, 
 	}
 
 	writeLine("ReplayId: %s\n", snapshot.ReplayID)
+	if snapshot.Meta.ArtifactDigest != "" {
+		writeLine("Artifact digest: %s\n", snapshot.Meta.ArtifactDigest)
+	}
 	writeLine("Created at: %s\n", snapshot.Meta.CreatedAt)
 	writeLine("Store: %s\n", snapshot.Dir)
 	writeLine("CLI version: %s\n", snapshot.Meta.CLIVersion)

@@ -22,16 +22,23 @@ SMALL works in air-gapped environments, on-prem servers, local machines, and CI 
 
 ### What happens if two agents write at the same time?
 
-Last write wins. Data may be lost.
+It depends on the profile and whether the writers share a checkout.
 
-SMALL is single-writer by design. There is no locking, no conflict detection, no automatic merge. If two agents write to the same artifact simultaneously:
+V1 remains single-writer. Mutating CLI operations in one checkout use a local
+exclusive lock and fail busy rather than silently interleave state-file writes.
+The lock is not distributed: disconnected clones can still diverge, and their
+shared YAML tails may conflict when Git merges them.
 
-1. The second write overwrites the first
-2. Progress entries from the first agent may be lost
-3. Plan and progress may become inconsistent
-4. No error is raised
+V2 also uses a checkout-local lock, but records each writer in unique immutable
+session and event paths. A v2 workspace defaults to solo mode, so another active
+writer is refused. Collaborative mode must be selected explicitly. After Git
+combines independent histories, the deterministic reducer detects incompatible
+task outcomes, policy changes, mode changes, stale evidence, and incomplete
+resolutions. Unresolved conflicts make strict validation and authoritative
+handoff fail until an explicit full-head resolution is recorded.
 
-Prevention is the responsibility of the orchestration layer. SMALL assumes you have ensured only one agent writes at a time.
+Neither profile provides a distributed lease, source-code conflict resolution,
+automatic Git merge, or execution orchestration.
 
 See [EXECUTION_MODEL.md](./EXECUTION_MODEL.md) for details.
 
@@ -51,7 +58,7 @@ Auto-merge creates ambiguous state. Ambiguous state leads to silent failures. Si
 
 ### How do I scale to multiple agents safely?
 
-Use one of these patterns:
+For v1, use one of these externally coordinated patterns:
 
 **Sequential handoff**: Agents work one at a time. Agent A completes and generates handoff. Agent B resumes from handoff. No concurrent writes.
 
@@ -59,7 +66,11 @@ Use one of these patterns:
 
 **Task partitioning**: Tasks are assigned to specific agents. Each agent writes only to its assigned tasks. Requires careful orchestration.
 
-All patterns require external coordination. SMALL does not provide this coordination.
+For v2, keep solo mode for ordinary work. Opt into collaborative mode only when
+you need multiple attributed sessions, give each writer a distinct session, let
+Git transport the immutable records, then run `small reconcile` and
+`small check --strict` after histories meet. SMALL records and validates the
+coordination state; an external tool or human still schedules and executes work.
 
 ## Identity
 
@@ -70,7 +81,7 @@ None of these.
 SMALL is an **execution protocol** for agent continuity.
 
 - **Not a CMS**: SMALL does not store content. It stores project state metadata.
-- **Not a task runner**: SMALL does not execute tasks. `small apply` records execution; it does not orchestrate it.
+- **Not a task runner**: SMALL does not decide or schedule tasks. `small apply` runs one supplied child command and records its outcome; it does not orchestrate a workflow.
 - **Not a spec format**: SMALL defines enforceable artifacts, not descriptive documentation.
 
 SMALL provides:
@@ -154,7 +165,7 @@ JSON Schema validates the structure. YAML is the serialization format.
 - Progress is append-only (never deleted)
 - Secrets are rejected during lint
 - All progress entries require evidence
-- Handoff is the only resume entrypoint (no state reconstruction)
+- In v1, handoff is the explicit resume entrypoint; v2 uses bounded reducer-backed session resume
 
 ### Can agents delete progress?
 

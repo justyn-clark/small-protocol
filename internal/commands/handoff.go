@@ -3,6 +3,7 @@ package commands
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,6 +11,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
@@ -49,12 +51,24 @@ type linkOut struct {
 	Description string `yaml:"description,omitempty"`
 }
 
+type handoffCommandOutput struct {
+	Profile      string    `json:"profile"`
+	Status       string    `json:"status"`
+	Summary      string    `json:"summary"`
+	Resume       resumeOut `json:"resume"`
+	ReplayID     string    `json:"replay_id"`
+	ReplaySource string    `json:"replay_source"`
+	Written      bool      `json:"written"`
+}
+
 func handoffCmd() *cobra.Command {
 	var (
 		summary       string
 		dir           string
 		replayId      string
 		workspaceFlag string
+		jsonOutput    bool
+		sessionID     string
 	)
 
 	cmd := &cobra.Command{
@@ -72,6 +86,43 @@ func handoffCmd() *cobra.Command {
 
 			artifactsDir := resolveArtifactsDir(dir)
 			p := currentPrinter()
+			if cmd.Flags().Changed("summary") && strings.TrimSpace(summary) == "" {
+				return fmt.Errorf("--summary must contain non-whitespace narrative")
+			}
+			if sessionv2.IsWorkspace(artifactsDir) {
+				if !cmd.Flags().Changed("summary") || strings.TrimSpace(summary) == "" {
+					return fmt.Errorf("v2 handoff requires an explicit non-whitespace --summary")
+				}
+				store, err := sessionv2.Load(artifactsDir)
+				if err != nil {
+					return err
+				}
+				state, err := sessionv2.Strict(store)
+				if err != nil {
+					return fmt.Errorf("authoritative handoff refused: %w", err)
+				}
+				resolved, err := sessionv2.ResolveSession(artifactsDir, sessionID)
+				if err != nil {
+					return err
+				}
+				event, err := sessionv2.AppendEvent(artifactsDir, resolved, "handoff_recorded", map[string]any{"summary": strings.TrimSpace(summary), "authoritative": true, "input_frontier": state.Frontier}, sessionv2.AppendOptions{ExpectedFrontier: state.Frontier})
+				if err != nil {
+					return err
+				}
+				updated, err := sessionv2.Load(artifactsDir)
+				if err != nil {
+					return err
+				}
+				updatedState, err := sessionv2.Strict(updated)
+				if err != nil {
+					return err
+				}
+				if jsonOutput {
+					return writeJSONValue(map[string]any{"profile": sessionv2.ProfileVersion, "status": "recorded", "summary": strings.TrimSpace(summary), "session_id": resolved, "handoff_event": event.EventID, "frontier": updatedState.Frontier, "written": true})
+				}
+				fmt.Printf("Recorded authoritative handoff %s for session %s\n", event.EventID, resolved)
+				return nil
+			}
 
 			scope, err := workspace.ParseScope(workspaceFlag)
 			if err != nil {
@@ -127,16 +178,44 @@ func handoffCmd() *cobra.Command {
 				return fmt.Errorf("dangling tasks detected: %d task(s) have progress but are not completed or blocked", len(danglingTasks))
 			}
 
-			h, err := buildHandoff(artifactsDir, summary, replayId, nil, nil, nil, defaultNextStepsLimit)
+			var existing *existingHandoff
+			if loaded, loadErr := loadExistingHandoff(artifactsDir); loadErr == nil {
+				existing = loaded
+			} else if !os.IsNotExist(loadErr) {
+				return loadErr
+			}
+			if !cmd.Flags().Changed("summary") {
+				summary = reusableHandoffNarrative(artifactsDir, existing)
+			}
+			links := existingLinks(existing)
+			h, err := buildHandoff(artifactsDir, summary, replayId, links, nil, nil, defaultNextStepsLimit)
 			if err != nil {
+				return err
+			}
+			state, err := machineStatusForHandoff(artifactsDir)
+			if err != nil {
+				return err
+			}
+			if err := validateHandoffState(state); err != nil {
 				return err
 			}
 			if err := setWorkspaceRunReplayIDIfPresent(artifactsDir, h.ReplayId.Value); err != nil {
 				return err
 			}
-
+			before, _ := os.ReadFile(filepath.Join(artifactsDir, small.SmallDir, "handoff.small.yml"))
 			if err := writeHandoff(artifactsDir, h); err != nil {
 				return err
+			}
+			after, _ := os.ReadFile(filepath.Join(artifactsDir, small.SmallDir, "handoff.small.yml"))
+			written := string(before) != string(after)
+			if jsonOutput {
+				payload := handoffCommandOutput{Profile: small.ProtocolVersion, Status: handoffStatusString(state.Status), Summary: h.Summary, Resume: h.Resume, ReplayID: h.ReplayId.Value, ReplaySource: h.ReplayId.Source, Written: written}
+				data, marshalErr := json.MarshalIndent(payload, "", "  ")
+				if marshalErr != nil {
+					return marshalErr
+				}
+				fmt.Println(string(data))
+				return nil
 			}
 
 			p.PrintInfo(fmt.Sprintf("Generated handoff.small.yml with %d next steps", len(h.Resume.NextSteps)))
@@ -151,6 +230,8 @@ func handoffCmd() *cobra.Command {
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&replayId, "replay-id", "", "Manual replayId override (64 hex chars, normalized to lowercase)")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root or any)")
+	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output computed status and narrative in JSON format")
+	cmd.Flags().StringVar(&sessionID, "session", "", "v2 session id (defaults to local active selection)")
 
 	return cmd
 }

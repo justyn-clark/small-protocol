@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/justyn-clark/small-protocol/internal/small"
@@ -20,7 +21,8 @@ func versionCmd() *cobra.Command {
 			}
 
 			p.PrintInfo(fmt.Sprintf("small %s", version.GetVersion()))
-			p.PrintInfo(fmt.Sprintf("Supported spec versions: [\"%s\"]", small.ProtocolVersion))
+			supported, _ := json.Marshal(small.SupportedProtocolVersions)
+			p.PrintInfo(fmt.Sprintf("Supported spec versions: %s", supported))
 			maybePrintUpdateNotice(p, false)
 		},
 	}

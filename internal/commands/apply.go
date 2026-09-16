@@ -2,6 +2,7 @@ package commands
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,22 +10,25 @@ import (
 	"strings"
 	"time"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 )
 
 func applyCmd() *cobra.Command {
 	var (
-		cmdArg         string
-		handoff        bool
-		taskID         string
-		dryRun         bool
-		autoProgress   bool
-		autoCheckpoint bool
-		dir            string
-		workspaceFlag  string
+		cmdArg             string
+		handoff            bool
+		taskID             string
+		dryRun             bool
+		autoProgress       bool
+		autoCheckpoint     bool
+		dir                string
+		workspaceFlag      string
+		jsonOutput         bool
+		acceptanceEvidence string
+		sessionID          string
 	)
 
 	cmd := &cobra.Command{
@@ -46,6 +50,9 @@ If no command is provided, defaults to dry-run mode.`,
 			// Check if .small directory exists
 			if _, err := os.Stat(smallDir); os.IsNotExist(err) {
 				return fmt.Errorf(".small/ directory does not exist. Run 'small init' first")
+			}
+			if sessionv2.IsWorkspace(artifactsDir) {
+				return runV2Apply(artifactsDir, sessionID, taskID, cmdArg, dryRun || cmdArg == "", autoCheckpoint, acceptanceEvidence, handoff, jsonOutput)
 			}
 
 			scope, err := workspace.ParseScope(workspaceFlag)
@@ -76,6 +83,15 @@ If no command is provided, defaults to dry-run mode.`,
 			if autoCheckpoint && dryRun {
 				return fmt.Errorf("--auto-checkpoint cannot be used with --dry-run")
 			}
+			if autoCheckpoint {
+				requiresEvidence, err := taskRequiresAcceptanceEvidence(artifactsDir, taskID)
+				if err != nil {
+					return err
+				}
+				if requiresEvidence && strings.TrimSpace(acceptanceEvidence) == "" {
+					return fmt.Errorf("--auto-checkpoint cannot accept task %s because it has acceptance criteria; provide --acceptance-evidence or run small checkpoint explicitly", taskID)
+				}
+			}
 			if autoProgress && dryRun {
 				return fmt.Errorf("--auto-progress cannot be used with --dry-run")
 			}
@@ -90,20 +106,22 @@ If no command is provided, defaults to dry-run mode.`,
 			timestamp := formatProgressTimestamp(time.Now().UTC())
 
 			if dryRun {
-				fmt.Println("Dry-run mode: no command will be executed")
-				fmt.Println()
+				if !jsonOutput {
+					fmt.Println("Dry-run mode: no command will be executed")
+					fmt.Println()
+				}
 
-				if cmdArg != "" {
+				if !jsonOutput && cmdArg != "" {
 					fmt.Printf("Would execute: %s\n", cmdArg)
-				} else {
+				} else if !jsonOutput {
 					fmt.Println("No command specified")
 				}
 
-				if taskID != "" {
+				if !jsonOutput && taskID != "" {
 					fmt.Printf("Would associate with task: %s\n", taskID)
 				}
 
-				if handoff {
+				if !jsonOutput && handoff {
 					fmt.Println("Would generate handoff after execution")
 				}
 
@@ -134,8 +152,13 @@ If no command is provided, defaults to dry-run mode.`,
 						return fmt.Errorf("failed to record progress: %w", err)
 					}
 
-					fmt.Println()
-					fmt.Println("Recorded dry-run in progress.small.yml")
+					if !jsonOutput {
+						fmt.Println()
+						fmt.Println("Recorded dry-run in progress.small.yml")
+					}
+				}
+				if jsonOutput {
+					return printApplyJSON(applyOutput{Command: small.SummarizeCommand(cmdArg, small.DefaultCommandSummaryCap), TaskID: normalizedTaskID, ChildOutcome: "not_executed", EvidenceRecorded: emitDryRunProgress, DryRun: true})
 				}
 				return nil
 			}
@@ -166,15 +189,17 @@ If no command is provided, defaults to dry-run mode.`,
 				}
 			}
 
-			fmt.Printf("Executing: %s\n", cmdArg)
-			fmt.Println()
+			if !jsonOutput {
+				fmt.Printf("Executing: %s\n", cmdArg)
+				fmt.Println()
+			}
 
 			// Execute command using sh -lc for portability
 			shellCmd := exec.Command("sh", "-lc", cmdArg)
 			shellCmd.Dir = artifactsDir
 
 			var outputBuffer bytes.Buffer
-			if autoProgress {
+			if autoProgress || jsonOutput {
 				shellCmd.Stdout = &outputBuffer
 				shellCmd.Stderr = &outputBuffer
 			} else {
@@ -184,7 +209,7 @@ If no command is provided, defaults to dry-run mode.`,
 
 			cmdErr := shellCmd.Run()
 			exitCode := 0
-			status := "completed"
+			outcome := "succeeded"
 
 			if cmdErr != nil {
 				if exitErr, ok := cmdErr.(*exec.ExitError); ok {
@@ -192,7 +217,7 @@ If no command is provided, defaults to dry-run mode.`,
 				} else {
 					exitCode = 1
 				}
-				status = "blocked"
+				outcome = "failed"
 			}
 
 			emitEndProgress := shouldEmitProgress(progressEventApplyComplete, normalizedTaskID, mode)
@@ -202,68 +227,79 @@ If no command is provided, defaults to dry-run mode.`,
 			endEntry := map[string]any{
 				"timestamp": endTimestamp,
 				"task_id":   normalizedTaskID,
-				"status":    status,
+				"status":    "in_progress",
 			}
-
+			var recordErr error
 			if emitEndProgress && cmdArg != "" {
 				summary, ref, sha, err := applyCommandMetadata(artifactsDir, endTimestamp, cmdArg)
 				if err != nil {
-					return err
+					recordErr = err
+				} else {
+					endEntry["command"] = summary
+					endEntry["command_summary"] = summary
+					endEntry["command_ref"] = ref
+					endEntry["command_sha256"] = sha
 				}
-				endEntry["command"] = summary
-				endEntry["command_summary"] = summary
-				endEntry["command_ref"] = ref
-				endEntry["command_sha256"] = sha
 			}
+			endEntry["evidence"] = buildExecutionEvidence(outputBuffer.String(), exitCode, autoProgress || jsonOutput)
+			endEntry["notes"] = fmt.Sprintf("apply: command outcome %s; task acceptance unchanged", outcome)
 
-			if autoProgress {
-				endEntry["evidence"] = buildAutoProgressEvidence(outputBuffer.String(), exitCode)
-				endEntry["notes"] = fmt.Sprintf("apply: exit code %d", exitCode)
-			} else if status == "completed" {
-				endEntry["evidence"] = "Command completed successfully"
-				endEntry["notes"] = fmt.Sprintf("apply: exit code %d", exitCode)
-			} else {
-				endEntry["evidence"] = fmt.Sprintf("Command failed with exit code %d", exitCode)
-				endEntry["notes"] = fmt.Sprintf("apply: failed with exit code %d", exitCode)
-			}
-
-			if emitEndProgress {
+			if emitEndProgress && recordErr == nil {
 				if err := appendProgressEntry(artifactsDir, endEntry); err != nil {
-					fmt.Fprintf(os.Stderr, "Warning: failed to record completion: %v\n", err)
+					recordErr = err
 				}
 			}
+			if recordErr != nil {
+				result := applyOutput{Command: small.SummarizeCommand(cmdArg, small.DefaultCommandSummaryCap), TaskID: normalizedTaskID, ChildOutcome: outcome, ChildExitCode: exitCode, ChildExecuted: true, EvidenceRecorded: false, ErrorCode: "executed_but_unrecorded"}
+				if jsonOutput {
+					_ = printApplyJSON(result)
+				}
+				return fmt.Errorf("command executed with exit code %d but durable evidence recording failed; command was not retried: %w", exitCode, recordErr)
+			}
 
+			checkpointed := false
 			if autoCheckpoint {
 				if err := ensureCheckpointTask(taskID); err != nil {
 					return err
 				}
 				checkpointStatus := "completed"
-				if status != "completed" {
+				if outcome != "succeeded" {
 					checkpointStatus = "blocked"
 				}
-				checkpointEvidence := buildAutoProgressEvidence(outputBuffer.String(), exitCode)
+				checkpointEvidence := strings.TrimSpace(acceptanceEvidence)
+				if checkpointEvidence == "" {
+					checkpointEvidence = fmt.Sprintf("Explicit auto-checkpoint of captured command outcome: exit_code=%d", exitCode)
+				}
 				if err := runCheckpointApply(artifactsDir, taskID, checkpointStatus, checkpointEvidence); err != nil {
 					return err
 				}
+				checkpointed = true
 			}
 
-			fmt.Println()
-			if status == "completed" {
+			if !jsonOutput {
+				fmt.Println()
+			}
+			if !jsonOutput && outcome == "succeeded" {
 				fmt.Printf("Command completed successfully (exit code: %d)\n", exitCode)
-			} else {
+			} else if !jsonOutput {
 				fmt.Printf("Command failed (exit code: %d)\n", exitCode)
 			}
 
 			// Generate handoff if requested and command succeeded
-			if handoff && status == "completed" {
+			if handoff && outcome == "succeeded" {
 				fmt.Println()
 				fmt.Println("Generating handoff...")
 
 				// Call handoff generation
 				if err := generateHandoffFromApply(artifactsDir); err != nil {
-					fmt.Fprintf(os.Stderr, "Warning: failed to generate handoff: %v\n", err)
+					return fmt.Errorf("command succeeded but requested handoff persistence failed: %w", err)
 				} else {
 					fmt.Println("Handoff generated")
+				}
+			}
+			if jsonOutput {
+				if err := printApplyJSON(applyOutput{Command: small.SummarizeCommand(cmdArg, small.DefaultCommandSummaryCap), TaskID: normalizedTaskID, ChildOutcome: outcome, ChildExitCode: exitCode, ChildExecuted: true, EvidenceRecorded: emitEndProgress, Checkpointed: checkpointed}); err != nil {
+					return err
 				}
 			}
 
@@ -281,11 +317,67 @@ If no command is provided, defaults to dry-run mode.`,
 	cmd.Flags().BoolVar(&dryRun, "dry-run", false, "Do not execute, only record intent")
 	cmd.Flags().BoolVar(&autoProgress, "auto-progress", false, "Capture output in progress evidence")
 	cmd.Flags().BoolVar(&autoCheckpoint, "auto-checkpoint", false, "Checkpoint the task based on command result")
+	cmd.Flags().StringVar(&acceptanceEvidence, "acceptance-evidence", "", "Explicit acceptance evidence for --auto-checkpoint")
+	cmd.Flags().StringVar(&sessionID, "session", "", "v2 session id (defaults to local active selection)")
+	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output child and persistence outcomes in JSON format")
 
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root or any)")
 
 	return cmd
+}
+
+type applyOutput struct {
+	Command          string `json:"command,omitempty"`
+	TaskID           string `json:"task_id"`
+	ChildOutcome     string `json:"child_outcome"`
+	ChildExitCode    int    `json:"child_exit_code"`
+	ChildExecuted    bool   `json:"child_executed"`
+	EvidenceRecorded bool   `json:"evidence_recorded"`
+	Checkpointed     bool   `json:"checkpointed"`
+	DryRun           bool   `json:"dry_run,omitempty"`
+	ErrorCode        string `json:"error_code,omitempty"`
+}
+
+func printApplyJSON(output applyOutput) error {
+	data, err := json.MarshalIndent(output, "", "  ")
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(data))
+	return nil
+}
+
+func buildExecutionEvidence(output string, exitCode int, includeOutput bool) map[string]any {
+	evidence := map[string]any{"kind": "cli_execution", "strength": "cli_captured", "exit_code": exitCode, "outcome": "succeeded"}
+	if exitCode != 0 {
+		evidence["outcome"] = "failed"
+	}
+	if includeOutput {
+		const maxLen = 4000
+		trimmed := strings.TrimRight(output, "\n")
+		if len(trimmed) > maxLen {
+			trimmed = trimmed[:maxLen]
+			evidence["output_truncated"] = true
+			evidence["output_limit_bytes"] = maxLen
+		}
+		if trimmed != "" {
+			evidence["bounded_output"] = trimmed
+		}
+	}
+	return evidence
+}
+
+func taskRequiresAcceptanceEvidence(baseDir, taskID string) (bool, error) {
+	plan, err := loadPlan(filepath.Join(baseDir, small.SmallDir, "plan.small.yml"))
+	if err != nil {
+		return false, err
+	}
+	task, _ := findTask(plan, strings.TrimSpace(taskID))
+	if task == nil {
+		return false, fmt.Errorf("task %s not found", taskID)
+	}
+	return len(task.Acceptance) > 0, nil
 }
 
 func normalizeTaskID(taskID string) string {
@@ -360,65 +452,8 @@ func runCheckpointApply(baseDir, taskID, status string, evidence string) error {
 		return fmt.Errorf("checkpoint status must be completed or blocked")
 	}
 
-	planPath := filepath.Join(baseDir, small.SmallDir, "plan.small.yml")
-	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
-
-	plan, err := loadPlan(planPath)
-	if err != nil {
-		return fmt.Errorf("failed to load plan.small.yml: %w", err)
-	}
-
-	progress, err := loadProgressData(progressPath)
-	if err != nil {
-		return fmt.Errorf("failed to load progress.small.yml: %w", err)
-	}
-
-	originalPlanData, err := yaml.Marshal(plan)
-	if err != nil {
-		return fmt.Errorf("failed to snapshot plan.small.yml: %w", err)
-	}
-	originalProgressData, err := yaml.Marshal(&progress)
-	if err != nil {
-		return fmt.Errorf("failed to snapshot progress.small.yml: %w", err)
-	}
-
-	if err := setTaskStatus(plan, taskID, status); err != nil {
-		return err
-	}
-
-	entry := map[string]any{
-		"task_id":   taskID,
-		"status":    status,
-		"timestamp": formatProgressTimestamp(time.Now().UTC()),
-	}
-	if strings.TrimSpace(evidence) != "" {
-		entry["evidence"] = evidence
-	}
-	if err := validateProgressEntry(entry); err != nil {
-		return err
-	}
-
-	if _, err := ensureWorkspaceRunReplayID(baseDir); err != nil {
-		return err
-	}
-
-	if err := appendProgressEntryWithData(baseDir, entry, progress); err != nil {
-		return err
-	}
-
-	if err := savePlan(planPath, plan); err != nil {
-		_ = os.WriteFile(planPath, originalPlanData, 0o644)
-		_ = os.WriteFile(progressPath, originalProgressData, 0o644)
-		return err
-	}
-
-	if err := validateCheckpointArtifacts(baseDir); err != nil {
-		_ = os.WriteFile(planPath, originalPlanData, 0o644)
-		_ = os.WriteFile(progressPath, originalProgressData, 0o644)
-		return err
-	}
-
-	return nil
+	_, err := commitV1Checkpoint(baseDir, taskID, status, evidence, "apply --auto-checkpoint", "", "", false)
+	return err
 }
 
 func validateCheckpointArtifacts(baseDir string) error {

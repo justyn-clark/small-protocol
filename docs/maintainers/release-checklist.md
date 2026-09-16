@@ -1,5 +1,16 @@
 # Release checklist
 
+## Protocol compatibility gate
+
+- Confirm `small version` advertises `1.0.0` and `2.0.0`.
+- Run the complete v1 suite and verify an unmigrated fixture has no diff.
+- Run migration determinism, stale-input, idempotence, and every fault boundary.
+- Run the local two-clone session proof and 10k/100k reducer measurements.
+- Confirm an older supported v1 CLI only fails read-only against a migrated
+  fixture and does not change its authoritative digest.
+- Run `go test -race ./...`, `go vet ./...`, format/schema gates, built selftest,
+  and `scripts/verify.sh` in a clean candidate containing the full patch.
+
 ## 1) Prepare and tag
 
 1. Ensure CI is green on main.

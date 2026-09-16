@@ -97,8 +97,11 @@ func TestAgentsPrintRequiredSections(t *testing.T) {
 	output := string(buf[:n])
 
 	requiredSections := []string{
+		"Required Commands",
 		"Ownership Rules",
 		"Artifact Rules",
+		"Progress Commands",
+		"Field Gotchas",
 		"Strict Mode Rules",
 		"Localhost HTTP Allowlist",
 		"Ralph Loop",
@@ -107,6 +110,25 @@ func TestAgentsPrintRequiredSections(t *testing.T) {
 	for _, section := range requiredSections {
 		if !strings.Contains(output, section) {
 			t.Errorf("output should contain section: %s", section)
+		}
+	}
+}
+
+func TestAgentsPrintIncludesReviewDrivenGuidance(t *testing.T) {
+	output := GenerateAgentsBlock()
+	required := []string{
+		"small status --json",
+		"small check --strict",
+		"small progress add --task <task-id>",
+		"Never hand-write timestamps",
+		"links entries are objects",
+		"Do not rely on `npx small`",
+		"Stop hook can enforce structural validation",
+	}
+
+	for _, expected := range required {
+		if !strings.Contains(output, expected) {
+			t.Errorf("generated AGENTS block should contain %q", expected)
 		}
 	}
 }

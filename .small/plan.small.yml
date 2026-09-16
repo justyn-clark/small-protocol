@@ -151,3 +151,51 @@ tasks:
     - id: task-46
       title: Push rebased main after reconciling origin/main updates
       status: completed
+    - id: task-47
+      title: Implement review-driven SMALL protocol hardening and Go 1.26 upgrade
+      status: completed
+    - id: task-48
+      title: Restore executable modes and run clean release verification
+      status: completed
+    - id: task-49
+      title: Fix v1 handoff, apply semantics, and transactional reliability
+      status: completed
+    - id: task-50
+      title: Specify and implement session-capable protocol v2 storage and reducer
+      status: completed
+      dependencies:
+        - task-49
+    - id: task-51
+      title: Implement solo-default mode and explicit session lifecycle
+      status: completed
+      dependencies:
+        - task-50
+    - id: task-52
+      title: Implement reconciliation, conflict resolution, and v1 migration
+      status: completed
+      dependencies:
+        - task-51
+    - id: task-53
+      title: Extend bounded resume, evidence receipts, and runstore coverage
+      status: completed
+      dependencies:
+        - task-52
+    - id: task-54
+      title: Add session documentation, compatibility guidance, and local two-clone proof
+      status: completed
+      dependencies:
+        - task-53
+    - id: task-55
+      title: Run full release validation and create narrative-preserving handoff
+      status: completed
+      dependencies:
+        - task-54
+    - id: task-56
+      title: Reconcile release-facing documentation, CI toolchain, and website sync contract for v2
+      status: completed
+    - id: task-57
+      title: Correct final v1/v2 documentation precision after release audit
+      status: completed
+    - id: task-58
+      title: Finalize, commit, and publish the SMALL v2 protocol candidate
+      status: pending

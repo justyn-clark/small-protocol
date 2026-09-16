@@ -39,13 +39,18 @@ This enables post-hoc audit and debugging of automated workflows.
 
 ## Audit Integration
 
-SMALL artifacts are machine-readable YAML files suitable for ingestion into log aggregation and observability systems.
+SMALL artifacts are machine-readable YAML (v1) or JSON (v2) files suitable for ingestion into log aggregation and observability systems.
 
-Export patterns:
+V1 export patterns:
 
 - Stream `progress.small.yml` entries to a log pipeline
 - Index `handoff.small.yml` for checkpoint recovery
 - Store full `.small/` snapshots in long-term storage
+
+For v2, export the complete authoritative `.small` tree rather than selecting
+only familiar v1 filenames. The tree includes immutable sessions, events,
+resolutions, policy revisions, imports, and evidence receipts. `small run
+snapshot` and `small archive` preserve that tree and its integrity metadata.
 
 ## What SMALL Does Not Replace
 

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/version"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
@@ -20,15 +21,20 @@ var knownPlanStatuses = []string{"pending", "in_progress", "blocked", "completed
 
 // StatusOutput represents the structured status output
 type StatusOutput struct {
-	Version        string           `json:"version"`
-	ProgressMode   string           `json:"progress_mode"`
-	SmallDirExists bool             `json:"small_dir_exists"`
-	Artifacts      ArtifactPresence `json:"artifacts"`
-	Plan           *PlanStatus      `json:"plan,omitempty"`
-	NextTask       string           `json:"next_task,omitempty"`
-	ReplayID       string           `json:"replay_id,omitempty"`
-	RecentProgress []ProgressEntry  `json:"recent_progress,omitempty"`
-	LastHandoff    string           `json:"last_handoff,omitempty"`
+	Version        string               `json:"version"`
+	Profile        string               `json:"profile,omitempty"`
+	Mode           string               `json:"mode,omitempty"`
+	Frontier       string               `json:"frontier,omitempty"`
+	Sessions       int                  `json:"sessions,omitempty"`
+	Conflicts      []sessionv2.Conflict `json:"conflicts,omitempty"`
+	ProgressMode   string               `json:"progress_mode"`
+	SmallDirExists bool                 `json:"small_dir_exists"`
+	Artifacts      ArtifactPresence     `json:"artifacts"`
+	Plan           *PlanStatus          `json:"plan,omitempty"`
+	NextTask       string               `json:"next_task,omitempty"`
+	ReplayID       string               `json:"replay_id,omitempty"`
+	RecentProgress []ProgressEntry      `json:"recent_progress,omitempty"`
+	LastHandoff    string               `json:"last_handoff,omitempty"`
 }
 
 // ArtifactPresence shows which artifacts exist
@@ -104,6 +110,30 @@ func statusCmd() *cobra.Command {
 				return nil
 			}
 			status.SmallDirExists = true
+			if sessionv2.IsWorkspace(artifactsDir) {
+				store, err := sessionv2.Load(artifactsDir)
+				if err != nil {
+					return err
+				}
+				state, err := sessionv2.Reduce(store)
+				if err != nil {
+					return err
+				}
+				status.Profile = sessionv2.ProfileVersion
+				status.Mode = state.Profile.Mode
+				status.Frontier = state.Frontier
+				status.Sessions = state.SessionCount
+				status.Conflicts = state.Conflicts
+				status.ProgressMode = "events"
+				if jsonOutput {
+					return outputJSON(status)
+				}
+				p.PrintInfo(fmt.Sprintf("small %s profile %s", version.GetVersion(), status.Profile))
+				p.PrintInfo(fmt.Sprintf("Mode: %s", status.Mode))
+				p.PrintInfo(fmt.Sprintf("Frontier: %s", status.Frontier))
+				p.PrintInfo(fmt.Sprintf("Sessions: %d  Events: %d  Conflicts: %d", state.SessionCount, state.EventCount, len(state.Conflicts)))
+				return nil
+			}
 
 			// Check artifact presence
 			status.Artifacts = ArtifactPresence{

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
@@ -59,6 +60,7 @@ func progressAddCmd() *cobra.Command {
 		dir            string
 		workspaceFlag  string
 		jsonOutput     bool
+		sessionID      string
 	)
 
 	cmd := &cobra.Command{
@@ -73,6 +75,9 @@ func progressAddCmd() *cobra.Command {
 
 			if _, err := os.Stat(smallDir); os.IsNotExist(err) {
 				return fmt.Errorf(".small/ directory does not exist. Run 'small init' first")
+			}
+			if sessionv2.IsWorkspace(artifactsDir) {
+				return runV2Progress(artifactsDir, sessionID, taskID, status, evidence, notes, timestampAt, timestampAfter, jsonOutput)
 			}
 
 			scope, err := workspace.ParseScope(workspaceFlag)
@@ -145,7 +150,7 @@ func progressAddCmd() *cobra.Command {
 				}
 			}
 
-			if err := appendProgressEntryWithData(artifactsDir, entry, progress); err != nil {
+			if err := appendProgressEntry(artifactsDir, entry); err != nil {
 				return fmt.Errorf("failed to append progress entry: %w", err)
 			}
 
@@ -199,6 +204,7 @@ func progressAddCmd() *cobra.Command {
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root, examples, or any)")
 	cmd.Flags().BoolVar(&jsonOutput, "json", false, "Output in JSON format")
+	cmd.Flags().StringVar(&sessionID, "session", "", "v2 session id (defaults to local active selection)")
 
 	_ = cmd.MarkFlagRequired("task")
 	_ = cmd.MarkFlagRequired("status")
@@ -337,72 +343,43 @@ func attachProgressReplayID(baseDir string, entry map[string]any) {
 }
 
 func appendProgressEntry(baseDir string, entry map[string]any) error {
-	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
-
-	progress, err := loadProgressData(progressPath)
-	if err != nil {
-		return fmt.Errorf("failed to read progress file: %w", err)
-	}
-
-	lastTimestamp, err := lastProgressTimestamp(progress.Entries)
-	if err != nil {
-		return fmt.Errorf("existing progress timestamps invalid: %w (run 'small progress migrate' to repair)", err)
-	}
-
-	if _, err := normalizeEntryTimestamp(entry, lastTimestamp); err != nil {
-		return err
-	}
-
-	attachProgressReplayID(baseDir, entry)
-	progress.Entries = append(progress.Entries, entry)
-	progress.SmallVersion = small.ProtocolVersion
-	progress.Owner = "agent"
-
-	yamlData, err := small.MarshalYAMLWithQuotedVersion(&progress)
-	if err != nil {
-		return fmt.Errorf("failed to marshal progress: %w", err)
-	}
-
-	if err := os.WriteFile(progressPath, yamlData, 0o644); err != nil {
-		return fmt.Errorf("failed to write progress file: %w", err)
-	}
-	if err := touchWorkspaceUpdatedAt(baseDir); err != nil {
-		return err
-	}
-
-	return nil
+	return appendProgressEntryLocked(baseDir, entry, nil)
 }
 
 func appendProgressEntryWithData(baseDir string, entry map[string]any, progress ProgressData) error {
+	return appendProgressEntryLocked(baseDir, entry, &progress)
+}
+
+func appendProgressEntryLocked(baseDir string, entry map[string]any, fallback *ProgressData) error {
 	progressPath := filepath.Join(baseDir, small.SmallDir, "progress.small.yml")
-
-	lastTimestamp, err := lastProgressTimestamp(progress.Entries)
-	if err != nil {
-		return fmt.Errorf("existing progress timestamps invalid: %w (run 'small progress migrate' to repair)", err)
-	}
-
-	if _, err := normalizeEntryTimestamp(entry, lastTimestamp); err != nil {
-		return err
-	}
-
-	attachProgressReplayID(baseDir, entry)
-	progress.Entries = append(progress.Entries, entry)
-	progress.SmallVersion = small.ProtocolVersion
-	progress.Owner = "agent"
-
-	yamlData, err := small.MarshalYAMLWithQuotedVersion(&progress)
-	if err != nil {
-		return fmt.Errorf("failed to marshal progress: %w", err)
-	}
-
-	if err := os.WriteFile(progressPath, yamlData, 0o644); err != nil {
-		return fmt.Errorf("failed to write progress file: %w", err)
-	}
-	if err := touchWorkspaceUpdatedAt(baseDir); err != nil {
-		return err
-	}
-
-	return nil
+	return small.WithStateLock(baseDir, func() error {
+		progress, err := loadProgressData(progressPath)
+		if err != nil {
+			if fallback == nil {
+				return fmt.Errorf("failed to read progress file: %w", err)
+			}
+			progress = *fallback
+		}
+		lastTimestamp, err := lastProgressTimestamp(progress.Entries)
+		if err != nil {
+			return fmt.Errorf("existing progress timestamps invalid: %w (run 'small progress migrate' to repair)", err)
+		}
+		if _, err := normalizeEntryTimestamp(entry, lastTimestamp); err != nil {
+			return err
+		}
+		attachProgressReplayID(baseDir, entry)
+		progress.Entries = append(progress.Entries, entry)
+		progress.SmallVersion = small.ProtocolVersion
+		progress.Owner = "agent"
+		yamlData, err := small.MarshalYAMLWithQuotedVersion(&progress)
+		if err != nil {
+			return fmt.Errorf("failed to marshal progress: %w", err)
+		}
+		if _, err := small.WriteStateFilesLocked(baseDir, []small.StateFile{{Path: filepath.Join(small.SmallDir, "progress.small.yml"), Data: yamlData, Mode: 0o644}}); err != nil {
+			return fmt.Errorf("failed to write progress file: %w", err)
+		}
+		return touchWorkspaceUpdatedAt(baseDir)
+	})
 }
 
 func lastProgressTimestamp(entries []map[string]any) (time.Time, error) {

@@ -94,7 +94,7 @@ func TestRunListOutputBasic(t *testing.T) {
 	if !strings.Contains(output, "created_at") {
 		t.Fatalf("expected output to contain header, got: %s", output)
 	}
-	if !strings.Contains(output, "Run in progress. Next task: task-1.") {
+	if !strings.Contains(output, "Selftest checkpoint") {
 		t.Fatalf("expected output to include summary, got: %s", output)
 	}
 }

@@ -5,6 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/justyn-clark/small-protocol/internal/workspace"
 )
 
 func TestGenerateReplayId(t *testing.T) {
@@ -396,6 +399,108 @@ entries:
 	}
 	if !strings.Contains(string(handoffContent), "next_steps: []") {
 		t.Fatalf("expected completed handoff next_steps to be empty, got:\n%s", string(handoffContent))
+	}
+}
+
+func TestBuildHandoffPreservesExplicitNarrativeAndComputedGate(t *testing.T) {
+	tmpDir := t.TempDir()
+	writeHandoffFixture(t, tmpDir, "blocked")
+	h, err := buildHandoff(tmpDir, "Unicode narrative — retained\nwith a second line", "", nil, nil, nil, defaultNextStepsLimit)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if h.Summary != "Unicode narrative — retained\nwith a second line" {
+		t.Fatalf("summary = %q", h.Summary)
+	}
+	if h.Resume.CurrentTaskID == nil || *h.Resume.CurrentTaskID != "task-1" {
+		t.Fatalf("blocked gate was masked: %+v", h.Resume)
+	}
+}
+
+func TestHandoffRejectsWhitespaceSummary(t *testing.T) {
+	tmpDir := t.TempDir()
+	writeHandoffFixture(t, tmpDir, "completed")
+	cmd := handoffCmd()
+	cmd.SetArgs([]string{"--dir", tmpDir, "--workspace", "any", "--summary", " \n\t "})
+	if err := cmd.Execute(); err == nil || !strings.Contains(err.Error(), "non-whitespace") {
+		t.Fatalf("error = %v", err)
+	}
+}
+
+func TestWriteHandoffIsIdempotent(t *testing.T) {
+	tmpDir := t.TempDir()
+	writeHandoffFixture(t, tmpDir, "completed")
+	h, err := buildHandoff(tmpDir, "Stable narrative", "", nil, nil, nil, defaultNextStepsLimit)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := writeHandoff(tmpDir, h); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(tmpDir, ".small", "handoff.small.yml")
+	first, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	time.Sleep(2 * time.Millisecond)
+	if err := writeHandoff(tmpDir, h); err != nil {
+		t.Fatal(err)
+	}
+	second, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !first.ModTime().Equal(second.ModTime()) {
+		t.Fatalf("equivalent handoff rewrite changed mtime: %s -> %s", first.ModTime(), second.ModTime())
+	}
+}
+
+func writeHandoffFixture(t *testing.T, tmpDir, status string) {
+	t.Helper()
+	smallDir := filepath.Join(tmpDir, ".small")
+	if err := os.MkdirAll(smallDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	mustSaveWorkspace(t, tmpDir, workspace.KindRepoRoot)
+	artifacts := map[string]string{
+		"intent.small.yml": `small_version: "1.0.0"
+owner: human
+intent: "Test"
+scope:
+  include: []
+  exclude: []
+success_criteria: []
+`,
+		"constraints.small.yml": `small_version: "1.0.0"
+owner: human
+constraints: []
+`,
+		"plan.small.yml": `small_version: "1.0.0"
+owner: agent
+tasks:
+  - id: task-1
+    title: Test task
+    status: ` + status + "\n",
+	}
+	progress := `small_version: "1.0.0"
+owner: agent
+entries: []
+`
+	if status == "completed" || status == "blocked" {
+		progress = `small_version: "1.0.0"
+owner: agent
+entries:
+  - task_id: task-1
+    status: ` + status + `
+    timestamp: "2026-01-01T00:00:00.000000000Z"
+    evidence: "fixture evidence"
+`
+	}
+	artifacts["progress.small.yml"] = progress
+	for name, content := range artifacts {
+		if err := os.WriteFile(filepath.Join(smallDir, name), []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 

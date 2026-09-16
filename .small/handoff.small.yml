@@ -1,6 +1,6 @@
 small_version: "1.0.0"
 owner: agent
-summary: Run blocked on task-29.
+summary: Implemented the SMALL v2 session profile while preserving v1 as the default solo workflow. Reliability now includes v1 locking and recoverable writes; v2 adds explicit migration, immutable sessions/events, deterministic reduction, reconciliation, conflict handling, evidence, health, and full-tree lifecycle exports. Release-facing documentation, website-facing canonical content, usage wording, and CI now match those behaviors. Verification passed, including race/vet/build/schema checks, a clean 19-step candidate verification, and a fresh two-clone proof. No execution orchestration was added, no project was migrated implicitly, and nothing was committed, pushed, published, or deployed. Historic blocked tasks 29, 31, and 32 remain recorded; they are not regressions from this implementation.
 resume:
     current_task_id: task-29
     next_steps:

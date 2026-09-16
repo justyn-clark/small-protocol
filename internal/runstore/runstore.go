@@ -1,10 +1,13 @@
 package runstore
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -12,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/version"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
@@ -36,14 +40,16 @@ var (
 )
 
 type Meta struct {
-	ReplayID      string `json:"replayId"`
-	CreatedAt     string `json:"created_at"`
-	GitSHA        string `json:"git_sha"`
-	GitDirty      bool   `json:"git_dirty"`
-	Branch        string `json:"branch"`
-	CLIVersion    string `json:"cli_version"`
-	WorkspaceKind string `json:"workspace_kind"`
-	SourceDir     string `json:"source_dir"`
+	ReplayID        string            `json:"replayId"`
+	ArtifactDigest  string            `json:"artifact_digest,omitempty"`
+	ArtifactDigests map[string]string `json:"artifact_digests,omitempty"`
+	CreatedAt       string            `json:"created_at"`
+	GitSHA          string            `json:"git_sha"`
+	GitDirty        bool              `json:"git_dirty"`
+	Branch          string            `json:"branch"`
+	CLIVersion      string            `json:"cli_version"`
+	WorkspaceKind   string            `json:"workspace_kind"`
+	SourceDir       string            `json:"source_dir"`
 }
 
 type Snapshot struct {
@@ -78,6 +84,9 @@ func WriteSnapshot(baseDir, storeDir string, force bool) (*Snapshot, error) {
 	}
 	storeDir = ResolveStoreDir(baseDir, storeDir)
 	smallDir := filepath.Join(baseDir, small.SmallDir)
+	if sessionv2.IsWorkspace(baseDir) {
+		return writeV2Snapshot(baseDir, storeDir, force)
+	}
 
 	if _, err := os.Stat(smallDir); err != nil {
 		if os.IsNotExist(err) {
@@ -123,6 +132,11 @@ func WriteSnapshot(baseDir, storeDir string, force bool) (*Snapshot, error) {
 		return nil, fmt.Errorf("failed to create snapshot directory: %w", err)
 	}
 
+	artifactDigest, artifactDigests, err := ComputeArtifactDigests(baseDir)
+	if err != nil {
+		return nil, err
+	}
+
 	artifacts := []string{}
 	for _, filename := range RequiredArtifacts {
 		src := filepath.Join(smallDir, filename)
@@ -149,14 +163,16 @@ func WriteSnapshot(baseDir, storeDir string, force bool) (*Snapshot, error) {
 
 	gitSHA, gitDirty, branch := resolveGitInfo(baseDir)
 	meta := Meta{
-		ReplayID:      handoffInfo.ReplayID,
-		CreatedAt:     time.Now().UTC().Format(time.RFC3339Nano),
-		GitSHA:        gitSHA,
-		GitDirty:      gitDirty,
-		Branch:        branch,
-		CLIVersion:    version.GetVersion(),
-		WorkspaceKind: string(workspaceInfo.Kind),
-		SourceDir:     baseDir,
+		ReplayID:        handoffInfo.ReplayID,
+		ArtifactDigest:  artifactDigest,
+		ArtifactDigests: artifactDigests,
+		CreatedAt:       time.Now().UTC().Format(time.RFC3339Nano),
+		GitSHA:          gitSHA,
+		GitDirty:        gitDirty,
+		Branch:          branch,
+		CLIVersion:      version.GetVersion(),
+		WorkspaceKind:   string(workspaceInfo.Kind),
+		SourceDir:       baseDir,
 	}
 
 	if err := WriteMeta(snapshotDir, meta); err != nil {
@@ -184,6 +200,250 @@ func WriteSnapshot(baseDir, storeDir string, force bool) (*Snapshot, error) {
 		HandoffNextSteps: handoffInfo.NextSteps,
 		CreatedAt:        createdAt,
 	}, nil
+}
+
+// ComputeArtifactDigests hashes the canonical artifacts inside a live
+// workspace's .small/ directory. It returns an aggregate digest and a
+// per-artifact map keyed by filename.
+func ComputeArtifactDigests(baseDir string) (string, map[string]string, error) {
+	if baseDir == "" {
+		return "", nil, fmt.Errorf("base directory is required")
+	}
+	if sessionv2.IsWorkspace(baseDir) {
+		return computeTreeDigests(filepath.Join(baseDir, small.SmallDir))
+	}
+	return computeArtifactDigestsInDir(filepath.Join(baseDir, small.SmallDir))
+}
+
+func writeV2Snapshot(baseDir, storeDir string, force bool) (*Snapshot, error) {
+	store, err := sessionv2.Load(baseDir)
+	if err != nil {
+		return nil, err
+	}
+	state, err := sessionv2.Strict(store)
+	if err != nil {
+		return nil, fmt.Errorf("v2 snapshot requires reconciled strict state: %w", err)
+	}
+	storeDir = ResolveStoreDir(baseDir, storeDir)
+	snapshotDir := filepath.Join(storeDir, state.Frontier)
+	if _, err := os.Stat(snapshotDir); err == nil {
+		if !force {
+			return nil, fmt.Errorf("run snapshot exists, pass --force to overwrite")
+		}
+		if err := os.RemoveAll(snapshotDir); err != nil {
+			return nil, err
+		}
+	}
+	stateRoot := filepath.Join(snapshotDir, "state", small.SmallDir)
+	if err := copyTree(filepath.Join(baseDir, small.SmallDir), stateRoot); err != nil {
+		return nil, err
+	}
+	aggregate, perFile, err := computeTreeDigests(filepath.Join(baseDir, small.SmallDir))
+	if err != nil {
+		return nil, err
+	}
+	gitSHA, gitDirty, branch := resolveGitInfo(baseDir)
+	meta := Meta{ReplayID: state.Frontier, ArtifactDigest: aggregate, ArtifactDigests: perFile, CreatedAt: time.Now().UTC().Format(time.RFC3339Nano), GitSHA: gitSHA, GitDirty: gitDirty, Branch: branch, CLIVersion: version.GetVersion(), WorkspaceKind: "v2-session-profile", SourceDir: baseDir}
+	if err := WriteMeta(snapshotDir, meta); err != nil {
+		return nil, err
+	}
+	summary := ""
+	if len(state.Handoffs) > 0 {
+		summary, _ = state.Handoffs[len(state.Handoffs)-1].Payload["summary"].(string)
+	}
+	artifacts := []string{filepath.Join(snapshotDir, MetaFileName), stateRoot}
+	createdAt, _ := time.Parse(time.RFC3339Nano, meta.CreatedAt)
+	return &Snapshot{ReplayID: state.Frontier, Dir: snapshotDir, Meta: meta, Artifacts: artifacts, HandoffSummary: summary, CreatedAt: createdAt}, nil
+}
+
+func computeTreeDigests(root string) (string, map[string]string, error) {
+	digests := map[string]string{}
+	lines := []string{}
+	err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if entry.Type()&os.ModeSymlink != 0 {
+			return fmt.Errorf("authoritative state contains symlink %s", path)
+		}
+		if entry.IsDir() {
+			return nil
+		}
+		if !entry.Type().IsRegular() {
+			return fmt.Errorf("authoritative state contains non-regular file %s", path)
+		}
+		rel, err := filepath.Rel(root, path)
+		if err != nil {
+			return err
+		}
+		rel = filepath.ToSlash(rel)
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		sum := sha256.Sum256(data)
+		digest := hex.EncodeToString(sum[:])
+		digests[rel] = digest
+		lines = append(lines, rel+"\t"+digest)
+		return nil
+	})
+	if err != nil {
+		return "", nil, err
+	}
+	sort.Strings(lines)
+	aggregate := sha256.Sum256([]byte(strings.Join(lines, "\n")))
+	return hex.EncodeToString(aggregate[:]), digests, nil
+}
+
+func copyTree(source, destination string) error {
+	return filepath.WalkDir(source, func(path string, entry fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(source, path)
+		if err != nil {
+			return err
+		}
+		target := filepath.Join(destination, rel)
+		if entry.Type()&os.ModeSymlink != 0 {
+			return fmt.Errorf("refusing snapshot symlink %s", path)
+		}
+		if entry.IsDir() {
+			return os.MkdirAll(target, 0o755)
+		}
+		if !entry.Type().IsRegular() {
+			return fmt.Errorf("refusing snapshot non-regular file %s", path)
+		}
+		return copyFile(path, target)
+	})
+}
+
+// computeArtifactDigestsInDir hashes the canonical artifacts located directly
+// inside dir. Live workspaces store them under .small/; run snapshots store
+// them flat in the snapshot directory, so snapshot verification points dir at
+// the snapshot root. workspace.small.yml is intentionally excluded: it carries
+// the replay_id and updated_at that mutate as part of taking a snapshot, so
+// including it would make the digest self-referential.
+func computeArtifactDigestsInDir(dir string) (string, map[string]string, error) {
+	filenames := canonicalArtifactFilenames()
+	digests := make(map[string]string, len(filenames))
+	aggregateLines := make([]string, 0, len(filenames))
+
+	for _, filename := range filenames {
+		path := filepath.Join(dir, filename)
+		data, err := os.ReadFile(path)
+		if err != nil {
+			if os.IsNotExist(err) && isOptionalArtifact(filename) {
+				continue
+			}
+			return "", nil, fmt.Errorf("failed to read %s for artifact digest: %w", filename, err)
+		}
+
+		sum := sha256.Sum256(data)
+		digest := hex.EncodeToString(sum[:])
+		digests[filename] = digest
+		aggregateLines = append(aggregateLines, filename+"\t"+digest)
+	}
+
+	aggregate := sha256.Sum256([]byte(strings.Join(aggregateLines, "\n")))
+	return hex.EncodeToString(aggregate[:]), digests, nil
+}
+
+func canonicalArtifactFilenames() []string {
+	filenames := make([]string, 0, len(RequiredArtifacts)+len(OptionalArtifacts))
+	filenames = append(filenames, RequiredArtifacts...)
+	filenames = append(filenames, OptionalArtifacts...)
+	return filenames
+}
+
+func isOptionalArtifact(filename string) bool {
+	for _, optional := range OptionalArtifacts {
+		if filename == optional {
+			return true
+		}
+	}
+	return false
+}
+
+// DigestMismatch describes a single artifact whose on-disk digest no longer
+// matches the value recorded in the snapshot's meta.json. Reason is one of
+// "changed", "missing_on_disk", or "not_recorded".
+type DigestMismatch struct {
+	Filename string `json:"filename"`
+	Recorded string `json:"recorded,omitempty"`
+	Computed string `json:"computed,omitempty"`
+	Reason   string `json:"reason"`
+}
+
+// SnapshotVerification is the result of recomputing a snapshot's artifact
+// digests and comparing them to the values stored in its meta.json.
+type SnapshotVerification struct {
+	ReplayID       string           `json:"replayId"`
+	DigestRecorded bool             `json:"digest_recorded"`
+	RecordedDigest string           `json:"recorded_digest,omitempty"`
+	ComputedDigest string           `json:"computed_digest"`
+	Match          bool             `json:"match"`
+	Mismatches     []DigestMismatch `json:"mismatches,omitempty"`
+}
+
+// VerifySnapshot recomputes the artifact digests for a stored snapshot and
+// compares them to the values recorded when the snapshot was written. It
+// detects tampering or corruption of the snapshot's own copied artifacts.
+//
+// Snapshots written before digest recording have no recorded digest; for those
+// DigestRecorded is false and Match is false (integrity is unverifiable rather
+// than confirmed). Callers should treat that case as a warning, not a failure.
+func VerifySnapshot(storeDir, replayID string) (*SnapshotVerification, error) {
+	snapshotDir := filepath.Join(storeDir, replayID)
+	if _, err := os.Stat(snapshotDir); err != nil {
+		if os.IsNotExist(err) {
+			return nil, fmt.Errorf("run snapshot not found: %s", replayID)
+		}
+		return nil, fmt.Errorf("failed to read snapshot: %w", err)
+	}
+
+	meta, err := ReadMeta(snapshotDir)
+	if err != nil {
+		return nil, err
+	}
+
+	computedAggregate, computedPerFile, err := computeArtifactDigestsInDir(snapshotDir)
+	if _, statErr := os.Stat(filepath.Join(snapshotDir, "state", small.SmallDir, "profile.json")); statErr == nil {
+		computedAggregate, computedPerFile, err = computeTreeDigests(filepath.Join(snapshotDir, "state", small.SmallDir))
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	result := &SnapshotVerification{
+		ReplayID:       replayID,
+		DigestRecorded: meta.ArtifactDigest != "",
+		RecordedDigest: meta.ArtifactDigest,
+		ComputedDigest: computedAggregate,
+	}
+
+	for filename, recorded := range meta.ArtifactDigests {
+		computed, ok := computedPerFile[filename]
+		if !ok {
+			result.Mismatches = append(result.Mismatches, DigestMismatch{Filename: filename, Recorded: recorded, Reason: "missing_on_disk"})
+			continue
+		}
+		if computed != recorded {
+			result.Mismatches = append(result.Mismatches, DigestMismatch{Filename: filename, Recorded: recorded, Computed: computed, Reason: "changed"})
+		}
+	}
+	for filename, computed := range computedPerFile {
+		if _, ok := meta.ArtifactDigests[filename]; !ok && len(meta.ArtifactDigests) > 0 {
+			result.Mismatches = append(result.Mismatches, DigestMismatch{Filename: filename, Computed: computed, Reason: "not_recorded"})
+		}
+	}
+
+	sort.Slice(result.Mismatches, func(i, j int) bool {
+		return result.Mismatches[i].Filename < result.Mismatches[j].Filename
+	})
+
+	result.Match = result.DigestRecorded && computedAggregate == meta.ArtifactDigest && len(result.Mismatches) == 0
+	return result, nil
 }
 
 func ListSnapshots(storeDir string) ([]Snapshot, error) {
@@ -269,16 +529,42 @@ func LoadSnapshot(storeDir, replayID string) (*Snapshot, error) {
 		meta.ReplayID = replayID
 	}
 
-	handoffInfo, err := readHandoff(filepath.Join(snapshotDir, "handoff.small.yml"))
-	if err != nil {
-		return nil, err
+	handoffInfo := HandoffInfo{}
+	stateRoot := filepath.Join(snapshotDir, "state")
+	if isV2Snapshot(snapshotDir) {
+		store, loadErr := sessionv2.Load(stateRoot)
+		if loadErr != nil {
+			return nil, fmt.Errorf("load v2 snapshot: %w", loadErr)
+		}
+		state, reduceErr := sessionv2.Reduce(store)
+		if reduceErr != nil {
+			return nil, fmt.Errorf("reduce v2 snapshot: %w", reduceErr)
+		}
+		if len(state.Handoffs) > 0 {
+			latest := state.Handoffs[len(state.Handoffs)-1]
+			handoffInfo.Summary, _ = latest.Payload["summary"].(string)
+			handoffInfo.NextSteps = payloadStrings(latest.Payload["next_steps"])
+		}
+	} else {
+		var handoffErr error
+		handoffInfo, handoffErr = readHandoff(filepath.Join(snapshotDir, "handoff.small.yml"))
+		if handoffErr != nil {
+			return nil, handoffErr
+		}
 	}
 
 	artifacts := []string{filepath.Join(snapshotDir, MetaFileName)}
-	for _, filename := range append(RequiredArtifacts, OptionalArtifacts...) {
-		path := filepath.Join(snapshotDir, filename)
-		if _, err := os.Stat(path); err == nil {
-			artifacts = append(artifacts, path)
+	if isV2Snapshot(snapshotDir) {
+		for filename := range meta.ArtifactDigests {
+			artifacts = append(artifacts, filepath.Join(stateRoot, small.SmallDir, filepath.FromSlash(filename)))
+		}
+		sort.Strings(artifacts[1:])
+	} else {
+		for _, filename := range append(RequiredArtifacts, OptionalArtifacts...) {
+			path := filepath.Join(snapshotDir, filename)
+			if _, err := os.Stat(path); err == nil {
+				artifacts = append(artifacts, path)
+			}
 		}
 	}
 
@@ -307,6 +593,23 @@ func CheckoutSnapshot(baseDir, storeDir, replayID string, force bool) error {
 		}
 		return fmt.Errorf("failed to read .small directory: %w", err)
 	}
+	if isV2Snapshot(snapshot.Dir) {
+		verification, err := VerifySnapshot(storeDir, replayID)
+		if err != nil {
+			return err
+		}
+		if !verification.DigestRecorded || !verification.Match {
+			return fmt.Errorf("refusing to restore v2 snapshot that does not match its recorded digest")
+		}
+		currentDigest, _, digestErr := computeTreeDigests(smallDir)
+		if digestErr == nil && currentDigest == verification.ComputedDigest {
+			return nil
+		}
+		if !force {
+			return fmt.Errorf("workspace .small tree differs from v2 snapshot, pass --force to replace it")
+		}
+		return replaceV2StateTree(baseDir, filepath.Join(snapshot.Dir, "state", small.SmallDir), verification.ComputedDigest)
+	}
 
 	if !force {
 		for _, filename := range snapshotFiles(snapshot.Dir) {
@@ -331,6 +634,71 @@ func CheckoutSnapshot(baseDir, storeDir, replayID string, force bool) error {
 	}
 
 	return nil
+}
+
+func isV2Snapshot(snapshotDir string) bool {
+	_, err := os.Stat(filepath.Join(snapshotDir, "state", small.SmallDir, "profile.json"))
+	return err == nil
+}
+
+func replaceV2StateTree(baseDir, source, expectedDigest string) error {
+	cacheDir := filepath.Join(baseDir, ".small-cache")
+	if err := os.MkdirAll(cacheDir, 0o755); err != nil {
+		return err
+	}
+	staging, err := os.MkdirTemp(cacheDir, "checkout-")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(staging)
+	prepared := filepath.Join(staging, "new.small")
+	if err := copyTree(source, prepared); err != nil {
+		return fmt.Errorf("prepare v2 snapshot checkout: %w", err)
+	}
+	digest, _, err := computeTreeDigests(prepared)
+	if err != nil {
+		return err
+	}
+	if digest != expectedDigest {
+		return fmt.Errorf("prepared v2 snapshot digest mismatch")
+	}
+	target := filepath.Join(baseDir, small.SmallDir)
+	backup := filepath.Join(staging, "old.small")
+	if err := os.Rename(target, backup); err != nil {
+		return fmt.Errorf("stage existing .small tree: %w", err)
+	}
+	if err := os.Rename(prepared, target); err != nil {
+		_ = os.Rename(backup, target)
+		return fmt.Errorf("publish v2 snapshot checkout: %w", err)
+	}
+	if err := syncDirectory(baseDir); err != nil {
+		return fmt.Errorf("sync v2 snapshot checkout: %w", err)
+	}
+	return nil
+}
+
+func syncDirectory(path string) error {
+	dir, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer dir.Close()
+	return dir.Sync()
+}
+
+func payloadStrings(value any) []string {
+	values := []string{}
+	switch typed := value.(type) {
+	case []string:
+		return append(values, typed...)
+	case []any:
+		for _, item := range typed {
+			if text, ok := item.(string); ok {
+				values = append(values, text)
+			}
+		}
+	}
+	return values
 }
 
 func ReadMeta(snapshotDir string) (Meta, error) {

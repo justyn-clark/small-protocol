@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smallprotocol.dev/schemas/small/v2.0.0/session.schema.json",
+  "type": "object",
+  "required": ["small_version", "project_id", "lineage_id", "session_id", "observed_frontier", "tool_version", "created_at", "digest"],
+  "properties": {
+    "small_version": {"const": "2.0.0"},
+    "project_id": {"type": "string", "minLength": 1},
+    "lineage_id": {"type": "string", "minLength": 1},
+    "session_id": {"type": "string", "minLength": 1},
+    "label": {"type": "string"},
+    "actor_label": {"type": "string"},
+    "model_label": {"type": "string"},
+    "parent_session_id": {"type": "string"},
+    "from_handoff": {"type": "string"},
+    "observed_frontier": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "tool_version": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": false
+}

@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
+
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 )
 
@@ -44,8 +46,227 @@ func TestWriteSnapshotCreatesFiles(t *testing.T) {
 	if meta.ReplayID == "" || meta.CreatedAt == "" {
 		t.Fatalf("expected meta.json to include replayId and created_at")
 	}
+	if meta.ArtifactDigest == "" {
+		t.Fatalf("expected meta.json to include artifact_digest")
+	}
+	if meta.ArtifactDigests["plan.small.yml"] == "" {
+		t.Fatalf("expected meta.json to include per-artifact digests")
+	}
 	if meta.WorkspaceKind == "" {
 		t.Fatalf("expected workspace_kind to be populated")
+	}
+}
+
+func TestV2SnapshotCoversEntireAuthoritativeTreeAndDetectsTamper(t *testing.T) {
+	base := t.TempDir()
+	storeDir := filepath.Join(t.TempDir(), "runs")
+	profile := sessionv2.Profile{SmallVersion: sessionv2.ProfileVersion, ProjectID: "snapshot_project", LineageID: "snapshot_lineage", Mode: "solo", PolicyRevision: "policy_1"}
+	if err := sessionv2.Initialize(base, profile, []byte("intent\n"), nil); err != nil {
+		t.Fatal(err)
+	}
+	session, _, err := sessionv2.StartSession(base, sessionv2.SessionStartOptions{ToolVersion: "test"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sessionv2.AppendEvent(base, session.SessionID, "handoff_recorded", map[string]any{"summary": "snapshot narrative", "authoritative": true}, sessionv2.AppendOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	snapshot, err := WriteSnapshot(base, storeDir, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snapshot.HandoffSummary != "snapshot narrative" {
+		t.Fatalf("summary = %q", snapshot.HandoffSummary)
+	}
+	verification, err := VerifySnapshot(storeDir, snapshot.ReplayID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !verification.Match {
+		t.Fatalf("verification = %#v", verification)
+	}
+	profilePath := filepath.Join(snapshot.Dir, "state", ".small", "profile.json")
+	if err := os.WriteFile(profilePath, []byte("tampered\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	verification, err = VerifySnapshot(storeDir, snapshot.ReplayID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if verification.Match || len(verification.Mismatches) == 0 {
+		t.Fatalf("tamper verification = %#v", verification)
+	}
+}
+
+func TestV2SnapshotCheckoutRestoresCompleteAuthoritativeTree(t *testing.T) {
+	base := t.TempDir()
+	storeDir := filepath.Join(t.TempDir(), "runs")
+	profile := sessionv2.Profile{SmallVersion: sessionv2.ProfileVersion, ProjectID: "checkout_project", LineageID: "checkout_lineage", Mode: "solo", PolicyRevision: "policy_1"}
+	if err := sessionv2.Initialize(base, profile, []byte("intent\n"), []byte("constraints\n")); err != nil {
+		t.Fatal(err)
+	}
+	session, _, err := sessionv2.StartSession(base, sessionv2.SessionStartOptions{ToolVersion: "test"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sessionv2.AppendEvent(base, session.SessionID, "handoff_recorded", map[string]any{"summary": "checkout narrative", "next_steps": []string{"resume safely"}}, sessionv2.AppendOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	importPath := filepath.Join(base, ".small", "imports", "v1", "import_test", "originals", "plan.small.yml")
+	if err := os.MkdirAll(filepath.Dir(importPath), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(importPath, []byte("legacy bytes\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sessionv2.PublishReceipt(base, sessionv2.Receipt{SmallVersion: sessionv2.ProfileVersion, ProjectID: profile.ProjectID, ReceiptID: "receipt_checkout", Strength: "narrative_assertion", Availability: "unavailable", Outcome: "private evidence not copied"}); err != nil {
+		t.Fatal(err)
+	}
+	snapshot, err := WriteSnapshot(base, storeDir, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snapshot.HandoffSummary != "checkout narrative" {
+		t.Fatalf("snapshot summary = %q", snapshot.HandoffSummary)
+	}
+	if _, err := sessionv2.AppendEvent(base, session.SessionID, "command_recorded", map[string]any{"outcome": "later"}, sessionv2.AppendOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	if err := CheckoutSnapshot(base, storeDir, snapshot.ReplayID, false); err == nil {
+		t.Fatal("expected non-force checkout to refuse a differing v2 tree")
+	}
+	if err := CheckoutSnapshot(base, storeDir, snapshot.ReplayID, true); err != nil {
+		t.Fatal(err)
+	}
+	restored, err := sessionv2.Load(base)
+	if err != nil {
+		t.Fatal(err)
+	}
+	state, err := sessionv2.Strict(restored)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if state.Frontier != snapshot.ReplayID || len(restored.Events) != 2 || len(restored.Receipts) != 1 {
+		t.Fatalf("restored frontier/events = %s/%d", state.Frontier, len(restored.Events))
+	}
+	if data, err := os.ReadFile(importPath); err != nil || string(data) != "legacy bytes\n" {
+		t.Fatalf("restored import = %q, %v", data, err)
+	}
+	loaded, err := LoadSnapshot(storeDir, snapshot.ReplayID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if loaded.HandoffSummary != "checkout narrative" || len(loaded.HandoffNextSteps) != 1 {
+		t.Fatalf("loaded handoff = %#v", loaded)
+	}
+}
+
+func TestComputeArtifactDigestsChangesWithArtifactContent(t *testing.T) {
+	tmpDir := t.TempDir()
+	writeTestWorkspace(t, tmpDir, "abc123", "Snapshot one", true)
+
+	initial, perFile, err := ComputeArtifactDigests(tmpDir)
+	if err != nil {
+		t.Fatalf("ComputeArtifactDigests failed: %v", err)
+	}
+	if initial == "" || perFile["progress.small.yml"] == "" {
+		t.Fatalf("expected aggregate and per-file digests")
+	}
+
+	progressPath := filepath.Join(tmpDir, ".small", "progress.small.yml")
+	updated := `small_version: "1.0.0"
+owner: "agent"
+entries:
+  - task_id: "task-1"
+    status: "in_progress"
+    timestamp: "2026-01-01T00:00:00.000000000Z"
+    evidence: "digest test"
+`
+	if err := os.WriteFile(progressPath, []byte(updated), 0644); err != nil {
+		t.Fatalf("failed to update progress: %v", err)
+	}
+
+	next, _, err := ComputeArtifactDigests(tmpDir)
+	if err != nil {
+		t.Fatalf("ComputeArtifactDigests after update failed: %v", err)
+	}
+	if next == initial {
+		t.Fatalf("expected artifact digest to change after artifact content changed")
+	}
+}
+
+func TestVerifySnapshotDetectsTampering(t *testing.T) {
+	tmpDir := t.TempDir()
+	writeTestWorkspace(t, tmpDir, "abc123", "Snapshot one", true)
+
+	storeDir := filepath.Join(tmpDir, DefaultStoreDirName)
+	snapshot, err := WriteSnapshot(tmpDir, storeDir, false)
+	if err != nil {
+		t.Fatalf("WriteSnapshot failed: %v", err)
+	}
+
+	intact, err := VerifySnapshot(storeDir, snapshot.ReplayID)
+	if err != nil {
+		t.Fatalf("VerifySnapshot failed: %v", err)
+	}
+	if !intact.DigestRecorded || !intact.Match || len(intact.Mismatches) != 0 {
+		t.Fatalf("expected intact snapshot to verify, got %+v", intact)
+	}
+
+	// Tamper with a copied artifact inside the snapshot directory.
+	tamperPath := filepath.Join(snapshot.Dir, "progress.small.yml")
+	if err := os.WriteFile(tamperPath, []byte("small_version: \"1.0.0\"\nowner: \"agent\"\nentries: []\n# tampered\n"), 0644); err != nil {
+		t.Fatalf("failed to tamper snapshot: %v", err)
+	}
+
+	tampered, err := VerifySnapshot(storeDir, snapshot.ReplayID)
+	if err != nil {
+		t.Fatalf("VerifySnapshot after tamper failed: %v", err)
+	}
+	if tampered.Match {
+		t.Fatalf("expected tampered snapshot to fail verification")
+	}
+	foundChanged := false
+	for _, mismatch := range tampered.Mismatches {
+		if mismatch.Filename == "progress.small.yml" && mismatch.Reason == "changed" {
+			foundChanged = true
+		}
+	}
+	if !foundChanged {
+		t.Fatalf("expected a changed mismatch for progress.small.yml, got %+v", tampered.Mismatches)
+	}
+}
+
+func TestVerifySnapshotUnverifiableWhenDigestMissing(t *testing.T) {
+	tmpDir := t.TempDir()
+	writeTestWorkspace(t, tmpDir, "abc123", "Snapshot one", true)
+
+	storeDir := filepath.Join(tmpDir, DefaultStoreDirName)
+	snapshot, err := WriteSnapshot(tmpDir, storeDir, false)
+	if err != nil {
+		t.Fatalf("WriteSnapshot failed: %v", err)
+	}
+
+	// Simulate a legacy snapshot by stripping recorded digests from meta.json.
+	meta, err := ReadMeta(snapshot.Dir)
+	if err != nil {
+		t.Fatalf("ReadMeta failed: %v", err)
+	}
+	meta.ArtifactDigest = ""
+	meta.ArtifactDigests = nil
+	if err := WriteMeta(snapshot.Dir, meta); err != nil {
+		t.Fatalf("WriteMeta failed: %v", err)
+	}
+
+	result, err := VerifySnapshot(storeDir, snapshot.ReplayID)
+	if err != nil {
+		t.Fatalf("VerifySnapshot failed: %v", err)
+	}
+	if result.DigestRecorded {
+		t.Fatalf("expected DigestRecorded to be false for legacy snapshot")
+	}
+	if result.Match {
+		t.Fatalf("expected Match to be false when integrity is unverifiable")
 	}
 }
 

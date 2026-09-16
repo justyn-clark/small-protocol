@@ -38,7 +38,6 @@ type existingHandoff struct {
 }
 
 func buildHandoff(artifactsDir string, summary string, manualReplayId string, links []linkOut, replayId *replayIdOut, run *runOut, nextStepsLimit int) (handoffOut, error) {
-	_ = summary
 	if nextStepsLimit <= 0 {
 		nextStepsLimit = defaultNextStepsLimit
 	}
@@ -56,7 +55,11 @@ func buildHandoff(artifactsDir string, summary string, manualReplayId string, li
 
 	resume := resumeOut{
 		CurrentTaskID: state.CurrentTaskID,
-		NextSteps:     state.NextSteps,
+		NextSteps:     limitNextSteps(state.NextSteps, nextStepsLimit),
+	}
+	narrative := strings.TrimSpace(summary)
+	if narrative == "" {
+		narrative = state.Summary
 	}
 
 	if links == nil {
@@ -92,7 +95,7 @@ func buildHandoff(artifactsDir string, summary string, manualReplayId string, li
 	return handoffOut{
 		SmallVersion: small.ProtocolVersion,
 		Owner:        defaultHandoffOwner,
-		Summary:      state.Summary,
+		Summary:      narrative,
 		Resume:       resume,
 		Links:        links,
 		ReplayId:     *replayId,
@@ -101,21 +104,83 @@ func buildHandoff(artifactsDir string, summary string, manualReplayId string, li
 }
 
 func writeHandoff(artifactsDir string, handoff handoffOut) error {
-	smallDir := filepath.Join(artifactsDir, small.SmallDir)
-	if err := os.MkdirAll(smallDir, 0o755); err != nil {
-		return fmt.Errorf("failed to create .small directory: %w", err)
-	}
-
 	yml, err := small.MarshalYAMLWithQuotedVersion(handoff)
 	if err != nil {
 		return fmt.Errorf("failed to marshal handoff: %w", err)
 	}
 
-	outPath := filepath.Join(smallDir, "handoff.small.yml")
-	if err := os.WriteFile(outPath, yml, 0o644); err != nil {
-		return fmt.Errorf("failed to write %s: %w", outPath, err)
+	changed, err := small.WriteStateFiles(artifactsDir, []small.StateFile{{
+		Path: filepath.Join(small.SmallDir, "handoff.small.yml"),
+		Data: yml,
+		Mode: 0o644,
+	}})
+	if err != nil {
+		return fmt.Errorf("failed to write handoff.small.yml: %w", err)
 	}
-	if err := touchWorkspaceUpdatedAt(artifactsDir); err != nil {
+	if changed {
+		if err := touchWorkspaceUpdatedAt(artifactsDir); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func reusableHandoffNarrative(artifactsDir string, existing *existingHandoff) string {
+	if existing == nil || strings.TrimSpace(existing.Summary) == "" || existing.ReplayId == nil {
+		return ""
+	}
+	current, err := currentWorkspaceRunReplayID(artifactsDir)
+	if err != nil || current == "" || current != strings.TrimSpace(existing.ReplayId.Value) {
+		return ""
+	}
+	return existing.Summary
+}
+
+func machineStatusForHandoff(artifactsDir string) (handoffState, error) {
+	plan, err := loadPlan(filepath.Join(artifactsDir, small.SmallDir, "plan.small.yml"))
+	if err != nil {
+		return handoffState{}, err
+	}
+	return computeHandoffState(artifactsDir, plan)
+}
+
+func handoffStatusString(status handoffStatus) string {
+	if status == "" {
+		return string(handoffStatusInProgress)
+	}
+	return string(status)
+}
+
+func ensureNarrativeDoesNotMaskGate(state handoffState) error {
+	if state.Status == handoffStatusComplete {
+		return nil
+	}
+	if state.Status != handoffStatusBlocked && state.Status != handoffStatusInProgress {
+		return fmt.Errorf("unknown computed handoff status %q", state.Status)
+	}
+	return nil
+}
+
+func noPlanTaskState() handoffState {
+	return handoffState{
+		Status:    handoffStatusInProgress,
+		Summary:   "Run in progress. No plan tasks exist.",
+		NextSteps: []string{"Add plan tasks via small plan --add"},
+	}
+}
+
+func limitNextSteps(steps []string, limit int) []string {
+	if limit <= 0 || len(steps) <= limit {
+		return steps
+	}
+	return steps[:limit]
+}
+
+func validateHandoffState(state handoffState) error {
+	if strings.TrimSpace(state.Summary) == "" {
+		return fmt.Errorf("computed handoff summary is empty")
+	}
+	if err := ensureNarrativeDoesNotMaskGate(state); err != nil {
 		return err
 	}
 	return nil
@@ -175,6 +240,9 @@ func computeHandoffState(artifactsDir string, plan *PlanData) (handoffState, err
 			Summary:   "Run complete. strict check passed. All plan tasks completed.",
 			NextSteps: []string{},
 		}, nil
+	}
+	if plan == nil || len(plan.Tasks) == 0 {
+		return noPlanTaskState(), nil
 	}
 
 	nextTaskID := runnableTaskID

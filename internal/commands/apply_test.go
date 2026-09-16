@@ -286,8 +286,8 @@ func TestApplyProgressSignalModeDefault(t *testing.T) {
 		t.Fatalf("expected 1 signal progress entry, got %d", len(progress.Entries))
 	}
 	entry := progress.Entries[0]
-	if stringVal(entry["status"]) != "completed" {
-		t.Fatalf("status = %q, want completed", stringVal(entry["status"]))
+	if stringVal(entry["status"]) != "in_progress" {
+		t.Fatalf("status = %q, want in_progress", stringVal(entry["status"]))
 	}
 	if stringVal(entry["notes"]) == "apply: execution started" {
 		t.Fatal("did not expect start telemetry in signal mode")
@@ -317,8 +317,8 @@ func TestApplyProgressAuditModeEmitsVerboseEntries(t *testing.T) {
 	if stringVal(progress.Entries[0]["status"]) != "in_progress" {
 		t.Fatalf("first status = %q, want in_progress", stringVal(progress.Entries[0]["status"]))
 	}
-	if stringVal(progress.Entries[1]["status"]) != "completed" {
-		t.Fatalf("second status = %q, want completed", stringVal(progress.Entries[1]["status"]))
+	if stringVal(progress.Entries[1]["status"]) != "in_progress" {
+		t.Fatalf("second status = %q, want in_progress", stringVal(progress.Entries[1]["status"]))
 	}
 }
 
@@ -367,11 +367,21 @@ func TestApplyProgressSignalModeDeterministicShape(t *testing.T) {
 		t.Fatalf("expected 2 completion entries, got %d", len(progress.Entries))
 	}
 	for i, entry := range progress.Entries {
-		if stringVal(entry["status"]) != "completed" {
-			t.Fatalf("entry %d status = %q, want completed", i, stringVal(entry["status"]))
+		if stringVal(entry["status"]) != "in_progress" {
+			t.Fatalf("entry %d status = %q, want in_progress", i, stringVal(entry["status"]))
 		}
 		if stringVal(entry["notes"]) == "apply: execution started" {
 			t.Fatalf("entry %d unexpectedly includes start telemetry", i)
 		}
+	}
+}
+
+func TestBuildExecutionEvidenceSeparatesCommandOutcome(t *testing.T) {
+	evidence := buildExecutionEvidence("ok\n", 0, true)
+	if evidence["kind"] != "cli_execution" || evidence["outcome"] != "succeeded" || evidence["exit_code"] != 0 {
+		t.Fatalf("unexpected evidence: %#v", evidence)
+	}
+	if _, lifecycle := evidence["status"]; lifecycle {
+		t.Fatalf("execution evidence must not claim task lifecycle status: %#v", evidence)
 	}
 }

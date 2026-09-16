@@ -8,6 +8,38 @@ This project follows a protocol-first versioning model:
 
 ---
 
+## [Unreleased]
+
+### Added
+- Added the separately versioned SMALL 2.0.0 session profile with solo-default,
+  opt-in collaborative sessions, immutable causal events, deterministic
+  reconciliation, typed receipts, bounded resume, and full-tree snapshots.
+- Added explicit preview/apply/recover v1 migration with byte-preserved originals,
+  deterministic shared-baseline mappings, stale refusal, and crash recovery.
+- Added `small mode`, `small policy`, `small session`, `small reconcile`,
+  `small migrate`, and `small evidence`; v2-aware lifecycle commands accept
+  `--session`.
+- Added `small health` for strict status, replay id, artifact digest, and snapshot freshness checks across workspaces.
+- Added `small reconstruct` for deterministic task/run evidence reconstruction from SMALL state.
+- Added `small run verify <replayId>` to recompute a snapshot's artifact digests and detect tampering or corruption against the values recorded in `meta.json`.
+- Run snapshots now store aggregate and per-artifact digests in `meta.json` while keeping replayId as the stable lineage key.
+- V2 run snapshots, checkout, verification, and archives operate on the complete
+  authoritative `.small` tree, including imported v1 bytes and evidence
+  receipts. V2 checkout refuses a differing live tree without `--force`, and v2
+  archive refuses partial `--include` selections.
+
+### Changed
+- Command execution outcome no longer implies task acceptance; checkpoint is the
+  explicit acceptance boundary, and evidence persistence failure is non-success.
+- Handoff preserves authored narrative while computed completion/conflict gates
+  remain separate and authoritative.
+- Generated AGENTS.md harness guidance now emphasizes `small check --strict`, CLI-owned progress timestamps, canonical YAML examples, field gotchas, human-owned file boundaries, and optional Stop hook enforcement.
+- `small reconstruct` now reports matched-vs-returned entry counts so `--limit` truncation is explicit rather than silent.
+- `small health` now surfaces run-store read errors instead of silently reporting zero snapshots.
+- `scripts/verify.sh` now enforces a Go **minimum** version (1.24+) rather than pinning an exact minor, so newer toolchains pass without edits.
+
+---
+
 ## [v1.0.9] - 2026-03-14
 
 ### Status

@@ -2,11 +2,13 @@ package commands
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/version"
 	"github.com/spf13/cobra"
@@ -39,7 +41,8 @@ func newRootCmd() *cobra.Command {
 
 	// --version / -v flag: same output as `small version`
 	rootCmd.Version = version.GetVersion()
-	rootCmd.SetVersionTemplate("small {{.Version}}\nSupported spec versions: [\"" + small.ProtocolVersion + "\"]\n")
+	supported, _ := json.Marshal(small.SupportedProtocolVersions)
+	rootCmd.SetVersionTemplate("small {{.Version}}\nSupported spec versions: " + string(supported) + "\n")
 
 	configureRootOutput(rootCmd)
 
@@ -72,7 +75,15 @@ func newRootCmd() *cobra.Command {
 	rootCmd.AddCommand(selftestCmd())
 	rootCmd.AddCommand(archiveCmd())
 	rootCmd.AddCommand(runCmd())
+	rootCmd.AddCommand(healthCmd())
+	rootCmd.AddCommand(reconstructCmd())
 	rootCmd.AddCommand(agentsCmd())
+	rootCmd.AddCommand(sessionCmd())
+	rootCmd.AddCommand(modeCmd())
+	rootCmd.AddCommand(reconcileCmd())
+	rootCmd.AddCommand(migrateCmd())
+	rootCmd.AddCommand(evidenceCmd())
+	rootCmd.AddCommand(policyCmd())
 
 	return rootCmd
 }
@@ -84,7 +95,42 @@ func Execute() error {
 	if errors.Is(err, errFlagError) {
 		return nil
 	}
+	if err != nil && requestedJSON(os.Args) {
+		var reported reportedJSONError
+		if !errors.As(err, &reported) {
+			_ = writeJSONValue(map[string]any{"error": map[string]any{"code": commandErrorCode(err), "message": err.Error()}})
+		}
+	}
 	return err
+}
+
+type reportedJSONError struct{ cause error }
+
+func (err reportedJSONError) Error() string { return err.cause.Error() }
+func (err reportedJSONError) Unwrap() error { return err.cause }
+func requestedJSON(args []string) bool {
+	for _, arg := range args {
+		if arg == "--json" {
+			return true
+		}
+	}
+	return false
+}
+func commandErrorCode(err error) string {
+	switch {
+	case errors.Is(err, sessionv2.ErrStaleFrontier):
+		return "stale_state"
+	case errors.Is(err, sessionv2.ErrConflict):
+		return "semantic_conflict"
+	case errors.Is(err, sessionv2.ErrAmbiguous):
+		return "ambiguous_session"
+	case errors.Is(err, sessionv2.ErrCorruption):
+		return "state_corruption"
+	case errors.Is(err, small.ErrStateBusy):
+		return "writer_busy"
+	default:
+		return "invalid_request"
+	}
 }
 
 func configureRootOutput(rootCmd *cobra.Command) {

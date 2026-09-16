@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
@@ -53,6 +54,7 @@ func planCmd() *cobra.Command {
 		dependsArg    string
 		dir           string
 		workspaceFlag string
+		sessionID     string
 	)
 
 	cmd := &cobra.Command{
@@ -69,6 +71,9 @@ func planCmd() *cobra.Command {
 			// Check if .small directory exists
 			if _, err := os.Stat(smallDir); os.IsNotExist(err) {
 				return fmt.Errorf(".small/ directory does not exist. Run 'small init' first")
+			}
+			if sessionv2.IsWorkspace(artifactsDir) {
+				return runV2Plan(artifactsDir, sessionID, reset, addTask, doneID, pendingID, blockedID, dependsArg)
 			}
 
 			scope, err := workspace.ParseScope(workspaceFlag)
@@ -240,6 +245,7 @@ func planCmd() *cobra.Command {
 	cmd.Flags().StringVar(&dependsArg, "depends", "", "Add dependency edge (format: <task-id>:<dep-id>)")
 	cmd.Flags().StringVar(&dir, "dir", ".", "Directory containing .small/ artifacts")
 	cmd.Flags().StringVar(&workspaceFlag, "workspace", string(workspace.ScopeRoot), "Workspace scope (root or any)")
+	cmd.Flags().StringVar(&sessionID, "session", "", "v2 session id (defaults to local active selection)")
 
 	return cmd
 }

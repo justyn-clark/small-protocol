@@ -45,3 +45,15 @@ func TestSchemaPath(t *testing.T) {
 		})
 	}
 }
+
+func TestReadV2Schema(t *testing.T) {
+	for _, recordType := range []string{"profile", "session", "event", "receipt"} {
+		data, err := ReadV2Schema(recordType)
+		if err != nil {
+			t.Fatalf("failed to read v2 %s schema: %v", recordType, err)
+		}
+		if len(data) == 0 || data[0] != '{' {
+			t.Fatalf("invalid v2 %s schema", recordType)
+		}
+	}
+}

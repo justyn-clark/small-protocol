@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"gopkg.in/yaml.v3"
@@ -229,5 +230,44 @@ func TestArchiveWithWorkspaceScope(t *testing.T) {
 	defaultInclude := []string{"intent.small.yml", "handoff.small.yml"}
 	if err := runArchive(tmpDir, "", defaultInclude); err != nil {
 		t.Fatalf("archive should work for any workspace kind: %v", err)
+	}
+}
+
+func TestArchiveV2PreservesCompleteAuthoritativeTree(t *testing.T) {
+	base := t.TempDir()
+	profile := sessionv2.Profile{SmallVersion: sessionv2.ProfileVersion, ProjectID: "archive_project", LineageID: "archive_lineage", Mode: "solo", PolicyRevision: "policy_1"}
+	if err := sessionv2.Initialize(base, profile, []byte("intent\n"), []byte("constraints\n")); err != nil {
+		t.Fatal(err)
+	}
+	session, _, err := sessionv2.StartSession(base, sessionv2.SessionStartOptions{ToolVersion: "test"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := sessionv2.AppendEvent(base, session.SessionID, "handoff_recorded", map[string]any{"summary": "archive narrative"}, sessionv2.AppendOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	importPath := filepath.Join(base, ".small", "imports", "v1", "import_test", "originals", "progress.small.yml")
+	if err := os.MkdirAll(filepath.Dir(importPath), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(importPath, []byte("legacy progress\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	receipt := sessionv2.Receipt{SmallVersion: sessionv2.ProfileVersion, ProjectID: profile.ProjectID, ReceiptID: "receipt_archive", Strength: "narrative_assertion", Availability: "unavailable", Outcome: "private evidence not copied"}
+	if _, err := sessionv2.PublishReceipt(base, receipt); err != nil {
+		t.Fatal(err)
+	}
+	out := filepath.Join(t.TempDir(), "archive")
+	if err := runArchive(base, out, defaultArchiveInclude); err != nil {
+		t.Fatal(err)
+	}
+	for _, rel := range []string{"profile.json", filepath.Join("sessions", session.SessionID+".json"), filepath.Join("events", session.SessionID), filepath.Join("imports", "v1", "import_test", "originals", "progress.small.yml"), filepath.Join("receipts", "sha256")} {
+		if _, err := os.Stat(filepath.Join(out, "state", ".small", rel)); err != nil {
+			t.Fatalf("missing archived %s: %v", rel, err)
+		}
+	}
+	data, err := os.ReadFile(filepath.Join(out, "archive.small.yml"))
+	if err != nil || !strings.Contains(string(data), sessionv2.ProfileVersion) {
+		t.Fatalf("v2 archive manifest: %v %s", err, data)
 	}
 }

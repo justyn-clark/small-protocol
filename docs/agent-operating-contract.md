@@ -3,6 +3,10 @@
 This document defines the behavioral requirements for AI agents (Claude, GPT, or any LLM) operating within a SMALL-managed workspace.
 
 These rules are non-negotiable. Violating them breaks the protocol's guarantees.
+The file-by-file examples below describe v1. For a v2 workspace, use the CLI to
+inspect the profile and active session, then follow
+[session-profile-v2.md](session-profile-v2.md); do not treat v1 YAML paths as the
+v2 source of truth.
 
 ## Entry Protocol
 
@@ -20,14 +24,14 @@ Do not skip this step. Do not assume you know the project state from conversatio
 
 ### Verify the Workspace
 
-After reading, run validation:
+After inspecting state, run the strict gate:
 
 ```bash
-small validate
-small lint
+small status --json
+small check --strict
 ```
 
-If either fails, fix the issues before proceeding. Do not proceed with invalid artifacts.
+If strict validation fails, follow the CLI diagnostics before proceeding.
 
 ## Ownership Rules
 
@@ -42,9 +46,10 @@ If these files are missing required information, ask the human to provide it. Do
 
 ### Only Append to Progress
 
-The `progress.small.yml` file is append-only:
+In v1, `progress.small.yml` is append-only and may be changed only through the
+CLI:
 
-- Add new entries at the end of the `entries` array
+- Use `small progress add` or `small checkpoint`; the CLI appends entries
 - Never modify existing entries
 - Never delete entries
 - Every entry must include evidence of execution
@@ -62,6 +67,7 @@ Valid evidence fields (at least one required):
 Before ending a session for any reason, generate a handoff:
 
 ```bash
+small check --strict
 small handoff --summary "Description of current state"
 ```
 
@@ -80,11 +86,11 @@ The handoff must accurately reflect the current state. The next session depends 
 Never claim a task is complete without validation:
 
 ```bash
-small validate
-small lint
+small check --strict
 ```
 
-Both must pass. A task with failing validation is not complete.
+The strict gate must pass. Command success from `small apply` does not accept a
+task; completion is recorded separately with `small checkpoint` and evidence.
 
 ### Record All Executions
 

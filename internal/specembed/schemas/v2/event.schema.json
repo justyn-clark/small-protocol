@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smallprotocol.dev/schemas/small/v2.0.0/event.schema.json",
+  "type": "object",
+  "required": ["small_version", "project_id", "lineage_id", "session_id", "event_id", "kind", "sequence", "occurred_at", "payload", "digest"],
+  "properties": {
+    "small_version": {"const": "2.0.0"},
+    "project_id": {"type": "string", "minLength": 1},
+    "lineage_id": {"type": "string", "minLength": 1},
+    "session_id": {"type": "string", "minLength": 1},
+    "event_id": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["session_started", "session_closed", "task_created", "task_updated", "task_transitioned", "command_recorded", "handoff_recorded", "mode_changed", "policy_changed", "ownership_claimed", "ownership_taken_over", "conflict_resolved", "v1_imported"]},
+    "sequence": {"type": "integer", "minimum": 1},
+    "previous_event": {"type": "string", "minLength": 1},
+    "parents": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "task_id": {"type": "string", "minLength": 1},
+    "task_revision": {"type": "integer", "minimum": 1},
+    "policy_revision": {"type": "string", "minLength": 1},
+    "source_digest": {"type": "string", "minLength": 1},
+    "payload": {"type": "object"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": false
+}

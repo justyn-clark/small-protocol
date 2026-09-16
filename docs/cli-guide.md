@@ -94,18 +94,18 @@ order. Use `small progress migrate` to repair older logs.
 |---------|--------------------------|
 | `small init` | `task_id: init`, `status: completed`, evidence about workspace creation |
 | `small plan --add` | `task_id: <new task>`, `status: pending`, evidence about the new task |
-| `small plan --done` | `task_id: <task>`, `status: completed`, evidence of completion |
+| `small plan --done` | Plan-status mutation only; not task acceptance (agents use `small checkpoint`) |
 | `small plan --pending` | `task_id: <task>`, `status: pending`, evidence of status change |
 | `small plan --blocked` | `task_id: <task>`, `status: blocked`, evidence of status change |
 | `small plan --depends` | `task_id: <task>`, evidence of dependency update |
 | `small progress add` | Appends a progress entry with monotonic timestamp |
 | `small checkpoint` | Updates plan status and appends progress entry |
-| `small apply` | start entry `in_progress`, end entry `completed` or `blocked` |
+| `small apply` | Records command outcome; task acceptance is unchanged by default |
 | `small apply --dry-run` | `status: pending`, evidence of dry-run |
 | `small reset` | `task_id: reset`, `status: completed`, evidence of reset |
 
-`small handoff`, `small status`, `small doctor`, `small verify`, and `small emit` are read-only
-and do not append progress.
+`small status`, `small health`, `small reconstruct`, `small doctor`, `small verify`, and `small emit` are read-only.
+`small handoff` writes `handoff.small.yml` but does not append progress.
 
 ## Commands
 
@@ -120,14 +120,26 @@ small version
 Output (example):
 ```
 small vX.Y.Z
-Supported spec versions: ["1.0.0"]
+Supported spec versions: ["1.0.0","2.0.0"]
 ```
 
 The root command also supports `small --version` and `small -v`.
 
+### v2 sessions, migration, and reconciliation
+
+The complete operational guide is [Session Profile v2](session-profile-v2.md).
+The v2-aware `plan`, `progress add`, `apply`, `checkpoint`, and `handoff`
+commands accept `--session`; a local ignored active-session pointer is used only
+when selection is unambiguous. JSON previews reserve stdout for JSON.
+Use `small policy show --json` before changing human-owned intent or constraints.
+Publish reviewed material with `small policy revise --intent <file>
+--constraints <file> --expect-state <frontier> --reason <text>`. The content
+digests, new revision, and files are one recoverable state transition; concurrent
+different policy revisions require reconciliation.
+
 ### small init
 
-Initialize a new `.small/` directory with all five canonical artifacts.
+Initialize a new v1 `.small/` directory with all five canonical artifacts.
 
 ```bash
 small init --intent "Build a user authentication system"
@@ -520,6 +532,47 @@ Returns structured data for programmatic use.
 |-------|-------|------------|
 | `.small/ not found` | Workspace not initialized | Run `small init` first |
 
+### small health
+
+Report strict status, replay lineage, current artifact digest, run snapshot count, and latest snapshot freshness for one or more workspaces.
+
+```bash
+small health
+small health ../repo-a ../repo-b
+small health --json
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--json` | Emit machine-readable output |
+| `--store <path>` | Run store directory (default: `<workspace>/.small-runs/`) |
+| `--workspace <scope>` | Workspace scope (`root` or `any`) |
+
+Use this when comparing older repositories, checking snapshot freshness, or deciding whether a workspace is clean enough to hand off.
+
+### small reconstruct
+
+Reconstruct task or run evidence from `plan.small.yml`, `progress.small.yml`, and `handoff.small.yml` without using chat history. This is an audit tool, not a replacement resume entrypoint for `handoff.small.yml`.
+
+```bash
+small reconstruct
+small reconstruct --task task-42
+small reconstruct --since 2026-01-01T00:00:00.000000000Z --json
+```
+
+**Flags:**
+
+| Flag | Description |
+|------|-------------|
+| `--task <task-id>` | Include only progress for a single task |
+| `--since <timestamp>` | Include entries at or after an RFC3339Nano timestamp |
+| `--limit <n>` | Limit returned progress entries; `0` means all |
+| `--json` | Emit machine-readable output |
+| `--dir <path>` | Directory containing .small/ |
+| `--workspace <scope>` | Workspace scope (`root` or `any`) |
+
 ### small apply
 
 Execute a command and record results in progress.small.yml.
@@ -536,7 +589,7 @@ small apply --cmd "npm test" --task task-1
 | `--task <task-id>` | Associate with specific task |
 | `--dry-run` | Record intent without executing |
 | `--auto-progress` | Capture command output in progress evidence |
-| `--auto-checkpoint` | Checkpoint the task based on command result |
+| `--auto-checkpoint` | Explicitly checkpoint from command result; requires reviewed `--acceptance-evidence` for successful completion |
 | `--handoff` | Generate handoff after success |
 | `--dir <path>` | Directory containing .small/ |
 | `--workspace <scope>` | Workspace scope (`root` or `any`; default `root`) |
@@ -545,9 +598,9 @@ small apply --cmd "npm test" --task task-1
 
 1. Records start entry (status: in_progress)
 2. Executes command via `sh -lc "<cmd>"`
-3. Records completion entry with exit code
-4. If exit code 0: status completed
-5. If exit code != 0: status blocked
+3. Records command outcome and persistence outcome
+4. Leaves task acceptance unchanged unless explicit `--auto-checkpoint` was
+   requested with acceptance evidence
 
 `small apply` already records narrow structured command evidence alongside human-readable evidence using `command_summary`, `command_ref`, and `command_sha256`. Additional nested command objects are intentionally deferred to keep `progress.small.yml` flat, auditable, and machine-legible without introducing another command schema.
 
@@ -935,7 +988,7 @@ All selftest steps passed!
 
 ### small run
 
-Git-like run history utilities: snapshot, list, show, diff, and checkout.
+Git-like run history utilities: snapshot, list, show, diff, checkout, and verify.
 
 ```bash
 small run snapshot
@@ -943,6 +996,7 @@ small run list
 small run show <replayId>
 small run diff <from> <to>
 small run checkout <replayId>
+small run verify <replayId>
 ```
 
 **Shared flags (all run subcommands):**
@@ -962,12 +1016,23 @@ small run checkout <replayId>
 | `small run show <replayId>` | `--json` |
 | `small run diff <from> <to>` | `--full`, `--json` |
 | `small run checkout <replayId>` | `--force` |
+| `small run verify <replayId>` | `--json` |
 
 **Snapshot**
 
-- Captures intent, plan, progress, handoff, and optional constraints
-- Writes `meta.json` with replayId, git info, and CLI version
+- For v1, captures intent, plan, progress, handoff, and optional constraints
+- For v2, captures the complete authoritative `.small` tree, including profile,
+  policy, sessions, immutable events, resolutions, imports, and receipts
+- Writes `meta.json` with replayId, current artifact/tree digest,
+  per-artifact digests, git info, and CLI version
 - Fails if replayId is missing (run `small handoff` first)
+
+**Verify**
+
+- Recomputes the snapshot's artifact digests and compares them to the values recorded in `meta.json`
+- Detects tampering or corruption of a snapshot's own copied artifacts (distinct from `small health`, which detects drift between the live workspace and its latest snapshot)
+- Exits `0` when artifacts match the recorded digest, non-zero on a mismatch
+- Snapshots written before digest recording report `unverifiable` and exit `0` (integrity cannot be confirmed, but this is not treated as a failure)
 
 **List output columns:**
 
@@ -981,9 +1046,12 @@ small run checkout <replayId>
 
 **Checkout safety:**
 
-- Restores snapshot YAMLs into `.small/`
-- Preserves `workspace.small.yml`
-- Refuses to overwrite local `.small` changes unless `--force`
+- V1 restores snapshot YAMLs into `.small/` and preserves
+  `workspace.small.yml`
+- V2 verifies the complete stored tree digest before restoring the complete
+  authoritative tree
+- Both profiles refuse to overwrite differing local `.small` state unless
+  `--force`
 
 ### small archive
 
@@ -1003,8 +1071,9 @@ small archive
 
 **What gets archived:**
 
-- All canonical SMALL artifacts (intent, constraints, plan, progress, handoff)
-- workspace.small.yml
+- V1: all canonical YAML artifacts plus `workspace.small.yml`
+- V2: the complete authoritative `.small` tree, including imported legacy bytes
+  and evidence receipts; partial `--include` selections are refused
 - A manifest (`archive.small.yml`) with SHA256 hashes for integrity verification
 
 **Manifest contents:**
@@ -1218,6 +1287,8 @@ small selftest --keep       # Keep temp workspace for inspection
 
 # Diagnosis
 small doctor                # Read-only workspace diagnosis
+small health                # Strict status, replay id, artifact digest, snapshots
+small reconstruct --task task-1  # Rebuild task evidence from SMALL state
 
 # Run history
 small run snapshot
@@ -1225,6 +1296,7 @@ small run list
 small run show <replayId>
 small run diff <from> <to>
 small run checkout <replayId>
+small run verify <replayId>   # Detect snapshot tampering/corruption
 
 # Archiving
 small archive               # Archive current run to .small-archive/

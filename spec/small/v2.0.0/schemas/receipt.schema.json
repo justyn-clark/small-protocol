@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smallprotocol.dev/schemas/small/v2.0.0/receipt.schema.json",
+  "type": "object",
+  "required": ["small_version", "project_id", "receipt_id", "strength", "availability", "digest"],
+  "properties": {
+    "small_version": {"const": "2.0.0"},
+    "project_id": {"type": "string", "minLength": 1},
+    "receipt_id": {"type": "string", "minLength": 1},
+    "strength": {"enum": ["narrative_assertion", "cli_captured", "verified_artifact"]},
+    "availability": {"enum": ["unavailable", "stale", "failed", "verified"]},
+    "producer": {"type": "object"},
+    "task_id": {"type": "string"},
+    "task_revision": {"type": "integer", "minimum": 1},
+    "policy_revision": {"type": "string"},
+    "source_digest": {"type": "string"},
+    "validator": {"type": "string"},
+    "outcome": {"type": "string"},
+    "artifact_path": {"type": "string"},
+    "artifact_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "artifact_size": {"type": "integer", "minimum": 0},
+    "metadata": {"type": "object"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": false
+}

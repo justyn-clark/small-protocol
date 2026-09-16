@@ -90,7 +90,9 @@ If `small` shows old behavior after updating:
 
 ## Schema Updates
 
-If you modify schemas in `spec/small/v1.0.0/schemas/`, you must sync them to the embedded location:
+If you modify schemas in `spec/small/v1.0.0/schemas/` or
+`spec/small/v2.0.0/schemas/`, sync both versioned trees to the embedded
+locations:
 
 ```bash
 make sync-schemas
@@ -131,11 +133,13 @@ small verify --ci
 
 ### Modify Schemas
 
-1. Edit `spec/small/v1.0.0/schemas/*.json`
-2. Sync to embedded copy: `make sync-schemas`
-3. Update tests if behavior changed
-4. Rebuild: `go build -o ~/go/bin/small ./cmd/small`
-5. Run `go test ./...` to verify
+1. Edit the appropriate versioned source under
+   `spec/small/v1.0.0/schemas/*.json` or `spec/small/v2.0.0/schemas/*.json`
+2. Sync both embedded copies: `make sync-schemas`
+3. Verify source-to-embedded byte parity for v1 and v2
+4. Update tests if behavior changed
+5. Rebuild: `go build -o ~/go/bin/small ./cmd/small`
+6. Run `go test ./...` to verify
 
 ### Test a Local Binary
 

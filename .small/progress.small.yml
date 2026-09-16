@@ -19079,3 +19079,2250 @@ entries:
       status: completed
       task_id: task-46
       timestamp: "2026-04-01T19:23:01.523066000Z"
+    - evidence: Added task task-47 via small plan --add
+      notes: Implement review-driven SMALL protocol hardening and Go 1.26 upgrade
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-47
+      timestamp: "2026-06-24T02:03:36.747354000Z"
+    - evidence: Started review-driven update batch after reading /Users/justin/.codex/attachments/9217bae3-f654-4cd0-9f8e-b204c59b9925/pasted-text-1.txt, verifying small check --strict passes, and confirming Go 1.26 is the current major line from official Go docs.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-47
+      timestamp: "2026-06-24T02:03:50.537716000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore.go @@ import ( + "crypto/sha256" "encoding/json" + "encoding/hex" "errors" "fmt" "io" @@ type Meta struct { - Repla...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020545.495785000Z.txt
+      command_sha256: d67d1e7ab5777d163b4a7ca26f1f4587ed538802c8f5984d624811d72c36e556
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore.go @@ import ( + "crypto/sha256" "encoding/json" + "encoding/hex" "errors" "fmt" "io" @@ type Meta struct { - Repla...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:05:45.495785000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/run.go @@ type runShowOutput struct { - ReplayID string `json:"replayId"` - Meta runstore.Meta `json:"meta"` - Artifacts []s...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020554.966953000Z.txt
+      command_sha256: 578e2dd980c04cd6160a594927bf50f7637785c211a48b412dab0fa4f5b5d35e
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/run.go @@ type runShowOutput struct { - ReplayID string `json:"replayId"` - Meta runstore.Meta `json:"meta"` - Artifacts []s...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:05:54.966953000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/health.go +package commands + +import ( + "bytes" + "encoding/json" + "fmt" + "os" + "path/filepath" + "strings" + "text/tabwri...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020635.175841000Z.txt
+      command_sha256: e67b8682bca010a16658aa38b7a86b7aa1669af4ec92b36aab4af37af272bc76
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/health.go +package commands + +import ( + "bytes" + "encoding/json" + "fmt" + "os" + "path/filepath" + "strings" + "text/tabwri...'
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-47
+      timestamp: "2026-06-24T02:06:35.175841000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/health.go +package commands + +import ( + "bytes" + "encoding/json" + "fmt" + "os" + "path/filepath" + "strings" + "text/tabwri...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020720.601281000Z.txt
+      command_sha256: 861ab23a954e4236a26596ba433694f9fa2b39ceaa5ff4d96c9ccef4e556fa88
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/health.go +package commands + +import ( + "bytes" + "encoding/json" + "fmt" + "os" + "path/filepath" + "strings" + "text/tabwri...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:07:20.601281000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(archiveCmd()) rootCmd.AddCommand(runCmd()) + rootCmd.AddCommand(healthCmd()) rootCmd.AddComman...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020724.565472000Z.txt
+      command_sha256: 8602d06efa3f17a1fc413f35c29659ecde6da7d14eaf3135b9574e5effcaa3c9
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(archiveCmd()) rootCmd.AddCommand(runCmd()) + rootCmd.AddCommand(healthCmd()) rootCmd.AddComman...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:07:24.565472000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/reconstruct.go +package commands + +import ( + "bytes" + "encoding/json" + "fmt" + "path/filepath" + "strings" + "time" + + "gi...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020809.745967000Z.txt
+      command_sha256: 7507ba007f71958ede080557cc0e4d18aaa80fcbfcf2668720bdcb3d174b8f1e
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/reconstruct.go +package commands + +import ( + "bytes" + "encoding/json" + "fmt" + "path/filepath" + "strings" + "time" + + "gi...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:08:09.745967000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(archiveCmd()) rootCmd.AddCommand(runCmd()) rootCmd.AddCommand(healthCmd()) + rootCmd.AddComman...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020814.663889000Z.txt
+      command_sha256: d867ae1d26193cc86657463dad5137bbbfdd42f419354f2ef531f53be143534a
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(archiveCmd()) rootCmd.AddCommand(runCmd()) rootCmd.AddCommand(healthCmd()) + rootCmd.AddComman...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:08:14.663889000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/templates.go @@ - // agentsBlockContent is the content inside the SMALL harness block (without markers) - agentsBlockContent...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020847.551679000Z.txt
+      command_sha256: 24f9668877bd6e7696b80f05bbb220cdcab22bcd68e4d3e745101687f7233429
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/templates.go @@ - // agentsBlockContent is the content inside the SMALL harness block (without markers) - agentsBlockContent...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:08:47.551679000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: go.mod @@ -go 1.24.0 +go 1.26.0 -toolchain go1.24.11 +toolchain go1.26.4 *** End Patch PATCH'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020900.285108000Z.txt
+      command_sha256: 4bbb9146236d2fddf9b28d733957ff89ebdcd9e9fe129daa94d2ab58fe855fd8
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: go.mod @@ -go 1.24.0 +go 1.26.0 -toolchain go1.24.11 +toolchain go1.26.4 *** End Patch PATCH'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:09:00.285108000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: scripts/verify.sh @@ -echo "$GO_VER" | grep -E "go1\.24\." >/dev/null || { - echo "ERROR: Go 1.24.x is required, found: $GO_VER" +echo "$GO_VE...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020906.823099000Z.txt
+      command_sha256: 14ae907281b3b849a08c311386b5843d042e6dea5c24c29e53e3bd485654af81
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: scripts/verify.sh @@ -echo "$GO_VER" | grep -E "go1\.24\." >/dev/null || { - echo "ERROR: Go 1.24.x is required, found: $GO_VER" +echo "$GO_VE...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:09:06.823099000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore_test.go @@ if meta.ReplayID == "" || meta.CreatedAt == "" { t.Fatalf("expected meta.json to include replayId and cr...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020942.663922000Z.txt
+      command_sha256: 1ea05916971dd72a0fbbb16fa4e26529e15f3d6486b03a077ed293c750443cdc
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore_test.go @@ if meta.ReplayID == "" || meta.CreatedAt == "" { t.Fatalf("expected meta.json to include replayId and cr...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:09:42.663922000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/health_test.go +package commands + +import ( + "strings" + "testing" + + "github.com/justyn-clark/small-protocol/internal/runst...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T020958.053050000Z.txt
+      command_sha256: 04295180d1528b94074ce3330e3e131caa3dc54039726e4c9f29325764efeb1d
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/health_test.go +package commands + +import ( + "strings" + "testing" + + "github.com/justyn-clark/small-protocol/internal/runst...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:09:58.053050000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/reconstruct_test.go +package commands + +import ( + "strings" + "testing" + "time" +) + +func TestBuildReconstructOutputFilters...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021013.635494000Z.txt
+      command_sha256: 1c72d738a0ff4903c99483093b4cd1b585ebf00ca29c5246f7695107a87f391e
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/reconstruct_test.go +package commands + +import ( + "strings" + "testing" + "time" +) + +func TestBuildReconstructOutputFilters...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:10:13.635494000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/agents_print_test.go @@ requiredSections := []string{ + "Required Commands", "Ownership Rules", "Artifact Rules", + "Progres...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021023.391549000Z.txt
+      command_sha256: c0c5dfe4fa34612f1c7f3e96c6e46f7302c5da653484dc6961bf3959a9d481e2
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/agents_print_test.go @@ requiredSections := []string{ + "Required Commands", "Ownership Rules", "Artifact Rules", + "Progres...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:10:23.391549000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: README.md @@ -[![Go](https://img.shields.io/badge/go-1.24%2B-blue)](https://go.dev) +[![Go](https://img.shields.io/badge/go-1.26%2B-blue)](htt...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021035.288898000Z.txt
+      command_sha256: f50267b7374a10dcec3455349f0c0e96a66f659f8668d9d309f3028ab789fac8
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: README.md @@ -[![Go](https://img.shields.io/badge/go-1.24%2B-blue)](https://go.dev) +[![Go](https://img.shields.io/badge/go-1.26%2B-blue)](htt...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:10:35.288898000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli.md @@ | `small doctor` | Diagnose workspace issues and suggest fixes | | `small status` | Show compact signal-first project state | +...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021043.075981000Z.txt
+      command_sha256: 8d40a782221deb5b07f4a6d004b1478cf728a88b265e79802b28ffbe947c9c8e
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli.md @@ | `small doctor` | Diagnose workspace issues and suggest fixes | | `small status` | Show compact signal-first project state | +...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:10:43.075981000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: scripts/verify.sh @@ echo "=== Step 13: Test status command in isolated workspace ===" "$BIN" status --dir "$WORKDIR" "$BIN" status --dir "$WO...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021049.817805000Z.txt
+      command_sha256: dd4156af9820727ed17361915a107de2ff049f906077d7795689c7be3d148282
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: scripts/verify.sh @@ echo "=== Step 13: Test status command in isolated workspace ===" "$BIN" status --dir "$WORKDIR" "$BIN" status --dir "$WO...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:10:49.817805000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ -`small handoff`, `small status`, `small doctor`, `small verify`, and `small emit` are read-only +`small handoff`, `small...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021108.201235000Z.txt
+      command_sha256: 33b86ffb9e388f0ee0002b4ee17578d9d03bc829a02b8f818f26a3e6cd7efcaf
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ -`small handoff`, `small status`, `small doctor`, `small verify`, and `small emit` are read-only +`small handoff`, `small...'
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-47
+      timestamp: "2026-06-24T02:11:08.201235000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ -`small handoff`, `small status`, `small doctor`, `small verify`, and `small emit` are read-only +`small handoff`, `small...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021118.951192000Z.txt
+      command_sha256: 43262e532845a4e89b204c5f1f56ba7650fc8f9c3444a316b62e6f913853bf4b
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ -`small handoff`, `small status`, `small doctor`, `small verify`, and `small emit` are read-only +`small handoff`, `small...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:11:18.951192000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ | Error | Cause | Resolution | |-------|-------|------------| | `.small/ not found` | Workspace not initialized | Run `sm...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021131.369874000Z.txt
+      command_sha256: f6c9b4b597fff38ce719a18581ba94a3ca78314ec5539b1f7df20cb5297ac199
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ | Error | Cause | Resolution | |-------|-------|------------| | `.small/ not found` | Workspace not initialized | Run `sm...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:11:31.369874000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ **Snapshot** - Captures intent, plan, progress, handoff, and optional constraints -- Writes `meta.json` with replayId, gi...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021202.087108000Z.txt
+      command_sha256: eb5297f4dc30f89fa303f44331e7987f2e544a7f826f1570ec868843dad8c2f5
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ **Snapshot** - Captures intent, plan, progress, handoff, and optional constraints -- Writes `meta.json` with replayId, gi...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:12:02.087108000Z"
+    - command: gofmt -w internal/commands/health.go internal/commands/reconstruct.go internal/runstore/runstore.go internal/commands/run.go internal/commands/root.go internal/commands/templates.go internal/comman...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021229.113183000Z.txt
+      command_sha256: 7d1361c2450b49c4853bba769b417c3580bc113c7599e7ee9a61195afef9d9f1
+      command_summary: gofmt -w internal/commands/health.go internal/commands/reconstruct.go internal/runstore/runstore.go internal/commands/run.go internal/commands/root.go internal/commands/templates.go internal/comman...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:12:29.113183000Z"
+    - command: GOTOOLCHAIN=auto go test ./...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021516.961425000Z.txt
+      command_sha256: b9d9b0ad1bfde75eabdf6dbc29190e8cfd2baf63a5fc5f24e68c13d4023d58ea
+      command_summary: GOTOOLCHAIN=auto go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:15:16.961425000Z"
+    - command: GOTOOLCHAIN=auto go mod tidy
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021534.750584000Z.txt
+      command_sha256: 0bb9a28a92a569194e27590c8e34f3743be9280312157850eb39f5c5fe982ea5
+      command_summary: GOTOOLCHAIN=auto go mod tidy
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:15:34.750584000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ -`small handoff`, `small status`, `small health`, `small reconstruct`, `small doctor`, `small verify`, and `small emit` a...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021602.828584000Z.txt
+      command_sha256: f46dadb0b5aaa432d7ef7424b6c31fec9edcb2dd7721202c9ab8af7905aa1271
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ -`small handoff`, `small status`, `small health`, `small reconstruct`, `small doctor`, `small verify`, and `small emit` a...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:16:02.828584000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: CHANGELOG.md @@ --- + +## [Unreleased] + +### Added +- Added `small health` for strict status, replay id, artifact digest, and snapshot freshn...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021636.771243000Z.txt
+      command_sha256: dcda7a94cddd73dd36f8f5f5574e45c074840a9da925b8daa6e0706ff968578f
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: CHANGELOG.md @@ --- + +## [Unreleased] + +### Added +- Added `small health` for strict status, replay id, artifact digest, and snapshot freshn...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:16:36.771243000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/reconstruct.go @@ - Long: `Reconstructs a deterministic timeline from plan.small.yml, -progress.small.yml, and handoff.small...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021702.026033000Z.txt
+      command_sha256: 170057999a6ebde56b227917a8225a8e97c3eddc08f2206a3d884c8e9ae63cb4
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/reconstruct.go @@ - Long: `Reconstructs a deterministic timeline from plan.small.yml, -progress.small.yml, and handoff.small...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:17:02.026033000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ -Reconstruct task or run evidence from `plan.small.yml`, `progress.small.yml`, and `handoff.small.yml` without using chat...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021715.198783000Z.txt
+      command_sha256: 6950ee4f78f133f2db94a6e3aa91a931566ce7cc89521157443bb85cabd407bc
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: docs/cli-guide.md @@ -Reconstruct task or run evidence from `plan.small.yml`, `progress.small.yml`, and `handoff.small.yml` without using chat...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:17:15.198783000Z"
+    - command: gofmt -w internal/commands/reconstruct.go
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021727.759715000Z.txt
+      command_sha256: d53b3b8bb34352b24d7d60a3c10e8d55a17791796f8386567500dd3972cd848e
+      command_summary: gofmt -w internal/commands/reconstruct.go
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:17:27.759715000Z"
+    - command: GOTOOLCHAIN=auto go test ./...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021751.023337000Z.txt
+      command_sha256: b9d9b0ad1bfde75eabdf6dbc29190e8cfd2baf63a5fc5f24e68c13d4023d58ea
+      command_summary: GOTOOLCHAIN=auto go test ./...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:17:51.023337000Z"
+    - command: GOTOOLCHAIN=auto go run ./cmd/small health --json >/tmp/small-health.json && GOTOOLCHAIN=auto go run ./cmd/small reconstruct --task task-47 --limit 3 >/tmp/small-reconstruct.txt
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021919.414472000Z.txt
+      command_sha256: 180840299ce4b5b47136b007ccd839e00e081f85336ddf5c8c74d419c538cd5a
+      command_summary: GOTOOLCHAIN=auto go run ./cmd/small health --json >/tmp/small-health.json && GOTOOLCHAIN=auto go run ./cmd/small reconstruct --task task-47 --limit 3 >/tmp/small-reconstruct.txt
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:19:19.414472000Z"
+    - command: GOTOOLCHAIN=auto make small-format-check small-build
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021950.159071000Z.txt
+      command_sha256: 0be6c7105cab099af55c30352296c0853171427abdf509cf56f00d842a1bebf5
+      command_summary: GOTOOLCHAIN=auto make small-format-check small-build
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:19:50.159071000Z"
+    - command: ./bin/small health --json >/tmp/small-bin-health.json && ./bin/small reconstruct --task task-47 --limit 1 >/tmp/small-bin-reconstruct.txt && ./bin/small version
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T021957.126319000Z.txt
+      command_sha256: 39baa5a0b96a57073d535479ef95168c8d704d3a0d2a54431c150f6625c4624d
+      command_summary: ./bin/small health --json >/tmp/small-bin-health.json && ./bin/small reconstruct --task task-47 --limit 1 >/tmp/small-bin-reconstruct.txt && ./bin/small version
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:19:57.126319000Z"
+    - evidence: 'Implemented review-driven SMALL hardening: added small health, small reconstruct, run snapshot artifact digests, updated AGENTS harness guidance, docs, changelog, verify smoke coverage, and bumped go.mod to go 1.26.0/toolchain go1.26.4. Verified with GOTOOLCHAIN=auto go test ./..., GOTOOLCHAIN=auto go mod tidy, GOTOOLCHAIN=auto make small-format-check small-build, built ./bin/small health/reconstruct smoke, and small check --strict.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-47
+      timestamp: "2026-06-24T02:20:17.034395000Z"
+    - evidence: Added task task-48 via small plan --add
+      notes: Restore executable modes and run clean release verification
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-48
+      timestamp: "2026-06-24T02:27:42.189721000Z"
+    - evidence: 'Started cleanup to address release verification gap: scripts/verify.sh cannot run in-place on a dirty tree, and chmod-only changes show tracked executable files currently lost +x mode.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-48
+      timestamp: "2026-06-24T02:27:48.005133000Z"
+    - command: chmod +x packages/npm/bin/small.js packages/npm/scripts/postinstall.js scripts/build-release.sh scripts/install.sh scripts/test-install.sh scripts/verify.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260624T022755.584408000Z.txt
+      command_sha256: c7661ec70ee475a80cb0a1b3903be476e5e27f226ad36b5cdc97781290b4ef06
+      command_summary: chmod +x packages/npm/bin/small.js packages/npm/scripts/postinstall.js scripts/build-release.sh scripts/install.sh scripts/test-install.sh scripts/verify.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-48
+      timestamp: "2026-06-24T02:27:55.584408000Z"
+    - evidence: Restored executable bits for npm and shell wrappers tracked as 100755, removing chmod-only diffs. Ran full release-style scripts/verify.sh in clean temporary candidate copy /tmp/small-protocol-verify.Fy2mAw with current patch indexed in a fresh git repo; verification passed all 19 steps including Go 1.26.4 guard, go mod tidy no-diff check, build, run snapshot/show artifact digest output, health/reconstruct smoke, go test ./..., format check, selftest, and archive.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-48
+      timestamp: "2026-06-24T02:28:41.330786000Z"
+    - evidence: Added task task-49 via small plan --add
+      notes: Fix v1 handoff, apply semantics, and transactional reliability
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-49
+      timestamp: "2026-09-13T08:58:20.389584000Z"
+    - evidence: Added task task-50 via small plan --add
+      notes: Specify and implement session-capable protocol v2 storage and reducer
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-50
+      timestamp: "2026-09-13T08:58:20.614879000Z"
+    - evidence: Added task task-51 via small plan --add
+      notes: Implement solo-default mode and explicit session lifecycle
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-51
+      timestamp: "2026-09-13T08:58:20.824609000Z"
+    - evidence: Added task task-52 via small plan --add
+      notes: Implement reconciliation, conflict resolution, and v1 migration
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-52
+      timestamp: "2026-09-13T08:58:21.034652000Z"
+    - evidence: Added task task-53 via small plan --add
+      notes: Extend bounded resume, evidence receipts, and runstore coverage
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-53
+      timestamp: "2026-09-13T08:58:21.246176000Z"
+    - evidence: Added task task-54 via small plan --add
+      notes: Add session documentation, compatibility guidance, and local two-clone proof
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-54
+      timestamp: "2026-09-13T08:58:21.457154000Z"
+    - evidence: Added task task-55 via small plan --add
+      notes: Run full release validation and create narrative-preserving handoff
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-55
+      timestamp: "2026-09-13T08:58:21.671328000Z"
+    - evidence: Added dependency task-49 to task-50
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-50
+      timestamp: "2026-09-13T08:58:28.529067000Z"
+    - evidence: Added dependency task-50 to task-51
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-51
+      timestamp: "2026-09-13T08:58:28.740350000Z"
+    - evidence: Added dependency task-51 to task-52
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-52
+      timestamp: "2026-09-13T08:58:29.020945000Z"
+    - evidence: Added dependency task-52 to task-53
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-53
+      timestamp: "2026-09-13T08:58:29.229889000Z"
+    - evidence: Added dependency task-53 to task-54
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-54
+      timestamp: "2026-09-13T08:58:29.439192000Z"
+    - evidence: Added dependency task-54 to task-55
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-55
+      timestamp: "2026-09-13T08:58:29.649429000Z"
+    - evidence: Inspected current checkout, resolved installed CLI /opt/homebrew/bin/small v1.0.2, confirmed source HEAD 567efe6 with preserved uncommitted task-47/task-48 work, and passed initial small check --strict.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-49
+      timestamp: "2026-09-13T08:58:29.895091000Z"
+    - command: 'apply_patch <<''PATCH''\n*** Begin Patch\n*** Add File: internal/small/state_transaction.go\n+package small\n+\n+import (\n+\t"crypto/rand"\n+\t"crypto/sha256"\n+\t"encoding/hex"\n+\t"encoding/json"\...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T090214.178701000Z.txt
+      command_sha256: 36397d65b69bb0b222a6aca46a596531ec59be07ab8e8e92defd3448459a049f
+      command_summary: 'apply_patch <<''PATCH''\n*** Begin Patch\n*** Add File: internal/small/state_transaction.go\n+package small\n+\n+import (\n+\t"crypto/rand"\n+\t"crypto/sha256"\n+\t"encoding/hex"\n+\t"encoding/json"\...'
+      evidence: Command failed with exit code 2
+      notes: 'apply: failed with exit code 2'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-49
+      timestamp: "2026-09-13T09:02:14.178701000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/small/state_transaction.go +package small + +import ( + "crypto/rand" + "crypto/sha256" + "encoding/hex" + "encoding/json" + "errors" + ...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T090353.168571000Z.txt
+      command_sha256: f574743286f54225655bf022a28c9b99cb67d70d2c855cf4b1f61e27b40cef76
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/small/state_transaction.go +package small + +import ( + "crypto/rand" + "crypto/sha256" + "encoding/hex" + "encoding/json" + "errors" + ...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:03:53.168571000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/handoff_helpers.go @@ func buildHandoff(artifactsDir string, summary string, manualReplayId string, links []linkOut, replayI...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T090500.370619000Z.txt
+      command_sha256: e69411e9dfa504db60da665134dc222ac538ac159b714322d348f7aa4a9fdb89
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/handoff_helpers.go @@ func buildHandoff(artifactsDir string, summary string, manualReplayId string, links []linkOut, replayI...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:05:00.370619000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/handoff_helpers.go @@ resume := resumeOut{ CurrentTaskID: state.CurrentTaskID, - NextSteps: state.NextSteps, + NextSteps: li...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T090551.200653000Z.txt
+      command_sha256: 1afb3fdee72bcddba044312f2a4c078a1f39c859f45c86ea0a200345aea96d57
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/handoff_helpers.go @@ resume := resumeOut{ CurrentTaskID: state.CurrentTaskID, - NextSteps: state.NextSteps, + NextSteps: li...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:05:51.200653000Z"
+    - command: gofmt -w internal/small/state_transaction.go internal/small/state_transaction_test.go internal/commands/handoff.go internal/commands/handoff_helpers.go internal/commands/handoff_test.go && go test ...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T090616.689390000Z.txt
+      command_sha256: b8bbcf382bdfd6d4ea941cd80ff7c7a6e250b0937cb37ac5fef6204fda296f81
+      command_summary: gofmt -w internal/small/state_transaction.go internal/small/state_transaction_test.go internal/commands/handoff.go internal/commands/handoff_helpers.go internal/commands/handoff_test.go && go test ...
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-49
+      timestamp: "2026-09-13T09:06:16.689390000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Delete File: internal/commands/checkpoint.go *** Add File: internal/commands/checkpoint.go +package commands + +import ( + "encoding/json" + "fmt" + "os" +...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T090740.025603000Z.txt
+      command_sha256: 065ecb4684b7ee4b5a004b34c333d46f05b7b08d785ddf32224ae7f005b65ab6
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Delete File: internal/commands/checkpoint.go *** Add File: internal/commands/checkpoint.go +package commands + +import ( + "encoding/json" + "fmt" + "os" +...'
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-49
+      timestamp: "2026-09-13T09:07:40.025603000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/run_test.go @@ - if !strings.Contains(output, "Run in progress. Next task: task-1.") { + if !strings.Contains(output, "Selft...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T090801.945557000Z.txt
+      command_sha256: 289f703d690524626a80682196b624eed32d4baee778c783771d3340523048bc
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/run_test.go @@ - if !strings.Contains(output, "Run in progress. Next task: task-1.") { + if !strings.Contains(output, "Selft...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:08:01.945557000Z"
+    - command: gofmt -w internal/commands/checkpoint.go internal/commands/apply.go internal/commands/run_test.go && go test ./internal/small ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T090812.234340000Z.txt
+      command_sha256: 96a5f96f3bc27a8d12516028aef413f4010ac2e34719490e094e3f44897efca6
+      command_summary: gofmt -w internal/commands/checkpoint.go internal/commands/apply.go internal/commands/run_test.go && go test ./internal/small ./internal/commands
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:08:12.234340000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply.go @@ import ( "bytes" + "encoding/json" @@ workspaceFlag string + jsonOutput bool + acceptanceEvidence string @@ if a...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T090922.485969000Z.txt
+      command_sha256: 8745f1878162a8535096b234c339f585e6b917f3f3d141c098048fa85ef15a4c
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply.go @@ import ( "bytes" + "encoding/json" @@ workspaceFlag string + jsonOutput bool + acceptanceEvidence string @@ if a...'
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-49
+      timestamp: "2026-09-13T09:09:22.485969000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/progress.go @@ - if err := appendProgressEntryWithData(artifactsDir, entry, progress); err != nil { + if err := appendProgre...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091009.207784000Z.txt
+      command_sha256: 22f532ba7ca53fc19ca0fc3b1f89229da3038c37a95368a0b205fa874c773c55
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/progress.go @@ - if err := appendProgressEntryWithData(artifactsDir, entry, progress); err != nil { + if err := appendProgre...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:10:09.207784000Z"
+    - command: gofmt -w internal/commands/apply.go internal/commands/apply_test.go internal/commands/progress.go internal/commands/checkpoint.go internal/commands/run_test.go && go test ./internal/small ./interna...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091022.172829000Z.txt
+      command_sha256: 57d120425bba6f396f4869a4d7eaeaab90909aabfda8c5ac3cc1c29f7bcc977f
+      command_summary: gofmt -w internal/commands/apply.go internal/commands/apply_test.go internal/commands/progress.go internal/commands/checkpoint.go internal/commands/run_test.go && go test ./internal/small ./interna...
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-49
+      timestamp: "2026-09-13T09:10:22.172829000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ - if stringVal(entry["status"]) != "completed" { - t.Fatalf("status = %q, want completed", stringVal(entry[...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091033.553527000Z.txt
+      command_sha256: b5156f021e35d1533f065f0d2a229da56f456fc4f9a01411d869f4f0410bedd0
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/apply_test.go @@ - if stringVal(entry["status"]) != "completed" { - t.Fatalf("status = %q, want completed", stringVal(entry[...'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:10:33.553527000Z"
+    - command: gofmt -w internal/commands/apply_test.go && go test ./internal/small ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091046.921885000Z.txt
+      command_sha256: f6923a6002093ee636c7a115b21686014590a4e9d5b0e39265ba38b99fc06ea5
+      command_summary: gofmt -w internal/commands/apply_test.go && go test ./internal/small ./internal/commands
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:10:46.921885000Z"
+    - command: go build -o bin/small ./cmd/small
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091052.068218000Z.txt
+      command_sha256: 43b63afe72a7261713e4338baa5bc329005ce325943973519db40e93f34b3ee3
+      command_summary: go build -o bin/small ./cmd/small
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:10:52.068218000Z"
+    - evidence: 'Focused reliability verification passed: go test ./internal/small ./internal/commands. Authored handoff summaries are retained with computed resume gates, apply command outcome is typed and no longer task completion, local writers serialize through .small-cache/state.lock, and checkpoint plan/progress publication is journaled with fault-injection recovery tests at prepared, each publish, and committed boundaries.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-49
+      timestamp: "2026-09-13T09:11:19.034090000Z"
+    - evidence: Started protocol v2 architecture and immutable storage implementation after task-49 reliability gates passed.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-50
+      timestamp: "2026-09-13T09:11:34.456719000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: docs/adr/0001-session-profile-v2.md +# ADR 0001: session-capable SMALL v2 profile + +Status: accepted + +Date: 2026-09-13 + +## Context + +SMALL ...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091232.765734000Z.txt
+      command_sha256: fc3687c2fc8b228181b9e76dcd30156c4e50e3a0f66c856b6ce14e89bea04d42
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: docs/adr/0001-session-profile-v2.md +# ADR 0001: session-capable SMALL v2 profile + +Status: accepted + +Date: 2026-09-13 + +## Context + +SMALL ...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-50
+      timestamp: "2026-09-13T09:12:32.765734000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/sessionv2/types.go +package sessionv2 + +import "errors" + +const ( + ProfileVersion = "2.0.0" + MaxRecordBytes = 1 << 20 +) + +var ( + ...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091453.501305000Z.txt
+      command_sha256: 43092a21d7decbb9be5849fcc507ddbff87a2ec91202f94b6dad67cd74c7d135
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/sessionv2/types.go +package sessionv2 + +import "errors" + +const ( + ProfileVersion = "2.0.0" + MaxRecordBytes = 1 << 20 +) + +var ( + ...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-50
+      timestamp: "2026-09-13T09:14:53.501305000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/sessionv2/reducer.go +package sessionv2 + +import ( + "crypto/sha256" + "encoding/hex" + "fmt" + "sort" + "strings" +) + +func Reduce(st...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091702.062321000Z.txt
+      command_sha256: 5721ac09f0719d05f1262c9178c1bb14194b2885b644f7974910e00a5a97104b
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/sessionv2/reducer.go +package sessionv2 + +import ( + "crypto/sha256" + "encoding/hex" + "fmt" + "sort" + "strings" +) + +func Reduce(st...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-50
+      timestamp: "2026-09-13T09:17:02.062321000Z"
+    - command: gofmt -w internal/sessionv2 && go test ./internal/sessionv2
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091706.970572000Z.txt
+      command_sha256: fb8a0f6317e567a785c03b978d883d984266c90c97c5a86bc85d1c9fd4c1a53f
+      command_summary: gofmt -w internal/sessionv2 && go test ./internal/sessionv2
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-50
+      timestamp: "2026-09-13T09:17:06.970572000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: spec/small/v2.0.0/schemas/profile.schema.json +{ + "$schema": "https://json-schema.org/draft/2020-12/schema", + "$id": "https://smallprotocol.dev...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091747.407396000Z.txt
+      command_sha256: 496e4c3aba69da6bd11cfe8275bec72b4ce9ee9ae4b71493fa7f08c517482213
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: spec/small/v2.0.0/schemas/profile.schema.json +{ + "$schema": "https://json-schema.org/draft/2020-12/schema", + "$id": "https://smallprotocol.dev...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-50
+      timestamp: "2026-09-13T09:17:47.407396000Z"
+    - command: gofmt -w internal/sessionv2 && go test ./internal/sessionv2 && go test ./internal/small ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091754.047505000Z.txt
+      command_sha256: 636c570744eaaf0c9531661c0f9c8c4de67ec777ce23213337e13436d2c13db3
+      command_summary: gofmt -w internal/sessionv2 && go test ./internal/sessionv2 && go test ./internal/small ./internal/commands
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-50
+      timestamp: "2026-09-13T09:17:54.047505000Z"
+    - evidence: Accepted ADR 0001 and normative v2.0.0 specification before code. Added strict canonical JSON decoding, immutable exclusive-create session/event/receipt storage, digest and graph validation, deterministic frontier/reducer, semantic task/mode/ownership conflicts, and strict conflict gating. go test ./internal/sessionv2 plus v1 focused suites pass.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-50
+      timestamp: "2026-09-13T09:18:00.064974000Z"
+    - evidence: Started solo-default mode and explicit session lifecycle CLI implementation on the validated v2 storage engine.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-51
+      timestamp: "2026-09-13T09:18:00.487090000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/sessionv2/lifecycle.go +package sessionv2 + +import ( + "fmt" + "os" + "path/filepath" + "sort" + "strings" + "time" + + "github.com/jus...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091927.918022000Z.txt
+      command_sha256: 54c8dad2005d4db026825ed9a77f746705d8e0555c3b6a9b1430414734ef5592
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/sessionv2/lifecycle.go +package sessionv2 + +import ( + "fmt" + "os" + "path/filepath" + "sort" + "strings" + "time" + + "github.com/jus...'
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-51
+      timestamp: "2026-09-13T09:19:27.918022000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/types.go @@ - ClosedSessions map[string]bool `json:"closed_sessions,omitempty"` + ClosedSessions map[string]bool `json:"clo...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T091949.219447000Z.txt
+      command_sha256: 81cd7afcbfb9c0c7bbbc791f5fb6a928e3f61882d8d06111ab28471b9f72f838
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/types.go @@ - ClosedSessions map[string]bool `json:"closed_sessions,omitempty"` + ClosedSessions map[string]bool `json:"clo...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-51
+      timestamp: "2026-09-13T09:19:49.219447000Z"
+    - command: gofmt -w internal/sessionv2 && go test ./internal/sessionv2
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092119.636222000Z.txt
+      command_sha256: fb8a0f6317e567a785c03b978d883d984266c90c97c5a86bc85d1c9fd4c1a53f
+      command_summary: gofmt -w internal/sessionv2 && go test ./internal/sessionv2
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-51
+      timestamp: "2026-09-13T09:21:19.636222000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/small/constants.go @@ const ProtocolVersion = "1.0.0" + +var SupportedProtocolVersions = []string{ProtocolVersion, "2.0.0"} *** Updat...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092241.238400000Z.txt
+      command_sha256: 464e196eef7bcefcc6fab44d00165783f18b9a0264987a81794342584d9b4021
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/small/constants.go @@ const ProtocolVersion = "1.0.0" + +var SupportedProtocolVersions = []string{ProtocolVersion, "2.0.0"} *** Updat...'
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-51
+      timestamp: "2026-09-13T09:22:41.238400000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/small/version.go @@ const ProtocolVersion = "1.0.0" + +var SupportedProtocolVersions = []string{ProtocolVersion, "2.0.0"} *** Update ...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092350.660803000Z.txt
+      command_sha256: ffbfde581b87fd64212212de306f0a8b9de216f60f8e3a8c2c311e078cc797ce
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/small/version.go @@ const ProtocolVersion = "1.0.0" + +var SupportedProtocolVersions = []string{ProtocolVersion, "2.0.0"} *** Update ...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-51
+      timestamp: "2026-09-13T09:23:50.660803000Z"
+    - command: gofmt -w internal/commands/session_v2.go internal/commands/mode_v2.go internal/commands/root.go internal/commands/version.go internal/small/version.go internal/sessionv2/lifecycle.go && go test ./i...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092403.656884000Z.txt
+      command_sha256: 5943bd692e73e4f98926fa38cbfbcb5f765d2292df2aa77caaa207edaf5135b7
+      command_summary: gofmt -w internal/commands/session_v2.go internal/commands/mode_v2.go internal/commands/root.go internal/commands/version.go internal/small/version.go internal/sessionv2/lifecycle.go && go test ./i...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-51
+      timestamp: "2026-09-13T09:24:03.656884000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/lifecycle.go @@ func Initialize(baseDir string, profile Profile, intent, constraints []byte) error { + if profile.Mode == "...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092455.511838000Z.txt
+      command_sha256: 20655e547a484c38de5948ad06783bcb820babc185668ff787d4a337b3e87c44
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/lifecycle.go @@ func Initialize(baseDir string, profile Profile, intent, constraints []byte) error { + if profile.Mode == "...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-51
+      timestamp: "2026-09-13T09:24:55.511838000Z"
+    - command: gofmt -w internal/sessionv2/lifecycle.go internal/sessionv2/lifecycle_test.go internal/commands/mode_v2.go && go test ./internal/sessionv2 ./internal/commands ./internal/small && go build -o ./bin/...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092508.366539000Z.txt
+      command_sha256: 4d9ffccfe5b70e3495e98569bea9435bbfa99cacb79715abc86bef67881590c7
+      command_summary: gofmt -w internal/sessionv2/lifecycle.go internal/sessionv2/lifecycle_test.go internal/commands/mode_v2.go && go test ./internal/sessionv2 ./internal/commands ./internal/small && go build -o ./bin/...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-51
+      timestamp: "2026-09-13T09:25:08.366539000Z"
+    - evidence: Implemented default-solo session lifecycle, explicit takeover/resume/close, CAS-protected mode changes, v1/v2 version advertisement, and command surface. Verified go test ./internal/sessionv2 ./internal/commands ./internal/small and source CLI strict check.
+      notes: Solo remains default; collaborative mode requires an explicit mode set event. Session ids are opaque and local active-session selection is untracked cache state.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-51
+      timestamp: "2026-09-13T09:25:21.800609000Z"
+    - evidence: Started reconciliation, explicit resolution, v1 migration, and v2 strict/status integration.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:25:22.124353000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(modeCmd()) + rootCmd.AddCommand(reconcileCmd()) *** Update File: internal/sessionv2/reducer.go...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092646.432855000Z.txt
+      command_sha256: 3d8926b27ad2898db5026c4c59a4489b88f2534c58af218efe53009ee77c85b7
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(modeCmd()) + rootCmd.AddCommand(reconcileCmd()) *** Update File: internal/sessionv2/reducer.go...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:26:46.432855000Z"
+    - command: gofmt -w internal/commands/reconcile_v2.go internal/sessionv2/reducer.go internal/commands/root.go && go test ./internal/sessionv2 ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092656.505730000Z.txt
+      command_sha256: 723a66d4314845825010bd578d9c690d6569d0692f1ec618431dc0ce96400796
+      command_summary: gofmt -w internal/commands/reconcile_v2.go internal/sessionv2/reducer.go internal/commands/root.go && go test ./internal/sessionv2 ./internal/commands
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:26:56.505730000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/reconcile_v2.go @@ - "encoding/json" "fmt" *** End Patch PATCH'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092702.212406000Z.txt
+      command_sha256: 33222b28171d291e233037b2dc1855918d9a1d595ec1f36cb3d0413a5152f798
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/reconcile_v2.go @@ - "encoding/json" "fmt" *** End Patch PATCH'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:27:02.212406000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/migratev2/migrate.go +package migratev2 + +import ( + "crypto/sha256" + "encoding/hex" + "encoding/json" + "fmt" + "io/fs" + "os" + "pat...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092915.091078000Z.txt
+      command_sha256: 5564432123a44f5c7b062153bdbbc3f68501987a3e4307368d0b0e66667d3f4c
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/migratev2/migrate.go +package migratev2 + +import ( + "crypto/sha256" + "encoding/hex" + "encoding/json" + "fmt" + "io/fs" + "os" + "pat...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:29:15.091078000Z"
+    - command: gofmt -w internal/migratev2/migrate.go internal/commands/reconcile_v2.go && go test ./internal/migratev2 ./internal/sessionv2 ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T092926.235084000Z.txt
+      command_sha256: a3401b3e78a7c37f7f1b3375624e91f11916695f28ad5525ed21e4e51cd06093
+      command_summary: gofmt -w internal/migratev2/migrate.go internal/commands/reconcile_v2.go && go test ./internal/migratev2 ./internal/sessionv2 ./internal/commands
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:29:26.235084000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(reconcileCmd()) + rootCmd.AddCommand(migrateCmd()) *** Add File: internal/commands/migrate_v2....'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093007.521476000Z.txt
+      command_sha256: 26541e79f157485f7eddf034b5389b45d2548ff74ebb566a319e20c93c6361e0
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(reconcileCmd()) + rootCmd.AddCommand(migrateCmd()) *** Add File: internal/commands/migrate_v2....'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:30:07.521476000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/migratev2/migrate_test.go +package migratev2 + +import ( + "bytes" + "errors" + "os" + "path/filepath" + "testing" + + "github.com/justy...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093057.689479000Z.txt
+      command_sha256: e247535b0c0938bcfb78b1c9964953e2abdd77099b6f3dbee22e32ba64366a4a
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/migratev2/migrate_test.go +package migratev2 + +import ( + "bytes" + "errors" + "os" + "path/filepath" + "testing" + + "github.com/justy...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:30:57.689479000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/store_test.go @@ import ( + "errors" @@ - b, _, err := StartSession(base, SessionStartOptions{ToolVersion: "test"}); if err...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093116.016366000Z.txt
+      command_sha256: c0f34b517a48825138f6c4d5ea20a711f6ccbc4fb4af8c63286b671bd8b2bd86
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/store_test.go @@ import ( + "errors" @@ - b, _, err := StartSession(base, SessionStartOptions{ToolVersion: "test"}); if err...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:31:16.016366000Z"
+    - command: gofmt -w internal/migratev2/migrate_test.go internal/sessionv2/store_test.go internal/commands/migrate_v2.go internal/commands/status.go internal/commands/check.go internal/commands/root.go && go t...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093123.529132000Z.txt
+      command_sha256: 26242ce8d4d73ee32e3c97b0bed3ae6dc0fde73a91a2d7c80d656c0aafe6ebd2
+      command_summary: gofmt -w internal/migratev2/migrate_test.go internal/sessionv2/store_test.go internal/commands/migrate_v2.go internal/commands/status.go internal/commands/check.go internal/commands/root.go && go t...
+      evidence:
+        exit_code: 2
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:31:23.529132000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/store_test.go @@ - left := Event{SmallVersion: ProfileVersion, ProjectID: profile.ProjectID, LineageID: profile.LineageID, ...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093141.256318000Z.txt
+      command_sha256: f64de61ed9e17d19b4a08912435e73704ba8d8d20ea67785f1555ae4f5016a2d
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/store_test.go @@ - left := Event{SmallVersion: ProfileVersion, ProjectID: profile.ProjectID, LineageID: profile.LineageID, ...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:31:41.256318000Z"
+    - command: gofmt -w internal/migratev2/migrate_test.go internal/sessionv2/store_test.go internal/commands/migrate_v2.go internal/commands/status.go internal/commands/check.go internal/commands/root.go && go t...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093153.080055000Z.txt
+      command_sha256: 26242ce8d4d73ee32e3c97b0bed3ae6dc0fde73a91a2d7c80d656c0aafe6ebd2
+      command_summary: gofmt -w internal/migratev2/migrate_test.go internal/sessionv2/store_test.go internal/commands/migrate_v2.go internal/commands/status.go internal/commands/check.go internal/commands/root.go && go t...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:31:53.080055000Z"
+    - command: gofmt -w internal/commands internal/migratev2 internal/sessionv2 && go test ./internal/migratev2 ./internal/sessionv2 ./internal/commands && go build -o ./bin/small ./cmd/small
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093225.475397000Z.txt
+      command_sha256: 4e12bbb59028d27b7b1ce808d87655a025470d5e0fa9cb20afd55ad1577f3c26
+      command_summary: gofmt -w internal/commands internal/migratev2 internal/sessionv2 && go test ./internal/migratev2 ./internal/sessionv2 ./internal/commands && go build -o ./bin/small ./cmd/small
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:32:25.475397000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/handoff.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/ses...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093246.322132000Z.txt
+      command_sha256: 7936dd02e0c21129ef8093fd322229f9ecd6878fa9e86ca28dd78e2332f3eb75
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/handoff.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/ses...'
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:32:46.322132000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/handoff.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/ses...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093306.774840000Z.txt
+      command_sha256: eae7cc7ef98ddec54918123dd6d5c41076b99b42da99abcf863f3ff5e355b216
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/handoff.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/ses...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:33:06.774840000Z"
+    - command: gofmt -w internal/commands/handoff.go && go test ./internal/migratev2 ./internal/sessionv2 ./internal/commands && go build -o ./bin/small ./cmd/small
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093324.326836000Z.txt
+      command_sha256: 373c27c2bf8193a706c3ec4bd9b55607e3111069e97eb183b8f4a9f433f57857
+      command_summary: gofmt -w internal/commands/handoff.go && go test ./internal/migratev2 ./internal/sessionv2 ./internal/commands && go build -o ./bin/small ./cmd/small
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:33:24.326836000Z"
+    - command: GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./cmd/small
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093342.757192000Z.txt
+      command_sha256: 253800a66f6328ecb301cf862f5cd1136f1998f4e6331c4e70f5663a912969c8
+      command_summary: GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./cmd/small
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-52
+      timestamp: "2026-09-13T09:33:42.757192000Z"
+    - evidence: Implemented deterministic reducer reconciliation with explicit full-head stale-safe resolutions, v2 strict/status/handoff gating, and preview/apply v1 migration with explicit namespace, solo default, byte-for-byte originals, deterministic mappings, idempotence, stale refusal, and fault recovery. Focused suites and source strict check passed.
+      notes: Migration remains explicit; unmigrated v1 behavior is unchanged. Recovery retains a local legacy backup under .small-cache.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-52
+      timestamp: "2026-09-13T09:33:43.737203000Z"
+    - evidence: Started v2 plan/progress/apply/checkpoint integration, bounded resume, receipts, and runstore support.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:33:44.049105000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/lifecycle.go @@ func AppendEvent(baseDir, sessionID, kind string, payload map[string]any, options AppendOptions) (Event, er...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093455.919310000Z.txt
+      command_sha256: 4cc55922a1f06d5673be9ac558c3a520b9a8eb96473edc795bfd94ace9df4720
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/lifecycle.go @@ func AppendEvent(baseDir, sessionID, kind string, payload map[string]any, options AppendOptions) (Event, er...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:34:55.919310000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/types.go @@ Acceptance []string `json:"acceptance,omitempty"` + Dependencies []string `json:"dependencies,omitempty"` *** U...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093511.603046000Z.txt
+      command_sha256: c3963478568954190f820efe3c5feb78766fc62b4b931c88b22ec209d2f6dc2a
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/types.go @@ Acceptance []string `json:"acceptance,omitempty"` + Dependencies []string `json:"dependencies,omitempty"` *** U...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:35:11.603046000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/plan.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/sessio...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093551.176098000Z.txt
+      command_sha256: 6e22a0a9fae7cf3a4eb857b645aa49bcaa2ff9f85afd597d19e084f4c10674a0
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/plan.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/sessio...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:35:51.176098000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/v2_operations.go +package commands + +import ( + "crypto/sha256" + "encoding/hex" + "fmt" + "os" + "os/exec" + "sort" + "string...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093713.143065000Z.txt
+      command_sha256: ca943581ec7998225d8109642ffd6811761a374ac5619ee6d7c20daa35efd506
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/v2_operations.go +package commands + +import ( + "crypto/sha256" + "encoding/hex" + "fmt" + "os" + "os/exec" + "sort" + "string...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:37:13.143065000Z"
+    - command: gofmt -w internal/commands internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093724.571784000Z.txt
+      command_sha256: ba33b7e708820a336f5d3b8c7ab35ee51cfece1c49f7947346cb32e26b9fdef5
+      command_summary: gofmt -w internal/commands internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:37:24.571784000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(migrateCmd()) + rootCmd.AddCommand(evidenceCmd()) *** Add File: internal/sessionv2/evidence.go...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093811.483225000Z.txt
+      command_sha256: 28efce1502a760e28854fd9f037c2c89d3b3ed892a2959394ae6ebdb7376baab
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ rootCmd.AddCommand(migrateCmd()) + rootCmd.AddCommand(evidenceCmd()) *** Add File: internal/sessionv2/evidence.go...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:38:11.483225000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/reconstruct.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093851.919153000Z.txt
+      command_sha256: 0f46c4358fa574b6b429b9e4104f4d8e6e9583d020e540e70ad0eb1465697307
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/reconstruct.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:38:51.919153000Z"
+    - command: gofmt -w internal/commands internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093858.756829000Z.txt
+      command_sha256: ba33b7e708820a336f5d3b8c7ab35ee51cfece1c49f7947346cb32e26b9fdef5
+      command_summary: gofmt -w internal/commands internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:38:58.756829000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/reconstruct.go @@ "path/filepath" + "sort" *** End Patch PATCH'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093903.201984000Z.txt
+      command_sha256: 529f4bab8c86b9051e112d8c2780d5bbef3b9f48dd43625fd6a15a2b4d317816
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/reconstruct.go @@ "path/filepath" + "sort" *** End Patch PATCH'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:39:03.201984000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/v2_operations_test.go +package commands + +import ( + "os" + "path/filepath" + "testing" + + "github.com/justyn-clark/small-pro...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093937.515495000Z.txt
+      command_sha256: 2f0c974fa900d4800bc3612a7696987a5fe26e6c043a82ec5c38aebfb8a03483
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/commands/v2_operations_test.go +package commands + +import ( + "os" + "path/filepath" + "testing" + + "github.com/justyn-clark/small-pro...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:39:37.515495000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/lifecycle_test.go @@ "testing" + + "github.com/justyn-clark/small-protocol/internal/small" ) *** End Patch PATCH'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093942.949071000Z.txt
+      command_sha256: 465240d095f7b3b24846660ca0cd63ec6f654155132d929e2755d826497ab3ac
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/lifecycle_test.go @@ "testing" + + "github.com/justyn-clark/small-protocol/internal/small" ) *** End Patch PATCH'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:39:42.949071000Z"
+    - command: gofmt -w internal/sessionv2 internal/commands && go test ./internal/sessionv2 ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T093955.484156000Z.txt
+      command_sha256: d1c4db48d7828e74df5f602a48937a3df515c8a88e717c6965c702a94262b81f
+      command_summary: gofmt -w internal/sessionv2 internal/commands && go test ./internal/sessionv2 ./internal/commands
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:39:55.484156000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore.go @@ "io" + "io/fs" @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-pr...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094017.699765000Z.txt
+      command_sha256: 637313d322739c3511013a53293b7321898e5ae64846a4f9f4286d61836a6ba0
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore.go @@ "io" + "io/fs" @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-pr...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:40:17.699765000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore.go @@ func ComputeArtifactDigests(baseDir string) (string, map[string]string, error) { @@ } + +func writeV2Snapshot...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094040.423786000Z.txt
+      command_sha256: 065f9a4bf9786e1ddb48f6d1ab35a215743dd52291ac72328a459522a893adca
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore.go @@ func ComputeArtifactDigests(baseDir string) (string, map[string]string, error) { @@ } + +func writeV2Snapshot...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:40:40.423786000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore_test.go @@ import ( @@ "testing" + + "github.com/justyn-clark/small-protocol/internal/sessionv2" @@ } + +func TestV...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094054.053025000Z.txt
+      command_sha256: f714eb89e1ec22679d8e3e8707ba6107eb83de45fc4cf117fa945bbbc71514ae
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore_test.go @@ import ( @@ "testing" + + "github.com/justyn-clark/small-protocol/internal/sessionv2" @@ } + +func TestV...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:40:54.053025000Z"
+    - command: gofmt -w internal/runstore internal/sessionv2 internal/commands && go test ./internal/sessionv2 ./internal/commands ./internal/runstore
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094111.279329000Z.txt
+      command_sha256: 35bbfaa835cd7a2f613e3852d3902bb5fba3d45fd6059feb86fe6d871b7405be
+      command_summary: gofmt -w internal/runstore internal/sessionv2 internal/commands && go test ./internal/sessionv2 ./internal/commands ./internal/runstore
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:41:11.279329000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/health.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/sess...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094133.556082000Z.txt
+      command_sha256: eaf19ed29aa1067e442456c2e26f820b254beb0ab9b9a4b8171c5e3f5886ad91
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/health.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/sess...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:41:33.556082000Z"
+    - command: gofmt -w internal/commands internal/sessionv2 internal/runstore && go test ./internal/sessionv2 ./internal/commands ./internal/runstore ./internal/migratev2
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094153.345968000Z.txt
+      command_sha256: f1e2056c1f112883709fb7b786179b10f035751d1cbc29fcea82faa8140a0a5e
+      command_summary: gofmt -w internal/commands internal/sessionv2 internal/runstore && go test ./internal/sessionv2 ./internal/commands ./internal/runstore ./internal/migratev2
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:41:53.345968000Z"
+    - command: GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./cmd/small
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094205.795093000Z.txt
+      command_sha256: 253800a66f6328ecb301cf862f5cd1136f1998f4e6331c4e70f5663a912969c8
+      command_summary: GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./cmd/small
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-53
+      timestamp: "2026-09-13T09:42:05.795093000Z"
+    - evidence: Implemented v2 session-aware plan/progress/apply/checkpoint operations, transactional command/checkpoint receipts, portable evidence save/verify with tamper and symlink safety, bounded resume packets with explicit truncation counts/bytes, v2 health identity, and full-tree run snapshots with tamper detection. Focused suites passed.
+      notes: Apply command success records execution evidence without accepting the task; checkpoint remains the explicit acceptance boundary.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-53
+      timestamp: "2026-09-13T09:42:07.539234000Z"
+    - evidence: Started documentation, performance measurements, compatibility exercises, and local two-clone proof.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:42:08.231797000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/reducer.go @@ - ancestors := buildAncestors(ordered) + ancestry := newAncestryIndex(store.Events) @@ - if semanticDefinitio...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094353.406788000Z.txt
+      command_sha256: 451d9fe7248001953873b6e3d1922dded6c3142caf455811cb8b2e99ae223714
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/reducer.go @@ - ancestors := buildAncestors(ordered) + ancestry := newAncestryIndex(store.Events) @@ - if semanticDefinitio...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:43:53.406788000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/sessionv2/performance_test.go +package sessionv2 + +import ( + "fmt" + "os" + "runtime" + "strconv" + "testing" + "time" +) + +// TestRe...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094411.400270000Z.txt
+      command_sha256: 232424a5904b497cc65bb3b3f5ade1d3c5230b198e1ac60beacb698cc12b59d7
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: internal/sessionv2/performance_test.go +package sessionv2 + +import ( + "fmt" + "os" + "runtime" + "strconv" + "testing" + "time" +) + +// TestRe...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:44:11.400270000Z"
+    - command: gofmt -w internal/sessionv2 && go test ./internal/sessionv2
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094419.164110000Z.txt
+      command_sha256: fb8a0f6317e567a785c03b978d883d984266c90c97c5a86bc85d1c9fd4c1a53f
+      command_summary: gofmt -w internal/sessionv2 && go test ./internal/sessionv2
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:44:19.164110000Z"
+    - command: SMALL_PERF_EVENTS=10000 go test -run TestReducerScale -v ./internal/sessionv2
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094419.926851000Z.txt
+      command_sha256: e2916cbfafdfd16769b5947e71315d956d0fe88ca1fb30243188bfff62bdfa0e
+      command_summary: SMALL_PERF_EVENTS=10000 go test -run TestReducerScale -v ./internal/sessionv2
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:44:19.926851000Z"
+    - command: SMALL_PERF_EVENTS=100000 go test -run TestReducerScale -v ./internal/sessionv2
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094421.463903000Z.txt
+      command_sha256: 9f469db670b9342a41a18d71996a75492658926be7c9f124376c81293f0d1dba
+      command_summary: SMALL_PERF_EVENTS=100000 go test -run TestReducerScale -v ./internal/sessionv2
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:44:21.463903000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Delete File: docs/multi-machine-considerations.md *** Add File: docs/multi-machine-considerations.md +# Multi-machine and multi-session operation + +This n...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094542.513943000Z.txt
+      command_sha256: 116d68b3aeab0de516074831bb65ee1c56674a5ff0fa4e02699574f2fbfd568e
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Delete File: docs/multi-machine-considerations.md *** Add File: docs/multi-machine-considerations.md +# Multi-machine and multi-session operation + +This n...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:45:42.513943000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/evidence_v2.go @@ cmd.AddCommand(evidenceSaveCmd(), evidenceVerifyCmd()) + cmd.AddCommand(evidenceUnavailableCmd()) @@ } + +...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094558.977799000Z.txt
+      command_sha256: e2e2029e41d29c63a59e695320d2484674fbaca2a15a9e8898e44134bac444ba
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/evidence_v2.go @@ cmd.AddCommand(evidenceSaveCmd(), evidenceVerifyCmd()) + cmd.AddCommand(evidenceUnavailableCmd()) @@ } + +...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:45:58.977799000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: scripts/proof-multi-session.sh +#!/usr/bin/env bash +set -euo pipefail + +BIN="${BIN_PATH:-./bin/small}" +case "$BIN" in /*) ;; *) BIN="$(pwd)/${...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094748.258318000Z.txt
+      command_sha256: d541b0ae7c9c83783c056ca7900ae48ec2d578a4d7b7c51a8f99a015757c4e2f
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Add File: scripts/proof-multi-session.sh +#!/usr/bin/env bash +set -euo pipefail + +BIN="${BIN_PATH:-./bin/small}" +case "$BIN" in /*) ;; *) BIN="$(pwd)/${...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:47:48.258318000Z"
+    - command: chmod +x scripts/proof-multi-session.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094748.622186000Z.txt
+      command_sha256: 8ee77470c641f9a87f994e789221c09840ed7b5d3aff8b9c38846e9c7f6515b3
+      command_summary: chmod +x scripts/proof-multi-session.sh
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:47:48.622186000Z"
+    - command: gofmt -w internal/commands internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands ./internal/migratev2 ./internal/runstore && GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./c...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094755.172953000Z.txt
+      command_sha256: fc9b04ef2dd7a659ba31357b5bbc0654256b5c37ba19d83eeabb050a23fa405d
+      command_summary: gofmt -w internal/commands internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands ./internal/migratev2 ./internal/runstore && GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./c...
+      evidence:
+        exit_code: 2
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:47:55.172953000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/templates.go @@ -This generated block describes v1 files. If `.small/profile.json` declares +This generated block describes ...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094806.809154000Z.txt
+      command_sha256: b43730846527c5cd124e8a301ac9b0c6b6703d036db2409255761a2c92d8283a
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/templates.go @@ -This generated block describes v1 files. If `.small/profile.json` declares +This generated block describes ...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:48:06.809154000Z"
+    - command: gofmt -w internal/commands internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands ./internal/migratev2 ./internal/runstore && GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./c...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094838.787240000Z.txt
+      command_sha256: fc9b04ef2dd7a659ba31357b5bbc0654256b5c37ba19d83eeabb050a23fa405d
+      command_summary: gofmt -w internal/commands internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands ./internal/migratev2 ./internal/runstore && GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./c...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:48:38.787240000Z"
+    - command: scripts/proof-multi-session.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094847.922485000Z.txt
+      command_sha256: c30a4a9a5ee64045355dd12487cda08de6e6c08186161b7b99438199660d4260
+      command_summary: scripts/proof-multi-session.sh
+      evidence:
+        exit_code: 2
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:48:47.922485000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/check.go @@ artifactsDir := resolveArtifactsDir(dir) p := currentPrinter() - if scope != workspace.ScopeAny { + isV2 := sess...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094900.336789000Z.txt
+      command_sha256: fd588ca5ab44034aefeb87769dbbd13d94a5ba0938dbb8a073bdba15cca3964d
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/check.go @@ artifactsDir := resolveArtifactsDir(dir) p := currentPrinter() - if scope != workspace.ScopeAny { + isV2 := sess...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:49:00.336789000Z"
+    - command: gofmt -w internal/commands/check.go && go test ./internal/commands && GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./cmd/small
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094914.551888000Z.txt
+      command_sha256: 108b73fbf9060fe4f526027720c4af51fb5eea3fd97e02566e81d95859d02a11
+      command_summary: gofmt -w internal/commands/check.go && go test ./internal/commands && GOCACHE=/tmp/small-go-cache go build -o ./bin/small ./cmd/small
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:49:14.551888000Z"
+    - command: scripts/proof-multi-session.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T094934.431813000Z.txt
+      command_sha256: c30a4a9a5ee64045355dd12487cda08de6e6c08186161b7b99438199660d4260
+      command_summary: scripts/proof-multi-session.sh
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:49:34.431813000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/check.go @@ if strict && len(state.Conflicts) > 0 { result.Verify.Status = "failed" for _, conflict := range state.Conflicts...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T095000.754827000Z.txt
+      command_sha256: f147fba21674a385630a3e2c3982bfab9fb5cd24a08019adb2f6e8cf3c7fe7f4
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/check.go @@ if strict && len(state.Conflicts) > 0 { result.Verify.Status = "failed" for _, conflict := range state.Conflicts...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:50:00.754827000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: Makefile @@ @mkdir -p internal/specembed/schemas @cp spec/small/v1.0.0/schemas/*.schema.json internal/specembed/schemas/ + @mkdir -p internal/...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T095025.560997000Z.txt
+      command_sha256: c5a445c5249f5d570c2861cfab81609dea01a80be4bfeda3e49b6b652881a5d5
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: Makefile @@ @mkdir -p internal/specembed/schemas @cp spec/small/v1.0.0/schemas/*.schema.json internal/specembed/schemas/ + @mkdir -p internal/...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:50:25.560997000Z"
+    - command: mkdir -p internal/specembed/schemas/v2 && cp spec/small/v2.0.0/schemas/*.schema.json internal/specembed/schemas/v2/
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T095025.767418000Z.txt
+      command_sha256: e9d4da87269c5cfabda1be8527630ca1644d7233df99376c724a97c5dde04efe
+      command_summary: mkdir -p internal/specembed/schemas/v2 && cp spec/small/v2.0.0/schemas/*.schema.json internal/specembed/schemas/v2/
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:50:25.767418000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ "path/filepath" "strings" @@ func Execute() error { printBannerIfEligible(os.Args) - - return newRootCmd().Execut...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T095054.274088000Z.txt
+      command_sha256: ca39641cbea284a77b4faf5b15c9a73c7047f829c3650c5765a23873bfeb2117
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ "path/filepath" "strings" @@ func Execute() error { printBannerIfEligible(os.Args) - - return newRootCmd().Execut...'
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:50:54.274088000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/sessio...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T095114.481047000Z.txt
+      command_sha256: 5c17f9246d3bf5008695e8e322455a8729cb7d3e64de86538daa6d72e4efbe72
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/commands/root.go @@ "github.com/justyn-clark/small-protocol/internal/small" + "github.com/justyn-clark/small-protocol/internal/sessio...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:51:14.481047000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/reducer.go @@ claims := map[string][]Event{} + sessionTakeovers := map[string][]Event{} @@ case "ownership_claimed", "owner...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T095214.269640000Z.txt
+      command_sha256: 38904d21e0264e2093cdb36991c81cb45893a0d4b9e52474692aafedd61c4f4e
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/sessionv2/reducer.go @@ claims := map[string][]Event{} + sessionTakeovers := map[string][]Event{} @@ case "ownership_claimed", "owner...'
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:52:14.269640000Z"
+    - command: gofmt -w internal/sessionv2 internal/commands internal/specembed && go test ./internal/sessionv2 ./internal/commands ./internal/specembed ./internal/migratev2 ./internal/runstore
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T095358.975802000Z.txt
+      command_sha256: e81d2f016d97092709984a376e14bbc4a5985d5f2d11d820c615a67e9110db74
+      command_summary: gofmt -w internal/sessionv2 internal/commands internal/specembed && go test ./internal/sessionv2 ./internal/commands ./internal/specembed ./internal/migratev2 ./internal/runstore
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:53:58.975802000Z"
+    - command: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore.go @@ func LoadSnapshot(storeDir, replayID string) (*Snapshot, error) { @@ - handoffInfo, err := readHandoff(filepa...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T095759.808230000Z.txt
+      command_sha256: 765b8a2077421e5800ba66adba4d9e3b6c04470a4a7135ad1be8a5394c62668e
+      command_summary: 'apply_patch <<''PATCH'' *** Begin Patch *** Update File: internal/runstore/runstore.go @@ func LoadSnapshot(storeDir, replayID string) (*Snapshot, error) { @@ - handoffInfo, err := readHandoff(filepa...'
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:57:59.808230000Z"
+    - command: apply_patch < /private/tmp/task54-runstore.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T095938.940648000Z.txt
+      command_sha256: d8227315f750483ee4199c11a8c9af4573ad99ec030b04aff9739ea856e6d05b
+      command_summary: apply_patch < /private/tmp/task54-runstore.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T09:59:38.940648000Z"
+    - command: apply_patch < /private/tmp/task54-archive-test.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100005.238461000Z.txt
+      command_sha256: d101536685c637a29bfb0b0b902e82eaf4757e3d65c89f7188c55a60fb5bb4f7
+      command_summary: apply_patch < /private/tmp/task54-archive-test.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:00:05.238461000Z"
+    - command: apply_patch < /private/tmp/task54-sync.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100025.097015000Z.txt
+      command_sha256: 2733072ba49e3fd23bb1db5b6d4a9651bab615e31e1386230415cc6200910b54
+      command_summary: apply_patch < /private/tmp/task54-sync.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:00:25.097015000Z"
+    - command: apply_patch < /private/tmp/task54-archive-default.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100104.879912000Z.txt
+      command_sha256: f6c8b615a9f97bd4d39289523e4376339c826d29fe31a83f93941a95e3d6ca02
+      command_summary: apply_patch < /private/tmp/task54-archive-default.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:01:04.879912000Z"
+    - command: apply_patch < /private/tmp/task54-policy.patch && gofmt -w internal/sessionv2 internal/migratev2 internal/commands && make sync-schemas && go test ./internal/sessionv2 ./internal/migratev2 ./intern...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100404.311451000Z.txt
+      command_sha256: 2d59c699b33ed23c34711e2777d2e2b2c219eb7ea5173b5e8baf01e5bf83eae4
+      command_summary: apply_patch < /private/tmp/task54-policy.patch && gofmt -w internal/sessionv2 internal/migratev2 internal/commands && make sync-schemas && go test ./internal/sessionv2 ./internal/migratev2 ./intern...
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:04:04.311451000Z"
+    - command: apply_patch < /private/tmp/task54-policy-doc.patch && gofmt -w internal/sessionv2 internal/migratev2 internal/commands && make sync-schemas && go test ./internal/sessionv2 ./internal/migratev2 ./in...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100449.851422000Z.txt
+      command_sha256: 18389a18829dad8a7e2a250457fd7c8eed5572da91ab43f89e7554d61c141eac
+      command_summary: apply_patch < /private/tmp/task54-policy-doc.patch && gofmt -w internal/sessionv2 internal/migratev2 internal/commands && make sync-schemas && go test ./internal/sessionv2 ./internal/migratev2 ./in...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:04:49.851422000Z"
+    - command: apply_patch < /private/tmp/task54-policy-tests.patch && gofmt -w internal/sessionv2 internal/commands && go test ./internal/sessionv2 ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100556.254785000Z.txt
+      command_sha256: 44a54c3b4017515088d550f2c9b6ee0cf3be4318ff95fcf295e760876f6045c6
+      command_summary: apply_patch < /private/tmp/task54-policy-tests.patch && gofmt -w internal/sessionv2 internal/commands && go test ./internal/sessionv2 ./internal/commands
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:05:56.254785000Z"
+    - command: apply_patch < /private/tmp/task54-root-test.patch && gofmt -w internal/sessionv2 internal/commands && go test ./internal/sessionv2 ./internal/commands
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100630.616368000Z.txt
+      command_sha256: b6c0efa1489e7446ada8bb044f349c971a16dfd52256b15bdb591004c733acd6
+      command_summary: apply_patch < /private/tmp/task54-root-test.patch && gofmt -w internal/sessionv2 internal/commands && go test ./internal/sessionv2 ./internal/commands
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:06:30.616368000Z"
+    - command: apply_patch < /private/tmp/task54-policy-test-fix.patch && gofmt -w internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands ./internal/migratev2 ./internal/runstore ./internal/specembed
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100654.081199000Z.txt
+      command_sha256: 72ba27f2fedc6839ba44a3d1a0aa30a87afcf1b3fcfa6fdfff0a49fee73361b3
+      command_summary: apply_patch < /private/tmp/task54-policy-test-fix.patch && gofmt -w internal/sessionv2 && go test ./internal/sessionv2 ./internal/commands ./internal/migratev2 ./internal/runstore ./internal/specembed
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:06:54.081199000Z"
+    - command: apply_patch < /private/tmp/task54-ceremony.patch && bash -n scripts/proof-multi-session.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100754.809256000Z.txt
+      command_sha256: f05b24a80fb0f73814549e7d34fe24613f5cf9a269c2aab25b3dd5fae2a42ec0
+      command_summary: apply_patch < /private/tmp/task54-ceremony.patch && bash -n scripts/proof-multi-session.sh
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:07:54.809256000Z"
+    - command: apply_patch < /private/tmp/task54-measurements-doc.patch && bash -n scripts/proof-multi-session.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100813.609516000Z.txt
+      command_sha256: 034f0e01a1e3084ae0b1490889a9b71a4dfdbf53682c0bc7d9a8b4eea31b691e
+      command_summary: apply_patch < /private/tmp/task54-measurements-doc.patch && bash -n scripts/proof-multi-session.sh
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:08:13.609516000Z"
+    - command: GOCACHE=/tmp/small-go-cache make small-build && SMALL_PROOF_DIR=/tmp/small-session-proof-final scripts/proof-multi-session.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100829.972958000Z.txt
+      command_sha256: dc3d9b7a4fd72ec708c7c2d463bd88cd26e1090b31d3b89ad25b5fa22cfb869f
+      command_summary: GOCACHE=/tmp/small-go-cache make small-build && SMALL_PROOF_DIR=/tmp/small-session-proof-final scripts/proof-multi-session.sh
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:08:29.972958000Z"
+    - command: apply_patch < /private/tmp/task54-ceremony-doc-final.patch && bash -n scripts/proof-multi-session.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100927.980886000Z.txt
+      command_sha256: bf8d3e52b835e8c2db991389fa75774fc060287ea7925b57b3c7db5bb96784dd
+      command_summary: apply_patch < /private/tmp/task54-ceremony-doc-final.patch && bash -n scripts/proof-multi-session.sh
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:09:27.980886000Z"
+    - command: apply_patch < /private/tmp/task54-cli-guide-policy.patch && bash -n scripts/proof-multi-session.sh && go test ./internal/sessionv2 ./internal/commands ./internal/runstore ./internal/migratev2 ./int...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100941.267785000Z.txt
+      command_sha256: 9d49a3c9b2efcd6792afcccd0f8f3355ade1d1dedaa1fd4d745a4dc5b008c34d
+      command_summary: apply_patch < /private/tmp/task54-cli-guide-policy.patch && bash -n scripts/proof-multi-session.sh && go test ./internal/sessionv2 ./internal/commands ./internal/runstore ./internal/migratev2 ./int...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:09:41.267785000Z"
+    - command: SMALL_PROOF_DIR=/tmp/small-session-proof-final2 scripts/proof-multi-session.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T100952.933324000Z.txt
+      command_sha256: ef96aa16a25c04a160bb5015cdc91c26e43c28d099a6401cdadbdb78fd2d23b4
+      command_summary: SMALL_PROOF_DIR=/tmp/small-session-proof-final2 scripts/proof-multi-session.sh
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:09:52.933324000Z"
+    - command: apply_patch < /private/tmp/task54-metric-values.patch && git diff --check && go test ./internal/sessionv2 ./internal/commands ./internal/runstore ./internal/migratev2 ./internal/specembed
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101011.777452000Z.txt
+      command_sha256: 7f2a4e6288da3d0ee0e41ac12668f1df33c2e68b651d289f037b6b3c0dc8e9b7
+      command_summary: apply_patch < /private/tmp/task54-metric-values.patch && git diff --check && go test ./internal/sessionv2 ./internal/commands ./internal/runstore ./internal/migratev2 ./internal/specembed
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-54
+      timestamp: "2026-09-13T10:10:11.777452000Z"
+    - evidence: 'Completed v2 documentation, schemas, policy transition, run snapshot/show/verify/checkout/archive coverage, reducer decision table, 10k/100k performance fixtures, and scripts/proof-multi-session.sh. Focused packages passed. Final local proof /tmp/small-session-proof-final2: v1 merge=1, semantic strict=1, conflicted handoff=1, evidence unavailable=1, stale mode=1, solo refusal=1, resolved strict=0, frontier 39641410dbf92c88c9c6aa2295fab99a839ceee73e637f5f08b15b29a2361b09. Ceremony: v1 1 action/3 tracked files/815 resume bytes; v2 1 action plus one-time session start/1 tracked file/10783 resume bytes; both obligations recovered.'
+      notes: Proof used only local CLI, Git, shell, disposable repos, and local Git identity; no network, global config, paid model, push to external remote, or deployment.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-54
+      timestamp: "2026-09-13T10:10:24.539582000Z"
+    - command: GOCACHE=/tmp/small-go-cache go test ./... && GOCACHE=/tmp/small-go-cache go vet ./... && make small-format-check && git diff --check
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101103.276186000Z.txt
+      command_sha256: 344ab6ddc7bc6b5af97a627945d2107b4788c68f0b625fa0ccc5b3f928a99d88
+      command_summary: GOCACHE=/tmp/small-go-cache go test ./... && GOCACHE=/tmp/small-go-cache go vet ./... && make small-format-check && git diff --check
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:11:03.276186000Z"
+    - command: GOCACHE=/tmp/small-go-cache go test -race ./...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101132.666121000Z.txt
+      command_sha256: 857a8e6e8314838b8591e2b8ca327000884b6eb1e4cd38f7f8f8ccf318027684
+      command_summary: GOCACHE=/tmp/small-go-cache go test -race ./...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:11:32.666121000Z"
+    - command: GOCACHE=/tmp/small-go-cache make small-build && diff -ru spec/small/v1.0.0/schemas internal/specembed/schemas --exclude=v2 && diff -ru spec/small/v2.0.0/schemas internal/specembed/schemas/v2 && ./b...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101141.248676000Z.txt
+      command_sha256: eaf806581851e745d04923aa061aa94a451fccdff4934276a15ad83d38be22ee
+      command_summary: GOCACHE=/tmp/small-go-cache make small-build && diff -ru spec/small/v1.0.0/schemas internal/specembed/schemas --exclude=v2 && diff -ru spec/small/v2.0.0/schemas internal/specembed/schemas/v2 && ./b...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:11:41.248676000Z"
+    - command: gitleaks dir . --no-banner --no-color --redact=100 --log-level warn
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101156.578759000Z.txt
+      command_sha256: 1ce57cbdacdb8f2efe209808778a902330779349700c7df198d7b4f6ab8860d3
+      command_summary: gitleaks dir . --no-banner --no-color --redact=100 --log-level warn
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:11:56.578759000Z"
+    - command: gitleaks dir . --no-banner --no-color --redact=100 --log-level error --report-format json --report-path /tmp/small-gitleaks.json || true; jq -r '.[] | [.RuleID,.File,.StartLine,.Description] | @tsv...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101203.575726000Z.txt
+      command_sha256: c4c1f4f69db38657ec991e90ffeeab065363b1cbcf5ba78205d36ad6d638e5e3
+      command_summary: gitleaks dir . --no-banner --no-color --redact=100 --log-level error --report-format json --report-path /tmp/small-gitleaks.json || true; jq -r '.[] | [.RuleID,.File,.StartLine,.Description] | @tsv...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:12:03.575726000Z"
+    - command: BASELINE=$(mktemp /tmp/small-gitleaks-baseline.XXXXXX.json); HEADTREE=$(mktemp -d /tmp/small-gitleaks-head.XXXXXX); git archive HEAD | tar -x -C "$HEADTREE"; gitleaks dir "$HEADTREE" --no-banner --...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101237.415234000Z.txt
+      command_sha256: 4c69102063fee97285f31606154df6ee69462bddc836ae1529de1ea4ffb14e91
+      command_summary: BASELINE=$(mktemp /tmp/small-gitleaks-baseline.XXXXXX.json); HEADTREE=$(mktemp -d /tmp/small-gitleaks-head.XXXXXX); git archive HEAD | tar -x -C "$HEADTREE"; gitleaks dir "$HEADTREE" --no-banner --...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:12:37.415234000Z"
+    - command: CANDIDATE=$(mktemp -d /tmp/small-protocol-candidate.XXXXXX); rsync -a --exclude=.git --exclude=.small-cache --exclude=.small-runs --exclude=.small-archive --exclude=bin ./ "$CANDIDATE"/; git -C "$C...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101313.530456000Z.txt
+      command_sha256: 4421a6a75b44494d2f42d4758d1131cae551145ad4bddd2b4d1a9af1a17b7803
+      command_summary: CANDIDATE=$(mktemp -d /tmp/small-protocol-candidate.XXXXXX); rsync -a --exclude=.git --exclude=.small-cache --exclude=.small-runs --exclude=.small-archive --exclude=bin ./ "$CANDIDATE"/; git -C "$C...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:13:13.530456000Z"
+    - command: apply_patch < /private/tmp/task55-lineage-tests.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands && git diff --check
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101421.070807000Z.txt
+      command_sha256: 0beb169caeb9f2a7847927d3326abf9ff7b0a283757748b0ed69051d843dcfbb
+      command_summary: apply_patch < /private/tmp/task55-lineage-tests.patch && gofmt -w internal/runstore internal/commands && go test ./internal/runstore ./internal/commands && git diff --check
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:14:21.070807000Z"
+    - command: GOCACHE=/tmp/small-go-cache go test ./... && GOCACHE=/tmp/small-go-cache go test -race ./... && GOCACHE=/tmp/small-go-cache go vet ./... && make small-format-check && git diff --check
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101446.443718000Z.txt
+      command_sha256: aa99c2004e059ec6ff3a0cab671ca26f73429af1de34715375e20da841896613
+      command_summary: GOCACHE=/tmp/small-go-cache go test ./... && GOCACHE=/tmp/small-go-cache go test -race ./... && GOCACHE=/tmp/small-go-cache go vet ./... && make small-format-check && git diff --check
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:14:46.443718000Z"
+    - command: CANDIDATE=$(mktemp -d /tmp/small-protocol-candidate-final.XXXXXX); rsync -a --exclude=.git --exclude=.small-cache --exclude=.small-runs --exclude=.small-archive --exclude=bin ./ "$CANDIDATE"/; git ...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260913T101515.581360000Z.txt
+      command_sha256: 0669da3f201d815da49900c73c00cc1904a1258d07bc99eae979d40e3ca14c23
+      command_summary: CANDIDATE=$(mktemp -d /tmp/small-protocol-candidate-final.XXXXXX); rsync -a --exclude=.git --exclude=.small-cache --exclude=.small-runs --exclude=.small-archive --exclude=bin ./ "$CANDIDATE"/; git ...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-55
+      timestamp: "2026-09-13T10:15:15.581360000Z"
+    - evidence: 'Release gates passed on Go 1.25.3 darwin/arm64: go test ./..., go test -race ./..., go vet ./..., make small-format-check, make small-build, v1/v2 schema byte synchronization, v1 examples validate/lint, built CLI selftest, git diff --check, and focused lineage preservation tests. Gitleaks 8.30.0 found zero new findings against a HEAD baseline; the sole raw whole-tree finding is the pre-existing synthetic API-key test fixture at internal/small/invariants_test.go:1515. Clean isolated candidate /tmp/small-protocol-candidate-final.QoA9xx committed as 60c44cbee679ea284462a1a8138f882563c1c845, tree 63c3bff3e36907ee03145509111a4343615675fd, 252 files; scripts/verify.sh passed all 19 steps and candidate git status remained clean.'
+      notes: Final strict check and narrative-preserving handoff follow this acceptance checkpoint. No external network, paid model, deployment, publication, external push, or global Git configuration was used.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-55
+      timestamp: "2026-09-13T10:15:27.201068000Z"
+    - evidence: Added task task-56 via small plan --add
+      notes: Reconcile release-facing documentation, CI toolchain, and website sync contract for v2
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-56
+      timestamp: "2026-09-15T16:47:43.077709000Z"
+    - evidence: Audited release-facing docs, workflows, and website sync surfaces; strict checks passed before changes.
+      notes: Preserving existing uncommitted work; updating protocol source before public website copies.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-56
+      timestamp: "2026-09-15T16:48:07.420368000Z"
+    - command: apply_patch < /private/tmp/task56-docs.patch
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260915T165105.439688000Z.txt
+      command_sha256: f7bf971639f99bb8747bd81b6517327315ea7b7b9300189ed12da138c41b25a1
+      command_summary: apply_patch < /private/tmp/task56-docs.patch
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-56
+      timestamp: "2026-09-15T16:51:05.439688000Z"
+    - command: apply_patch < /private/tmp/task56-usage-followup.patch
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260915T165803.760235000Z.txt
+      command_sha256: 929755c4ea296164ec3e291f32209a5b9d6437b103f35c3a972de88ef71f5d0e
+      command_summary: apply_patch < /private/tmp/task56-usage-followup.patch
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-56
+      timestamp: "2026-09-15T16:58:03.760235000Z"
+    - command: apply_patch < /private/tmp/task56-doc-corrections.patch
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260915T170209.893161000Z.txt
+      command_sha256: 22537494b41d10aefc3761384d3b4d97fd8f50177be3d2328070689755385d79
+      command_summary: apply_patch < /private/tmp/task56-doc-corrections.patch
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-56
+      timestamp: "2026-09-15T17:02:09.893161000Z"
+    - command: GOCACHE=/tmp/small-go-cache go test ./... && GOCACHE=/tmp/small-go-cache go test -race ./... && GOCACHE=/tmp/small-go-cache go vet ./... && make small-format-check && make small-build && cmp spec/s...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260915T170255.660810000Z.txt
+      command_sha256: bcea47ec2c3ca3756a5f03b7a39d0c5854af0e74be65c12e201f8d6d72da44dc
+      command_summary: GOCACHE=/tmp/small-go-cache go test ./... && GOCACHE=/tmp/small-go-cache go test -race ./... && GOCACHE=/tmp/small-go-cache go vet ./... && make small-format-check && make small-build && cmp spec/s...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-56
+      timestamp: "2026-09-15T17:02:55.660810000Z"
+    - command: SMALL_PROOF_DIR=$(mktemp -d /tmp/small-session-proof-docs.XXXXXX) scripts/proof-multi-session.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260915T170313.990955000Z.txt
+      command_sha256: b7042bc403ce32041e09a721baa1f217eb48585acd19b347e015b0160edd51f2
+      command_summary: SMALL_PROOF_DIR=$(mktemp -d /tmp/small-session-proof-docs.XXXXXX) scripts/proof-multi-session.sh
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-56
+      timestamp: "2026-09-15T17:03:13.990955000Z"
+    - command: CANDIDATE=$(mktemp -d /tmp/small-protocol-docs-candidate.XXXXXX); rsync -a --exclude=.git --exclude=.small-cache --exclude=.small-runs --exclude=.small-archive --exclude=bin ./ "$CANDIDATE"/; git -...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260915T170343.997467000Z.txt
+      command_sha256: 682f4b7ad05a1157c1b2e049ffde87999ee906e9a735467325e0b8dd0339de3d
+      command_summary: CANDIDATE=$(mktemp -d /tmp/small-protocol-docs-candidate.XXXXXX); rsync -a --exclude=.git --exclude=.small-cache --exclude=.small-runs --exclude=.small-archive --exclude=bin ./ "$CANDIDATE"/; git -...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-56
+      timestamp: "2026-09-15T17:03:43.997467000Z"
+    - evidence: Release docs and usage guidance now distinguish default v1 from explicit v2 sessions; CI targets Go 1.24; go test ./..., go test -race ./..., go vet ./..., format/build/schema parity, two-clone proof, clean-candidate verify.sh (19/19), and git diff --check passed.
+      notes: Website canonical and authored documentation updated in sibling smallprotocol.dev. Protocol candidate tree 511e05c48e029d3a30fe5b2bdd3e6034fd9e3671; proof frontier 83817bc212f88c8ded74eddd7c8e6f6b270a9e77d9ac68a84398aab9a2b0ccb1.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-56
+      timestamp: "2026-09-15T17:12:11.801232000Z"
+    - evidence: Added task task-57 via small plan --add
+      notes: Correct final v1/v2 documentation precision after release audit
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-57
+      timestamp: "2026-09-15T17:15:20.440981000Z"
+    - evidence: Recorded progress via small progress add
+      notes: Final terminology audit found v1-only resume wording and an overbroad execution claim.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-57
+      timestamp: "2026-09-15T17:15:20.653905000Z"
+    - command: apply_patch < /private/tmp/task56-final-doc-precision.patch
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260915T171521.001964000Z.txt
+      command_sha256: a1b0ddd3bf3cbcfc7cb182b9612fe395a16219d17579759002451e25f552e222
+      command_summary: apply_patch < /private/tmp/task56-final-doc-precision.patch
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-57
+      timestamp: "2026-09-15T17:15:21.001964000Z"
+    - evidence: 'Final documentation precision audit passed: v1/v2 resume language is scoped correctly, small apply is described as one supplied child command rather than orchestration, CLI init is explicitly v1, git diff --check passed, and strict validation passed.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-57
+      timestamp: "2026-09-15T17:16:28.544867000Z"
+    - evidence: Added task task-58 via small plan --add
+      notes: Finalize, commit, and publish the SMALL v2 protocol candidate
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-58
+      timestamp: "2026-09-16T09:42:13.383691000Z"
+    - evidence: Recorded progress via small progress add
+      notes: Running final clean-candidate verification before the ordered protocol and website commits.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-58
+      timestamp: "2026-09-16T09:42:13.571545000Z"
+    - command: bash /private/tmp/task58-verify-protocol.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T094333.280284000Z.txt
+      command_sha256: 442431364c3f8f23b66d7f22a0f4bcbf91468c2009d3e9c1802cc61484cc5a3b
+      command_summary: bash /private/tmp/task58-verify-protocol.sh
+      evidence:
+        exit_code: 127
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-58
+      timestamp: "2026-09-16T09:43:33.280284000Z"
+    - command: bash /private/tmp/task58-verify-protocol.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T094445.625013000Z.txt
+      command_sha256: 442431364c3f8f23b66d7f22a0f4bcbf91468c2009d3e9c1802cc61484cc5a3b
+      command_summary: bash /private/tmp/task58-verify-protocol.sh
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-58
+      timestamp: "2026-09-16T09:44:45.625013000Z"
+    - command: apply_patch < /private/tmp/task58-trim-adr-eof.patch
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T094607.746640000Z.txt
+      command_sha256: 48bc848936121a5489de84065b0f73c524c797da538f68bf23711c01334bf90f
+      command_summary: apply_patch < /private/tmp/task58-trim-adr-eof.patch
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-58
+      timestamp: "2026-09-16T09:46:07.746640000Z"
+    - command: apply_patch < /private/tmp/task58-rebase-doc-conflict.patch
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T094806.900995000Z.txt
+      command_sha256: 0a26163c57b6bd417ba8980d9977fb4148dfff7faed640460a586ed8ad057054
+      command_summary: apply_patch < /private/tmp/task58-rebase-doc-conflict.patch
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-58
+      timestamp: "2026-09-16T09:48:06.900995000Z"

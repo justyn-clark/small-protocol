@@ -25,12 +25,21 @@ echo "=== Step 1: Go version ==="
 GO_VER="$(go version)"
 echo "$GO_VER"
 
-echo "=== Enforcing Go toolchain version ==="
-echo "$GO_VER" | grep -E "go1\.24\." >/dev/null || {
-  echo "ERROR: Go 1.24.x is required, found: $GO_VER"
+echo "=== Enforcing minimum Go toolchain version ==="
+GO_MIN_MAJOR=1
+GO_MIN_MINOR=24
+GO_SEMVER="$(printf '%s\n' "$GO_VER" | sed -nE 's/.*go([0-9]+)\.([0-9]+).*/\1 \2/p')"
+GO_MAJOR="${GO_SEMVER%% *}"
+GO_MINOR="${GO_SEMVER##* }"
+if [ -z "$GO_MAJOR" ] || [ -z "$GO_MINOR" ]; then
+  echo "ERROR: could not parse Go version from: $GO_VER"
   exit 1
-}
-echo "✓ Go toolchain pinned to 1.24.x"
+fi
+if [ "$GO_MAJOR" -lt "$GO_MIN_MAJOR" ] || { [ "$GO_MAJOR" -eq "$GO_MIN_MAJOR" ] && [ "$GO_MINOR" -lt "$GO_MIN_MINOR" ]; }; then
+  echo "ERROR: Go ${GO_MIN_MAJOR}.${GO_MIN_MINOR}+ is required, found: $GO_VER"
+  exit 1
+fi
+echo "✓ Go toolchain ${GO_MAJOR}.${GO_MINOR} satisfies minimum ${GO_MIN_MAJOR}.${GO_MIN_MINOR}"
 
 echo "=== README acronym check ==="
 grep -q 'SMALL (Schema, Manifest, Artifact, Lineage, Lifecycle)' README.md || {
@@ -87,6 +96,8 @@ fi
 echo "=== Step 10: List and show run snapshots ==="
 "$BIN" run list --dir "$WORKDIR"
 "$BIN" run show --dir "$WORKDIR" "$SNAPSHOT_ID"
+"$BIN" run verify --dir "$WORKDIR" "$SNAPSHOT_ID"
+"$BIN" run verify --dir "$WORKDIR" "$SNAPSHOT_ID" --json >/dev/null
 
 echo "=== Step 11: Checkout snapshot into fresh workspace ==="
 RESTORE_DIR="$WORKDIR/restore"
@@ -107,6 +118,10 @@ fi
 echo "=== Step 13: Test status command in isolated workspace ==="
 "$BIN" status --dir "$WORKDIR"
 "$BIN" status --dir "$WORKDIR" --json >/dev/null
+"$BIN" health "$WORKDIR"
+"$BIN" health "$WORKDIR" --json >/dev/null
+"$BIN" reconstruct --dir "$WORKDIR" --task "$TASK_ID"
+"$BIN" reconstruct --dir "$WORKDIR" --task "$TASK_ID" --json >/dev/null
 
 echo "=== Step 14: Test apply command (dry-run) in isolated workspace ==="
 "$BIN" apply --dir "$WORKDIR" --dry-run
