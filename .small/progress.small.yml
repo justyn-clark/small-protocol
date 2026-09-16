@@ -21386,3 +21386,65 @@ entries:
       status: in_progress
       task_id: task-59
       timestamp: "2026-09-16T11:40:11.874878000Z"
+    - command: go test -race ./... && go vet ./... && /Users/justin/go/bin/goreleaser check && bash scripts/verify.sh && SMALL_PROOF_DIR=/private/tmp/task59-session-proof-v110-20260916 bash scripts/proof-multi-se...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T114242.829179000Z.txt
+      command_sha256: a443c2574a728b8358fa9a611d296d7055f5c34eef2cbb88654fe8062b706253
+      command_summary: go test -race ./... && go vet ./... && /Users/justin/go/bin/goreleaser check && bash scripts/verify.sh && SMALL_PROOF_DIR=/private/tmp/task59-session-proof-v110-20260916 bash scripts/proof-multi-se...
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:42:42.829179000Z"
+    - command: 'find dist -maxdepth 1 -type f -name ''small-*'' | awk ''END { exit (NR == 6 ? 0 : 1) }'' && cd dist && shasum -a 256 -c checksums.txt && cd .. && npm pack --dry-run --json ./packages/npm && git diff --...'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T114349.909319000Z.txt
+      command_sha256: 7bb2d50a61da6ca8e66e88b4505bc8959bd49067600eeb19ad4a276bcf1cbd3e
+      command_summary: 'find dist -maxdepth 1 -type f -name ''small-*'' | awk ''END { exit (NR == 6 ? 0 : 1) }'' && cd dist && shasum -a 256 -c checksums.txt && cd .. && npm pack --dry-run --json ./packages/npm && git diff --...'
+      evidence:
+        exit_code: 255
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:43:49.909319000Z"
+    - command: npm_config_cache=/private/tmp/task59-npm-cache npm pack --dry-run --json ./packages/npm && git diff --check
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T114356.774210000Z.txt
+      command_sha256: bb0703cded0388f06cb9feb09d5d0eaf1d1879b5d633110a03186ca9fc3d375d
+      command_summary: npm_config_cache=/private/tmp/task59-npm-cache npm pack --dry-run --json ./packages/npm && git diff --check
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:43:56.774210000Z"
+    - command: rm -rf dist
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T114400.434118000Z.txt
+      command_sha256: 96c12d588e71cbd6fc80a23dfbe09a1db112ddd2d02d670c7df1668d718d9c4e
+      command_summary: rm -rf dist
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:44:00.434118000Z"
+    - evidence: 'Local release gates passed at 971a646: go test -race ./..., go vet ./..., goreleaser check, scripts/verify.sh (19/19), two-clone v2 proof with final frontier 34f28833c7750912ddc7392fe48c30f4b10991efe6d5b134ddf6d5be49246299, GoReleaser snapshot six archives plus checksum verification, npm pack dry-run @small-protocol/small@1.1.0 (5 files), and git diff --check. The initial aggregate wrapper failed only because its archive count was expanded before dist existed; the corrected archive and package assertions passed. Generated dist artifacts were removed after verification.'
+      notes: Ready to commit verification state, push main, require remote CI success, then tag v1.1.0 and verify GitHub/npm publication.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:44:14.122118000Z"
