@@ -2,7 +2,6 @@
 
 [![CI](https://github.com/justyn-clark/small-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/justyn-clark/small-protocol/actions/workflows/ci.yml)
 [![Release](https://github.com/justyn-clark/small-protocol/actions/workflows/release.yml/badge.svg)](https://github.com/justyn-clark/small-protocol/actions/workflows/release.yml)
-[![npm publish](https://github.com/justyn-clark/small-protocol/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/justyn-clark/small-protocol/actions/workflows/npm-publish.yml)
 [![GitHub release](https://img.shields.io/github/v/release/justyn-clark/small-protocol)](https://github.com/justyn-clark/small-protocol/releases)
 [![npm version](https://img.shields.io/npm/v/@small-protocol/small)](https://www.npmjs.com/package/@small-protocol/small)
 [![Go](https://img.shields.io/badge/go-1.24%2B-blue)](https://go.dev)

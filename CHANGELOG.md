@@ -10,6 +10,12 @@ This project follows a protocol-first versioning model:
 
 ## [Unreleased]
 
+## [v1.1.0] - 2026-09-16
+
+### Status
+Stable tooling release with support for both the SMALL v1.0.0 artifact profile
+and the opt-in SMALL v2.0.0 session profile.
+
 ### Added
 - Added the separately versioned SMALL 2.0.0 session profile with solo-default,
   opt-in collaborative sessions, immutable causal events, deterministic

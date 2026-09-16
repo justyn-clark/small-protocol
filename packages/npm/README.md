@@ -4,6 +4,11 @@
 
 It gives humans and agents a shared, file-based contract for intent, constraints, plan, progress, and handoff so work can be resumed, verified, and audited without relying on chat memory.
 
+Version 1.1.0 supports the stable SMALL 1.0.0 artifact profile and the
+separately versioned SMALL 2.0.0 session profile. New workspaces remain v1 by
+default. V2 migration is explicit, starts in solo mode unless collaboration is
+requested, and preserves the original v1 bytes.
+
 ## Install
 
 Latest:
@@ -37,6 +42,18 @@ small check
 small status
 small handoff
 ```
+
+To opt an existing reviewed workspace into the v2 session profile, preview the
+migration first and apply it with the returned input digest:
+
+```bash
+small migrate --to 2.0.0 --preview --namespace my-project-baseline --json > /tmp/migration.json
+small migrate --apply /tmp/migration.json --expect-state <expected_input_digest>
+small session start --label first-v2-session
+```
+
+Collaboration is opt-in. Omit `--mode collaborative` during migration to keep
+the default solo policy.
 
 ## What this package does
 

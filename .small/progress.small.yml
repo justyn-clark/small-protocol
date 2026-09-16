@@ -21332,3 +21332,57 @@ entries:
       status: completed
       task_id: task-58
       timestamp: "2026-09-16T09:49:16.681012000Z"
+    - evidence: Added task task-59 via small plan --add
+      notes: Prepare and publish CLI and npm release v1.1.0
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-59
+      timestamp: "2026-09-16T11:37:03.913056000Z"
+    - evidence: Recorded progress via small progress add
+      notes: 'Authorized release scope: align package and changelog, repair misleading tag-only npm badge, run full release gates, push preparation commit, publish annotated v1.1.0 tag, verify GitHub release assets, npm OIDC provenance, curl/npm fresh installs, then record final evidence.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:37:04.117789000Z"
+    - command: apply_patch < /private/tmp/task59-release-prep.patch
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T113836.593724000Z.txt
+      command_sha256: 03d369e66330768712f5115098c6ed5bc95a7868ae8db66938a1ed3f324ef5e8
+      command_summary: apply_patch < /private/tmp/task59-release-prep.patch
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:38:36.593724000Z"
+    - command: apply_patch < /private/tmp/task59-release-prep.patch
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T113908.986843000Z.txt
+      command_sha256: 03d369e66330768712f5115098c6ed5bc95a7868ae8db66938a1ed3f324ef5e8
+      command_summary: apply_patch < /private/tmp/task59-release-prep.patch
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:39:08.986843000Z"
+    - command: node -e "const p=require('./packages/npm/package.json'); if(p.version!=='1.1.0') process.exit(1)" && npm pack --dry-run --json ./packages/npm && go test ./... && go vet ./... && test -z "" && git d...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260916T114011.874878000Z.txt
+      command_sha256: e9d26885e97f616a9428ee30f2e611b854f5d8fc90820840248478326c78aaef
+      command_summary: node -e "const p=require('./packages/npm/package.json'); if(p.version!=='1.1.0') process.exit(1)" && npm pack --dry-run --json ./packages/npm && go test ./... && go vet ./... && test -z "" && git d...
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-59
+      timestamp: "2026-09-16T11:40:11.874878000Z"

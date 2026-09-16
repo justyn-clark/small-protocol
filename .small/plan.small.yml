@@ -199,3 +199,6 @@ tasks:
     - id: task-58
       title: Finalize, commit, and publish the SMALL v2 protocol candidate
       status: completed
+    - id: task-59
+      title: Prepare and publish CLI and npm release v1.1.0
+      status: pending
