@@ -21326,3 +21326,9 @@ entries:
       status: in_progress
       task_id: task-58
       timestamp: "2026-09-16T09:48:06.900995000Z"
+    - evidence: Final clean candidate 718f91e1a07614de923863db31053ba5171e6a27 passed Go tests, race, vet, formatting, build, schema parity, all 19 verify.sh steps, and the two-clone proof with frontier 8be634ea9da2cfbe61e56a6047223b789cf4f75aa7b9ed85b3e408a481e3a3fc. Baseline-aware and rebased-commit Gitleaks scans found zero new findings. Rebased implementation commit 3d40da1 pushed to origin/main.
+      notes: Integrated remote commit 1e23040 (ASCII documentation normalization) without force-push; resolved the only overlap in docs/getting-started.md by retaining the corrected apply/checkpoint lifecycle semantics.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-58
+      timestamp: "2026-09-16T09:49:16.681012000Z"

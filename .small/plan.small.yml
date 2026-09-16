@@ -198,4 +198,4 @@ tasks:
       status: completed
     - id: task-58
       title: Finalize, commit, and publish the SMALL v2 protocol candidate
-      status: pending
+      status: completed
