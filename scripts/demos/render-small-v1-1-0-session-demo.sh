@@ -82,15 +82,28 @@ ffmpeg -hide_banner -loglevel error -y \
   -i "$output_dir/small-v1-1-0-session-demo.mp4" -ss 0.8 -frames:v 1 \
   "$output_dir/small-v1-1-0-session-demo-poster.png"
 
+ffmpeg -hide_banner -loglevel error -y \
+  -i "$output_dir/small-v1-1-0-session-demo.mp4" \
+  -filter_complex "fps=12,scale=800:-1:flags=lanczos,split[gif][palette];[palette]palettegen=max_colors=128:stats_mode=diff[p];[gif][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" \
+  -loop 0 "$output_dir/small-v1-1-0-session-demo.gif"
+
 mp4_codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$output_dir/small-v1-1-0-session-demo.mp4")
 webm_codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$output_dir/small-v1-1-0-session-demo.webm")
+gif_codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$output_dir/small-v1-1-0-session-demo.gif")
 
-if [[ "$mp4_codec" != "h264" || "$webm_codec" != "vp9" ]]; then
-  echo "unexpected video codecs: mp4=$mp4_codec webm=$webm_codec" >&2
+if [[ "$mp4_codec" != "h264" || "$webm_codec" != "vp9" || "$gif_codec" != "gif" ]]; then
+  echo "unexpected media codecs: mp4=$mp4_codec webm=$webm_codec gif=$gif_codec" >&2
+  exit 1
+fi
+
+gif_size=$(wc -c < "$output_dir/small-v1-1-0-session-demo.gif")
+if (( gif_size > 10000000 )); then
+  echo "animated README preview exceeds GitHub's 10 MB image limit: $gif_size bytes" >&2
   exit 1
 fi
 
 printf 'created %s\n' \
   "$output_dir/small-v1-1-0-session-demo.mp4" \
   "$output_dir/small-v1-1-0-session-demo.webm" \
-  "$output_dir/small-v1-1-0-session-demo-poster.png"
+  "$output_dir/small-v1-1-0-session-demo-poster.png" \
+  "$output_dir/small-v1-1-0-session-demo.gif"

@@ -27,5 +27,6 @@ Outputs:
 - `docs/media/small-v1-1-0-session-demo.mp4` — H.264 for social platforms and broad browser support
 - `docs/media/small-v1-1-0-session-demo.webm` — VP9 web version
 - `docs/media/small-v1-1-0-session-demo-poster.png` — first-frame poster
+- `docs/media/small-v1-1-0-session-demo.gif` — optimized, autoplaying GitHub README preview
 
 VHS 0.12.0 currently reports success even when its direct video encoder fails on this macOS setup. The renderer therefore asks VHS for the real text and cursor frame sequences, composites those frames with FFmpeg, and verifies the resulting codecs.

@@ -21588,3 +21588,45 @@ entries:
       status: completed
       task_id: task-61
       timestamp: "2026-09-17T15:30:16.217147000Z"
+    - evidence: Added task task-62 via small plan --add
+      notes: Add an autoplaying inline v1.1.0 demo preview to README
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-62
+      timestamp: "2026-09-17T15:51:49.244382000Z"
+    - command: cp /tmp/README.small-autoplay.md README.md && cp /tmp/render-small-v1-1-0-session-demo-autoplay.sh scripts/demos/render-small-v1-1-0-session-demo.sh && chmod 755 scripts/demos/render-small-v1-1-0-s...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T155304.637274000Z.txt
+      command_sha256: eb6e4c5c0fc6231dc078dbbf13f6142acb099396f94b20f0efcf612b32841649
+      command_summary: cp /tmp/README.small-autoplay.md README.md && cp /tmp/render-small-v1-1-0-session-demo-autoplay.sh scripts/demos/render-small-v1-1-0-session-demo.sh && chmod 755 scripts/demos/render-small-v1-1-0-s...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-62
+      timestamp: "2026-09-17T15:53:04.637274000Z"
+    - command: SMALL_BIN=/tmp/small-v1.1.0-demo-bin.VReyws/small scripts/demos/render-small-v1-1-0-session-demo.sh /Users/justin/jcnagent/Agent/Projects/devtools/jcn-receipt-check
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T155436.705130000Z.txt
+      command_sha256: a11f4d7d6e9cfb5cf09b6d62e1c916bf445ba1cafa8cd8a855de810d9faa6ff5
+      command_summary: SMALL_BIN=/tmp/small-v1.1.0-demo-bin.VReyws/small scripts/demos/render-small-v1-1-0-session-demo.sh /Users/justin/jcnagent/Agent/Projects/devtools/jcn-receipt-check
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-62
+      timestamp: "2026-09-17T15:54:36.705130000Z"
+    - command: cp /private/tmp/small-original-media.o7zMBy/docs/media/small-v1-1-0-session-demo.mp4 docs/media/small-v1-1-0-session-demo.mp4 && cp /private/tmp/small-original-media.o7zMBy/docs/media/small-v1-1-0-...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T155510.260387000Z.txt
+      command_sha256: 20a2a6bdf369924da04a9ecee407be69253428df9e3d5f02deac807af1e24877
+      command_summary: cp /private/tmp/small-original-media.o7zMBy/docs/media/small-v1-1-0-session-demo.mp4 docs/media/small-v1-1-0-session-demo.mp4 && cp /private/tmp/small-original-media.o7zMBy/docs/media/small-v1-1-0-...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-62
+      timestamp: "2026-09-17T15:55:10.260387000Z"
+    - evidence: Replaced the static linked README poster with an inline looping GIF generated from the real SMALL v1.1.0 terminal recording while retaining MP4/WebM full-quality links. Added GIF generation, codec validation, and a 10 MB GitHub size guard to the reproducible renderer. End-to-end renderer passed against the clean jcn-receipt-check source. Final GIF is 800x482, 12 fps, 31.66 seconds, 380 frames, 1,569,135 bytes, SHA-256 597545c4fd851d18b1faabdcb95fc05b130b64a38b8864a948284909c49fde28. Intro, solo state, collaborative transition, and final strict pass frames were visually inspected. bash -n, vhs validate, ffprobe, git diff --check, target existence/size, and small check --strict passed.
+      notes: GitHub documents GIF as a supported inline image format with a 10 MB limit. MP4/WebM remain available for full-quality playback.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-62
+      timestamp: "2026-09-17T15:55:57.567296000Z"

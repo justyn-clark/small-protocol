@@ -27,11 +27,11 @@ This 31-second demonstration uses the released `small v1.1.0` binary against an 
 
 <p align="center">
   <a href="docs/media/small-v1-1-0-session-demo.mp4">
-    <img src="docs/media/small-v1-1-0-session-demo-poster.png" alt="Watch the SMALL v1.1.0 durable session state terminal demonstration" width="1078">
+    <img src="docs/media/small-v1-1-0-session-demo.gif" alt="SMALL v1.1.0 durable session state terminal demonstration showing strict validation, migration, solo mode, session creation, and collaborative mode" width="800">
   </a>
 </p>
 
-**Watch:** [MP4](docs/media/small-v1-1-0-session-demo.mp4) · [WebM](docs/media/small-v1-1-0-session-demo.webm) · [v1.1.0 release notes](https://github.com/justyn-clark/small-protocol/releases/tag/v1.1.0)
+**Watch full quality:** [MP4](docs/media/small-v1-1-0-session-demo.mp4) · [WebM](docs/media/small-v1-1-0-session-demo.webm) · [v1.1.0 release notes](https://github.com/justyn-clark/small-protocol/releases/tag/v1.1.0)
 
 <details>
 <summary>What the demonstration verifies</summary>

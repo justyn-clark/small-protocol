@@ -208,3 +208,6 @@ tasks:
     - id: task-61
       title: Add v1.1.0 infographic and real demo to repository homepage
       status: completed
+    - id: task-62
+      title: Add an autoplaying inline v1.1.0 demo preview to README
+      status: completed
