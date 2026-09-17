@@ -202,3 +202,9 @@ tasks:
     - id: task-59
       title: Prepare and publish CLI and npm release v1.1.0
       status: completed
+    - id: task-60
+      title: Create real SMALL v1.1.0 terminal demonstration videos
+      status: completed
+    - id: task-61
+      title: Add v1.1.0 infographic and real demo to repository homepage
+      status: completed

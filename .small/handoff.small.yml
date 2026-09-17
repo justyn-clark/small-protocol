@@ -1,6 +1,6 @@
 small_version: "1.0.0"
 owner: agent
-summary: 'SMALL v1.1.0 is shipped from 2ef7d2c with GitHub CI, GoReleaser, npm Trusted Publishing, checksums, fresh curl/npm installs, and live Brave/Playwright documentation checks all passing. This tooling release preserves the v1.0.0 artifact profile as the default while adding the opt-in v2.0.0 session profile: solo by default, collaboration only by explicit mode transition, union reconciliation, typed receipts, recoverable migration, and authoritative event/session state. Migration is never automatic; preview and expected-input validation remain required, and supported v1 writers must not write v2 state. SMALL still governs state rather than execution: orchestration, retries, model routing, authorization, distributed consensus, and source-code conflict resolution remain outside it. Task-59 and all v1.1.0 release work are complete. The generated resume pointer to task-29 is historical: task-29 is the superseded blocked v1.0.4 OIDC attempt, followed by completed later release tasks and the successful v1.1.0 OIDC publication; it is not remaining v1.1.0 work.'
+summary: Run blocked on task-29.
 resume:
     current_task_id: task-29
     next_steps:

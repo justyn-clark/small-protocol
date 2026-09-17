@@ -11,6 +11,39 @@
 
 It defines versioned machine-readable artifacts that replace ephemeral chat history with durable project state.
 
+## SMALL v1.1.0: Durable Session State
+
+Solo by default. Collaborative by choice. SMALL preserves the state around AI-assisted work so another run, machine, or operator can inspect and resume it.
+
+<p align="center">
+  <a href="https://github.com/justyn-clark/small-protocol/releases/tag/v1.1.0">
+    <img src="docs/media/small-v1-1-0-durable-session-state.png" alt="SMALL v1.1.0 durable session state: solo by default, collaborative by choice" width="1200">
+  </a>
+</p>
+
+### See it work on a real project
+
+This 31-second demonstration uses the released `small v1.1.0` binary against an existing SMALL-enabled repository. The commands and state transitions are real, not simulated output.
+
+<p align="center">
+  <a href="docs/media/small-v1-1-0-session-demo.mp4">
+    <img src="docs/media/small-v1-1-0-session-demo-poster.png" alt="Watch the SMALL v1.1.0 durable session state terminal demonstration" width="1078">
+  </a>
+</p>
+
+**Watch:** [MP4](docs/media/small-v1-1-0-session-demo.mp4) · [WebM](docs/media/small-v1-1-0-session-demo.webm) · [v1.1.0 release notes](https://github.com/justyn-clark/small-protocol/releases/tag/v1.1.0)
+
+<details>
+<summary>What the demonstration verifies</summary>
+
+- strict validation of existing canonical SMALL state;
+- explicit migration to the v2.0.0 session profile;
+- solo mode as the default;
+- session creation and an explicit transition to collaborative mode; and
+- a final strict validation pass.
+
+</details>
+
 ## What SMALL Is Not
 
 - An agent framework

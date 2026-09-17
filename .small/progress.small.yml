@@ -21468,3 +21468,123 @@ entries:
       status: completed
       task_id: task-59
       timestamp: "2026-09-16T11:54:12.184665000Z"
+    - evidence: Added task task-60 via small plan --add
+      notes: Create real SMALL v1.1.0 terminal demonstration videos
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-60
+      timestamp: "2026-09-17T08:10:24.512777000Z"
+    - command: bash /tmp/run-small-video-capture.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T081202.210249000Z.txt
+      command_sha256: 66a6839df36c0df9a155b089ac412703769f657ec3070432fcb217532772808d
+      command_summary: bash /tmp/run-small-video-capture.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-60
+      timestamp: "2026-09-17T08:12:02.210249000Z"
+    - command: bash /tmp/run-small-video-capture.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T081333.231811000Z.txt
+      command_sha256: 66a6839df36c0df9a155b089ac412703769f657ec3070432fcb217532772808d
+      command_summary: bash /tmp/run-small-video-capture.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-60
+      timestamp: "2026-09-17T08:13:33.231811000Z"
+    - command: bash /tmp/run-small-video-capture.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T081528.050420000Z.txt
+      command_sha256: 66a6839df36c0df9a155b089ac412703769f657ec3070432fcb217532772808d
+      command_summary: bash /tmp/run-small-video-capture.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-60
+      timestamp: "2026-09-17T08:15:28.050420000Z"
+    - command: bash /tmp/run-small-video-capture.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T081711.856847000Z.txt
+      command_sha256: 66a6839df36c0df9a155b089ac412703769f657ec3070432fcb217532772808d
+      command_summary: bash /tmp/run-small-video-capture.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-60
+      timestamp: "2026-09-17T08:17:11.856847000Z"
+    - command: mkdir -p scripts/demos docs/media && cp /tmp/small-v1-1-0-session-demo.tape scripts/demos/small-v1-1-0-session-demo.tape && cp /tmp/render-small-v1-1-0-session-demo.sh scripts/demos/render-small-v1...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T083414.170260000Z.txt
+      command_sha256: cb615cf7d70d94a89921eff8ad3133b63393e6d18a430228cc6f6da385ede0cd
+      command_summary: mkdir -p scripts/demos docs/media && cp /tmp/small-v1-1-0-session-demo.tape scripts/demos/small-v1-1-0-session-demo.tape && cp /tmp/render-small-v1-1-0-session-demo.sh scripts/demos/render-small-v1...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-60
+      timestamp: "2026-09-17T08:34:14.170260000Z"
+    - command: SMALL_BIN=/tmp/small-v1.1.0-demo-bin.VReyws/small scripts/demos/render-small-v1-1-0-session-demo.sh /Users/justin/jcnagent/Agent/Projects/devtools/jcn-receipt-check
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T083518.991301000Z.txt
+      command_sha256: a11f4d7d6e9cfb5cf09b6d62e1c916bf445ba1cafa8cd8a855de810d9faa6ff5
+      command_summary: SMALL_BIN=/tmp/small-v1.1.0-demo-bin.VReyws/small scripts/demos/render-small-v1-1-0-session-demo.sh /Users/justin/jcnagent/Agent/Projects/devtools/jcn-receipt-check
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-60
+      timestamp: "2026-09-17T08:35:18.991301000Z"
+    - evidence: Created a 31.533-second real terminal demo from the clean jcn-receipt-check canonical SMALL state using the released small v1.1.0 binary. Checked in the VHS tape, reproducible renderer, H.264 MP4 (1078x650, 30 fps, 903449 bytes), VP9 WebM (1078x650, 30 fps, 525757 bytes), and poster. The recording visibly proves strict validation, explicit migration to 2.0.0, solo default with zero sessions, session creation, collaborative opt-in with changed=true, and a final strict pass. bash -n, vhs validate, git diff --check, ffprobe codec/shape checks, source-project cleanliness, and source/repo strict checks passed.
+      notes: The source checkout was never modified; capture runs used disposable no-hardlink clones. Renderer works around VHS 0.12.0 direct-video export failures by compositing its real text/cursor PNG frames with FFmpeg.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-60
+      timestamp: "2026-09-17T08:36:08.195227000Z"
+    - evidence: Added task task-61 via small plan --add
+      notes: Add v1.1.0 infographic and real demo to repository homepage
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-61
+      timestamp: "2026-09-17T15:25:36.052542000Z"
+    - command: cp /tmp/README.small-repo-homepage.md README.md && cp /Users/justin/jcnagent/Agent/Projects/web-platform/justynclarknetwork-apps/apps/justynclarknetwork/public/images/blog/small-v1-1-0-durable-sess...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T152637.855001000Z.txt
+      command_sha256: 87409ed883cfa058c1f2cab84766688109909e4fd14e89527bc93d5cb5b334d2
+      command_summary: cp /tmp/README.small-repo-homepage.md README.md && cp /Users/justin/jcnagent/Agent/Projects/web-platform/justynclarknetwork-apps/apps/justynclarknetwork/public/images/blog/small-v1-1-0-durable-sess...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-61
+      timestamp: "2026-09-17T15:26:37.855001000Z"
+    - command: GOCACHE=/tmp/small-readme-go-cache go test ./... && make small-format-check
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T152743.597270000Z.txt
+      command_sha256: 84cab3db45f7aed466809ebb631dd20fa13b91f73baa637cf4c73e56bc8837ad
+      command_summary: GOCACHE=/tmp/small-readme-go-cache go test ./... && make small-format-check
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-61
+      timestamp: "2026-09-17T15:27:43.597270000Z"
+    - evidence: Updated README.md with a compact SMALL v1.1.0 release-highlight section directly after the protocol definition. Added the exact 1200x630 JCN infographic, a clickable 31-second real-project video poster, MP4/WebM links, v1.1.0 release link, accessible alt text, and a collapsed verification summary. All relative media targets exist; infographic SHA-256 matches the deployed article asset (12e576b462eed93a1ebcd3fa4940c9ad134b826827eee4c5a03759bbe74ad49f). go test ./... passed across all packages, make small-format-check passed, git diff --check passed, and small check --strict passed.
+      notes: The release block is version-scoped so the repository's evergreen definition remains first. Unrelated .playwright-mcp content was preserved and excluded.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-61
+      timestamp: "2026-09-17T15:28:04.070945000Z"
+    - command: GOCACHE=/tmp/small-full-verify-go-cache ./scripts/verify.sh
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20260917T153004.239694000Z.txt
+      command_sha256: 9e16b125279bf9bb96f6e89933d0d3dd8b353e8bf3f08a269a5aa4e9c25932a3
+      command_summary: GOCACHE=/tmp/small-full-verify-go-cache ./scripts/verify.sh
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-61
+      timestamp: "2026-09-17T15:30:04.239694000Z"
+    - evidence: 'Full repository verification passed against commit 3ec4cf1: Go 1.25.3 satisfied the 1.24 minimum; README acronym check passed; go mod tidy produced no diffs; v1/v2 schema sync and CLI build passed; examples validate/lint passed; isolated handoff, snapshot, list/show/verify, restore, plan, status, health, reconstruct, apply dry-run/execution, and workspace verification passed; go test ./... passed across all packages; gofmt check passed; six-step selftest passed; archive passed.'
+      notes: This supplements the earlier media, link, ffprobe, render, visual, strict, and diff checks. The full verifier ran in isolated temporary workspaces and left no code or dependency diffs.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-61
+      timestamp: "2026-09-17T15:30:16.217147000Z"
