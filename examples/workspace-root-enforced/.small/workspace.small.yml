@@ -1,3 +1,7 @@
 small_version: "1.0.0"
-kind: "examples"
+owner: agent
+kind: examples
 created_at: "2025-01-01T00:00:00.000000000Z"
+updated_at: "2026-09-17T16:25:23.168745Z"
+run:
+    replay_id: 4a5f6b9e1f73a9d2f2651ee5bfb7d941e3349ff5279d1f784df82d1c39ff6de7

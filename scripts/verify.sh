@@ -82,10 +82,13 @@ echo "=== Step 6: Validate spec examples ==="
 echo "=== Step 7: Lint spec examples ==="
 "$BIN" lint --dir spec/small/v1.0.0/examples
 
-echo "=== Step 8: Generate handoff in isolated workspace ==="
+echo "=== Step 8: Strict-check committed example gallery ==="
+BIN_PATH="$BIN" scripts/verify-examples.sh
+
+echo "=== Step 9: Generate handoff in isolated workspace ==="
 "$BIN" handoff --dir "$WORKDIR" --summary "Verification checkpoint"
 
-echo "=== Step 9: Snapshot run history in isolated workspace ==="
+echo "=== Step 10: Snapshot run history in isolated workspace ==="
 "$BIN" run snapshot --dir "$WORKDIR"
 SNAPSHOT_ID="$(ls "$WORKDIR/.small-runs" | head -n 1)"
 if [ -z "$SNAPSHOT_ID" ]; then
@@ -93,19 +96,19 @@ if [ -z "$SNAPSHOT_ID" ]; then
   exit 1
 fi
 
-echo "=== Step 10: List and show run snapshots ==="
+echo "=== Step 11: List and show run snapshots ==="
 "$BIN" run list --dir "$WORKDIR"
 "$BIN" run show --dir "$WORKDIR" "$SNAPSHOT_ID"
 "$BIN" run verify --dir "$WORKDIR" "$SNAPSHOT_ID"
 "$BIN" run verify --dir "$WORKDIR" "$SNAPSHOT_ID" --json >/dev/null
 
-echo "=== Step 11: Checkout snapshot into fresh workspace ==="
+echo "=== Step 12: Checkout snapshot into fresh workspace ==="
 RESTORE_DIR="$WORKDIR/restore"
 "$BIN" init --dir "$RESTORE_DIR" --force --intent "Restore workspace"
 "$BIN" run checkout --dir "$RESTORE_DIR" --store "$WORKDIR/.small-runs" --force "$SNAPSHOT_ID"
 "$BIN" verify --dir "$RESTORE_DIR" --workspace root
 
-echo "=== Step 12: Test plan command in isolated workspace ==="
+echo "=== Step 13: Test plan command in isolated workspace ==="
 ADD_OUT="$("$BIN" plan --dir "$WORKDIR" --add "Verification test task")"
 echo "$ADD_OUT"
 TASK_ID="$(echo "$ADD_OUT" | sed -nE 's/^Added task ([^:]+):.*/\1/p' | tail -n1)"
@@ -115,7 +118,7 @@ if [ -z "$TASK_ID" ]; then
 fi
 "$BIN" plan --dir "$WORKDIR" --done "$TASK_ID"
 
-echo "=== Step 13: Test status command in isolated workspace ==="
+echo "=== Step 14: Test status command in isolated workspace ==="
 "$BIN" status --dir "$WORKDIR"
 "$BIN" status --dir "$WORKDIR" --json >/dev/null
 "$BIN" health "$WORKDIR"
@@ -123,24 +126,24 @@ echo "=== Step 13: Test status command in isolated workspace ==="
 "$BIN" reconstruct --dir "$WORKDIR" --task "$TASK_ID"
 "$BIN" reconstruct --dir "$WORKDIR" --task "$TASK_ID" --json >/dev/null
 
-echo "=== Step 14: Test apply command (dry-run) in isolated workspace ==="
+echo "=== Step 15: Test apply command (dry-run) in isolated workspace ==="
 "$BIN" apply --dir "$WORKDIR" --dry-run
 "$BIN" apply --dir "$WORKDIR" --dry-run --cmd "echo hello"
 
-echo "=== Step 15: Test apply command (execution) in isolated workspace ==="
+echo "=== Step 16: Test apply command (execution) in isolated workspace ==="
 "$BIN" apply --dir "$WORKDIR" --cmd "echo 'SMALL apply test'"
 
-echo "=== Step 16: Verify isolated workspace ==="
+echo "=== Step 17: Verify isolated workspace ==="
 "$BIN" verify --dir "$WORKDIR"
 
-echo "=== Step 17: Run tests and format check ==="
+echo "=== Step 18: Run tests and format check ==="
 make small-test
 make small-format-check
 
-echo "=== Step 18: Run built-in selftest ==="
+echo "=== Step 19: Run built-in selftest ==="
 "$BIN" selftest
 
-echo "=== Step 19: Test archive command ==="
+echo "=== Step 20: Test archive command ==="
 "$BIN" archive --dir "$WORKDIR"
 
 echo "=== All verification steps passed ==="

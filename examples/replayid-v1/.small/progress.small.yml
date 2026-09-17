@@ -1,4 +1,4 @@
-small_version: 1.0.0
+small_version: "1.0.0"
 owner: agent
 entries:
     - evidence: 'Dry-run: no command executed'

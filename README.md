@@ -90,6 +90,10 @@ spec/small/v1.0.0/
 The session-capable contract is in `spec/small/v2.0.0/`. See
 [SMALL 2.0.0 session profile](docs/session-profile-v2.md) for migration and use.
 
+Want to inspect finished state instead of reading the specification first?
+Open the **[examples gallery](examples/)** for a real v2 durable session, the
+31-second terminal demonstration, and focused v1 protocol labs.
+
 ## Getting Started
 
 **New to SMALL?** Start here:
@@ -117,6 +121,7 @@ The session-capable contract is in `spec/small/v2.0.0/`. See
 | [FAQ](docs/FAQ.md) | Frequently asked questions |
 | [Execution Model](docs/EXECUTION_MODEL.md) | Single-writer design and concurrency |
 | [Session Profile v2](docs/session-profile-v2.md) | Solo/collaborative sessions, reconciliation, evidence, and migration |
+| [Examples Gallery](examples/) | Runnable v1 labs and a complete v2 durable-session workspace |
 | [Development](docs/DEVELOPMENT.md) | Building, testing, and schema updates during development |
 | [Releasing](docs/maintainers/releasing.md) | Maintainer release process and npm publish policy |
 | [Docs Sync](docs/maintainers/docs-sync.md) | Canonical docs sync model, mapping, and verification gates |

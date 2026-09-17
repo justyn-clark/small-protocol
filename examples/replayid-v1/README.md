@@ -1,17 +1,35 @@
-# ReplayId v1 — Deterministic Handoff Example
+# Lab: deterministic replay ID
 
-This example demonstrates a complete SMALL execution resulting in a
-deterministic `replayId`.
+**Question:** Can two machines identify the same v1 run without a central
+coordinator?
 
-What it shows:
+This completed v1 workspace shows SMALL's deterministic handoff identity. When
+the run-defining intent, plan, and constraints are unchanged, the CLI derives
+the same lowercase SHA-256 replay ID.
 
-- Automatic replayId generation (`source: auto`)
-- Deterministic hashing of intent + plan + constraints
-- A full execution trace captured via `.small/` artifacts
-- A valid handoff suitable for audit, resume, or verification
+## Inspect it
 
-Notes:
+From the repository root:
 
-- This `.small/` directory is a **committed example**, not a live workspace.
-- The root `.small/` directory remains ignored and is used only during active runs.
-- This pattern is recommended for documenting protocol behavior in spec repos.
+```bash
+small check --strict --dir examples/replayid-v1 --workspace examples
+small status --json --dir examples/replayid-v1
+```
+
+Open [`.small/handoff.small.yml`](.small/handoff.small.yml) and look for:
+
+```yaml
+replayId:
+  value: <64 lowercase hexadecimal characters>
+  source: auto
+```
+
+`source: auto` means the CLI derived the identity from canonical inputs.
+`--replay-id` remains available for a validated manual override when an
+external process already owns the identity.
+
+## Why it matters
+
+A replay ID is not an execution engine or a distributed lock. It is a stable
+continuity anchor: the handoff can prove which run-defining state it summarizes
+without relying on terminal history or chat memory.

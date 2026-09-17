@@ -1,53 +1,41 @@
-# Mandatory ReplayId Example
+# Lab: mandatory replay ID
 
-This example demonstrates two key `small verify` invariants:
+**Question:** What stops a handoff from becoming an anonymous blob of state?
 
-1. **Evidence Gate**: Completed tasks in `plan.small.yml` must have corresponding entries in `progress.small.yml`
-2. **ReplayId Requirement**: `handoff.small.yml` must include a valid `replayId`
+This valid v1 workspace demonstrates two enforcement boundaries:
 
-## Verifying the Example
+1. every completed plan task has matching progress evidence; and
+2. every handoff has a schema-valid replay ID.
+
+## Run the passing case
+
+From the repository root:
 
 ```bash
-# From repo root
-small verify --dir examples/mandatory-replayid
-# Expected: Verification passed
+small check --strict --dir examples/mandatory-replayid --workspace examples
 ```
 
-## Reproducing Failures
+Expected result: `Check passed`.
 
-### Evidence Gate Failure
+## Explore the failures safely
 
-1. Edit `.small/progress.small.yml` and remove all entries
-2. Run `small verify --dir examples/mandatory-replayid`
+Copy the example first; do not edit committed SMALL state:
 
-Expected output:
-```
-Verification failed with 1 error(s):
-  Invariant [progress.small.yml]: progress entries missing or invalid for completed plan tasks: demonstrate-evidence-gate, demonstrate-replayid
+```bash
+cp -R examples/mandatory-replayid /tmp/mandatory-replayid
 ```
 
-### ReplayId Failure
+In the copy, removing a completed task's progress entry makes strict checking
+report the missing task evidence. Removing the `replayId` object from the
+handoff makes schema validation reject the handoff.
 
-1. Edit `.small/handoff.small.yml` and remove the `replayId` block
-2. Run `small verify --dir examples/mandatory-replayid`
+Use the CLI to repair a handoff instead of hand-editing it:
 
-Expected output:
-```
-Verification failed with 1 error(s):
-  handoff.small.yml must include replayId (use 'small handoff' to generate)
-```
-
-## CI Integration
-
-Add to your CI workflow:
-
-```yaml
-- name: Verify SMALL artifacts
-  run: small verify --ci
+```bash
+small handoff --dir /tmp/mandatory-replayid --workspace any \
+  --summary "Rebuilt from canonical run state"
+small check --strict --dir /tmp/mandatory-replayid --workspace any
 ```
 
-This ensures that:
-- Completed tasks have auditable progress evidence
-- Session continuity is tracked via replayId
-- Schema validation passes
-- Ownership rules are enforced
+The point is not the YAML syntax. It is that a future operator can verify both
+what finished and which run-defining state the handoff belongs to.

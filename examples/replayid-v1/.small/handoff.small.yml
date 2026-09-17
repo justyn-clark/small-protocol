@@ -1,8 +1,7 @@
-small_version: 1.0.0
+small_version: "1.0.0"
 owner: agent
-summary: ReplayId v1 implementation complete. CLI now emits spec-compliant replayId automatically with deterministic sha256 hash of run-defining artifacts.
+summary: Committed example complete. Run strict validation, then inspect the focused protocol invariant.
 resume:
-    current_task_id: ""
     next_steps: []
 links: []
 replayId:

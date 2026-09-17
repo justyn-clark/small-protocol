@@ -1,46 +1,36 @@
-# Workspace Root Enforcement Example
+# Lab: workspace scope
 
-This example demonstrates `small verify` workspace scope enforcement.
+**Question:** How can CI distinguish a published example from the live SMALL
+state at a repository root?
 
-## Workspace Metadata
+This v1 fixture declares `kind: examples` in
+[`workspace.small.yml`](.small/workspace.small.yml). The scope flag makes that
+boundary explicit.
 
-The `.small/workspace.small.yml` file contains:
+## See both outcomes
 
-```yaml
-small_version: "1.0.0"
-kind: "examples"  # Marks this as an example workspace
-```
-
-## Workspace Scopes
-
-The `--workspace` flag controls which workspaces pass verification:
-
-| Scope | Description |
-|-------|-------------|
-| `root` | Only repo-root workspaces (default) |
-| `examples` | Only example workspaces |
-| `any` | Any workspace kind |
-
-## Verifying the Example
+From the repository root:
 
 ```bash
-# From repo root - passes because kind is "examples"
-small verify --dir examples/workspace-root-enforced --workspace examples
+# Accepted: this command expects an example workspace.
+small check --strict --dir examples/workspace-root-enforced --workspace examples
 
-# This would fail with --workspace root
-small verify --dir examples/workspace-root-enforced --workspace root
-# Error: Workspace validation failed: invalid workspace kind "examples"
+# Rejected: this command expects live repository-root state.
+small check --strict --dir examples/workspace-root-enforced --workspace root
 ```
 
-## When to Use Workspace Scopes
+The second command should fail with a workspace-kind mismatch. That is the
+feature: sample state cannot silently masquerade as the repository's active
+run.
 
-- **CI pipelines**: Use `--workspace root` to verify the main workspace
-- **Example verification**: Use `--workspace examples` to verify committed examples
-- **Development**: Use `--workspace any` to bypass scope checks
+## Scope guide
 
-## Key Behavior
+| Scope | Intended use |
+|---|---|
+| `root` | The live SMALL workspace at a repository root |
+| `examples` | Committed reference and regression workspaces |
+| `any` | Explicitly bypass the kind distinction for controlled tooling |
 
-The workspace scope ensures that:
-1. Example workspaces are not accidentally treated as the main workspace
-2. CI pipelines can distinguish between different workspace types
-3. Commands like `plan`, `apply`, `reset` are restricted to appropriate workspace types
+Use the narrowest scope that matches the operation. In CI for this gallery,
+[`scripts/verify-examples.sh`](../../scripts/verify-examples.sh) selects
+`examples` and requires strict validation for every discovered workspace.

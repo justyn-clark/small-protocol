@@ -1,4 +1,4 @@
-.PHONY: small-build small-validate small-lint small-test small-format small-format-check verify sync-schemas
+.PHONY: small-build small-validate small-lint small-examples small-test small-format small-format-check verify sync-schemas
 
 GOOS := $(shell go env GOOS)
 GOARCH := $(shell go env GOARCH)
@@ -32,6 +32,9 @@ small-validate: small-build
 small-lint: small-build
 	@echo "Linting examples directory..."
 	@$(BIN_PATH) lint --dir spec/small/v1.0.0/examples
+
+small-examples: small-build
+	@BIN_PATH=$(BIN_PATH) scripts/verify-examples.sh
 
 small-test:
 	@echo "Running Go tests..."

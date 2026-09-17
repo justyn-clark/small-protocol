@@ -1,11 +1,9 @@
 small_version: "1.0.0"
-owner: "agent"
-summary: "Example handoff"
+owner: agent
+summary: Committed example complete. Run strict validation, then inspect the focused protocol invariant.
 resume:
-  current_task_id: ""
-  next_steps:
-    - "Continue example work"
+    next_steps: []
 links: []
 replayId:
-  value: "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
-  source: "auto"
+    value: 4a5f6b9e1f73a9d2f2651ee5bfb7d941e3349ff5279d1f784df82d1c39ff6de7
+    source: auto

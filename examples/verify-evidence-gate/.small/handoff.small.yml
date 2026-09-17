@@ -1,10 +1,9 @@
-small_version: 1.0.0
+small_version: "1.0.0"
 owner: agent
-summary: "Enforced the progress evidence gate, documented the git contract and verify rule, published the verify evidence example, and confirmed go test/make verify"
+summary: Committed example complete. Run strict validation, then inspect the focused protocol invariant.
 resume:
-    current_task_id: ""
     next_steps: []
 links: []
 replayId:
-    value: abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789
-    source: manual
+    value: b7d6743ab3b4b0b6fdf60153e734aa2ff941bb2aa1afae7a4ebcc9048154ed41
+    source: auto

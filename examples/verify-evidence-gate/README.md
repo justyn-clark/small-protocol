@@ -1,24 +1,36 @@
-# Verify evidence gate
+# Lab: the evidence gate
 
-This example shows the new `small verify` rule that enforces progress entries for every completed plan task. The `.small/` contents reproduce the workspace state after this rule landed.
+**Question:** Is changing a task to `completed` enough to claim the work is
+done?
 
-## Reproducing the failure
+No. This v1 workspace demonstrates the invariant that every completed plan task
+must have a matching progress entry with evidence.
 
-1. Leave the `verify-evidence-rule` task marked as `completed` in `plan.small.yml`.
-2. Remove (or omit) the corresponding entry from `progress.small.yml`.
-3. Run:
+## Inspect the passing case
 
-```
-small verify
-```
+From the repository root:
 
-`small verify` exits with code 1 and prints:
-
-```
-Verification failed with 1 error(s):
-  Invariant [progress.small.yml]: progress entries missing for completed plan tasks: verify-evidence-rule
+```bash
+small check --strict --dir examples/verify-evidence-gate --workspace examples
 ```
 
-## Fix
+Compare the task in
+[`plan.small.yml`](.small/plan.small.yml) with its matching entry in
+[`progress.small.yml`](.small/progress.small.yml). The shared task ID is the
+auditable link between the claim and its evidence.
 
-Add at least one `progress.small.yml` entry that references the completed task before rerunning `small verify`. Each completed task must include a progress entry so the verification gate passes.
+## Reproduce the gate safely
+
+Copy the example to a disposable directory before experimenting:
+
+```bash
+cp -R examples/verify-evidence-gate /tmp/verify-evidence-gate
+small check --strict --dir /tmp/verify-evidence-gate --workspace any
+```
+
+If the completed task's progress entry is absent, strict verification fails and
+names the task whose evidence is missing. Restore the copy or record evidence
+through the CLI; never patch a live `.small/` history by hand.
+
+The rule is intentionally simple: completion must be backed by durable,
+task-addressable evidence.

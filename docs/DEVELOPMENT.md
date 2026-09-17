@@ -160,6 +160,7 @@ make small-build       # Build the CLI
 make small-test        # Run all tests
 make small-format      # Format code
 make small-validate    # Validate examples
+make small-examples    # Strict-check every committed example workspace
 make sync-schemas      # Sync schemas to embedded location
 ```
 

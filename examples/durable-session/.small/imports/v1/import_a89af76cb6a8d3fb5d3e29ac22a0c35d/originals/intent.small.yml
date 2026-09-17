@@ -1,0 +1,14 @@
+small_version: "1.0.0"
+owner: "human"
+intent: "Implement SMALL protocol for agent-legible project continuity"
+scope:
+  include:
+    - "src/"
+    - "internal/"
+  exclude:
+    - "node_modules/"
+    - ".git/"
+success_criteria:
+  - "All five canonical artifacts are validated"
+  - "Invariants are enforced programmatically"
+  - "Agent can resume work from handoff"
