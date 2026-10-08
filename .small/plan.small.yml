@@ -219,4 +219,4 @@ tasks:
       status: completed
     - id: task-65
       title: Correct command summaries and strict validation with portable verified legacy command proof; preserve audit history, test, and push focused branch
-      status: pending
+      status: completed

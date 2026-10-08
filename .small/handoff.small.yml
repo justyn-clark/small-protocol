@@ -1,6 +1,6 @@
 small_version: "1.0.0"
 owner: agent
-summary: Run blocked on task-29.
+summary: 'Command-summary correction implemented, verified, and pushed on fix/command-summary-proof (PR 2); implementation CI passed all three jobs. Canonical LoopExec strict passes read-only and all 14 baseline audit files are unchanged. Use bin/small-command-summary-fix; proof and clean verification receipts are under bin/. docs/command-proof.md specifies the two selective portable proofs and compatibility requirements. Next operator steps: obtain stable-release authorization, publish compatible tooling through maintainer release instructions, then explicitly prepare LoopExec proof and CI pin in its own task. No merge, release tag, default Homebrew binary change, LoopExec modification, or deployment occurred.'
 resume:
     current_task_id: task-29
     next_steps:
