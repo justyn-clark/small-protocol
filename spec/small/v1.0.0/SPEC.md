@@ -66,6 +66,20 @@ The following invariants are non-negotiable and MUST be enforced by all SMALL v1
   - `commit` (string - git commit hash)
 - Evidence fields enable verification of progress claims
 
+### Command capture tooling extension
+
+The CLI records display-only `command_summary`, original `command_ref`, and
+exact-byte `command_sha256`. New bounded captures additionally use optional
+integer `command_summary_version: 2`, requiring verified full-command proof in
+strict tooling checks. Summaries preserve UTF-8 and URL token boundaries.
+Historical legacy-display exceptions require exact original hash and legacy
+summary agreement, and do not rewrite artifacts. Supported local and selective
+portable stores, containment/read bounds, full-command security checks, and
+cacheless compatibility are specified in
+[the command proof contract](../../../docs/command-proof.md).
+This tooling extension does not change `small_version` or migrate profiles;
+older tooling cannot validate entries carrying the new marker.
+
 ### 3. Plan is Disposable; Progress is Not
 
 - `plan.small.yml` may be regenerated or replaced at any time

@@ -82,6 +82,17 @@ When a task in `plan.small.yml` is marked as `status: completed`, there MUST be 
 
 This ensures that completed tasks have auditable evidence of completion.
 
+## Strict Command Proof
+
+Strict checks verify full commands for new truncated CLI displays marked
+`command_summary_version: 2`. Existing insecure-looking legacy summaries require
+exact original bytes, SHA256 and legacy-summary agreement before any display
+exception. Reads are bounded and contained; full-command link and secret checks
+remain enforced. Existing audit files are never rewritten. Selective portable
+proof outside `.small/` supports fresh checkouts without a private cache;
+otherwise valid old receipts do not require one. See
+[command proof](command-proof.md) for the complete tooling contract.
+
 ## Strict Mode Invariants
 
 Strict mode is opt-in (`--strict`) and extends invariant enforcement with additional safety checks.

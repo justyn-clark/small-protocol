@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/spf13/cobra"
 )
@@ -18,6 +19,9 @@ func lintCmd() *cobra.Command {
 		Use:   "lint",
 		Short: "Lint SMALL artifacts for invariant violations",
 		Long: `Checks invariants beyond schema validation (version, ownership, evidence, secrets).
+
+Strict command validation uses verified full commands for bounded CLI displays.
+Missing proof fails closed; see docs/command-proof.md for portable local proof.
 
 Also warns when small_version is not a quoted string. Fix with: small fix --versions
 Use --format-strict to treat formatting drift as an error.
@@ -77,6 +81,16 @@ Schema Resolution (for any validation performed):
 }
 
 func runLintArtifacts(baseDir string, strict bool) ([]small.InvariantViolation, error) {
+	if sessionv2.IsWorkspace(baseDir) {
+		store, err := sessionv2.Load(baseDir)
+		if err != nil {
+			return nil, err
+		}
+		if strict {
+			return sessionv2.CommandSecurityViolations(store), nil
+		}
+		return nil, nil
+	}
 	artifacts, err := small.LoadAllArtifacts(baseDir)
 	if err != nil {
 		return nil, err

@@ -256,6 +256,9 @@ func Strict(store *Store) (State, error) {
 	if len(state.Conflicts) > 0 {
 		return state, fmt.Errorf("%w: %d conflict(s)", ErrConflict, len(state.Conflicts))
 	}
+	if violations := CommandSecurityViolations(store); len(violations) > 0 {
+		return state, fmt.Errorf("strict command validation: %s: %s", violations[0].File, violations[0].Message)
+	}
 	return state, nil
 }
 

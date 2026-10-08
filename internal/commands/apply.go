@@ -39,7 +39,9 @@ Writes progress entries using signal-first mode by default.
 Set SMALL_PROGRESS_MODE=audit to retain verbose apply telemetry.
 Optionally generates a handoff at the end.
 
-If no command is provided, defaults to dry-run mode.`,
+If no command is provided, defaults to dry-run mode.
+Bounded captures require exact local command proof in strict checks;
+see docs/command-proof.md for selective portable proof without editing history.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if dir == "" {
 				dir = baseDir
@@ -144,6 +146,9 @@ If no command is provided, defaults to dry-run mode.`,
 					entry["command_summary"] = summary
 					entry["command_ref"] = ref
 					entry["command_sha256"] = sha
+					if small.CommandNeedsProof(cmdArg) {
+						entry["command_summary_version"] = 2
+					}
 					entry["notes"] = fmt.Sprintf("apply --dry-run (cmd: %q)", summary)
 				}
 
@@ -182,6 +187,9 @@ If no command is provided, defaults to dry-run mode.`,
 					startEntry["command_summary"] = summary
 					startEntry["command_ref"] = ref
 					startEntry["command_sha256"] = sha
+					if small.CommandNeedsProof(cmdArg) {
+						startEntry["command_summary_version"] = 2
+					}
 				}
 
 				if err := appendProgressEntry(artifactsDir, startEntry); err != nil {
@@ -239,6 +247,9 @@ If no command is provided, defaults to dry-run mode.`,
 					endEntry["command_summary"] = summary
 					endEntry["command_ref"] = ref
 					endEntry["command_sha256"] = sha
+					if small.CommandNeedsProof(cmdArg) {
+						endEntry["command_summary_version"] = 2
+					}
 				}
 			}
 			endEntry["evidence"] = buildExecutionEvidence(outputBuffer.String(), exitCode, autoProgress || jsonOutput)
