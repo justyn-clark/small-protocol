@@ -222,4 +222,4 @@ tasks:
       status: completed
     - id: task-66
       title: Resolve the synthetic bearer fixture security-check false positive without rewriting branch or audit history
-      status: pending
+      status: blocked
