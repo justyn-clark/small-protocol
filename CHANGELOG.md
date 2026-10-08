@@ -10,6 +10,8 @@ This project follows a protocol-first versioning model:
 
 ## [Unreleased]
 
+## [v1.1.1] - 2026-10-08
+
 ### Fixed
 - Command summaries preserve UTF-8 and complete URL tokens within the existing
   200-byte bound. Exact, hash-verified command proof allows legacy split-localhost
