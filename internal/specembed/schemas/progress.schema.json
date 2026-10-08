@@ -70,6 +70,11 @@
             "minLength": 1,
             "description": "Truncated command summary"
           },
+          "command_summary_version": {
+            "type": "integer",
+            "enum": [2],
+            "description": "Tooling marker for bounded summaries requiring exact command proof in strict mode"
+          },
           "command_sha256": {
             "type": "string",
             "pattern": "^[a-f0-9]{64}$",

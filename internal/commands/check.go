@@ -34,6 +34,7 @@ func checkCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "check",
 		Short: "Run validate, lint, and verify",
+		Long:  "Run read-only validate, lint, and verify. Strict checks require exact command proof for bounded CLI displays; see docs/command-proof.md for selective portable proof.",
 		Run: func(cmd *cobra.Command, args []string) {
 			p := currentPrinter()
 			if dir == "" {
@@ -115,6 +116,20 @@ func runCheck(dir string, strict, ci, jsonOutput bool, scope workspace.Scope, fo
 			}
 			result.ExitCode = ExitInvalid
 			return ExitInvalid, result, nil
+		}
+		if strict {
+			violations := sessionv2.CommandSecurityViolations(store)
+			if len(violations) > 0 {
+				result.Lint.Status = "failed"
+				for _, v := range violations {
+					result.Lint.Errors = append(result.Lint.Errors, fmt.Sprintf("%s: %s", v.File, v.Message))
+				}
+				result.ExitCode = ExitInvalid
+				if !ci && !jsonOutput {
+					p.PrintError(p.FormatBlock("Strict command validation failed", result.Lint.Errors))
+				}
+				return ExitInvalid, result, nil
+			}
 		}
 		return ExitValid, result, nil
 	}

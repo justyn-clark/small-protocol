@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/justyn-clark/small-protocol/internal/sessionv2"
 	"github.com/justyn-clark/small-protocol/internal/small"
 	"github.com/justyn-clark/small-protocol/internal/workspace"
 	"github.com/spf13/cobra"
@@ -34,6 +35,9 @@ Performs:
   - Schema validation of all artifacts
   - Invariant enforcement (required files, ownership, format)
   - ReplayId validation (required in handoff.small.yml)
+
+Strict command checks require verified full-command proof for bounded CLI
+displays. See docs/command-proof.md for selective portable proof.
 
 Exit codes:
   0 - All artifacts valid
@@ -82,6 +86,26 @@ func runVerify(dir string, strict, ci bool, scope workspace.Scope) int {
 	}
 
 	artifactsDir := resolveArtifactsDir(dir)
+	if sessionv2.IsWorkspace(artifactsDir) {
+		store, err := sessionv2.Load(artifactsDir)
+		if err != nil {
+			p.PrintError(err.Error())
+			return ExitInvalid
+		}
+		if strict {
+			if _, err := sessionv2.Strict(store); err != nil {
+				p.PrintError(err.Error())
+				return ExitInvalid
+			}
+		} else if _, err := sessionv2.Reduce(store); err != nil {
+			p.PrintError(err.Error())
+			return ExitInvalid
+		}
+		if !ci {
+			p.PrintSuccess("Verification passed")
+		}
+		return ExitValid
+	}
 	if err := enforceWorkspaceScope(artifactsDir, scope); err != nil {
 		p.PrintError(fmt.Sprintf("Workspace validation failed: %v", err))
 		// Check if workspace.small.yml is missing

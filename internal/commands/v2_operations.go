@@ -276,8 +276,16 @@ func runV2Apply(baseDir, explicitSession, taskRef, command string, dryRun, autoC
 	if err != nil {
 		return err
 	}
-	payload := map[string]any{"command_summary": small.SummarizeCommand(command, small.DefaultCommandSummaryCap), "command_sha256": source, "outcome": outcome, "exit_code": exitCode, "evidence_digests": []string{receipt.Digest}, "task_acceptance_unchanged": true}
-	event, receipts, persistErr := sessionv2.AppendEventWithReceipts(baseDir, sessionID, "command_recorded", payload, sessionv2.AppendOptions{TaskID: task.ID, TaskRevision: task.Revision, PolicyRevision: task.PolicyRevision, SourceDigest: source, ExpectedFrontier: state.Frontier}, []sessionv2.Receipt{receipt})
+	ref, _, persistErr := small.WriteContentCommandLog(baseDir, command)
+	payload := map[string]any{"command_ref": ref, "command_summary": small.SummarizeCommand(command, small.DefaultCommandSummaryCap), "command_sha256": source, "outcome": outcome, "exit_code": exitCode, "evidence_digests": []string{receipt.Digest}, "task_acceptance_unchanged": true}
+	if small.CommandNeedsProof(command) {
+		payload["command_summary_version"] = 2
+	}
+	var event sessionv2.Event
+	var receipts []sessionv2.Receipt
+	if persistErr == nil {
+		event, receipts, persistErr = sessionv2.AppendEventWithReceipts(baseDir, sessionID, "command_recorded", payload, sessionv2.AppendOptions{TaskID: task.ID, TaskRevision: task.Revision, PolicyRevision: task.PolicyRevision, SourceDigest: source, ExpectedFrontier: state.Frontier}, []sessionv2.Receipt{receipt})
+	}
 	if persistErr != nil {
 		if jsonOutput {
 			_ = writeJSONValue(map[string]any{"profile": sessionv2.ProfileVersion, "child_outcome": outcome, "child_exit_code": exitCode, "child_executed": true, "evidence_recorded": false, "error_code": "executed_but_unrecorded"})

@@ -72,6 +72,15 @@ outcome and producer metadata. A completed or blocked task is accepted only by a
 requirements. Later policy, acceptance, or source revisions make earlier
 evidence historical and potentially inapplicable; they do not erase it.
 
+New bounded `command_recorded` displays carry `command_summary_version: 2`,
+`command_ref` and `command_sha256`, with the same digest as `source_digest`.
+Strict tooling checks require exact full-command proof from the contained local
+cache or mirrored selective portable store; missing/tampered proof fails closed.
+Summaries preserve UTF-8 and URL token boundaries. Existing event/receipt bytes
+and profile identity are never rewritten. See
+[the command proof contract](../../../docs/command-proof.md) for read bounds,
+full-command security enforcement and portable CI preparation.
+
 ## Reduction and reconciliation
 
 Event-set ingestion is idempotent, commutative, and associative. Per-session

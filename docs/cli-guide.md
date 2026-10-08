@@ -602,6 +602,13 @@ small apply --cmd "npm test" --task task-1
 4. Leaves task acceptance unchanged unless explicit `--auto-checkpoint` was
    requested with acceptance evidence
 
+Truncated captures additionally carry `command_summary_version: 2` and require
+verified full-command proof in strict checks. Summaries stay within 200 bytes,
+preserve UTF-8 and URL token boundaries, and are display-only. See
+[command proof](command-proof.md) for legacy receipt compatibility and selective
+portable proof when CI has no private cache. Profile versions and existing audit
+bytes are preserved; older CLIs do not understand the new v1 tooling marker.
+
 `small apply` already records narrow structured command evidence alongside human-readable evidence using `command_summary`, `command_ref`, and `command_sha256`. Additional nested command objects are intentionally deferred to keep `progress.small.yml` flat, auditable, and machine-legible without introducing another command schema.
 
 **Dry-run mode:**

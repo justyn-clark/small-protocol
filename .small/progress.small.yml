@@ -21702,3 +21702,285 @@ entries:
       status: completed
       task_id: task-64
       timestamp: "2026-09-17T16:56:20.704586000Z"
+    - evidence: Added task task-65 via small plan --add
+      notes: Correct command summaries and strict validation with portable verified legacy command proof; preserve audit history, test, and push focused branch
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-65
+      timestamp: "2026-10-08T05:00:02.355442000Z"
+    - evidence: Read LoopExec correction handoff; baseline strict passes, main equals live origin SHA 82178bc217eb7e1510b61596fd43594dc7af9237, latest release is v1.1.0; preserve unrelated .playwright-mcp and downstream audit records.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-65
+      timestamp: "2026-10-08T05:00:16.889065000Z"
+    - command: git switch -c fix/command-summary-proof
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T050017.224539000Z.txt
+      command_sha256: 1231c999a0ce13167430436ecacc51ab3e39c47a52fe54bc404d5275fa3aa3d4
+      command_summary: git switch -c fix/command-summary-proof
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:00:17.224539000Z"
+    - command: mkdir -p /private/tmp/small-command-summary-correction && python3 - <<'PY' from pathlib import Path import hashlib,json root=Path("/Users/justin/jcnagent/Agent/Projects/ai-protocol/loopexec") paths...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T050246.919486000Z.txt
+      command_sha256: 1e524cdf30af367d19cc618998ca4d9ab997524cc2a191d323bfc910311f92ff
+      command_summary: mkdir -p /private/tmp/small-command-summary-correction && python3 - <<'PY' from pathlib import Path import hashlib,json root=Path("/Users/justin/jcnagent/Agent/Projects/ai-protocol/loopexec") paths...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:02:46.919486000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/implement.py && gofmt -w internal/small/command_logs.go internal/small/command_proof.go internal/small/invariants.go internal/sessionv2/command...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T050554.386258000Z.txt
+      command_sha256: 4e38ab98c4b34a118e6d87eb3b7dd30d75d1e5d19b2659512e9c16536f32f59f
+      command_summary: python3 /private/tmp/small-command-summary-correction/implement.py && gofmt -w internal/small/command_logs.go internal/small/command_proof.go internal/small/invariants.go internal/sessionv2/command...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:05:54.386258000Z"
+    - command: GOCACHE=/private/tmp/small-command-summary-go-cache go test ./internal/small -run "Test(SummarizeCommand|CheckInvariants_StrictMode(Localhost|Insecure|Secrets))" -count=1
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T050825.877436000Z.txt
+      command_sha256: f93f493d74996afa748990eb75297792421baf355fb290514577b3fe71752af4
+      command_summary: GOCACHE=/private/tmp/small-command-summary-go-cache go test ./internal/small -run "Test(SummarizeCommand|CheckInvariants_StrictMode(Localhost|Insecure|Secrets))" -count=1
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:08:25.877436000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/tests.py && gofmt -w internal/small/command_proof_test.go internal/commands/command_proof_test.go && GOCACHE=/private/tmp/small-command-summary...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T051531.136049000Z.txt
+      command_sha256: 35682f41ba372db8f44df83249d793e75ff3e6794ca79e7804e3c842e7d4b4fe
+      command_summary: python3 /private/tmp/small-command-summary-correction/tests.py && gofmt -w internal/small/command_proof_test.go internal/commands/command_proof_test.go && GOCACHE=/private/tmp/small-command-summary...
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-65
+      timestamp: "2026-10-08T05:15:31.136049000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/refine.py && gofmt -w internal/small/command_logs.go internal/small/invariants.go internal/small/command_proof.go && GOCACHE=/private/tmp/small...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T051606.276979000Z.txt
+      command_sha256: 9da695f029757b53b8876d74feeef125de6a90e5a499a75c9dad807b38bada8b
+      command_summary: python3 /private/tmp/small-command-summary-correction/refine.py && gofmt -w internal/small/command_logs.go internal/small/invariants.go internal/small/command_proof.go && GOCACHE=/private/tmp/small...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:16:06.276979000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/docs.py && gofmt -w internal/commands/check.go internal/commands/verify.go internal/sessionv2/command_security.go && GOCACHE=/private/tmp/small...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T051831.101980000Z.txt
+      command_sha256: 78ebaabc9cb33116d31d93cd7b7bc3994efb276a6992a8a3601836f8c9c598b5
+      command_summary: python3 /private/tmp/small-command-summary-correction/docs.py && gofmt -w internal/commands/check.go internal/commands/verify.go internal/sessionv2/command_security.go && GOCACHE=/private/tmp/small...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:18:31.101980000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/acceptance.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052147.891739000Z.txt
+      command_sha256: e6ec32cd83d7fef1afdd96b954d0f743143bb928a2404648ada0822c51300513
+      command_summary: python3 /private/tmp/small-command-summary-correction/acceptance.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:21:47.891739000Z"
+    - command: GOCACHE=/private/tmp/small-command-summary-go-cache go test ./... && GOCACHE=/private/tmp/small-command-summary-go-cache go vet ./... && GOCACHE=/private/tmp/small-command-summary-go-cache make sma...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052217.918853000Z.txt
+      command_sha256: 1375ce4f01022fcf10123fe3e096944aea9a10040ea01a71a9f29743bef73eb4
+      command_summary: GOCACHE=/private/tmp/small-command-summary-go-cache go test ./... && GOCACHE=/private/tmp/small-command-summary-go-cache go vet ./... && GOCACHE=/private/tmp/small-command-summary-go-cache make sma...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:22:17.918853000Z"
+    - command: gitleaks dir internal/small internal/commands --no-banner --redact
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052304.658638000Z.txt
+      command_sha256: 94cfd403f0b5bdcc1437b9b160455245e0dd3d080c6bdd2732920b28b86d7905
+      command_summary: gitleaks dir internal/small internal/commands --no-banner --redact
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-65
+      timestamp: "2026-10-08T05:23:04.658638000Z"
+    - command: gitleaks dir internal --no-banner --redact --report-format json --report-path /private/tmp/small-command-summary-correction/gitleaks.json
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052429.281106000Z.txt
+      command_sha256: acda0540714e8a92a1deb648719676ebfcc8eafdcc92d8aa764679eb4f8ee0ca
+      command_summary: gitleaks dir internal --no-banner --redact --report-format json --report-path /private/tmp/small-command-summary-correction/gitleaks.json
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-65
+      timestamp: "2026-10-08T05:24:29.281106000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/verify_clean.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052432.085863000Z.txt
+      command_sha256: 54e66345efb66f116f576c347465d0b42de3327913f54899c482d30e5419acf6
+      command_summary: python3 /private/tmp/small-command-summary-correction/verify_clean.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:24:32.085863000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/persistence.py && gofmt -w internal/commands/v2_operations.go internal/commands/command_proof_test.go && GOCACHE=/private/tmp/small-command-sum...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052550.949223000Z.txt
+      command_sha256: 3c5d883b5263bb1c98737851b12dcf88a2055e2fafd9bb47bce3b16e16ba41ed
+      command_summary: python3 /private/tmp/small-command-summary-correction/persistence.py && gofmt -w internal/commands/v2_operations.go internal/commands/command_proof_test.go && GOCACHE=/private/tmp/small-command-sum...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:25:50.949223000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/stage.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052625.381133000Z.txt
+      command_sha256: 8eb928af9e661f884bb18e804ca1b0df09e00d0a6d35715ff2280091e06bd7f5
+      command_summary: python3 /private/tmp/small-command-summary-correction/stage.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:26:25.381133000Z"
+    - command: 'git add -- .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml && git commit -m "fix: verify bounded command summaries without rewriting receipts"'
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052634.866873000Z.txt
+      command_sha256: 82da400a309f212c3c5fd26b7e18629cc33c767880f3167ea9bab7e9e4f14c66
+      command_summary: 'git add -- .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml && git commit -m "fix: verify bounded command summaries without rewriting receipts"'
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:26:34.866873000Z"
+    - command: git push -u origin fix/command-summary-proof
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052709.060673000Z.txt
+      command_sha256: b49ef35820a84ba30203f39f265e7a06b17e7c6c4ae4b6e54338fdbf66c01ec6
+      command_summary: git push -u origin fix/command-summary-proof
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:27:09.060673000Z"
+    - command: gh pr create --repo justyn-clark/small-protocol --base main --head fix/command-summary-proof --title "Fix command summary strict checks with preserved audit history" --body-file /private/tmp/small-...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052722.098778000Z.txt
+      command_sha256: 425ddce97a8de71de8a6dc217ffd84a61c2fb06984c0d4d0bd1be7457a15d726
+      command_summary: gh pr create --repo justyn-clark/small-protocol --base main --head fix/command-summary-proof --title "Fix command summary strict checks with preserved audit history" --body-file /private/tmp/small-...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:27:22.098778000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052803.291326000Z.txt
+      command_sha256: 0e14d016f3406bf758d6f96e30a87632d97218f6ff94a2310076afb46c028eb0
+      command_summary: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:28:03.291326000Z"
+    - evidence: 'Implemented correction in commit d1c0582ff75a75fe550ef09684ac50c3bc2d0e00; pushed fix/command-summary-proof and opened PR 2. CI run 37732458782 passed verify and both installer smoke jobs for that exact head. Focused regressions, full Go suite, go vet, formatting, all five examples, clean isolated make verify, and staged Gitleaks pass. Canonical LoopExec and retained legacy fixture strict checks pass read-only with bin/small-command-summary-fix (v1.1.0-dev.command-summary.d1c0582ff75a). Clean official v1.1.0 fixture reproduces two violations; patched new audit/dry-run captures pass. Cacheless LoopExec copy passes with exactly two selective proofs; missing/tampered proof fails. Fourteen original audit files are byte-identical; LoopExec progress SHA256 remains 548b49b1aa30761f09f1253e101d7080fc1ac55c7f7421cc1f887521956df253. Receipt: bin/command-summary-verification.json; clean verification log: bin/command-summary-make-verify.log. Prior source scan flags only a pre-existing test fixture; staged correction scan is clean. Preserved unrelated .playwright-mcp and all existing progress entries. Stable publication and downstream proof/CI-pin preparation remain separate authorized tasks.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:29:38.875125000Z"
+    - command: git add -- .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml .small/handoff.small.yml && git diff --cached --check && gitleaks git --staged --no-banner --redact && git comm...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052943.019614000Z.txt
+      command_sha256: b73331dc9ed472d32f7ffd4dbeb7dd41bf6a279a475a198203c31401aaa25168
+      command_summary: git add -- .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml .small/handoff.small.yml && git diff --cached --check && gitleaks git --staged --no-banner --redact && git comm...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:29:43.019614000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T053010.434202000Z.txt
+      command_sha256: 0e14d016f3406bf758d6f96e30a87632d97218f6ff94a2310076afb46c028eb0
+      command_summary: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:30:10.434202000Z"
+    - evidence: Added task task-66 via small plan --add
+      notes: Resolve the synthetic bearer fixture security-check false positive without rewriting branch or audit history
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-66
+      timestamp: "2026-10-08T05:32:21.742863000Z"
+    - evidence: Final Actions CI run 37732656270 passes all three jobs, but GitGuardian check 113165085410 flags the literal alphabet bearer fixture in internal/small/command_proof_test.go:103 from commit d1c0582. This is fabricated test input, never used as a credential. Preserve all commits and audit records; construct the fixture at runtime and address only this precise false positive.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-66
+      timestamp: "2026-10-08T05:32:21.885273000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/bearer_fixture.py && gofmt -w internal/small/command_proof_test.go && GOCACHE=/private/tmp/small-command-summary-go-cache go test ./internal/sm...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T053223.263563000Z.txt
+      command_sha256: 0dd995344465ae7506d61668aac4ddfde8a45aa032fdd68e0fa070a056767873
+      command_summary: python3 /private/tmp/small-command-summary-correction/bearer_fixture.py && gofmt -w internal/small/command_proof_test.go && GOCACHE=/private/tmp/small-command-summary-go-cache go test ./internal/sm...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:32:23.263563000Z"
+    - command: git add -- internal/small/command_proof_test.go .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml && git diff --cached --check && gitleaks git --staged --no-banner --redact...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T053415.991580000Z.txt
+      command_sha256: 49ba17fb9be00d3d5341a23417e2acca3ba136cb5ecb59f87393e27b7f130814
+      command_summary: git add -- internal/small/command_proof_test.go .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml && git diff --cached --check && gitleaks git --staged --no-banner --redact...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:34:15.991580000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T053459.289935000Z.txt
+      command_sha256: 0e14d016f3406bf758d6f96e30a87632d97218f6ff94a2310076afb46c028eb0
+      command_summary: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:34:59.289935000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/capture_ci.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T053658.404399000Z.txt
+      command_sha256: 8048a9be5d0ed4e67ae9468b5fe2e29e1e401f4ab0b1499650120d29cbb2fb21
+      command_summary: python3 /private/tmp/small-command-summary-correction/capture_ci.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:36:58.404399000Z"
+    - command: gh pr edit 2 --repo justyn-clark/small-protocol --body-file /private/tmp/small-command-summary-correction/pr-body.md
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T053700.056858000Z.txt
+      command_sha256: c0a468649b30fda9fd80f818537496d8e6e553e1b7dc1ed29ba76e83b1affe68
+      command_summary: gh pr edit 2 --repo justyn-clark/small-protocol --body-file /private/tmp/small-command-summary-correction/pr-body.md
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:37:00.056858000Z"
+    - evidence: 'Runtime synthetic bearer fixture correction is tested and pushed in commit 221a1868558c5e528f6e9aa116940a0d61b25931 without rewriting any commit or audit record. Actions run 37733047402 passes verify and both installer smoke jobs on that exact head. GitGuardian check 113166299917 remains failure because incident 33758950 scans the original fabricated alphabet bearer fixture in d1c0582; current source constructs the fixture at runtime. Resolving this precise historical false positive is intentionally handed to the authenticated GitGuardian account operator: no GitGuardian connector or ggshield CLI is available, and the dashboard in the available browser requires login. User permission for that additional login is pending. No security gate was bypassed, no blanket ignore was added, and no history was rewritten. The local binary bin/small-command-summary-fix reports v1.1.0-dev.command-summary.221a1868558c; canonical LoopExec and retained/new/cached/cacheless fixture checks pass, all 14 baseline audit files remain byte-identical. Evidence: bin/command-summary-verification.json, bin/command-summary-ci.json, PR 2; the PR description reports the unresolved gate.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-66
+      timestamp: "2026-10-08T05:39:28.611470000Z"

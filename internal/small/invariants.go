@@ -2,6 +2,7 @@ package small
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 	"sort"
 	"strings"
@@ -84,8 +85,10 @@ func CheckInvariants(artifacts map[string]*Artifact, strict bool) []InvariantVio
 
 		// --- Strict mode: secrets + link hygiene ---
 		if strict {
-			violations = append(violations, checkSecrets(artifact)...)
-			violations = append(violations, checkInsecureLinks(artifact)...)
+			securityArtifact, commandViolations := commandSecurityArtifact(artifact)
+			violations = append(violations, commandViolations...)
+			violations = append(violations, checkSecrets(securityArtifact)...)
+			violations = append(violations, checkInsecureLinks(securityArtifact)...)
 		}
 	}
 
@@ -807,20 +810,15 @@ func validateHandoff(path string, root map[string]any, owner string) []Invariant
 	return v
 }
 
-// localhostHTTPPrefixes are http:// URLs allowed in progress files only.
-var localhostHTTPPrefixes = []string{
-	"http://localhost",
-	"http://127.0.0.1",
-	"http://0.0.0.0",
-	"http://[::1]",
-}
-
-// isAllowedLocalhostHTTP checks if a URL is an allowed localhost http URL.
-func isAllowedLocalhostHTTP(url string) bool {
-	for _, prefix := range localhostHTTPPrefixes {
-		if strings.HasPrefix(url, prefix) {
-			return true
-		}
+// isAllowedLocalhostHTTP requires an exact permitted host, with no credentials.
+func isAllowedLocalhostHTTP(raw string) bool {
+	parsed, err := url.Parse(raw)
+	if err != nil || !strings.EqualFold(parsed.Scheme, "http") || parsed.User != nil {
+		return false
+	}
+	switch parsed.Hostname() {
+	case "localhost", "127.0.0.1", "0.0.0.0", "::1":
+		return true
 	}
 	return false
 }
@@ -831,7 +829,7 @@ func extractHTTPURLs(s string) []string {
 	var urls []string
 	remaining := s
 	for {
-		idx := strings.Index(remaining, "http://")
+		idx := strings.Index(strings.ToLower(remaining), "http://")
 		if idx < 0 {
 			break
 		}
@@ -853,7 +851,7 @@ func extractHTTPURLs(s string) []string {
 		url := urlStart[:end]
 		// Only include URLs that have something after "http://" (a host)
 		// Skip things like "http://" or "http:// " which aren't real URLs
-		host := strings.TrimPrefix(url, "http://")
+		host := url[len("http://"):]
 		if len(host) > 0 && host[0] != ' ' && host[0] != '/' {
 			urls = append(urls, url)
 		}
@@ -885,7 +883,7 @@ func checkInsecureLinks(artifact *Artifact) []InvariantViolation {
 				visit(x)
 			}
 		case string:
-			if strings.Contains(vv, "http://") {
+			if strings.Contains(strings.ToLower(vv), "http://") {
 				urls := extractHTTPURLs(vv)
 				for _, url := range urls {
 					// In progress files, allow localhost http
@@ -930,7 +928,7 @@ func checkSecrets(artifact *Artifact) []InvariantViolation {
 
 	checkValue := func(key string, value any, path string) bool {
 		// Skip excluded paths
-		if excludedPaths[path] || strings.HasSuffix(path, ".replayId") || path == "replayId" || strings.HasSuffix(path, ".command_sha256") {
+		if excludedPaths[path] || strings.HasSuffix(path, ".replayId") || path == "replayId" || (path == "command_sha256" || strings.HasSuffix(path, ".command_sha256")) {
 			return false
 		}
 

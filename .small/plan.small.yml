@@ -217,3 +217,9 @@ tasks:
     - id: task-64
       title: Commit and push the verified examples gallery
       status: completed
+    - id: task-65
+      title: Correct command summaries and strict validation with portable verified legacy command proof; preserve audit history, test, and push focused branch
+      status: completed
+    - id: task-66
+      title: Resolve the synthetic bearer fixture security-check false positive without rewriting branch or audit history
+      status: blocked

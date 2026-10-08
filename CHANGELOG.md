@@ -10,6 +10,22 @@ This project follows a protocol-first versioning model:
 
 ## [Unreleased]
 
+### Fixed
+- Command summaries preserve UTF-8 and complete URL tokens within the existing
+  200-byte bound. Exact, hash-verified command proof allows legacy split-localhost
+  receipts to pass strict checks without changing audit history.
+- Strict checks enforce full-command HTTP and secret hygiene for new bounded
+  v1/v2 captures and verified legacy displays, reject loopback prefix lookalikes,
+  and fail closed on missing/tampered proof or unsafe refs.
+
+### Added
+- Optional tooling marker `command_summary_version: 2` for new truncated v1
+  progress entries and v2 command payloads, plus contained, 1 MiB-bounded local
+  proof resolution and selective `.small-command-proofs/` support for cacheless
+  CI. Profile versions are unchanged; writers and gates need compatible tooling.
+- Documented the proof contract, exact legacy/dry-run compatibility scope and
+  explicit downstream proof/CI-pin preparation in `docs/command-proof.md`.
+
 ## [v1.1.0] - 2026-09-16
 
 ### Status
