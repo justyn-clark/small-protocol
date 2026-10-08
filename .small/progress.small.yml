@@ -21898,3 +21898,44 @@ entries:
       status: completed
       task_id: task-65
       timestamp: "2026-10-08T05:29:38.875125000Z"
+    - command: git add -- .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml .small/handoff.small.yml && git diff --cached --check && gitleaks git --staged --no-banner --redact && git comm...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T052943.019614000Z.txt
+      command_sha256: b73331dc9ed472d32f7ffd4dbeb7dd41bf6a279a475a198203c31401aaa25168
+      command_summary: git add -- .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml .small/handoff.small.yml && git diff --cached --check && gitleaks git --staged --no-banner --redact && git comm...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:29:43.019614000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T053010.434202000Z.txt
+      command_sha256: 0e14d016f3406bf758d6f96e30a87632d97218f6ff94a2310076afb46c028eb0
+      command_summary: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-65
+      timestamp: "2026-10-08T05:30:10.434202000Z"
+    - evidence: Added task task-66 via small plan --add
+      notes: Resolve the synthetic bearer fixture security-check false positive without rewriting branch or audit history
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-66
+      timestamp: "2026-10-08T05:32:21.742863000Z"
+    - evidence: Final Actions CI run 37732656270 passes all three jobs, but GitGuardian check 113165085410 flags the literal alphabet bearer fixture in internal/small/command_proof_test.go:103 from commit d1c0582. This is fabricated test input, never used as a credential. Preserve all commits and audit records; construct the fixture at runtime and address only this precise false positive.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-66
+      timestamp: "2026-10-08T05:32:21.885273000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/bearer_fixture.py && gofmt -w internal/small/command_proof_test.go && GOCACHE=/private/tmp/small-command-summary-go-cache go test ./internal/sm...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T053223.263563000Z.txt
+      command_sha256: 0dd995344465ae7506d61668aac4ddfde8a45aa032fdd68e0fa070a056767873
+      command_summary: python3 /private/tmp/small-command-summary-correction/bearer_fixture.py && gofmt -w internal/small/command_proof_test.go && GOCACHE=/private/tmp/small-command-summary-go-cache go test ./internal/sm...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:32:23.263563000Z"

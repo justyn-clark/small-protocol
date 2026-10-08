@@ -100,7 +100,7 @@ func TestCommandProofFullCommandEnforcement(t *testing.T) {
 			{"external after cap", " http://external.example/path", "insecure link"},
 			{"secret after cap", " API_KEY=sk-abcdefghijklmnopqrstuvwxyz0123456789", "potential secret"},
 			{"private key after cap", " -----BEGIN PRIVATE KEY-----", "potential secret"},
-			{"bearer after cap", " Authorization: Bearer abcdefghijklmnopqrstuvwxyz", "potential secret"},
+			{"bearer after cap", " Authorization: " + "Bearer " + strings.Repeat("fixture", 4), "potential secret"},
 		} {
 			t.Run(fmt.Sprintf("%t/%s", modern, test.name), func(t *testing.T) {
 				base, record := proofFixture(t, boundaryCommand()+test.suffix, modern)
