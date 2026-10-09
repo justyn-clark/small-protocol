@@ -26,6 +26,9 @@ type Artifact struct {
 	Data map[string]any
 	Path string
 	Type string
+
+	// Populated only after exact command proof is verified, never from artifact data.
+	verifiedCommandPaths map[string]bool
 }
 
 func LoadArtifact(baseDir, filename string) (*Artifact, error) {

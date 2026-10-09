@@ -10,6 +10,13 @@ This project follows a protocol-first versioning model:
 
 ## [Unreleased]
 
+## [v1.1.2] - 2026-10-08
+
+### Fixed
+- Strict command validation recognizes exact-loopback HTTP literals in verified
+  captured code, including backtick-quoted runtime-port templates, while keeping
+  original secret checks, authored-field policy and audit history intact.
+
 ## [v1.1.1] - 2026-10-08
 
 ### Fixed
