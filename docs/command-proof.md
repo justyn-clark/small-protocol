@@ -51,6 +51,24 @@ heuristics include credential assignments, bearer credentials, recognized token
 prefixes and private-key headers, as well as existing artifact-value heuristics.
 Diagnostics do not echo command bytes or credentials.
 
+## Captured code literals
+
+Exact, hash-verified command displays support backtick-quoted local HTTP source
+literals. The authority must use one of the exact permitted local hosts without
+userinfo. A runtime port interpolation may contain a simple ASCII identifier,
+a member expression ending in `.port`, or a receiver's `.address().port`, such
+as `` `http://127.0.0.1:${server.address().port}` ``. Calls with arguments,
+operators, dynamic hosts, malformed ports and authority suffixes are unsupported
+and fail closed. A static local URL inside backticks is also recognized.
+
+This is source-text classification, not runtime evaluation or network isolation.
+Only the URL-check view of proven `command`/`command_summary` fields changes in
+memory. Full original bytes still undergo secret checks, including the port
+expression and text beyond the display cap. Notes, evidence, handoffs and other
+authored fields retain ordinary URL policy. Short displays using this grammar
+also require exact command proof; missing or tampered proof is not exempted.
+Existing records, timestamps, summaries, refs and hashes remain unchanged.
+
 ## Existing receipts
 
 The pre-correction summarizer could split an allowed local URL into an insecure

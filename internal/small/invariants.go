@@ -871,18 +871,22 @@ func checkInsecureLinks(artifact *Artifact) []InvariantViolation {
 	// Check if this is a progress artifact (allow localhost http)
 	isProgress := artifact.Type == "progress"
 
-	var visit func(value any)
-	visit = func(value any) {
+	var visit func(value any, path string)
+	visit = func(value any, path string) {
 		switch vv := value.(type) {
 		case map[string]any:
-			for _, x := range vv {
-				visit(x)
+			for key, x := range vv {
+				key = strings.ReplaceAll(strings.ReplaceAll(key, "~", "~0"), "/", "~1")
+				visit(x, path+"/"+key)
 			}
 		case []any:
-			for _, x := range vv {
-				visit(x)
+			for i, x := range vv {
+				visit(x, fmt.Sprintf("%s/%d", path, i))
 			}
 		case string:
+			if artifact.verifiedCommandPaths[path] {
+				vv = commandHTTPLiteralsForLint(vv)
+			}
 			if strings.Contains(strings.ToLower(vv), "http://") {
 				urls := extractHTTPURLs(vv)
 				for _, url := range urls {
@@ -904,7 +908,7 @@ func checkInsecureLinks(artifact *Artifact) []InvariantViolation {
 		}
 	}
 
-	visit(root)
+	visit(root, "")
 	return v
 }
 

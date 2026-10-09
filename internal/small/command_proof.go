@@ -112,30 +112,31 @@ func insecureCommandSummary(summary string) bool {
 
 // commandRecordForLint clones only the proven CLI display fields. Original
 // artifact data, arbitrary notes/evidence and all other strings stay untouched.
-func commandRecordForLint(baseDir string, record map[string]any) (map[string]any, []string) {
+func commandRecordForLint(baseDir string, record map[string]any) (map[string]any, bool, []string) {
 	summary, _ := record["command_summary"].(string)
 	version, marked := record["command_summary_version"]
 	legacyCandidate := len(summary) == DefaultCommandSummaryCap && strings.HasSuffix(summary, "...") && insecureCommandSummary(summary)
-	if !marked && !legacyCandidate {
-		return record, nil
+	literalCandidate := commandHTTPLiteralsForLint(summary) != summary
+	if !marked && !legacyCandidate && !literalCandidate {
+		return record, false, nil
 	}
 	if marked && !summaryVersionTwo(version) {
-		return record, []string{"unsupported command_summary_version; expected 2"}
+		return record, false, []string{"unsupported command_summary_version; expected 2"}
 	}
 	ref, _ := record["command_ref"].(string)
 	digest, _ := record["command_sha256"].(string)
 	command, err := ReadCommandProof(baseDir, ref, digest)
 	if err != nil {
-		return record, []string{err.Error()}
+		return record, false, []string{err.Error()}
 	}
 	if parts := commandLogRefPattern.FindStringSubmatch(ref); parts != nil {
 		if replay, ok := record["replayId"].(string); ok && replay != parts[1] {
-			return record, []string{"command_ref replayId does not match receipt replayId"}
+			return record, false, []string{"command_ref replayId does not match receipt replayId"}
 		}
 		if timestamp, ok := record["timestamp"].(string); ok {
 			filename, err := SanitizeTimestampForFilename(timestamp)
 			if err != nil || filename+".txt" != parts[2] {
-				return record, []string{"command_ref timestamp does not match receipt timestamp"}
+				return record, false, []string{"command_ref timestamp does not match receipt timestamp"}
 			}
 		}
 	}
@@ -144,10 +145,10 @@ func commandRecordForLint(baseDir string, record map[string]any) (map[string]any
 		expected = SummarizeCommand(command, DefaultCommandSummaryCap)
 	}
 	if summary != expected {
-		return record, []string{"command_summary does not match the verified command summarizer output"}
+		return record, false, []string{"command_summary does not match the verified command summarizer output"}
 	}
 	if value, exists := record["command"]; exists && value != expected {
-		return record, []string{"command does not match the verified command summary"}
+		return record, false, []string{"command does not match the verified command summary"}
 	}
 	copy := make(map[string]any, len(record))
 	for key, value := range record {
@@ -160,7 +161,7 @@ func commandRecordForLint(baseDir string, record map[string]any) (map[string]any
 	if record["evidence"] == "Dry-run: no command executed" && record["status"] == "pending" && record["notes"] == fmt.Sprintf("apply --dry-run (cmd: %q)", expected) {
 		copy["notes"] = "apply --dry-run (verified command display)"
 	}
-	return copy, nil
+	return copy, true, nil
 }
 
 var commandSecretPattern = regexp.MustCompile(`(?i)(?:\b(?:api[_-]?key|access[_-]?token|password|passwd|secret|token)\s*=\s*["']?[^\s"'$;<>][^\s"';]*|\bbearer\s+[a-z0-9._~+/-]{8,}|\b(?:gh[pousr]_[a-z0-9]{20,}|github_pat_[a-z0-9_]{20,}|sk-[a-z0-9_-]{16,}|AKIA[A-Z0-9]{16})\b|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)`)
@@ -178,12 +179,15 @@ func commandSecretViolations(path string, record map[string]any) []InvariantViol
 
 // CheckCommandRecord provides the same strict command policy to v2 receipts.
 func CheckCommandRecord(baseDir, path string, record map[string]any) []InvariantViolation {
-	copy, errors := commandRecordForLint(baseDir, record)
+	copy, verified, errors := commandRecordForLint(baseDir, record)
 	var violations []InvariantViolation
 	for _, err := range errors {
 		violations = append(violations, InvariantViolation{File: path, Message: err})
 	}
 	artifact := &Artifact{Type: "progress", Path: path, Data: copy}
+	if verified {
+		artifact.verifiedCommandPaths = map[string]bool{"/command": true, "/command_summary": true}
+	}
 	violations = append(violations, checkSecrets(artifact)...)
 	violations = append(violations, checkInsecureLinks(artifact)...)
 	return append(violations, commandSecretViolations(path, copy)...)
@@ -199,6 +203,7 @@ func commandSecurityArtifact(artifact *Artifact) (*Artifact, []InvariantViolatio
 	}
 	entries, _ := root["entries"].([]any)
 	copies := make([]any, len(entries))
+	verifiedPaths := make(map[string]bool)
 	var violations []InvariantViolation
 	baseDir := filepath.Dir(filepath.Dir(artifact.Path))
 	for i, entry := range entries {
@@ -207,13 +212,17 @@ func commandSecurityArtifact(artifact *Artifact) (*Artifact, []InvariantViolatio
 			copies[i] = entry
 			continue
 		}
-		copy, errors := commandRecordForLint(baseDir, record)
+		copy, verified, errors := commandRecordForLint(baseDir, record)
 		copies[i] = copy
+		if verified {
+			verifiedPaths[fmt.Sprintf("/entries/%d/command", i)] = true
+			verifiedPaths[fmt.Sprintf("/entries/%d/command_summary", i)] = true
+		}
 		for _, err := range errors {
 			violations = append(violations, InvariantViolation{File: artifact.Path, Message: fmt.Sprintf("entries[%d]: %s", i, err)})
 		}
 		violations = append(violations, commandSecretViolations(artifact.Path, copy)...)
 	}
 	root["entries"] = copies
-	return &Artifact{Type: artifact.Type, Path: artifact.Path, Data: root}, violations
+	return &Artifact{Type: artifact.Type, Path: artifact.Path, Data: root, verifiedCommandPaths: verifiedPaths}, violations
 }
