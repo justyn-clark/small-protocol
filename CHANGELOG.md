@@ -10,7 +10,7 @@ This project follows a protocol-first versioning model:
 
 ## [Unreleased]
 
-## [v1.1.2] - 2026-10-08
+## [v1.1.2] - 2026-10-09
 
 ### Fixed
 - Strict command validation recognizes exact-loopback HTTP literals in verified
