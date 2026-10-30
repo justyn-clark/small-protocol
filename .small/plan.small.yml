@@ -223,3 +223,45 @@ tasks:
     - id: task-66
       title: Resolve the synthetic bearer fixture security-check false positive without rewriting branch or audit history
       status: blocked
+    - id: task-67
+      title: Revalidate PR 2 formatting and exact-head gates, then merge only when all checks are green under the owner authorization; preserve local and downstream audit history
+      status: blocked
+      dependencies:
+        - task-66
+    - id: task-68
+      title: Merge reviewed PR 2 with a merge commit under the owner explicit exception for GitGuardian synthetic-fixture incident 33758950; require all other checks green and verify history plus downstream strict proof
+      status: completed
+      dependencies:
+        - task-65
+    - id: task-69
+      title: Prepare and validate a clean stable v1.1.1 release candidate containing the command-summary fix, aligned npm version and release notes, preserving audits and public tags
+      status: completed
+    - id: task-70
+      title: Publish immutable stable v1.1.1 through the standard GitHub and npm release workflows; verify public assets, checksums, installer and read-only LoopExec strict proof
+      status: completed
+      dependencies:
+        - task-69
+    - id: task-71
+      title: Update the public Homebrew tap to stable SMALL v1.1.1 archive names and checksums, validate formula and upgrade the local standard binary
+      status: completed
+      dependencies:
+        - task-70
+    - id: task-72
+      title: Correct URL-literal handling for verified captured code with exact-loopback runtime-port templates; preserve full-command secrets, authored-field HTTP policy and immutable audit proofs
+      status: completed
+    - id: task-73
+      title: Verify captured-code correction against exact retained LoopExec evidence and cacheless proof, run security negatives and clean CI checks, then push a focused correction PR
+      status: completed
+      dependencies:
+        - task-72
+    - id: task-74
+      title: Publish validated captured-code correction as stable v1.1.2, verify public GitHub/npm/installers and upgrade canonical Homebrew through existing updater while preserving audit and tag history
+      status: completed
+      dependencies:
+        - task-73
+    - id: task-75
+      title: Resolve shadowed SMALL CLI on PATH and verify LoopExec audit-preserving recovery with stable v1.1.2
+      status: completed
+    - id: task-76
+      title: Correct captured environment-assignment false positives and report command-proof availability without changing historical receipts or strict evidence requirements
+      status: completed

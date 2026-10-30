@@ -36,6 +36,7 @@ files publish in one recoverable transaction.
 | `small validate` | Validate canonical artifacts against schemas |
 | `small lint` | Enforce invariant rules beyond schema validation |
 | `small check` | Run validate, lint, and verify |
+| `small proof status` | Inspect exact command-proof availability without writing or disclosing commands |
 | `small verify` | CI/local enforcement gate |
 | `small doctor` | Diagnose workspace issues and suggest fixes |
 | `small status` | Show compact signal-first project state |
@@ -80,6 +81,18 @@ Check project status:
 small status
 small check --strict
 ```
+
+Inspect command proof coverage independently of strict pass/fail:
+
+```bash
+small proof status
+small proof status --json --dir ../other-repo
+```
+
+This inventory reports unavailable legacy command bytes even where historical
+strict policy permits a summary. It does not assess secret safety or restore
+proof. See [command proof](command-proof.md) for the classification and recovery
+rules.
 
 Inspect run history:
 

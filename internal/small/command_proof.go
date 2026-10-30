@@ -115,9 +115,7 @@ func insecureCommandSummary(summary string) bool {
 func commandRecordForLint(baseDir string, record map[string]any) (map[string]any, bool, []string) {
 	summary, _ := record["command_summary"].(string)
 	version, marked := record["command_summary_version"]
-	legacyCandidate := len(summary) == DefaultCommandSummaryCap && strings.HasSuffix(summary, "...") && insecureCommandSummary(summary)
-	literalCandidate := commandHTTPLiteralsForLint(summary) != summary
-	if !marked && !legacyCandidate && !literalCandidate {
+	if !commandProofRequired(record) {
 		return record, false, nil
 	}
 	if marked && !summaryVersionTwo(version) {
@@ -129,26 +127,8 @@ func commandRecordForLint(baseDir string, record map[string]any) (map[string]any
 	if err != nil {
 		return record, false, []string{err.Error()}
 	}
-	if parts := commandLogRefPattern.FindStringSubmatch(ref); parts != nil {
-		if replay, ok := record["replayId"].(string); ok && replay != parts[1] {
-			return record, false, []string{"command_ref replayId does not match receipt replayId"}
-		}
-		if timestamp, ok := record["timestamp"].(string); ok {
-			filename, err := SanitizeTimestampForFilename(timestamp)
-			if err != nil || filename+".txt" != parts[2] {
-				return record, false, []string{"command_ref timestamp does not match receipt timestamp"}
-			}
-		}
-	}
-	expected := legacyCommandSummary(command)
-	if marked {
-		expected = SummarizeCommand(command, DefaultCommandSummaryCap)
-	}
-	if summary != expected {
-		return record, false, []string{"command_summary does not match the verified command summarizer output"}
-	}
-	if value, exists := record["command"]; exists && value != expected {
-		return record, false, []string{"command does not match the verified command summary"}
+	if errors := commandProofBindingErrors(record, command); len(errors) > 0 {
+		return record, false, errors
 	}
 	copy := make(map[string]any, len(record))
 	for key, value := range record {
@@ -158,20 +138,18 @@ func commandRecordForLint(baseDir string, record map[string]any) (map[string]any
 	if _, exists := record["command"]; exists {
 		copy["command"] = command
 	}
-	if record["evidence"] == "Dry-run: no command executed" && record["status"] == "pending" && record["notes"] == fmt.Sprintf("apply --dry-run (cmd: %q)", expected) {
+	if record["evidence"] == "Dry-run: no command executed" && record["status"] == "pending" && record["notes"] == fmt.Sprintf("apply --dry-run (cmd: %q)", summary) {
 		copy["notes"] = "apply --dry-run (verified command display)"
 	}
 	return copy, true, nil
 }
-
-var commandSecretPattern = regexp.MustCompile(`(?i)(?:\b(?:api[_-]?key|access[_-]?token|password|passwd|secret|token)\s*=\s*["']?[^\s"'$;<>][^\s"';]*|\bbearer\s+[a-z0-9._~+/-]{8,}|\b(?:gh[pousr]_[a-z0-9]{20,}|github_pat_[a-z0-9_]{20,}|sk-[a-z0-9_-]{16,}|AKIA[A-Z0-9]{16})\b|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)`)
 
 func commandSecretViolations(path string, record map[string]any) []InvariantViolation {
 	command, _ := record["command_summary"].(string)
 	if command == "" {
 		command, _ = record["command"].(string)
 	}
-	if commandSecretPattern.MatchString(command) {
+	if capturedCommandHasSecret(command) {
 		return []InvariantViolation{{File: path, Message: "potential secret detected in captured command; remove credentials from commands, never rewrite historical receipts"}}
 	}
 	return nil
@@ -225,4 +203,35 @@ func commandSecurityArtifact(artifact *Artifact) (*Artifact, []InvariantViolatio
 	}
 	root["entries"] = copies
 	return &Artifact{Type: artifact.Type, Path: artifact.Path, Data: root, verifiedCommandPaths: verifiedPaths}, violations
+}
+
+func commandProofBindingErrors(record map[string]any, command string) []string {
+	ref, _ := record["command_ref"].(string)
+	summary, _ := record["command_summary"].(string)
+	version, marked := record["command_summary_version"]
+	if marked && !summaryVersionTwo(version) {
+		return []string{"unsupported command_summary_version; expected 2"}
+	}
+	if parts := commandLogRefPattern.FindStringSubmatch(ref); parts != nil {
+		if replay, ok := record["replayId"].(string); ok && replay != parts[1] {
+			return []string{"command_ref replayId does not match receipt replayId"}
+		}
+		if timestamp, ok := record["timestamp"].(string); ok {
+			filename, err := SanitizeTimestampForFilename(timestamp)
+			if err != nil || filename+".txt" != parts[2] {
+				return []string{"command_ref timestamp does not match receipt timestamp"}
+			}
+		}
+	}
+	expected := legacyCommandSummary(command)
+	if marked {
+		expected = SummarizeCommand(command, DefaultCommandSummaryCap)
+	}
+	if summary != expected {
+		return []string{"command_summary does not match the verified command summarizer output"}
+	}
+	if value, exists := record["command"]; exists && value != expected {
+		return []string{"command does not match the verified command summary"}
+	}
+	return nil
 }
