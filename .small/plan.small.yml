@@ -265,3 +265,6 @@ tasks:
     - id: task-76
       title: Correct captured environment-assignment false positives and report command-proof availability without changing historical receipts or strict evidence requirements
       status: completed
+    - id: task-77
+      title: Merge verified PR5 and prepare an audit-preserving v1.1.3 patch release with aligned package metadata, checked release artifacts and a concrete publication handoff
+      status: completed
