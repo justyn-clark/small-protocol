@@ -10,6 +10,8 @@ This project follows a protocol-first versioning model:
 
 ## [Unreleased]
 
+## [v1.1.3] - 2026-10-30
+
 ### Fixed
 - Captured JavaScript declarations that read an environment variable or a JSON
   config at an environment-rooted path no longer trigger credential-assignment

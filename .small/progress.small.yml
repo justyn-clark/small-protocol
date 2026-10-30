@@ -23034,3 +23034,19 @@ entries:
       status: completed
       task_id: task-76
       timestamp: "2026-10-30T05:14:32.027040000Z"
+    - evidence: Added task task-77 via small plan --add
+      notes: Merge verified PR5 and prepare an audit-preserving v1.1.3 patch release with aligned package metadata, checked release artifacts and a concrete publication handoff
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-77
+      timestamp: "2026-10-30T16:58:20.509037000Z"
+    - evidence: Prepare patch1.1.3 from merged PR5 source. Preserve this main branch history as a prefix; do not replace it with divergent operator bookkeeping. Align npm/changelog, perform non-publishing release rehearsal and compatibility checks, then prepare an exact-source draft. User authorized merging PR5 and preparing a release; public tag/npm/Homebrew activation remains a separate step.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-77
+      timestamp: "2026-10-30T16:58:20.714714000Z"
+    - evidence: 'Local v1.1.3 release preparation passed from merged PR5 mainf690e37156a658b580424096f6ff1de17286e500. npm metadata is1.1.3 and existing Unreleased notes are now dated1.1.3 changelog entries. No runtime/protocol or publication workflow changes. Verified GoReleaser2.19.0 checksum and configuration; non-publishing rehearsal produced all6 platform archives with matching checksums. Full race suite, vet, clean make verify, mocked installer smoke, selftest, cacheless strict, multi-session migration/reconciliation proof, 10k/100k reducer measurements, unmigrated-v1 byte preservation, and npm pack manifest/version checks passed. Old v1.0.7 strict validation refuses the v2 fixture without changing its digest; its separate status-only probe returned0 and is preserved as a non-validation observation. Existing public main progress remains an exact prefix. Original operator checkout/audit state is preserved separately. Durable local receipt: bin/small-v1.1.3-preparation/candidate-validation-receipt.json in the operator checkout. The operator will put the metadata through hosted CI, merge the preparation and rebuild for that exact main commit before saving a draft. No public tag, release, npm or Homebrew activation occurred.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-77
+      timestamp: "2026-10-30T17:11:37.420109000Z"
