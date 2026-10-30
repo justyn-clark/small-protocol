@@ -10,6 +10,17 @@ This project follows a protocol-first versioning model:
 
 ## [Unreleased]
 
+### Fixed
+- Captured JavaScript declarations that read an environment variable or a JSON
+  config at an environment-rooted path no longer trigger credential-assignment
+  false positives. Literal fallbacks, unsupported expressions, credential values
+  elsewhere and full-command checks beyond the display cap remain enforced.
+
+### Added
+- Read-only `small proof status [--json]` reports exact command-proof availability
+  separately from strict policy and secret inspection, including missing legacy
+  evidence and display/digest identity without reconstructing or exporting proof.
+
 ## [v1.1.2] - 2026-10-09
 
 ### Fixed

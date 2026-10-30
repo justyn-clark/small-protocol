@@ -69,6 +69,69 @@ authored fields retain ordinary URL policy. Short displays using this grammar
 also require exact command proof; missing or tampered proof is not exempted.
 Existing records, timestamps, summaries, refs and hashes remain unchanged.
 
+## Captured credential references
+
+The captured-command assignment heuristic recognizes two finite JavaScript
+source forms in `const`, `let` or `var` declarations with an explicit semicolon:
+
+```js
+const token = process.env.EXAMPLE_TOKEN;
+const token = JSON.parse(fs.readFileSync(process.env.HOME + "/.config/example/config.json", "utf8")).user.token;
+```
+
+The environment member must be a simple ASCII identifier. The JSON form uses
+exact `JSON.parse`/`fs.readFileSync` names, an environment reference plus one
+quoted slash-prefixed path suffix, `utf8` or `utf-8` encoding, and one or more
+simple property accesses. Path suffixes contain only ASCII letters, digits,
+dot, underscore, slash and hyphen. Both quote styles and whitespace between
+tokens are supported. Environment namespace dots may also be escaped as
+`process\.env\.EXAMPLE_TOKEN` inside a regex search literal; this does not
+unescape other shell/JavaScript text or accept escaped fallback operators.
+No files or environment values are read or evaluated.
+
+This classifies source references rather than proving runtime behavior or
+credential safety. Fallbacks (including `||` and `??`), arbitrary calls, escaped
+or interpolated paths, incomplete/truncated expressions, extra arguments and
+other syntax retain the assignment warning. For example,
+`const token = process.env.EXAMPLE_TOKEN || "fixture-value";` remains flagged.
+Credential patterns continue scanning all available captured text independently;
+other assignments and credentials after a recognized reference are still checked.
+Exact verified proof retains full-command checks beyond the display cap. A legacy
+summary without proof cannot establish the safety of its omitted bytes.
+This exception applies only to captured command fields, does not waive exact
+proof requirements, and does not change any historical receipt.
+
+## Read-only proof availability
+
+Run `small proof status --json --dir <workspace>` for an inventory of v1 progress
+captures or v2 `command_recorded` events. `--dir` also accepts the `.small`
+directory. The command reads local cache/portable files using the same bounded,
+contained, hash-bound resolver as strict validation. It never evaluates commands,
+reads environment values, requests the network, reconstructs or exports proof,
+or changes workspace state.
+
+The report contains counts and zero-based v1 entry locations or v2 event paths:
+
+- `available`: exact file bytes and receipt summary/metadata binding match;
+  v2 event source digests must match as well.
+- `missing`: the referenced command is absent from the supported local stores.
+- `invalid`: a digest, reference, file safety or receipt binding check failed.
+- `unreferenced`: captured command text has no proof reference or digest.
+
+`coverage` is `incomplete` whenever any captured command is unavailable.
+`required_unavailable` counts gaps for which existing strict policy requires
+proof. `display_digest_matches` means only that display bytes hash to the
+recorded digest; it is neither a secret review nor permission to restore or
+publish those bytes. The report excludes commands and user-authored metadata.
+
+An inventory can complete successfully while reporting incomplete coverage.
+Its exit status indicates that the inventory was read, not that strict policy
+or credential inspection passed. Run `small check --strict` separately. Legacy
+summaries without original bytes must not be described as fully inspected,
+even if their historical strict rules allow a successful check. Mandatory
+marked-command proof remains fail-closed. If exact originals cannot be recovered,
+record the evidence gap; do not synthesize replacement commands or edit receipts.
+
 ## Existing receipts
 
 The pre-correction summarizer could split an allowed local URL into an insecure

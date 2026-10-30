@@ -21984,3 +21984,1053 @@ entries:
       status: blocked
       task_id: task-66
       timestamp: "2026-10-08T05:39:28.611470000Z"
+    - command: git add -- .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml .small/handoff.small.yml && git diff --cached --check && gitleaks git --staged --no-banner --redact && git comm...
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T053934.192092000Z.txt
+      command_sha256: 1f14a573bf9a5398497bb4fbf83b5a5c0ba2b4c158c864b9db5d9393d1462950
+      command_summary: git add -- .small/plan.small.yml .small/progress.small.yml .small/workspace.small.yml .small/handoff.small.yml && git diff --cached --check && gitleaks git --staged --no-banner --redact && git comm...
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:39:34.192092000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T054004.897057000Z.txt
+      command_sha256: 0e14d016f3406bf758d6f96e30a87632d97218f6ff94a2310076afb46c028eb0
+      command_summary: python3 /private/tmp/small-command-summary-correction/build_patched.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:40:04.897057000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/capture_ci.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T054122.577946000Z.txt
+      command_sha256: 8048a9be5d0ed4e67ae9468b5fe2e29e1e401f4ab0b1499650120d29cbb2fb21
+      command_summary: python3 /private/tmp/small-command-summary-correction/capture_ci.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:41:22.577946000Z"
+    - command: gh pr edit 2 --repo justyn-clark/small-protocol --body-file /private/tmp/small-command-summary-correction/pr-body.md
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T054130.791952000Z.txt
+      command_sha256: c0a468649b30fda9fd80f818537496d8e6e553e1b7dc1ed29ba76e83b1affe68
+      command_summary: gh pr edit 2 --repo justyn-clark/small-protocol --body-file /private/tmp/small-command-summary-correction/pr-body.md
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T05:41:30.791952000Z"
+    - evidence: Updated task task-66 to pending
+      notes: small plan --pending
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-66
+      timestamp: "2026-10-08T12:46:17.982258000Z"
+    - evidence: User authorized GitGuardian login and resolution of the precise synthetic fixture finding. Resuming incident 33758950 on open PR 2, pushed head 3069dab8ab255b0a3054f06e4a16c52f1a884404; preserve every prior commit and audit record. Existing strict check passes; verify authentication, incident outcome, and exact-head external check status before completion.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-66
+      timestamp: "2026-10-08T12:46:18.233830000Z"
+    - evidence: User explicitly authorized GitGuardian login and exact false-positive resolution. The available Codex browser reached the GitHub sign-in form for GitGuardian; no authenticated session is available. The visible login page is retained for the user and an authentication-complete request is pending; permission is no longer the blocker. No incident disposition was changed. Live PR 2 remains OPEN and unmerged at 3069dab8ab255b0a3054f06e4a16c52f1a884404. verify and both installer smoke jobs pass in Actions run 37733486273; GitGuardian check 113167718566 fails on historical synthetic fixture incident 33758950. Patched binary v1.1.0-dev.command-summary.3069dab8ab25 passes canonical LoopExec strict; all 14 original audit/proof hashes match. Resume task-66 after browser authentication, resolve only that known synthetic fixture, and verify exact-head checks. No commit history or LoopExec audit records were rewritten.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-66
+      timestamp: "2026-10-08T12:51:55.930170000Z"
+    - evidence: Updated task task-66 to pending
+      notes: small plan --pending
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-66
+      timestamp: "2026-10-08T13:25:26.569274000Z"
+    - evidence: User authorized merging PR 2 only after validation, formatting, and every gate is green, and requested phone-friendly headless authorization. Resume the precise GitGuardian synthetic-fixture resolution without history rewriting. Live PR head remains 3069dab8ab255b0a3054f06e4a16c52f1a884404, OPEN and mergeable, with GitGuardian check failure; no merge while that condition remains.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-66
+      timestamp: "2026-10-08T13:25:26.788668000Z"
+    - evidence: Added task task-67 via small plan --add
+      notes: Revalidate PR 2 formatting and exact-head gates, then merge only when all checks are green under the owner authorization; preserve local and downstream audit history
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-67
+      timestamp: "2026-10-08T13:25:27.108257000Z"
+    - evidence: Added dependency task-66 to task-67
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-67
+      timestamp: "2026-10-08T13:25:27.289728000Z"
+    - evidence: Owner approved merging only after exact-head validation, formatting, and all checks pass. Begin read-only revalidation independently while task-66 completes the supported phone-friendly GitGuardian authorization flow. Do not merge while GitGuardian fails.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-67
+      timestamp: "2026-10-08T13:26:15.424218000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/install_guardian.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T132651.807603000Z.txt
+      command_sha256: 8ee5c466e84a6c8ca228cc57c27cfda6924a679544984fe209e7dd352611fa1a
+      command_summary: python3 /private/tmp/small-command-summary-correction/install_guardian.py
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-66
+      timestamp: "2026-10-08T13:26:51.807603000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/install_guardian.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T132705.094143000Z.txt
+      command_sha256: 8ee5c466e84a6c8ca228cc57c27cfda6924a679544984fe209e7dd352611fa1a
+      command_summary: python3 /private/tmp/small-command-summary-correction/install_guardian.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-66
+      timestamp: "2026-10-08T13:27:05.094143000Z"
+    - evidence: User requested phone-based headless authorization and reported completing the phone step. Verified official ggshield 1.55.0 is awaiting the one-time authorization code in terminal session 5214; no code has been supplied and no token has been stored. Missing code is the sole authentication blocker, not permission. The CLI is retained and resume metadata is /private/tmp/small-command-summary-correction/auth-pending.json. Resume after receiving the one-time code, close only synthetic fixture incident 33758950, and verify the exact-head GitGuardian check. No incident disposition has changed.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-66
+      timestamp: "2026-10-08T13:41:46.993664000Z"
+    - evidence: Owner authorized merging PR 2 once validation, formatting, and all gates are green. Exact-head 3069dab8ab255b0a3054f06e4a16c52f1a884404 formatting and diff checks pass; validation and all three Actions jobs pass. Canonical LoopExec strict passes and all 14 audit/proof baseline files remain unchanged. GitGuardian check is still failure pending task-66 phone authorization code and exact false-positive resolution, so the green-check condition prevents merging. PR remains OPEN and unmerged. Merge-commit guard is prepared outside the repository at /private/tmp/small-command-summary-correction/merge_guard.py; it rejects missing, pending, or non-success checks and matches the exact verified head before merge. No new permission is needed once the stated conditions pass.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-67
+      timestamp: "2026-10-08T13:41:47.402059000Z"
+    - evidence: Updated task task-66 to pending
+      notes: small plan --pending
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-66
+      timestamp: "2026-10-08T16:10:15.610859000Z"
+    - evidence: Owner asks to merge now. Live PR 2 still reports all Actions jobs successful and GitGuardian failed, so preserve the existing all-green merge condition. Request one provider rescan to check whether the reported phone action closed incident 33758950. No incident credentials are stored locally and the headless authorization code is still missing.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-66
+      timestamp: "2026-10-08T16:10:15.840941000Z"
+    - command: gh api --method POST repos/justyn-clark/small-protocol/check-runs/113167718566/rerequest
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T161048.531676000Z.txt
+      command_sha256: 8c25bad23413c88543b0f6c2295b74800bb07c78c5561b57f1b9c3d7d90dfe3a
+      command_summary: gh api --method POST repos/justyn-clark/small-protocol/check-runs/113167718566/rerequest
+      evidence: Command failed with exit code 1
+      notes: 'apply: failed with exit code 1'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-66
+      timestamp: "2026-10-08T16:10:48.531676000Z"
+    - evidence: 'Live PR 2 at 3069dab8ab255b0a3054f06e4a16c52f1a884404 remains OPEN and UNSTABLE: all three Actions jobs are SUCCESS, but GitGuardian check 113167718566 remains FAILURE on synthetic fixture incident 33758950. The previous headless terminal session 5214 is no longer available and no OAuth credential was stored. Genuine provider rerequest POST returned GitHub HTTP 404; no rescan started and no check conclusion was altered. Owner is offered the exact phone incident action Ignore -> False positive and provider rerun, or an explicit exception to the earlier all-green merge condition. Await that input; no incident was changed and no merge occurred.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-66
+      timestamp: "2026-10-08T16:16:11.497784000Z"
+    - evidence: 'Owner explicitly instructed: Okay, you may merge it and we will resolve it later. GitGuardian synthetic-fixture incident 33758950 is intentionally deferred; its check remains failure and is not claimed resolved. No token is stored, no incident status was changed, and no security configuration or commit history is being rewritten. Later action: ignore this precise synthetic fixture as false positive and rerun the provider check.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-66
+      timestamp: "2026-10-08T16:34:52.438411000Z"
+    - evidence: The earlier all-green-only merge route is intentionally superseded by the owner explicit exception for GitGuardian synthetic-fixture incident 33758950. Validation, formatting, and the three Actions jobs pass on reviewed head 3069dab8ab255b0a3054f06e4a16c52f1a884404. This task is moved to a new scoped merge task that records the specific failed-check exception; task-66 remains deferred rather than falsely completed.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: blocked
+      task_id: task-67
+      timestamp: "2026-10-08T16:34:52.849508000Z"
+    - evidence: Added task task-68 via small plan --add
+      notes: Merge reviewed PR 2 with a merge commit under the owner explicit exception for GitGuardian synthetic-fixture incident 33758950; require all other checks green and verify history plus downstream strict proof
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-68
+      timestamp: "2026-10-08T16:34:53.221614000Z"
+    - evidence: Added dependency task-65 to task-68
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-68
+      timestamp: "2026-10-08T16:34:53.402260000Z"
+    - evidence: Owner explicitly permits merging PR 2 now and deferring the known GitGuardian false positive. Bind the merge to reviewed head 3069dab8ab255b0a3054f06e4a16c52f1a884404, verify all non-GitGuardian checks are SUCCESS, allow only the exact historical synthetic fixture failure, use a merge commit, and preserve local and LoopExec audit history.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-68
+      timestamp: "2026-10-08T16:34:53.622371000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/merge_guard.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T163526.156832000Z.txt
+      command_sha256: 14cf320f1325ed4ecbd0dc56564c2793d2cfa58782213d01abd83529db74797b
+      command_summary: python3 /private/tmp/small-command-summary-correction/merge_guard.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-68
+      timestamp: "2026-10-08T16:35:26.156832000Z"
+    - command: python3 /private/tmp/small-command-summary-correction/verify_merge.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T163901.769144000Z.txt
+      command_sha256: 8aad744c9c6b2756e05d7f59dbf6a2e50ae04f912f3908812e7091dc7780155b
+      command_summary: python3 /private/tmp/small-command-summary-correction/verify_merge.py
+      evidence: Command completed successfully
+      notes: 'apply: exit code 0'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-68
+      timestamp: "2026-10-08T16:39:01.769144000Z"
+    - evidence: 'PR #2 merged with a normal merge commit 88261152c8643d121b4ff642881b1f701fc016d5 from reviewed head 3069dab8ab255b0a3054f06e4a16c52f1a884404 under the owner explicit exception for synthetic GitGuardian incident 33758950. Post-merge Actions run 37809981575 passed verify and Ubuntu/macOS installer_smoke on this exact merge SHA. GitHub verified the two original parents and an identical reviewed/merged tree 307884aedc2ad23a9b1d02daa61639c399a00652. Patched binary v1.1.0-dev.command-summary.3069dab8ab25 passed read-only LoopExec check --strict with exit 0; all 14 original audit/proof hashes match and the original SMALL progress prefix is preserved. Detailed receipt: bin/command-summary-merge.json. No force push, rebase, squash, check-result alteration, stable release, or global binary replacement occurred. GitGuardian remains failed and intentionally deferred in task-66.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-68
+      timestamp: "2026-10-08T16:41:43.141567000Z"
+    - evidence: Added task task-69 via small plan --add
+      notes: Prepare and validate a clean stable v1.1.1 release candidate containing the command-summary fix, aligned npm version and release notes, preserving audits and public tags
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-69
+      timestamp: "2026-10-08T20:06:03.557582000Z"
+    - evidence: Added task task-70 via small plan --add
+      notes: Publish immutable stable v1.1.1 through the standard GitHub and npm release workflows; verify public assets, checksums, installer and read-only LoopExec strict proof
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-70
+      timestamp: "2026-10-08T20:06:03.718481000Z"
+    - evidence: Added task task-71 via small plan --add
+      notes: Update the public Homebrew tap to stable SMALL v1.1.1 archive names and checksums, validate formula and upgrade the local standard binary
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-71
+      timestamp: "2026-10-08T20:06:03.869468000Z"
+    - evidence: Owner requests public stable publication for the community. Prepare v1.1.1 from verified main 88261152c8643d121b4ff642881b1f701fc016d5 in an isolated clean candidate; preserve the dirty root audit tail and unrelated browser artifacts. Align changelog and npm package; verify release checklist before publishing.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-69
+      timestamp: "2026-10-08T20:06:44.051747000Z"
+    - evidence: Added dependency task-69 to task-70
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-70
+      timestamp: "2026-10-08T20:06:44.384776000Z"
+    - evidence: Added dependency task-70 to task-71
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-71
+      timestamp: "2026-10-08T20:06:44.538479000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/prepare.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T200652.000969000Z.txt
+      command_sha256: 7c4a643ec25def07bc9bd574a0caf3f0ba3920beeb42aae3e8207988c6dd9072
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/prepare.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-69
+      timestamp: "2026-10-08T20:06:52.000969000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/validate.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T200752.272072000Z.txt
+      command_sha256: 10dfaf914531f3419e35b213dddab7e75ed51c3e57b4569f09bfc200f0f589df
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/validate.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-69
+      timestamp: "2026-10-08T20:07:52.272072000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/compatibility.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T200824.453260000Z.txt
+      command_sha256: e943516faaab392d6e32bc395d799a1a45a9da184e2be20b7af8566e514a72ce
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/compatibility.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-69
+      timestamp: "2026-10-08T20:08:24.453260000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/open_pr.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T200852.863749000Z.txt
+      command_sha256: d7ee8407c8b62b3ebb1a7cc4ce881f7e3f6367cdaa0cc5d63453d86585d3f3f1
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/open_pr.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-69
+      timestamp: "2026-10-08T20:08:52.863749000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/merge_release.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T200940.541096000Z.txt
+      command_sha256: e33f51db4f72a04c29c3cc2f0f6a8dc8f2df7dd9c5f9c99bea031403cf64e57b
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/merge_release.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-69
+      timestamp: "2026-10-08T20:09:40.541096000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/old_cli_probe.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T201019.016294000Z.txt
+      command_sha256: 0b7b0b3e5ebd753d5ff03f0e758e8e327b493f7c8a7594354734a7d31e5290a0
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/old_cli_probe.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-69
+      timestamp: "2026-10-08T20:10:19.016294000Z"
+    - evidence: 'Stable v1.1.1 preparation PR #3 merged as 6e1270b77f0cf93ab11f7cc45874b16c83e0f39e; only CHANGELOG.md and packages/npm/package.json changed. Candidate race tests, vet, formatting, make verify/selftest/examples, GoReleaser check, installer smoke, two-clone compatibility, migration fault/idempotence tests and 10k/100k reducer measurements passed. Old v1 strict checking refused v2 with exit 2 and 38 authoritative files unchanged. All four PR gates including GitGuardian passed, and post-merge CI run 37837358526 passed all three jobs. Evidence: /private/tmp/small-v1.1.1-publication/validation.json, compatibility.json, old-cli-strict.json and release-merge.json.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-69
+      timestamp: "2026-10-08T20:10:56.638119000Z"
+    - evidence: Publish owner-authorized stable v1.1.1 from fully validated release merge 6e1270b77f0cf93ab11f7cc45874b16c83e0f39e. Preserve all old tag refs and audit files; use existing GitHub Release and npm OIDC workflows, then verify public archives/checksums, installer paths and downstream strict behavior.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-70
+      timestamp: "2026-10-08T20:10:56.984039000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/tag.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T201101.634486000Z.txt
+      command_sha256: 2f394cb388683a97594f9cd9f2610f67a57c95fdd2fe9c6fe28eb37af2d36d3a
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/tag.py
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-70
+      timestamp: "2026-10-08T20:11:01.634486000Z"
+    - evidence: Initial tag guard stopped before creating any tag because LoopExec independently resumed task-36 and legitimately appended progress and refreshed handoff/workspace. Its strict check passes. Narrow verification confirms the other 11 original hashes are unchanged and preserves original progress as a byte-identical prefix from the retained acceptance snapshot; publishing will leave all downstream files untouched.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-70
+      timestamp: "2026-10-08T20:12:28.160669000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/tag.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T201231.921970000Z.txt
+      command_sha256: 2f394cb388683a97594f9cd9f2610f67a57c95fdd2fe9c6fe28eb37af2d36d3a
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/tag.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-70
+      timestamp: "2026-10-08T20:12:31.921970000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/verify_public.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T201538.044522000Z.txt
+      command_sha256: 09de191ce74b3a4b59c71b4f18870a0f8289b1ee0cdd90c58815e855b8e9ec55
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/verify_public.py
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-70
+      timestamp: "2026-10-08T20:15:38.044522000Z"
+    - evidence: GitHub release and npm OIDC workflows succeeded on tag v1.1.1. All six archive checksums, released binary selftest, and explicit/latest hosted shell installer paths pass. npm initially returned a cached 404; a fresh registry request now confirms version 1.1.1, latest tag 1.1.1 and SLSA provenance. Continue actual npm/go installation and downstream strict proof.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-70
+      timestamp: "2026-10-08T20:17:49.851559000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/verify_public.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T201824.496127000Z.txt
+      command_sha256: 09de191ce74b3a4b59c71b4f18870a0f8289b1ee0cdd90c58815e855b8e9ec55
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/verify_public.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-70
+      timestamp: "2026-10-08T20:18:24.496127000Z"
+    - command: cp /private/tmp/small-v1.1.1-publication/public-verification.json bin/small-v1.1.1-release-receipt.json
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T201903.035835000Z.txt
+      command_sha256: 83a7b61251365747941e09c21f10b13c44449268a8074e9c8887369eb6bbfd16
+      command_summary: cp /private/tmp/small-v1.1.1-publication/public-verification.json bin/small-v1.1.1-release-receipt.json
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-70
+      timestamp: "2026-10-08T20:19:03.035835000Z"
+    - evidence: 'Published immutable stable tag v1.1.1 at 6e1270b77f0cf93ab11f7cc45874b16c83e0f39e. GitHub Release run 37837711031 and npm OIDC/provenance run 37837711015 succeeded. All six public platform archives match checksums; hosted explicit/latest shell installers, actual npm install with verified registry signatures/provenance, and public go install report v1.1.1. Released binary selftest and live LoopExec strict pass; cacheless exact two-proof validation passes and missing/tampered negatives fail closed without audit changes. Original progress remains an unchanged prefix while LoopExec independently resumes; all pre-existing tag refs unchanged. Public release notes published. Durable receipt: bin/small-v1.1.1-release-receipt.json.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-70
+      timestamp: "2026-10-08T20:19:03.246902000Z"
+    - evidence: GitHub/npm publication and public installer proofs complete. Update justyn-clark/homebrew-tap Formula/small.rb and its stale update workflow from obsolete small-dist/SHA256SUMS paths to the canonical small-protocol archives/checksums.txt, preserving other formulas. Validate and publish a focused tap PR, then upgrade and verify the local standard binary.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:19:03.607795000Z"
+    - command: git clone https://github.com/justyn-clark/homebrew-tap.git /private/tmp/small-v1.1.1-publication/homebrew-tap
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T201905.769804000Z.txt
+      command_sha256: a780b73040384bdb034e0f8a20d9eb7416dd642d11cbc30f06d8942f77d3ad7c
+      command_summary: git clone https://github.com/justyn-clark/homebrew-tap.git /private/tmp/small-v1.1.1-publication/homebrew-tap
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:19:05.769804000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/prepare_brew.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T201947.894092000Z.txt
+      command_sha256: 373ca718115edf643b99d97bef2da1441a7c4749150fafaba9dc0428675af65b
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/prepare_brew.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:19:47.894092000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/validate_brew.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T202058.413334000Z.txt
+      command_sha256: cf0e91cb3bb4b0bbf05038a20c186b45e5a00725c30439139315fb16d488fef3
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/validate_brew.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:20:58.413334000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/refine_brew.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T202146.615436000Z.txt
+      command_sha256: 5fbc6727ac9d8b9d336c1d5e2c1fe03f1448be44203961c35eb088267902a14b
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/refine_brew.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:21:46.615436000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/open_brew_pr.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T202152.663597000Z.txt
+      command_sha256: 874137cfce41be2dbae70772b2be0f61341b42a005b671efe27d923e5ce2ee07
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/open_brew_pr.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:21:52.663597000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/merge_brew.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T202300.929857000Z.txt
+      command_sha256: 6769cec58699766b22e1895a84599c388c6f43f8e2106e7a8aa809c099d5c80c
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/merge_brew.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:23:00.929857000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/upgrade_brew.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T202347.967479000Z.txt
+      command_sha256: 9ae0f3ab83df3f32728f4d98f4da444b94424101c939bb36172f4bb9c7f34260
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/upgrade_brew.py
+      evidence:
+        exit_code: 128
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:23:47.967479000Z"
+    - evidence: 'Homebrew PR #1 merged as f9542946b7ec33b8f4d0e4b4198328d7f865ea9d; real Ubuntu updater workflow run 37839022856 succeeded. Local upgrade stopped before any binary or trust change because its clean tap origin references a missing legacy local checkout. Preserve that origin in the receipt, reconnect only this owned tap to its canonical public GitHub repository, then retry the scoped upgrade.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:24:22.984954000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/upgrade_brew.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T202423.446928000Z.txt
+      command_sha256: 9ae0f3ab83df3f32728f4d98f4da444b94424101c939bb36172f4bb9c7f34260
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/upgrade_brew.py
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:24:23.446928000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/upgrade_brew.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T202507.759391000Z.txt
+      command_sha256: 9ae0f3ab83df3f32728f4d98f4da444b94424101c939bb36172f4bb9c7f34260
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/upgrade_brew.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:25:07.759391000Z"
+    - command: python3 /private/tmp/small-v1.1.1-publication/finalize_receipt.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261008T202644.012275000Z.txt
+      command_sha256: 187a1ee17fd6c673c361ba9c394a19cb2bb0d217d55a63d5d626a104dbaa6f24
+      command_summary: python3 /private/tmp/small-v1.1.1-publication/finalize_receipt.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-71
+      timestamp: "2026-10-08T20:26:44.012275000Z"
+    - evidence: 'Published Homebrew PR #1 as merge f9542946b7ec33b8f4d0e4b4198328d7f865ea9d. Formula 1.1.1 uses canonical archive URLs and all four verified SHA256 values; other formulas unchanged. Repaired updater uses small-protocol/checksums.txt and correct Apache-2.0 license, generated byte-identical formula locally, and passed actual Ubuntu workflow 37839022856. Reconnected only the clean local tap from missing legacy file origin to canonical public GitHub origin, preserved original origin in receipt, trusted only SMALL formula, disabled old Cellar cleanup, upgraded and passed brew test. /opt/homebrew/bin/small resolves to stable 1.1.1 and matches the published darwin-arm64 binary hash; standard-binary LoopExec check --strict exits 0. Release notes include Homebrew installation instructions and were read back exactly. Final durable proof: bin/small-v1.1.1-release-receipt.json. All existing public tags and upstream/LoopExec original progress prefixes remain unchanged; historical GitGuardian incident 33758950 remains intentionally deferred.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-71
+      timestamp: "2026-10-08T20:27:12.180281000Z"
+    - evidence: Added task task-72 via small plan --add
+      notes: Correct URL-literal handling for verified captured code with exact-loopback runtime-port templates; preserve full-command secrets, authored-field HTTP policy and immutable audit proofs
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-72
+      timestamp: "2026-10-09T06:52:51.197144000Z"
+    - evidence: Added task task-73 via small plan --add
+      notes: Verify captured-code correction against exact retained LoopExec evidence and cacheless proof, run security negatives and clean CI checks, then push a focused correction PR
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-73
+      timestamp: "2026-10-09T06:52:51.361110000Z"
+    - evidence: Stable v1.1.1 reproduces two insecure-link violations from one marked full-command capture containing a Node loopback origin template. Exact command SHA 5f06e6615a251c4124e5fd85bd580f405c8ba27c7b20e5d576b3aa4f6d9d0996. Implement proof-scoped source-literal handling without touching downstream records, relaxing authored fields, or accepting unsafe HTTP/credentials.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-72
+      timestamp: "2026-10-09T06:52:51.558923000Z"
+    - command: python3 /private/tmp/small-command-template-correction/prepare.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T065255.022240000Z.txt
+      command_sha256: c407ec31c70ad65c30b3f79f0b60ab0cb1b26217feebe15430dbd24cfc488618
+      command_summary: python3 /private/tmp/small-command-template-correction/prepare.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-72
+      timestamp: "2026-10-09T06:52:55.022240000Z"
+    - command: python3 /private/tmp/small-command-template-correction/seed_tests.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T065655.484813000Z.txt
+      command_sha256: 078dfd29e1dc2a247cbfb38f0bc4aa9ccf30456aa4b7219783cd19462433347f
+      command_summary: python3 /private/tmp/small-command-template-correction/seed_tests.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-72
+      timestamp: "2026-10-09T06:56:55.484813000Z"
+    - command: python3 /private/tmp/small-command-template-correction/edit.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T065831.094184000Z.txt
+      command_sha256: 871968e021eca4a7b8bcc934b72e044d53d89a4ad0b382fdf64e657fde6a1cbd
+      command_summary: python3 /private/tmp/small-command-template-correction/edit.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-72
+      timestamp: "2026-10-09T06:58:31.094184000Z"
+    - command: python3 /private/tmp/small-command-template-correction/refine.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T070243.368438000Z.txt
+      command_sha256: ee23afd3f7f10e46daa1b6f5e5055d84d9823c73222411867311a607e430428a
+      command_summary: python3 /private/tmp/small-command-template-correction/refine.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-72
+      timestamp: "2026-10-09T07:02:43.368438000Z"
+    - evidence: Implemented proof-scoped URL views for backtick local literals and simple runtime-port templates; original full command bytes still feed secret checks, and authored fields retain ordinary policy. Pre-patch regression reproduced; focused new and existing security/proof tests pass, including crafted path metadata, hidden credentials/HTTP, absent/tampered proof and malformed authorities. Focused candidate commit 9e3948d7255d8152e586289adc7c09d26c281367; bin/small-command-literal-fix v1.1.2-dev.command-literals.9e3948d7255d passes live read-only LoopExec strict without editing its state.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-72
+      timestamp: "2026-10-09T07:05:17.666158000Z"
+    - evidence: Added dependency task-72 to task-73
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-73
+      timestamp: "2026-10-09T07:05:17.986606000Z"
+    - evidence: Verify exact retained capture and current immutable downstream hashes with the candidate binary, plus fresh cacheless proof and meaningful security negatives. Run clean full/race/vet/format, compatibility and release checks; push focused public correction PR after all local evidence passes.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-73
+      timestamp: "2026-10-09T07:05:18.183280000Z"
+    - evidence: Added task task-74 via small plan --add
+      notes: Publish validated captured-code correction as stable v1.1.2, verify public GitHub/npm/installers and upgrade canonical Homebrew through existing updater while preserving audit and tag history
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-74
+      timestamp: "2026-10-09T07:05:18.525587000Z"
+    - evidence: Added dependency task-73 to task-74
+      notes: small plan --depends
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-74
+      timestamp: "2026-10-09T07:05:18.691425000Z"
+    - command: python3 /private/tmp/small-command-template-correction/acceptance.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T070519.912962000Z.txt
+      command_sha256: 9f3ce9869ff7e434179cc84caf1e5dee44ba280b80f1d3ed42c7236d0a7bb111
+      command_summary: python3 /private/tmp/small-command-template-correction/acceptance.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-73
+      timestamp: "2026-10-09T07:05:19.912962000Z"
+    - command: python3 /private/tmp/small-command-template-correction/finalize_candidate.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T070653.658952000Z.txt
+      command_sha256: aad8354ea8c90655eb838eddb9c586f3cdeca2391a523f7d08df16f89e5eed9a
+      command_summary: python3 /private/tmp/small-command-template-correction/finalize_candidate.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-73
+      timestamp: "2026-10-09T07:06:53.658952000Z"
+    - command: python3 /private/tmp/small-command-template-correction/validate.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T070825.403123000Z.txt
+      command_sha256: b6473661a90949cc645e3d654481a787083fa64c6a7bb8bf4207c4df44b3fd7d
+      command_summary: python3 /private/tmp/small-command-template-correction/validate.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-73
+      timestamp: "2026-10-09T07:08:25.403123000Z"
+    - command: python3 /private/tmp/small-command-template-correction/compatibility.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T070914.663948000Z.txt
+      command_sha256: 145d624a4257d65b7731c51e2bc1b64c91bd4392196b2bdbb01cc9b1065a1340
+      command_summary: python3 /private/tmp/small-command-template-correction/compatibility.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-73
+      timestamp: "2026-10-09T07:09:14.663948000Z"
+    - command: python3 /private/tmp/small-command-template-correction/open_pr.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T071017.884386000Z.txt
+      command_sha256: f8767d0e85ee9e1cf17296a998c75476833b9f37d79944c54f37cd0f570e07f4
+      command_summary: python3 /private/tmp/small-command-template-correction/open_pr.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-73
+      timestamp: "2026-10-09T07:10:17.884386000Z"
+    - command: python3 /private/tmp/small-command-template-correction/old_cli_probe.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T071137.861192000Z.txt
+      command_sha256: b45a573b5f251000a3d91eea4f779e03e2107fc9c4a315a906cbd9e4fc78cd8d
+      command_summary: python3 /private/tmp/small-command-template-correction/old_cli_probe.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-73
+      timestamp: "2026-10-09T07:11:37.861192000Z"
+    - command: gh pr edit 4 --repo justyn-clark/small-protocol --body-file /private/tmp/small-command-template-correction/pr-body.md
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T071308.990549000Z.txt
+      command_sha256: 94437173e6b3f12e15ca4617c0ef7ba40239bf5b008b8c6daf0fa96087d14273
+      command_summary: gh pr edit 4 --repo justyn-clark/small-protocol --body-file /private/tmp/small-command-template-correction/pr-body.md
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-73
+      timestamp: "2026-10-09T07:13:08.990549000Z"
+    - evidence: 'Focused correction PR #4 at 59a05b25ca64c4824c47df951337ba954171985d passes all four gates, including GitGuardian; Actions run 37897503741 verifies exact reviewed head. Pre-patch unit and installed v1.1.1 live failures retained. Final patched binary passes actual unchanged LoopExec state and fresh cacheless snapshot; missing/tampered template proof fail closed. All 12 baseline original audit/proof hashes unchanged. Race/full tests, vet, formatting, make verify/selftest/examples, installer smoke, GoReleaser config, local two-clone profile proof, 10k/100k measurements and old-v1 refusal without changing 38 files pass. Durable acceptance receipt: bin/command-literal-verification.json; detailed checks in /private/tmp/small-command-template-correction.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-73
+      timestamp: "2026-10-09T07:13:09.250528000Z"
+    - evidence: 'Continue the owner-authorized public SMALL correction/release work with fully validated green PR #4. Merge using matched head and a normal merge commit, verify post-merge CI, publish immutable v1.1.2, verify actual public installers/provenance and preserved records, then use the canonical Homebrew updater and upgrade the standard local binary.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-74
+      timestamp: "2026-10-09T07:13:09.620478000Z"
+    - command: python3 /private/tmp/small-command-template-correction/merge_release.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T071314.817547000Z.txt
+      command_sha256: c6f8b0f49f89e6f1f099f67da152f81a7de4d6ee56f49a23df9a4cd0762b33b4
+      command_summary: python3 /private/tmp/small-command-template-correction/merge_release.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-74
+      timestamp: "2026-10-09T07:13:14.817547000Z"
+    - command: python3 /private/tmp/small-command-template-correction/tag.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T071511.775376000Z.txt
+      command_sha256: 234ad48b9929c55cc43452dea721bc0f67e69b58bb47ac5e9a25a6f756783fda
+      command_summary: python3 /private/tmp/small-command-template-correction/tag.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-74
+      timestamp: "2026-10-09T07:15:11.775376000Z"
+    - command: python3 /private/tmp/small-command-template-correction/verify_public.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T071818.732665000Z.txt
+      command_sha256: cb5bb5442e081bd8633a40c34f700bca87c12f70aeb24887dec774d7a772cfe0
+      command_summary: python3 /private/tmp/small-command-template-correction/verify_public.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-74
+      timestamp: "2026-10-09T07:18:18.732665000Z"
+    - command: gh workflow run update-formula.yml --repo justyn-clark/homebrew-tap --ref main -f version=v1.1.2
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T072015.782475000Z.txt
+      command_sha256: 16d73f2aad08896a7311d6d79dfc694cc36a243bbf80960c85364b9e5c8ee22f
+      command_summary: gh workflow run update-formula.yml --repo justyn-clark/homebrew-tap --ref main -f version=v1.1.2
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-74
+      timestamp: "2026-10-09T07:20:15.782475000Z"
+    - command: python3 /private/tmp/small-command-template-correction/upgrade_brew.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T072532.841140000Z.txt
+      command_sha256: 385a5e1c360c32815fd5290dfbc0a5691a4474a323e6d16eb1257e17425e1477
+      command_summary: python3 /private/tmp/small-command-template-correction/upgrade_brew.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-74
+      timestamp: "2026-10-09T07:25:32.841140000Z"
+    - command: python3 /private/tmp/small-command-template-correction/finalize_receipt.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T072703.291294000Z.txt
+      command_sha256: 3914f8a00f11840fb929669010df9af5b8201fb38b2aa79fa7a8e0db0bc0bbd1
+      command_summary: python3 /private/tmp/small-command-template-correction/finalize_receipt.py
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-74
+      timestamp: "2026-10-09T07:27:03.291294000Z"
+    - command: python3 /private/tmp/small-command-template-correction/finalize_receipt.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T072748.840914000Z.txt
+      command_sha256: 3914f8a00f11840fb929669010df9af5b8201fb38b2aa79fa7a8e0db0bc0bbd1
+      command_summary: python3 /private/tmp/small-command-template-correction/finalize_receipt.py
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-74
+      timestamp: "2026-10-09T07:27:48.840914000Z"
+    - command: python3 /private/tmp/small-command-template-correction/finalize_receipt.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T072835.180225000Z.txt
+      command_sha256: 3914f8a00f11840fb929669010df9af5b8201fb38b2aa79fa7a8e0db0bc0bbd1
+      command_summary: python3 /private/tmp/small-command-template-correction/finalize_receipt.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-74
+      timestamp: "2026-10-09T07:28:35.180225000Z"
+    - evidence: 'Published immutable SMALL v1.1.2 from PR #4 merge 1a101564cac8d22e200b965f912df7c9c37ab0e4, reviewed head 59a05b25ca64c4824c47df951337ba954171985d. All four PR gates including GitGuardian passed; post-merge CI 37897775463, release 37897960326, npm provenance 37897960037 and Homebrew updater 37898431179 succeeded. Formatting, vet, race tests, make verify, release configuration, installer smoke, v1/v2 session proof and scale checks passed. Verified all six public archive checksums, actual pinned/latest shell installers, npm registry signature and provenance, go install, and brew test. Standard /opt/homebrew/bin/small is v1.1.2, SHA256 dbab524d4789a09b2f0b875ebb38bd6d805f320cdb96ac7408f4932906641975, matching the published Darwin ARM64 binary. Actual LoopExec strict and cacheless selective-proof strict pass; missing and tampered proof fail closed. All 12 original LoopExec audit/proof files, both original progress prefixes and all previous tag refs remain unchanged. New durable receipt: bin/small-v1.1.2-release-receipt.json; previous receipts and failed readback attempts preserved. Historical GitGuardian incident 33758950 remains intentionally deferred. LoopExec CI still pins v1.1.1 and should pin v1.1.2 before resuming task-36.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-74
+      timestamp: "2026-10-09T07:29:09.029023000Z"
+    - evidence: Added task task-75 via small plan --add
+      notes: Resolve shadowed SMALL CLI on PATH and verify LoopExec audit-preserving recovery with stable v1.1.2
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-75
+      timestamp: "2026-10-09T13:28:25.697751000Z"
+    - evidence: LoopExec shell resolves /Users/justin/.local/bin/small v1.0.7 and rejects command_summary_version, while explicit /opt/homebrew/bin/small v1.1.2 passes strict. Preserve the original local binary in a checksum-verified backup and point the shadowing path to the verified Homebrew installation. The existing LoopExec agent is concurrently handling task-41 CI and prose adoption; this task changes no LoopExec repository files.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-75
+      timestamp: "2026-10-09T13:29:12.266787000Z"
+    - command: python3 /private/tmp/small-cli-path-recovery.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261009T133000.309030000Z.txt
+      command_sha256: c2558f886696f5d953de7e0e95ba00650669419d664a320f5ada00683c1c92cd
+      command_summary: python3 /private/tmp/small-cli-path-recovery.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-75
+      timestamp: "2026-10-09T13:30:00.309030000Z"
+    - evidence: 'Resolved the stale CLI on PATH: /Users/justin/.local/bin/small now links to /opt/homebrew/bin/small and a fresh login shell reports v1.1.2. Binary SHA256 dbab524d4789a09b2f0b875ebb38bd6d805f320cdb96ac7408f4932906641975 matches the public release. Original v1.0.7 binary is preserved byte-for-byte at /Users/justin/.local/bin/small.v1.0.7.946a24ff4aec.backup. Default-path LoopExec strict passes; original progress prefix and eight existing portable command proofs are unchanged. This task wrote no LoopExec repository files while its own agent updates task-41. Durable proof: bin/small-v1.1.2-path-receipt.json.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-75
+      timestamp: "2026-10-09T13:30:31.592319000Z"
+    - evidence: Added task task-76 via small plan --add
+      notes: Correct captured environment-assignment false positives and report command-proof availability without changing historical receipts or strict evidence requirements
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: pending
+      task_id: task-76
+      timestamp: "2026-10-30T04:43:59.317016000Z"
+    - evidence: Read owner-supplied small-strict-investigation.md and exact installed v1.1.2 source/revision1a101564. Reproduce assignment-scanner false positives and unsafe fallback counterexample, implement narrow fail-closed source-expression classification and read-only proof-availability reporting, verify v1/v2 and beyond-cap failures, and preserve existing audit bytes. Root checkout has known pre-existing audit state and .playwright-mcp work; use isolated current-source checkout. Do not recover, fabricate, export or rewrite JBM evidence, install globally, or deploy production as part of this correction.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T04:43:59.847594000Z"
+    - command: python3 /private/tmp/prepare-small-strict-correction.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261030T044431.774960000Z.txt
+      command_sha256: 565c07d7db9189995677add99bba7bfae4161e6383ae73f788f5c011b3589de5
+      command_summary: python3 /private/tmp/prepare-small-strict-correction.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T04:44:31.774960000Z"
+    - evidence: Continue the verified correction under authoritative task76. Canonical local history extends public main byte-for-byte and was imported with SMALL snapshot/checkout; scratch task67 and its evidence remain preserved separately. Source fields and audit records are not reconstructed or rewritten.
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T05:05:32.620286000Z"
+    - command: /opt/homebrew/bin/go build -ldflags "-X github.com/justyn-clark/small-protocol/internal/version.Version=1.1.2-dev.command-proof" -o bin/small-strict-dev ./cmd/small
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261030T050542.389586000Z.txt
+      command_sha256: fa8208670323579ebfdfcafe62e580a3a5459a6e27be691566e8972a57e0e2a1
+      command_summary: /opt/homebrew/bin/go build -ldflags "-X github.com/justyn-clark/small-protocol/internal/version.Version=1.1.2-dev.command-proof" -o bin/small-strict-dev ./cmd/small
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T05:05:42.389586000Z"
+    - command: python3 /private/tmp/small-strict-correction-20261029/verify-source.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261030T050747.431077000Z.txt
+      command_sha256: d112ba2a6c5c3e15b6f168222cb42c7cdd08b5c0797b87fa2132c69eabf36109
+      command_summary: python3 /private/tmp/small-strict-correction-20261029/verify-source.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T05:07:47.431077000Z"
+    - command: python3 /private/tmp/small-strict-correction-20261029/verify-clean-snapshot.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261030T050900.305700000Z.txt
+      command_sha256: 42d9d2fec6c3bc7547d06292dfe7899ae80d01bbfb1bbb6704a4a664facd32e5
+      command_summary: python3 /private/tmp/small-strict-correction-20261029/verify-clean-snapshot.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T05:09:00.305700000Z"
+    - command: python3 /private/tmp/small-strict-correction-20261029/verify-jbm-readonly.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261030T050917.592322000Z.txt
+      command_sha256: afddeb84e435a13905a4bc244ccdfb5dfa8479b439ea52d6582895a3458473fa
+      command_summary: python3 /private/tmp/small-strict-correction-20261029/verify-jbm-readonly.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T05:09:17.592322000Z"
+    - command: python3 /private/tmp/small-strict-correction-20261029/clarify-coverage-docs.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261030T051139.261427000Z.txt
+      command_sha256: 8cf1924bd8783b2ed92641a9670bb3357d2bd37f62500796b0710d8baae7f8d4
+      command_summary: python3 /private/tmp/small-strict-correction-20261029/clarify-coverage-docs.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T05:11:39.261427000Z"
+    - command: python3 /private/tmp/small-strict-correction-20261029/preserve-readiness.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261030T051313.930067000Z.txt
+      command_sha256: 91da39ebbca9b9afc56611891aab70c5aac0c363119098812b11286567c3f2e1
+      command_summary: python3 /private/tmp/small-strict-correction-20261029/preserve-readiness.py
+      evidence:
+        exit_code: 1
+        kind: cli_execution
+        outcome: failed
+        strength: cli_captured
+      notes: 'apply: command outcome failed; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T05:13:13.930067000Z"
+    - command: python3 /private/tmp/small-strict-correction-20261029/preserve-readiness.py
+      command_ref: .small-cache/logs/22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52/commands/20261030T051327.059097000Z.txt
+      command_sha256: 91da39ebbca9b9afc56611891aab70c5aac0c363119098812b11286567c3f2e1
+      command_summary: python3 /private/tmp/small-strict-correction-20261029/preserve-readiness.py
+      evidence:
+        exit_code: 0
+        kind: cli_execution
+        outcome: succeeded
+        strength: cli_captured
+      notes: 'apply: command outcome succeeded; task acceptance unchanged'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: in_progress
+      task_id: task-76
+      timestamp: "2026-10-30T05:13:27.059097000Z"
+    - evidence: 'Implemented the owner-supplied strict investigation correction on a branch from current v1.1.2 source1a101564. Finite captured-source classification accepts direct environment references, escaped-dot environment search literals and environment-rooted JSON config reads; literal fallbacks, unknown calls/escapes, mixed credentials and values after the display cap remain rejected. Added read-only small proof status for both profiles with missing/invalid/unreferenced coverage and display digest identity, without reconstruction or disclosure. Go tests, vet, focused regressions, race checks, clean immutable make verify, mocked installer smoke, cacheless strict, formatting/whitespace and redacted zero-finding scan passed. Exact JBM investigation worktreecd20ada1 has12 old assignment warnings and0 patched warnings; its4 required missing proofs still block strict. Inventory:331 captures,90 available,232 missing,9 unreferenced;165 missing display bytes match their digests but were not restored. All downstream audit/portable-proof hashes and the original authoritative progress prefix remain unchanged. Scratch task allocation conflict is preserved separately; canonical history continues under task76 via CLI snapshot/checkout. Durable receipt and development CLI: bin/small-strict-correction-20261029/ under the original source checkout. Installed stable binary and production remain unchanged; no stable release has been published for this correction.'
+      replayId: 22980d19369cecba5c57ddcc5ad3b8d34e4b3eb41b03dfe3fae06ef1ea2dab52
+      status: completed
+      task_id: task-76
+      timestamp: "2026-10-30T05:14:32.027040000Z"
